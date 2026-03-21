@@ -1,34 +1,16 @@
 {
   "name": "shadowyrealm",
-  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS"
+    "not_found_handling": "single-page-application"
   },
   "observability": {
     "enabled": true
   },
-  "ai_gateway": [
-    {
-      "binding": "AIGATEWAY",
-      "gateway_id": "shadowyrealm"
-    }
-  ],
-  "env": {
-    "production": {
-      "name": "shadowyrealm",
-      "routes": [
-        { "pattern": "shadowyrealm.com/*", "zone_name": "shadowyrealm.com" },
-        { "pattern": "www.shadowyrealm.com/*", "zone_name": "shadowyrealm.com" }
-      ]
-    },
-    "staging": {
-      "name": "shadowyrealm-staging",
-      "routes": [
-        { "pattern": "staging.shadowyrealm.com/*", "zone_name": "shadowyrealm.com" }
-      ]
-    }
-  }
+  "routes": [
+    { "pattern": "shadowyrealm.com", "custom_domain": true, "override_existing_origin": true, "override_existing_dns_record": true },
+    { "pattern": "www.shadowyrealm.com", "custom_domain": true, "override_existing_origin": true, "override_existing_dns_record": true }
+  ]
 }
