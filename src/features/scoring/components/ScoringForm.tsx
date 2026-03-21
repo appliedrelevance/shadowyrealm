@@ -1,0 +1,189 @@
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreateAssessment } from "../hooks/useAssessments";
+
+const DIMENSIONS = [
+  { key: "scientific", label: "Scientific" },
+  { key: "economic", label: "Economic" },
+  { key: "human_rights", label: "Human Rights" },
+  { key: "health", label: "Health" },
+  { key: "cultural", label: "Cultural" },
+] as const;
+
+const scoringSchema = z.object({
+  scientific_score: z.number().int().min(-10).max(10),
+  economic_score: z.number().int().min(-10).max(10),
+  human_rights_score: z.number().int().min(-10).max(10),
+  health_score: z.number().int().min(-10).max(10),
+  cultural_score: z.number().int().min(-10).max(10),
+  scientific_justification: z.string().min(1, "Justification required"),
+  economic_justification: z.string().min(1, "Justification required"),
+  human_rights_justification: z.string().min(1, "Justification required"),
+  health_justification: z.string().min(1, "Justification required"),
+  cultural_justification: z.string().min(1, "Justification required"),
+  period_id: z.number().nullable().optional(),
+  confidence_level: z.number().min(0).max(1).optional(),
+});
+
+type ScoringFormData = z.infer<typeof scoringSchema>;
+
+interface ScoringFormProps {
+  entityId: number;
+  periods?: { id: number; label: string }[];
+  onSuccess?: () => void;
+}
+
+export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) {
+  const mutation = useCreateAssessment();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ScoringFormData>({
+    resolver: zodResolver(scoringSchema),
+    defaultValues: {
+      scientific_score: 0,
+      economic_score: 0,
+      human_rights_score: 0,
+      health_score: 0,
+      cultural_score: 0,
+      scientific_justification: "",
+      economic_justification: "",
+      human_rights_justification: "",
+      health_justification: "",
+      cultural_justification: "",
+      period_id: null,
+      confidence_level: 0.5,
+    },
+  });
+
+  const onSubmit = async (data: ScoringFormData) => {
+    await mutation.mutateAsync({
+      entity_id: entityId,
+      period_id: data.period_id ?? null,
+      scientific_score: data.scientific_score,
+      economic_score: data.economic_score,
+      human_rights_score: data.human_rights_score,
+      health_score: data.health_score,
+      cultural_score: data.cultural_score,
+      scientific_justification: data.scientific_justification,
+      economic_justification: data.economic_justification,
+      human_rights_justification: data.human_rights_justification,
+      health_justification: data.health_justification,
+      cultural_justification: data.cultural_justification,
+      confidence_level: data.confidence_level ?? 0.5,
+    });
+    onSuccess?.();
+  };
+
+  const inputClass =
+    "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text text-sm focus:border-arcane-purple focus:outline-none";
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {mutation.isError && (
+        <p className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+          {mutation.error.message}
+        </p>
+      )}
+
+      {/* Optional period selection */}
+      {periods && periods.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-text-muted">
+            Assessment Period
+          </label>
+          <select
+            {...register("period_id", { valueAsNumber: true })}
+            className={inputClass}
+          >
+            <option value="">Overall (no specific period)</option>
+            {periods.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Five dimensions */}
+      {DIMENSIONS.map((dim) => {
+        const scoreKey = `${dim.key}_score` as keyof ScoringFormData;
+        const justKey = `${dim.key}_justification` as keyof ScoringFormData;
+        const scoreValue = watch(scoreKey) as number;
+
+        return (
+          <div
+            key={dim.key}
+            className="rounded-lg border border-realm-border bg-realm-surface p-4"
+          >
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-text-bright">
+                {dim.label}
+              </label>
+              <span
+                className={`font-mono text-lg font-bold ${scoreValue > 0 ? "text-spectral-green" : scoreValue < 0 ? "text-blood-red" : "text-text-muted"}`}
+              >
+                {scoreValue > 0 ? "+" : ""}
+                {scoreValue}
+              </span>
+            </div>
+
+            <input
+              type="range"
+              min={-10}
+              max={10}
+              step={1}
+              {...register(scoreKey, { valueAsNumber: true })}
+              className="mt-2 w-full accent-arcane-purple"
+            />
+            <div className="flex justify-between text-xs text-text-muted">
+              <span>-10 (Devastating)</span>
+              <span>0</span>
+              <span>+10 (Transformative)</span>
+            </div>
+
+            <textarea
+              rows={2}
+              placeholder={`Justify your ${dim.label.toLowerCase()} score...`}
+              {...register(justKey)}
+              className={`${inputClass} mt-2`}
+            />
+            {errors[justKey] && (
+              <p className="mt-1 text-xs text-destructive">
+                {(errors[justKey] as { message?: string })?.message}
+              </p>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Confidence */}
+      <div>
+        <label className="block text-sm font-medium text-text-muted">
+          Confidence Level: {((watch("confidence_level") ?? 0.5) * 100).toFixed(0)}%
+        </label>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          {...register("confidence_level", { valueAsNumber: true })}
+          className="mt-1 w-full accent-arcane-purple"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full rounded bg-primary px-4 py-2.5 font-semibold text-text-bright hover:bg-primary-hover disabled:opacity-50 sm:w-auto"
+      >
+        {isSubmitting ? "Recording..." : "Submit Assessment"}
+      </button>
+    </form>
+  );
+}

@@ -1,0 +1,272 @@
+import { useState, useMemo } from "react";
+import { X, Search } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
+import { ImpactRadarChart } from "@/components/ImpactRadarChart";
+import { MagnitudeBadge } from "@/components/MagnitudeBadge";
+import {
+  calculateATIS,
+  computeConsensusScores,
+  type DimensionalScores,
+} from "@/lib/atis-calculator";
+
+const CHART_COLORS = ["#7c3aed", "#10b981", "#f59e0b", "#3b82f6", "#ec4899"];
+
+function useEntityWithScores(entityId: number) {
+  return useQuery({
+    queryKey: ["entity-comparison", entityId],
+    queryFn: async () => {
+      const [entityRes, assessRes] = await Promise.all([
+        supabase.schema("shadowyrealm").from("entities").select("*").eq("id", entityId).single(),
+        supabase.schema("shadowyrealm").from("assessments").select("*").eq("entity_id", entityId),
+      ]);
+      if (entityRes.error) throw entityRes.error;
+      if (assessRes.error) throw assessRes.error;
+      return { entity: entityRes.data, assessments: assessRes.data };
+    },
+  });
+}
+
+function useSearchEntities(query: string) {
+  return useQuery({
+    queryKey: ["entity-search", query],
+    enabled: query.length >= 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .schema("shadowyrealm")
+        .from("entities")
+        .select("id, name, entity_type")
+        .eq("status", "published")
+        .ilike("name", `%${query}%`)
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+const DIMENSIONS: (keyof DimensionalScores)[] = [
+  "scientific",
+  "economic",
+  "human_rights",
+  "health",
+  "cultural",
+];
+
+export function ComparisonView() {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data: searchResults } = useSearchEntities(searchQuery);
+
+  const addEntity = (id: number) => {
+    if (!selectedIds.includes(id)) {
+      setSelectedIds([...selectedIds, id]);
+    }
+    setSearchQuery("");
+  };
+
+  const removeEntity = (id: number) => {
+    setSelectedIds(selectedIds.filter((i) => i !== id));
+  };
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <h1 className="font-display text-3xl font-bold text-text-bright">
+        Comparative Analysis
+      </h1>
+      <p className="mt-2 text-text-muted">
+        Select entities to compare side-by-side.
+      </p>
+
+      {/* Search and add */}
+      <div className="relative mt-6">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search entities to compare..."
+              className="w-full rounded border border-realm-border bg-realm-surface py-2 pl-9 pr-3 text-sm text-text focus:border-arcane-purple focus:outline-none"
+            />
+          </div>
+        </div>
+        {searchResults && searchResults.length > 0 && (
+          <div className="absolute z-10 mt-1 w-full rounded border border-realm-border bg-realm-surface shadow-lg">
+            {searchResults.map((e) => (
+              <button
+                key={e.id}
+                onClick={() => addEntity(e.id)}
+                className="flex w-full items-center justify-between px-3 py-2 text-sm text-text hover:bg-realm-surface-raised"
+              >
+                <span>{e.name}</span>
+                <span className="text-xs text-text-muted capitalize">
+                  {e.entity_type}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Selected entities */}
+      {selectedIds.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {selectedIds.map((id, idx) => (
+            <EntityTag key={id} entityId={id} color={CHART_COLORS[idx % CHART_COLORS.length]} onRemove={() => removeEntity(id)} />
+          ))}
+        </div>
+      )}
+
+      {/* Comparison charts */}
+      {selectedIds.length >= 2 && (
+        <ComparisonCharts entityIds={selectedIds} />
+      )}
+
+      {selectedIds.length < 2 && selectedIds.length > 0 && (
+        <p className="mt-8 text-center text-text-muted">
+          Add at least one more entity to begin comparison.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function EntityTag({ entityId, color, onRemove }: { entityId: number; color: string; onRemove: () => void }) {
+  const { data } = useEntityWithScores(entityId);
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
+      style={{ borderColor: color, color }}
+    >
+      {data?.entity.name ?? `Entity ${entityId}`}
+      <button onClick={onRemove} className="hover:opacity-70">
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
+function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
+  const entityData = entityIds.map((id) => useEntityWithScores(id));
+  const allLoaded = entityData.every((d) => d.data);
+
+  const chartData = useMemo(() => {
+    if (!allLoaded) return null;
+
+    return entityData.map((d, idx) => {
+      const assessments = d.data!.assessments;
+      const scores = computeConsensusScores(
+        assessments.map((a) => ({
+          scores: {
+            scientific: a.scientific_score,
+            economic: a.economic_score,
+            human_rights: a.human_rights_score,
+            health: a.health_score,
+            cultural: a.cultural_score,
+          },
+        })),
+      );
+
+      const atis = calculateATIS(
+        assessments.map((a) => ({
+          scores: {
+            scientific: a.scientific_score,
+            economic: a.economic_score,
+            human_rights: a.human_rights_score,
+            health: a.health_score,
+            cultural: a.cultural_score,
+          },
+          confidence_level: Number(a.confidence_level) || 0.5,
+          controversy_level: Number(a.controversy_level) || 0,
+          consensus_score: 0.5,
+        })),
+        [],
+        [],
+      );
+
+      return {
+        entity: d.data!.entity,
+        scores,
+        atis,
+        color: CHART_COLORS[idx % CHART_COLORS.length],
+      };
+    });
+  }, [allLoaded, entityData]);
+
+  if (!allLoaded || !chartData) {
+    return <p className="mt-8 text-text-muted">Loading comparison data...</p>;
+  }
+
+  return (
+    <div className="mt-8 space-y-6">
+      {/* Radar overlay */}
+      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
+        <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+          Dimensional Comparison
+        </h3>
+        <ImpactRadarChart
+          series={chartData.map((d) => ({
+            label: d.entity.name,
+            scores: d.scores,
+            color: d.color,
+          }))}
+        />
+      </div>
+
+      {/* ATIS tiers */}
+      <div className="flex flex-wrap gap-4">
+        {chartData.map((d) => (
+          <div key={d.entity.id} className="flex items-center gap-2">
+            <Link to="/entity/$slug" params={{ slug: d.entity.slug }} className="text-sm font-medium text-text hover:text-arcane-purple-light">
+              {d.entity.name}
+            </Link>
+            <MagnitudeBadge tier={d.atis.impact_class.tier} magnitude={d.atis.magnitude} />
+          </div>
+        ))}
+      </div>
+
+      {/* Dimensional differences */}
+      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
+        <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+          Dimensional Differences
+        </h3>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-realm-border text-left text-text-muted">
+              <th className="pb-2 pr-4 font-medium">Dimension</th>
+              {chartData.map((d) => (
+                <th key={d.entity.id} className="pb-2 pr-4 font-medium" style={{ color: d.color }}>
+                  {d.entity.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {DIMENSIONS.map((dim) => (
+              <tr key={dim} className="border-b border-realm-border/50">
+                <td className="py-2 pr-4 capitalize text-text-muted">
+                  {dim.replace("_", " ")}
+                </td>
+                {chartData.map((d) => {
+                  const val = d.scores[dim];
+                  return (
+                    <td
+                      key={d.entity.id}
+                      className={`py-2 pr-4 font-mono ${val > 0 ? "text-spectral-green" : val < 0 ? "text-blood-red" : "text-text-muted"}`}
+                    >
+                      {val > 0 ? "+" : ""}
+                      {val.toFixed(1)}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

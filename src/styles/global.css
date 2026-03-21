@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Dark fantasy primaries */
+  --color-realm-bg: #0a0a0f;
+  --color-realm-surface: #13131a;
+  --color-realm-surface-raised: #1a1a24;
+  --color-realm-border: #2a2a3a;
+
+  /* Arcane accent palette */
+  --color-arcane-purple: #7c3aed;
+  --color-arcane-purple-light: #a78bfa;
+  --color-arcane-blue: #3b82f6;
+  --color-shadow-gold: #d4a843;
+  --color-shadow-gold-light: #e8c972;
+  --color-blood-red: #dc2626;
+  --color-ember-orange: #ea580c;
+  --color-spectral-green: #10b981;
+
+  /* ATIS magnitude tier colors */
+  --color-tier-minimal: #6b7280;
+  --color-tier-moderate: #3b82f6;
+  --color-tier-significant: #f59e0b;
+  --color-tier-transformational: #ef4444;
+  --color-tier-legendary: #a855f7;
+
+  /* Text — WCAG AA on dark backgrounds */
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-text-bright: #f8fafc;
+
+  /* Semantic */
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-accent: #d4a843;
+  --color-destructive: #dc2626;
+
+  /* Typography — fantasy-inspired */
+  --font-family-display: "Cinzel", "Times New Roman", serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
+}
+
+/* Prose overrides for dark theme */
+.prose {
+  --tw-prose-body: var(--color-text);
+  --tw-prose-headings: var(--color-text-bright);
+  --tw-prose-links: var(--color-arcane-purple-light);
+  --tw-prose-bold: var(--color-text-bright);
+  --tw-prose-code: var(--color-shadow-gold);
+}
+
+/* Base styles */
+html {
+  background-color: var(--color-realm-bg);
+  color: var(--color-text);
+}
