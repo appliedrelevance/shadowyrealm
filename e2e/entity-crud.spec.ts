@@ -19,8 +19,8 @@ test.describe("Entity CRUD lifecycle", () => {
 
   test("create entity and view profile", async ({ page }) => {
     // Navigate to create form
-    await page.click("text=Summon Entity");
-    await expect(page.locator("h1")).toContainText("Summon Entity");
+    await page.click("text=Add Figure");
+    await expect(page.locator("h1")).toContainText("Add Figure");
     await page.screenshot({ path: "screenshots/entity-create-form.png" });
 
     // Fill form
@@ -47,7 +47,7 @@ test.describe("Entity CRUD lifecycle", () => {
   });
 
   test("entity list shows filters", async ({ page }) => {
-    await expect(page.locator("h1")).toContainText("Arcane Archives");
+    await expect(page.locator("h1")).toContainText("Impact Index");
     const typeFilter = page.locator("select").first();
     await expect(typeFilter).toBeVisible();
     await page.screenshot({ path: "screenshots/entity-list-filters.png" });

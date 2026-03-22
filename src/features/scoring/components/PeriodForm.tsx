@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/components/Toast";
 import { useCreatePeriod } from "../hooks/useAssessments";
 
 const periodSchema = z
@@ -26,6 +27,7 @@ interface PeriodFormProps {
 
 export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
   const mutation = useCreatePeriod();
+  const { toast } = useToast();
 
   const {
     register,
@@ -45,6 +47,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
 
   const onSubmit = async (data: PeriodFormData) => {
     await mutation.mutateAsync({ entity_id: entityId, ...data });
+    toast("Period created");
     onSuccess?.();
   };
 

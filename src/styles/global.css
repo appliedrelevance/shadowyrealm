@@ -2,11 +2,11 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  /* Dark fantasy primaries */
-  --color-realm-bg: #0a0a0f;
-  --color-realm-surface: #13131a;
-  --color-realm-surface-raised: #1a1a24;
-  --color-realm-border: #2a2a3a;
+  /* Twilight dark primaries */
+  --color-realm-bg: #181822;
+  --color-realm-surface: #1e1e2e;
+  --color-realm-surface-raised: #262636;
+  --color-realm-border: #333350;
 
   /* Arcane accent palette */
   --color-arcane-purple: #7c3aed;
@@ -55,4 +55,26 @@
 html {
   background-color: var(--color-realm-bg);
   color: var(--color-text);
+}
+
+/* Page fade-in animation */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 200ms ease-out;
+}
+
+/* Collapsible expand/collapse pattern */
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease-out;
+}
+.collapsible[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.collapsible > div {
+  overflow: hidden;
 }

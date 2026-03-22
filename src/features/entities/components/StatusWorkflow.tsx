@@ -1,5 +1,6 @@
 import { Send, CheckCircle, Archive, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/Toast";
 import { useUpdateEntityStatus } from "../hooks/useEntityMutations";
 import type { Entity, PublicationStatus } from "../types";
 
@@ -44,6 +45,7 @@ const transitions: StatusTransition[] = [
 
 export function StatusWorkflow({ entity }: { entity: Entity }) {
   const mutation = useUpdateEntityStatus();
+  const { toast } = useToast();
 
   const available = transitions.filter((t) => t.from === entity.status);
 
@@ -61,12 +63,17 @@ export function StatusWorkflow({ entity }: { entity: Entity }) {
           <button
             key={transition.to}
             onClick={() =>
-              mutation.mutate({
-                entityId: entity.id,
-                slug: entity.slug,
-                oldStatus: entity.status,
-                newStatus: transition.to,
-              })
+              mutation.mutate(
+                {
+                  entityId: entity.id,
+                  slug: entity.slug,
+                  oldStatus: entity.status,
+                  newStatus: transition.to,
+                },
+                {
+                  onSuccess: () => toast(`Status updated to ${transition.to.replace("_", " ")}`),
+                },
+              )
             }
             disabled={mutation.isPending}
             className={cn(

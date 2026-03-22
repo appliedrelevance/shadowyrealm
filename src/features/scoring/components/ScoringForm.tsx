@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { COPY } from "@/lib/copy";
+import { useToast } from "@/components/Toast";
 import { useCreateAssessment } from "../hooks/useAssessments";
 
 const DIMENSIONS = [
@@ -10,6 +12,15 @@ const DIMENSIONS = [
   { key: "health", label: "Health" },
   { key: "cultural", label: "Cultural" },
 ] as const;
+
+const TICK_MARKS = [-10, -5, 0, 5, 10];
+
+function confidenceLabel(value: number): string {
+  if (value <= 0.25) return "Low";
+  if (value <= 0.50) return "Medium";
+  if (value <= 0.75) return "High";
+  return "Very High";
+}
 
 const scoringSchema = z.object({
   scientific_score: z.number().int().min(-10).max(10),
@@ -36,6 +47,7 @@ interface ScoringFormProps {
 
 export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) {
   const mutation = useCreateAssessment();
+  const { toast } = useToast();
 
   const {
     register,
@@ -76,11 +88,15 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
       cultural_justification: data.cultural_justification,
       confidence_level: data.confidence_level ?? 0.5,
     });
+    toast("Assessment saved");
     onSuccess?.();
   };
 
   const inputClass =
     "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text text-sm focus:border-arcane-purple focus:outline-none";
+
+  const confidenceValue = watch("confidence_level") ?? 0.5;
+  const confidencePct = (confidenceValue * 100).toFixed(0);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -142,9 +158,9 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
               className="mt-2 w-full accent-arcane-purple"
             />
             <div className="flex justify-between text-xs text-text-muted">
-              <span>-10 (Devastating)</span>
-              <span>0</span>
-              <span>+10 (Transformative)</span>
+              {TICK_MARKS.map((t) => (
+                <span key={t}>{t > 0 ? `+${t}` : t}</span>
+              ))}
             </div>
 
             <textarea
@@ -165,7 +181,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
       {/* Confidence */}
       <div>
         <label className="block text-sm font-medium text-text-muted">
-          Confidence Level: {((watch("confidence_level") ?? 0.5) * 100).toFixed(0)}%
+          Confidence: {confidencePct}% — {confidenceLabel(confidenceValue)}
         </label>
         <input
           type="range"
@@ -180,9 +196,9 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded bg-primary px-4 py-2.5 font-semibold text-text-bright hover:bg-primary-hover disabled:opacity-50 sm:w-auto"
+        className="w-full rounded bg-primary px-4 py-2.5 font-semibold text-text-bright hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
       >
-        {isSubmitting ? "Recording..." : "Submit Assessment"}
+        {isSubmitting ? COPY.entity.saving : "Submit Assessment"}
       </button>
     </form>
   );

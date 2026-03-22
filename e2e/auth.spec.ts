@@ -38,8 +38,8 @@ test.describe("Authentication", () => {
       await page.fill('input[type="password"]', TEST_PASSWORD);
       await page.click('button[type="submit"]');
       await page.waitForURL("/");
-      await expect(page.locator("text=Summon Entity")).toBeVisible();
-      await expect(page.locator("text=Leave")).toBeVisible();
+      await expect(page.locator("text=Add Figure")).toBeVisible();
+      await expect(page.locator("text=Sign Out")).toBeVisible();
       await page.screenshot({ path: "screenshots/authenticated-home.png" });
     });
 
@@ -52,9 +52,9 @@ test.describe("Authentication", () => {
       await page.waitForURL("/");
 
       // Logout
-      await page.click("text=Leave");
-      await expect(page.locator("text=Enter")).toBeVisible();
-      await expect(page.locator("text=Summon Entity")).not.toBeVisible();
+      await page.click("text=Sign Out");
+      await expect(page.locator("text=Sign In")).toBeVisible();
+      await expect(page.locator("text=Add Figure")).not.toBeVisible();
       await page.screenshot({ path: "screenshots/logged-out.png" });
     });
   });

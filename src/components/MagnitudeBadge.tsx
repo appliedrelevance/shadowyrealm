@@ -9,18 +9,21 @@ const tierStyles: Record<ATISTier, string> = {
   legendary: "border-tier-legendary bg-tier-legendary/20 text-tier-legendary shadow-lg shadow-tier-legendary/30",
 };
 
+const negativeStyle = "border-blood-red bg-blood-red/20 text-blood-red";
+
 interface MagnitudeBadgeProps {
   tier: ATISTier;
   magnitude: number;
+  isNegative?: boolean;
   className?: string;
 }
 
-export function MagnitudeBadge({ tier, magnitude, className }: MagnitudeBadgeProps) {
+export function MagnitudeBadge({ tier, magnitude, isNegative, className }: MagnitudeBadgeProps) {
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-display text-sm font-semibold uppercase tracking-wider",
-        tierStyles[tier],
+        isNegative ? negativeStyle : tierStyles[tier],
         className,
       )}
     >

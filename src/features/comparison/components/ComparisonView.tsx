@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { X, Search } from "lucide-react";
+import { X, Search, User, Building2, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +12,12 @@ import {
 } from "@/lib/atis-calculator";
 
 const CHART_COLORS = ["#7c3aed", "#10b981", "#f59e0b", "#3b82f6", "#ec4899"];
+
+const typeIcons: Record<string, typeof User> = {
+  person: User,
+  organization: Building2,
+  event: Zap,
+};
 
 function useEntityWithScores(entityId: number) {
   return useQuery({
@@ -95,18 +101,22 @@ export function ComparisonView() {
         </div>
         {searchResults && searchResults.length > 0 && (
           <div className="absolute z-10 mt-1 w-full rounded border border-realm-border bg-realm-surface shadow-lg">
-            {searchResults.map((e) => (
-              <button
-                key={e.id}
-                onClick={() => addEntity(e.id)}
-                className="flex w-full items-center justify-between px-3 py-2 text-sm text-text hover:bg-realm-surface-raised"
-              >
-                <span>{e.name}</span>
-                <span className="text-xs text-text-muted capitalize">
-                  {e.entity_type}
-                </span>
-              </button>
-            ))}
+            {searchResults.map((e) => {
+              const TypeIcon = typeIcons[e.entity_type] ?? User;
+              return (
+                <button
+                  key={e.id}
+                  onClick={() => addEntity(e.id)}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-text hover:bg-realm-surface-raised"
+                >
+                  <TypeIcon className="h-4 w-4 text-text-muted" />
+                  <span className="flex-1 text-left">{e.name}</span>
+                  <span className="text-xs text-text-muted capitalize">
+                    {e.entity_type}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -125,10 +135,12 @@ export function ComparisonView() {
         <ComparisonCharts entityIds={selectedIds} />
       )}
 
-      {selectedIds.length < 2 && selectedIds.length > 0 && (
-        <p className="mt-8 text-center text-text-muted">
-          Add at least one more entity to begin comparison.
-        </p>
+      {selectedIds.length < 2 && (
+        <div className="mt-8 rounded-lg border border-dashed border-realm-border bg-realm-surface/50 p-6 text-center">
+          <p className="text-text-muted">
+            Search for figures above and add at least two to compare their impact side by side.
+          </p>
+        </div>
       )}
     </div>
   );

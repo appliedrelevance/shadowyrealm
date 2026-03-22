@@ -1,15 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Public pages", () => {
-  test("home page loads with archives heading", async ({ page }) => {
+  test("home page loads with index heading", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("Arcane Archives");
+    await expect(page.locator("h1")).toContainText("Impact Index");
     await page.screenshot({ path: "screenshots/home.png" });
   });
 
   test("methodology page renders ATIS documentation", async ({ page }) => {
     await page.goto("/methodology");
-    await expect(page.locator("h1")).toContainText("Tome of Impact");
+    await expect(page.locator("h1")).toContainText("How It Works");
     await expect(page.getByText("The Formula")).toBeVisible();
     await expect(page.getByText("Dimensional Scoring")).toBeVisible();
     await expect(page.getByText("Magnitude Tiers")).toBeVisible();
@@ -24,7 +24,7 @@ test.describe("Public pages", () => {
 
   test("login page renders", async ({ page }) => {
     await page.goto("/login");
-    await expect(page.locator("h1")).toContainText("Enter the Realm");
+    await expect(page.locator("h1")).toContainText("Sign In");
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
     await page.screenshot({ path: "screenshots/login.png" });
@@ -32,13 +32,13 @@ test.describe("Public pages", () => {
 
   test("register page renders", async ({ page }) => {
     await page.goto("/register");
-    await expect(page.locator("h1")).toContainText("Join the Realm");
+    await expect(page.locator("h1")).toContainText("Sign Up");
     await page.screenshot({ path: "screenshots/register.png" });
   });
 
-  test("nonexistent entity shows 404", async ({ page }) => {
+  test("nonexistent entity shows not found", async ({ page }) => {
     await page.goto("/entity/nonexistent-entity-slug-12345");
-    await expect(page.locator("h1")).toContainText("Entity Not Found");
+    await expect(page.locator("h1")).toContainText("Not found");
     await page.screenshot({ path: "screenshots/entity-404.png" });
   });
 
@@ -46,22 +46,22 @@ test.describe("Public pages", () => {
     await page.goto("/");
     const nav = page.locator("nav");
     await expect(nav.getByText("ShadowyRealm")).toBeVisible();
-    await expect(nav.getByText("Archives")).toBeVisible();
+    await expect(nav.getByText("Index")).toBeVisible();
     await expect(nav.getByText("Compare")).toBeVisible();
-    await expect(nav.getByText("Tome")).toBeVisible();
-    await expect(nav.getByText("Enter")).toBeVisible();
-    await expect(nav.getByText("Join")).toBeVisible();
+    await expect(nav.getByText("How It Works")).toBeVisible();
+    await expect(nav.getByText("Sign In")).toBeVisible();
+    await expect(nav.getByText("Sign Up")).toBeVisible();
   });
 
   test("unauthenticated user sees no create button", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("text=Summon Entity")).not.toBeVisible();
+    await expect(page.locator("text=Add Figure")).not.toBeVisible();
   });
 
   test("entity/new redirects to login when not authenticated", async ({ page }) => {
     await page.goto("/entity/new");
     await page.waitForURL(/\/login/);
-    await expect(page.locator("h1")).toContainText("Enter the Realm");
+    await expect(page.locator("h1")).toContainText("Sign In");
     await page.screenshot({ path: "screenshots/auth-redirect.png" });
   });
 });

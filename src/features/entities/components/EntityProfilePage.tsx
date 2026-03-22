@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { User, Building2, Zap, Edit, Calendar, MapPin, Globe, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { COPY } from "@/lib/copy";
 import {
   calculateATIS,
   computeConsensusScores,
@@ -21,6 +22,8 @@ import { AchievementList } from "@/components/AchievementList";
 import { ATISBreakdown } from "@/components/ATISBreakdown";
 import { ScoringForm } from "@/features/scoring/components/ScoringForm";
 import { PeriodForm } from "@/features/scoring/components/PeriodForm";
+import { EntityProfileSkeleton } from "@/components/Skeleton";
+import { RefreshCw } from "lucide-react";
 import type { EntityType, PublicationStatus } from "../types";
 
 const typeIcons: Record<EntityType, typeof User> = {
@@ -52,27 +55,38 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   const { data: entity, isLoading, error } = useEntity(slug);
 
   if (isLoading) {
+    return <EntityProfileSkeleton />;
+  }
+
+  if (error) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-12">
-        <p className="text-text-muted">Consulting the archives...</p>
+      <div className="mx-auto max-w-4xl px-4 py-12 text-center">
+        <p className="text-destructive">{error.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-3 inline-flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Retry
+        </button>
       </div>
     );
   }
 
-  if (error || !entity) {
+  if (!entity) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-12">
         <h1 className="font-display text-3xl font-bold text-text-bright">
-          Entity Not Found
+          {COPY.entity.notFound}
         </h1>
         <p className="mt-4 text-text-muted">
-          This entity does not exist in the archives.
+          {COPY.entity.notFoundDescription}
         </p>
         <Link
           to="/"
           className="mt-4 inline-block text-arcane-purple-light hover:underline"
         >
-          Return to Archives
+          {COPY.entity.returnToIndex}
         </Link>
       </div>
     );
@@ -87,8 +101,8 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
-      <div className="flex gap-6">
-        {/* Entity Image with arcane frame */}
+      <div className="flex flex-col gap-6 border-b border-realm-border pb-8 sm:flex-row">
+        {/* Entity Image */}
         <div className="shrink-0">
           {entity.image_url ? (
             <img
@@ -116,7 +130,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
                 </span>
                 <span
                   className={cn(
-                    "rounded px-2 py-0.5 text-xs font-medium",
+                    "rounded px-2 py-0.5 text-xs font-medium transition-colors duration-200",
                     statusColors[entityStatus],
                   )}
                 >
@@ -153,7 +167,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
           <h2 className="font-display text-lg font-semibold text-text-bright">
             Details
           </h2>
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {metadata.birth_date && (
               <MetadataField icon={Calendar} label="Born" value={metadata.birth_date} />
             )}
@@ -212,6 +226,7 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
   const { data: relationships } = useRelationships(entityId);
   const [showScoringForm, setShowScoringForm] = useState(false);
   const [showPeriodForm, setShowPeriodForm] = useState(false);
+  const [openJustifications, setOpenJustifications] = useState<Set<number>>(new Set());
 
   const atisResult = useMemo(() => {
     if (!assessments || assessments.length === 0) return null;
@@ -397,28 +412,44 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
               key={a.id}
               className="rounded border border-realm-border/50 bg-realm-surface-raised p-3 text-sm"
             >
-              <div className="flex items-center gap-3 font-mono text-text-muted">
-                <span>SCI:{a.scientific_score > 0 ? "+" : ""}{a.scientific_score}</span>
-                <span>ECO:{a.economic_score > 0 ? "+" : ""}{a.economic_score}</span>
-                <span>HUM:{a.human_rights_score > 0 ? "+" : ""}{a.human_rights_score}</span>
-                <span>HLT:{a.health_score > 0 ? "+" : ""}{a.health_score}</span>
-                <span>CUL:{a.cultural_score > 0 ? "+" : ""}{a.cultural_score}</span>
+              <div className="flex flex-wrap items-center gap-3 font-mono">
+                {[
+                  { label: "SCI", value: a.scientific_score },
+                  { label: "ECO", value: a.economic_score },
+                  { label: "HUM", value: a.human_rights_score },
+                  { label: "HLT", value: a.health_score },
+                  { label: "CUL", value: a.cultural_score },
+                ].map((s) => (
+                  <span key={s.label} className={s.value > 0 ? "text-spectral-green" : s.value < 0 ? "text-blood-red" : "text-text-muted"}>
+                    {s.label}:{s.value > 0 ? "+" : ""}{s.value}
+                  </span>
+                ))}
                 <span className="ml-auto text-xs">
                   {new Date(a.created_at).toLocaleDateString()}
                 </span>
               </div>
-              <details className="mt-2">
-                <summary className="cursor-pointer text-xs text-arcane-purple-light">
-                  View justifications
-                </summary>
-                <div className="mt-2 space-y-1 text-xs text-text-muted">
-                  <p><strong>Scientific:</strong> {a.scientific_justification}</p>
-                  <p><strong>Economic:</strong> {a.economic_justification}</p>
-                  <p><strong>Human Rights:</strong> {a.human_rights_justification}</p>
-                  <p><strong>Health:</strong> {a.health_justification}</p>
-                  <p><strong>Cultural:</strong> {a.cultural_justification}</p>
+              <button
+                onClick={() => setOpenJustifications((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(a.id)) next.delete(a.id);
+                  else next.add(a.id);
+                  return next;
+                })}
+                className="mt-2 cursor-pointer text-xs text-arcane-purple-light hover:underline"
+              >
+                {openJustifications.has(a.id) ? "Hide" : "View"} justifications
+              </button>
+              <div className="collapsible" data-open={openJustifications.has(a.id)}>
+                <div>
+                  <div className="mt-2 space-y-1 text-xs text-text-muted">
+                    <p><strong>Scientific:</strong> {a.scientific_justification}</p>
+                    <p><strong>Economic:</strong> {a.economic_justification}</p>
+                    <p><strong>Human Rights:</strong> {a.human_rights_justification}</p>
+                    <p><strong>Health:</strong> {a.health_justification}</p>
+                    <p><strong>Cultural:</strong> {a.cultural_justification}</p>
+                  </div>
                 </div>
-              </details>
+              </div>
             </div>
           ))}
         </div>

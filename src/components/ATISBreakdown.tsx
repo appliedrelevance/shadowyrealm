@@ -19,7 +19,7 @@ export function ATISBreakdown({ breakdown }: { breakdown: PeriodBreakdown[] }) {
         </thead>
         <tbody>
           {breakdown.map((row, i) => (
-            <tr key={i} className="border-b border-realm-border/50">
+            <tr key={i} className="border-b border-realm-border/50 even:bg-realm-surface-raised/50">
               <td className="py-2 pr-4 font-medium text-text">{row.period}</td>
               <td className="py-2 pr-4 font-mono text-text-muted">
                 {row.baseImpact.toFixed(1)}

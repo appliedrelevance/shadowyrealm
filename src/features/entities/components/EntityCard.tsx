@@ -24,7 +24,7 @@ export function EntityCard({ entity }: { entity: Entity }) {
     <Link
       to="/entity/$slug"
       params={{ slug: entity.slug }}
-      className="group block rounded-lg border border-realm-border bg-realm-surface p-4 transition hover:border-arcane-purple/50 hover:shadow-lg hover:shadow-arcane-purple/10"
+      className="group block rounded-lg border border-realm-border bg-realm-surface p-4 transition-all duration-200 hover:border-arcane-purple/50 hover:shadow-lg hover:shadow-arcane-purple/10"
     >
       <div className="flex gap-4">
         {entity.image_url ? (

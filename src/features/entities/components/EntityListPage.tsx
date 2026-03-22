@@ -3,8 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { COPY } from "@/lib/copy";
 import { useEntities } from "../hooks/useEntities";
 import { EntityCard } from "./EntityCard";
+import { EntityCardSkeleton } from "@/components/Skeleton";
+import { RefreshCw } from "lucide-react";
 import type { EntityType, PublicationStatus } from "../types";
 
 const PER_PAGE = 12;
@@ -45,10 +48,10 @@ export function EntityListPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-text-bright">
-            Arcane Archives
+            {COPY.home.heading}
           </h1>
           <p className="mt-1 text-text-muted">
-            Browse entities across the ages
+            {COPY.home.subtitle}
           </p>
         </div>
         {user && (
@@ -57,7 +60,7 @@ export function EntityListPage() {
             className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
           >
             <Plus className="h-4 w-4" />
-            Summon Entity
+            {COPY.home.addFigure}
           </Link>
         )}
       </div>
@@ -97,19 +100,41 @@ export function EntityListPage() {
 
       {/* Results */}
       {error && (
-        <p className="mt-8 text-destructive">
-          Failed to load entities: {error.message}
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-destructive">
+            Failed to load entities: {error.message}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-3 inline-flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Retry
+          </button>
+        </div>
       )}
 
       {isLoading && (
-        <p className="mt-8 text-text-muted">Summoning entities...</p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <EntityCardSkeleton key={i} />
+          ))}
+        </div>
       )}
 
       {data && data.entities.length === 0 && (
-        <p className="mt-8 text-text-muted">
-          No entities found. The archives are empty.
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-text-muted">{COPY.home.empty}</p>
+          {user && (
+            <Link
+              to="/entity/new"
+              className="mt-3 inline-flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+            >
+              <Plus className="h-4 w-4" />
+              Create the first entry
+            </Link>
+          )}
+        </div>
       )}
 
       {data && data.entities.length > 0 && (

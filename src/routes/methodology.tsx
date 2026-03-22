@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DIMENSION_WEIGHTS, TIER_THRESHOLDS, DEFAULT_ATIS_CONFIG } from "@/lib/atis-calculator";
+import { COPY } from "@/lib/copy";
 
 export const Route = createFileRoute("/methodology")({
   component: MethodologyPage,
@@ -9,7 +10,7 @@ function MethodologyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="font-display text-4xl font-bold text-text-bright">
-        Tome of Impact
+        {COPY.methodology.heading}
       </h1>
       <p className="mt-4 text-text-muted">
         The Advanced Temporal Impact Scoring (ATIS) methodology — transparent,
