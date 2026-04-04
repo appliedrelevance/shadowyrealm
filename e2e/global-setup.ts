@@ -37,12 +37,12 @@ async function globalSetup() {
     "Content-Type": "application/json",
   };
 
-  // 1. Wipe ALL entities via direct SQL (bypasses PostgREST schema config issues)
-  console.log("Cleaning all entities from shadowyrealm schema via SQL...");
+  // 1. Wipe ALL entities — try SQL first, then REST API as fallback
+  console.log("Cleaning all entities from shadowyrealm schema...");
   const dbPassword = getEnv("SUPABASE_DB_PASSWORD");
   const projectRef = supabaseUrl.match(/https:\/\/(\w+)\.supabase/)?.[1];
+  let sqlCleanupOk = false;
 
-  console.log(`DB: pw=${dbPassword ? 'set' : 'unset'}, ref=${projectRef}, url=${supabaseUrl?.slice(0, 30)}`);
   if (dbPassword && projectRef) {
     const { execSync } = await import("child_process");
     try {
@@ -54,72 +54,89 @@ async function globalSetup() {
           env: { ...process.env, PGPASSWORD: dbPassword },
         },
       );
-      console.log("Entities cleaned and PostgREST schemas updated via SQL.");
+      console.log("Entities cleaned via SQL.");
+      sqlCleanupOk = true;
     } catch (err) {
-      console.log(`SQL cleanup warning: ${(err as Error).message?.slice(0, 200)}`);
-    }
-  } else {
-    // Fallback to REST API
-    console.log("No DB password — falling back to REST API for cleanup...");
-    const deleteRes = await fetch(`${supabaseUrl}/rest/v1/entities?id=gt.0`, {
-      method: "DELETE",
-      headers: {
-        ...headers,
-        "Accept-Profile": "shadowyrealm",
-        "Content-Profile": "shadowyrealm",
-        Prefer: "return=minimal",
-      },
-    });
-    if (!deleteRes.ok) {
-      console.log(`Entity cleanup: ${deleteRes.status} ${await deleteRes.text()}`);
+      console.log(`SQL cleanup failed, falling back to REST API: ${(err as Error).message?.slice(0, 120)}`);
     }
   }
 
-  // 2. Delete ALL users matching the test email (handles duplicates)
+  if (!sqlCleanupOk) {
+    // Delete dependent records first (assessments, periods, relationships, audit log), then entities
+    for (const table of ["entity_audit_log", "relationships", "assessments", "assessment_periods", "entities"]) {
+      const deleteRes = await fetch(`${supabaseUrl}/rest/v1/${table}?id=not.is.null`, {
+        method: "DELETE",
+        headers: {
+          ...headers,
+          "Accept-Profile": "shadowyrealm",
+          "Content-Profile": "shadowyrealm",
+          Prefer: "return=minimal",
+        },
+      });
+      if (!deleteRes.ok) {
+        console.log(`  ${table}: ${deleteRes.status} ${await deleteRes.text()}`);
+      } else {
+        console.log(`  ${table}: cleaned`);
+      }
+    }
+  }
+
+  // 2. Find or create test user, reset password either way
   console.log(`Setting up test user: ${TEST_USER.email}`);
+
+  // Check if user already exists
+  let testUserId: string | null = null;
   const listRes = await fetch(
     `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=100`,
     { headers },
   );
-
   if (listRes.ok) {
     const listData = await listRes.json();
-    const matchingUsers = (listData.users ?? []).filter(
+    const existing = (listData.users ?? []).find(
       (u: { email: string }) => u.email === TEST_USER.email,
     );
-    for (const user of matchingUsers) {
-      console.log(`Deleting old test user ${user.id}...`);
-      await fetch(`${supabaseUrl}/auth/v1/admin/users/${user.id}`, {
-        method: "DELETE",
+    if (existing) testUserId = existing.id;
+  }
+
+  if (testUserId) {
+    // Update existing user — reset password and ensure email is confirmed
+    console.log(`Found existing test user ${testUserId}, resetting password...`);
+    const updateRes = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users/${testUserId}`,
+      {
+        method: "PUT",
         headers,
-      });
-    }
-    if (matchingUsers.length > 0) {
-      console.log(`Deleted ${matchingUsers.length} old test user(s).`);
-    }
-  }
-
-  // 3. Create fresh user with confirmed email
-  const createRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      email: TEST_USER.email,
-      password: TEST_USER.password,
-      email_confirm: true,
-    }),
-  });
-
-  const createBody = await createRes.json();
-  if (!createRes.ok) {
-    throw new Error(
-      `Failed to create test user: ${createRes.status} ${JSON.stringify(createBody)}`,
+        body: JSON.stringify({
+          password: TEST_USER.password,
+          email_confirm: true,
+        }),
+      },
     );
+    if (!updateRes.ok) {
+      const body = await updateRes.text();
+      throw new Error(`Failed to update test user: ${updateRes.status} ${body}`);
+    }
+    console.log("Test user password reset.");
+  } else {
+    // Create fresh user
+    const createRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        email: TEST_USER.email,
+        password: TEST_USER.password,
+        email_confirm: true,
+      }),
+    });
+    const createBody = await createRes.json();
+    if (!createRes.ok) {
+      throw new Error(
+        `Failed to create test user: ${createRes.status} ${JSON.stringify(createBody)}`,
+      );
+    }
+    testUserId = createBody.id;
+    console.log(`Test user created: ${testUserId}`);
   }
-
-  console.log(
-    `Test user created: ${createBody.id}, confirmed: ${createBody.email_confirmed_at}`,
-  );
 
   // Verify login works
   const loginRes = await fetch(

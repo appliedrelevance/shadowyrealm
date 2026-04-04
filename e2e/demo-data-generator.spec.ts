@@ -130,6 +130,9 @@ test.describe.serial("ShadowyRealm UAT — Full Demo", () => {
       await page.click("text=Add Figure");
       await expect(page.locator("h1")).toContainText("Add Figure");
 
+      // Switch to manual entry (AI Research Assistant is shown by default)
+      await page.click("text=Enter manually instead");
+
       // Fill common fields
       await page.fill('input[id="name"]', entity.name);
       await page.selectOption('select[id="entity_type"]', entity.entity_type);
@@ -223,7 +226,7 @@ test.describe.serial("ShadowyRealm UAT — Full Demo", () => {
 
       // draft → submitted
       await page.click("text=Submit for Review");
-      await expect(page.locator("text=submitted")).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText("submitted", { exact: true })).toBeVisible({ timeout: 5000 });
       await page.screenshot({
         path: `screenshots/${stepNum}-${entity.entity_type}-submitted.png`,
         fullPage: true,
@@ -231,13 +234,13 @@ test.describe.serial("ShadowyRealm UAT — Full Demo", () => {
 
       // submitted → under_review
       await page.click("text=Begin Review");
-      await expect(page.locator("text=under_review")).toBeVisible({
+      await expect(page.getByText("under_review", { exact: true })).toBeVisible({
         timeout: 5000,
       });
 
       // under_review → published
       await page.click("text=Publish");
-      await expect(page.locator("text=published")).toBeVisible({
+      await expect(page.getByText("published", { exact: true })).toBeVisible({
         timeout: 5000,
       });
       await page.screenshot({
