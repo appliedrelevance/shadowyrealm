@@ -26,8 +26,6 @@
     { "pattern": "www.bone-again.com", "custom_domain": true },
     { "pattern": "dopaminehit.com", "custom_domain": true },
     { "pattern": "www.dopaminehit.com", "custom_domain": true },
-    { "pattern": "interleaf.org", "custom_domain": true },
-    { "pattern": "www.interleaf.org", "custom_domain": true },
     { "pattern": "libidomismatch.com", "custom_domain": true },
     { "pattern": "www.libidomismatch.com", "custom_domain": true },
     { "pattern": "mojobump.com", "custom_domain": true },
@@ -37,6 +35,8 @@
     { "pattern": "nurograf.com", "custom_domain": true },
     { "pattern": "www.nurograf.com", "custom_domain": true },
     { "pattern": "poolagua.com", "custom_domain": true },
-    { "pattern": "www.poolagua.com", "custom_domain": true }
+    { "pattern": "www.poolagua.com", "custom_domain": true },
+    { "pattern": "strawyer.com", "custom_domain": true },
+    { "pattern": "www.strawyer.com", "custom_domain": true }
   ]
 }
