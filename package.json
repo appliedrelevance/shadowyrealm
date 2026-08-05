@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 35420",
     "build": "tsc && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types"
@@ -40,6 +42,7 @@
     "dotenv": "^17.3.1",
     "typescript": "^5.9.3",
     "vite": "^6.3.5",
+    "vitest": "^4.1.10",
     "wrangler": "^4.22.0"
   },
   "packageManager": "bun@1.3.5"
