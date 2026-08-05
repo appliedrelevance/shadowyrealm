@@ -33,9 +33,13 @@ export interface EventMetadata {
 
 export type EntityMetadata = PersonMetadata | OrganizationMetadata | EventMetadata;
 
+export type EntitySort = "newest" | "oldest" | "name_asc" | "name_desc";
+
 export interface EntityFilters {
   entityType?: EntityType;
   status?: PublicationStatus;
+  search?: string;
+  sort?: EntitySort;
   page: number;
   perPage: number;
 }

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
@@ -8,9 +8,17 @@ import { useEntities } from "../hooks/useEntities";
 import { EntityCard } from "./EntityCard";
 import { EntityCardSkeleton } from "@/components/Skeleton";
 import { RefreshCw } from "lucide-react";
-import type { EntityType, PublicationStatus } from "../types";
+import type { EntitySort, EntityType, PublicationStatus } from "../types";
 
 const PER_PAGE = 12;
+const SEARCH_DEBOUNCE_MS = 300;
+
+const sortOptions: { value: EntitySort; label: string }[] = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "name_asc", label: "Name A–Z" },
+  { value: "name_desc", label: "Name Z–A" },
+];
 
 const entityTypes: { value: EntityType | ""; label: string }[] = [
   { value: "", label: "All Types" },
@@ -32,11 +40,25 @@ export function EntityListPage() {
   const { user } = useAuth();
   const [typeFilter, setTypeFilter] = useState<EntityType | "">("");
   const [statusFilter, setStatusFilter] = useState<PublicationStatus | "">("");
+  const [sort, setSort] = useState<EntitySort>("newest");
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+
+  // Debounce the search input so we don't query on every keystroke
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(handle);
+  }, [searchInput]);
 
   const { data, isLoading, error } = useEntities({
     entityType: typeFilter || undefined,
     status: statusFilter || undefined,
+    search: search || undefined,
+    sort,
     page,
     perPage: PER_PAGE,
   });
@@ -66,7 +88,28 @@ export function EntityListPage() {
       </div>
 
       {/* Filters */}
-      <div className="mt-6 flex gap-3">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+          <input
+            type="search"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder={COPY.home.searchPlaceholder}
+            aria-label={COPY.home.searchPlaceholder}
+            className="w-full rounded border border-realm-border bg-realm-surface py-2 pl-9 pr-8 text-sm text-text placeholder:text-text-muted focus:border-arcane-purple focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+          />
+          {searchInput && (
+            <button
+              onClick={() => setSearchInput("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-text-muted hover:text-text"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
         <select
           value={typeFilter}
           onChange={(e) => {
@@ -93,6 +136,22 @@ export function EntityListPage() {
           {statuses.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={sort}
+          onChange={(e) => {
+            setSort(e.target.value as EntitySort);
+            setPage(1);
+          }}
+          aria-label="Sort entities"
+          className="rounded border border-realm-border bg-realm-surface px-3 py-2 text-sm text-text focus:border-arcane-purple focus:outline-none"
+        >
+          {sortOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
             </option>
           ))}
         </select>
@@ -124,8 +183,12 @@ export function EntityListPage() {
 
       {data && data.entities.length === 0 && (
         <div className="mt-8 text-center">
-          <p className="text-text-muted">{COPY.home.empty}</p>
-          {user && (
+          <p className="text-text-muted">
+            {search
+              ? `${COPY.home.noResults} "${search}"`
+              : COPY.home.empty}
+          </p>
+          {user && !search && (
             <Link
               to="/entity/new"
               className="mt-3 inline-flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"

@@ -13,6 +13,8 @@ export const COPY = {
     subtitle: "Who shaped the world — for better or worse?",
     addFigure: "Add Figure",
     empty: "No entries yet",
+    noResults: "No entries match",
+    searchPlaceholder: "Search figures...",
     loading: "Loading...",
   },
   entity: {
