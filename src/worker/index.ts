@@ -143,109 +143,134 @@ function validateAndClampProfile(raw: Record<string, unknown>): Record<string, u
   };
 }
 
+async function handleResearch(request: Request, env: Env): Promise<Response> {
+  let body: { query?: string; model?: string };
+  try {
+    body = (await request.json()) as { query?: string; model?: string };
+  } catch {
+    return Response.json({ error: "invalid JSON body" }, { status: 400 });
+  }
+  const { query, model } = body;
+  if (!query) {
+    return Response.json({ error: "query is required" }, { status: 400 });
+  }
+
+  // Wikipedia lookup — non-fatal if it fails
+  const wikipedia = await fetchWikipedia(query).catch(() => null);
+
+  const gateway = env.AI.gateway(env.AI_GATEWAY_NAME);
+  const selectedModel = model ?? "claude-sonnet-4-5";
+  const useOpenRouter = selectedModel.includes("/");
+
+  let aiResp: Response;
+
+  if (useOpenRouter) {
+    // OpenRouter — OpenAI-compatible format via gateway binding
+    aiResp = await gateway.run({
+      provider: "openrouter",
+      endpoint: "chat/completions",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+        "cf-aig-metadata": JSON.stringify({ project: "shadowyrealm" }),
+      },
+      query: {
+        model: selectedModel,
+        max_tokens: 3000,
+        temperature: 0.3,
+        messages: [
+          {
+            role: "user",
+            content: buildAnalysisPrompt(query, wikipedia),
+          },
+        ],
+      },
+    });
+  } else {
+    // Anthropic — Messages API format via gateway binding
+    aiResp = await gateway.run({
+      provider: "anthropic",
+      endpoint: "messages",
+      headers: {
+        "Content-Type": "application/json",
+        "anthropic-version": "2023-06-01",
+        "x-api-key": env.ANTHROPIC_API_KEY,
+        "cf-aig-metadata": JSON.stringify({ project: "shadowyrealm" }),
+      },
+      query: {
+        model: selectedModel,
+        max_tokens: 3000,
+        temperature: 0.3,
+        messages: [
+          {
+            role: "user",
+            content: buildAnalysisPrompt(query, wikipedia),
+          },
+        ],
+      },
+    });
+  }
+
+  if (!aiResp.ok) {
+    const errText = await aiResp.text();
+    return Response.json(
+      {
+        error: "AI provider request failed",
+        status: aiResp.status,
+        detail: errText.slice(0, 200),
+      },
+      { status: 502 },
+    );
+  }
+
+  // Parse response — OpenRouter returns OpenAI format, Anthropic returns Messages format
+  let textContent: string | undefined;
+  if (useOpenRouter) {
+    const data = (await aiResp.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    textContent = data.choices?.[0]?.message?.content ?? undefined;
+  } else {
+    const data = (await aiResp.json()) as {
+      content?: Array<{ type: string; text?: string }>;
+    };
+    textContent = data.content?.find((b) => b.type === "text")?.text;
+  }
+  let aiProfile = null;
+
+  if (textContent) {
+    try {
+      // Strip markdown code fences if present
+      const cleaned = textContent.replace(/^```(?:json)?\s*\n?/m, "").replace(/\n?```\s*$/m, "").trim();
+      const parsed = JSON.parse(cleaned) as Record<string, unknown>;
+      aiProfile = validateAndClampProfile(parsed);
+    } catch {
+      aiProfile = null;
+    }
+  }
+
+  return Response.json({
+    wikipedia,
+    ai_profile: aiProfile,
+    bias_warnings: (aiProfile as Record<string, unknown>)?.potential_biases ?? [],
+    model_used: selectedModel,
+  });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
     if (url.pathname === "/api/ai/research" && request.method === "POST") {
-      const { query, model } = (await request.json()) as { query: string; model?: string };
-      if (!query) {
-        return Response.json({ error: "query is required" }, { status: 400 });
+      try {
+        return await handleResearch(request, env);
+      } catch (err) {
+        console.error("research request failed:", err);
+        return Response.json(
+          { error: "internal error handling research request" },
+          { status: 500 },
+        );
       }
-
-      // Wikipedia lookup
-      const wikipedia = await fetchWikipedia(query);
-
-      const gateway = env.AI.gateway(env.AI_GATEWAY_NAME);
-      const selectedModel = model ?? "claude-sonnet-4-5";
-      const useOpenRouter = selectedModel.includes("/");
-
-      let aiResp: Response;
-
-      if (useOpenRouter) {
-        // OpenRouter — OpenAI-compatible format via gateway binding
-        aiResp = await gateway.run({
-          provider: "openrouter",
-          endpoint: "chat/completions",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
-            "cf-aig-metadata": JSON.stringify({ project: "shadowyrealm" }),
-          },
-          query: {
-            model: selectedModel,
-            max_tokens: 3000,
-            temperature: 0.3,
-            messages: [
-              {
-                role: "user",
-                content: buildAnalysisPrompt(query, wikipedia),
-              },
-            ],
-          },
-        });
-      } else {
-        // Anthropic — Messages API format via gateway binding
-        aiResp = await gateway.run({
-          provider: "anthropic",
-          endpoint: "messages",
-          headers: {
-            "Content-Type": "application/json",
-            "anthropic-version": "2023-06-01",
-            "x-api-key": env.ANTHROPIC_API_KEY,
-            "cf-aig-metadata": JSON.stringify({ project: "shadowyrealm" }),
-          },
-          query: {
-            model: selectedModel,
-            max_tokens: 3000,
-            temperature: 0.3,
-            messages: [
-              {
-                role: "user",
-                content: buildAnalysisPrompt(query, wikipedia),
-              },
-            ],
-          },
-        });
-      }
-
-      if (!aiResp.ok) {
-        const errText = await aiResp.text();
-        throw new Error(`AI Gateway ${aiResp.status}: ${errText.slice(0, 200)}`);
-      }
-
-      // Parse response — OpenRouter returns OpenAI format, Anthropic returns Messages format
-      let textContent: string | undefined;
-      if (useOpenRouter) {
-        const data = (await aiResp.json()) as {
-          choices?: Array<{ message?: { content?: string } }>;
-        };
-        textContent = data.choices?.[0]?.message?.content ?? undefined;
-      } else {
-        const data = (await aiResp.json()) as {
-          content?: Array<{ type: string; text?: string }>;
-        };
-        textContent = data.content?.find((b) => b.type === "text")?.text;
-      }
-      let aiProfile = null;
-
-      if (textContent) {
-        try {
-          // Strip markdown code fences if present
-          const cleaned = textContent.replace(/^```(?:json)?\s*\n?/m, "").replace(/\n?```\s*$/m, "").trim();
-          const parsed = JSON.parse(cleaned) as Record<string, unknown>;
-          aiProfile = validateAndClampProfile(parsed);
-        } catch {
-          aiProfile = null;
-        }
-      }
-
-      return Response.json({
-        wikipedia,
-        ai_profile: aiProfile,
-        bias_warnings: (aiProfile as Record<string, unknown>)?.potential_biases ?? [],
-        model_used: selectedModel,
-      });
     }
 
     // Serve SPA for all other routes

@@ -26,7 +26,9 @@ export function useAIResearch(): UseAIResearchReturn {
     });
 
     if (!resp.ok) {
-      const body = (await resp.json()) as { error: string };
+      const body = (await resp
+        .json()
+        .catch(() => ({}))) as { error?: string };
       setIsLoading(false);
       throw new Error(body.error || `HTTP ${resp.status}`);
     }
