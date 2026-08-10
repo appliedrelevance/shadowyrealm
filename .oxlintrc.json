@@ -1,28 +1,5 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "jsPlugins": ["./tools/oxlint-ar-tokens.js"],
-  "rules": {
-    "ar-tokens/no-raw-color": "error"
-  },
-  "overrides": [
-    // Server-side code renders standalone HTML that never loads the SPA
-    // stylesheet, so literal hex is correct there.
-    {
-      "files": ["src/worker/**"],
-      "rules": {
-        "ar-tokens/no-raw-color": "off"
-      }
-    },
-    // Google's sign-in mark. Its four hex values are fixed by Google's brand
-    // guidelines for third-party sign-in buttons — they are not our tokens and
-    // must not be swapped. Scoped to this one file deliberately.
-    {
-      "files": ["src/components/GoogleIcon.tsx"],
-      "rules": {
-        "ar-tokens/no-raw-color": "off"
-      }
-    }
-  ],
   "ignorePatterns": [
     "dist/**",
     "node_modules/**",

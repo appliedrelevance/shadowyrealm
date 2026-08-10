@@ -1,0 +1,12 @@
+{
+  "hexAllowed": [
+    {
+      "pattern": "^src/worker/",
+      "why": "Server-rendered standalone HTML that never loads the SPA stylesheet."
+    },
+    {
+      "pattern": "^src/components/GoogleIcon\\.tsx$",
+      "why": "Google's sign-in mark. Its four values are fixed by Google's brand guidelines for third-party sign-in buttons; they are not our tokens and must not be re-tinted."
+    }
+  ]
+}

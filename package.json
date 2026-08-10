@@ -4,13 +4,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "lint:tokens": "node tools/check-tokens.mjs",
     "dev": "vite --host 0.0.0.0 --port 35420",
     "build": "tsc && vite build",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix"
+    "lint:fix": "oxlint src --fix",
+    "db:types": "bunx supabase gen types typescript --db-url postgresql://postgres:postgres@the-mark-of-gideon.local:35322/postgres --schema public,shadowyrealm > src/lib/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
