@@ -47,17 +47,17 @@ export function EntityListPage() {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-text-bright">
+          <h1 className="font-display text-3xl font-bold text-ink">
             {COPY.home.heading}
           </h1>
-          <p className="mt-1 text-text-muted">
+          <p className="mt-1 text-ink-muted">
             {COPY.home.subtitle}
           </p>
         </div>
         {user && (
           <Link
             to="/entity/new"
-            className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+            className="flex items-center gap-2 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
           >
             <Plus className="h-4 w-4" />
             {COPY.home.addFigure}
@@ -73,7 +73,7 @@ export function EntityListPage() {
             setTypeFilter(e.target.value as EntityType | "");
             setPage(1);
           }}
-          className="rounded border border-realm-border bg-realm-surface px-3 py-2 text-sm text-text focus:border-arcane-purple focus:outline-none"
+          className="rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
         >
           {entityTypes.map((t) => (
             <option key={t.value} value={t.value}>
@@ -88,7 +88,7 @@ export function EntityListPage() {
             setStatusFilter(e.target.value as PublicationStatus | "");
             setPage(1);
           }}
-          className="rounded border border-realm-border bg-realm-surface px-3 py-2 text-sm text-text focus:border-arcane-purple focus:outline-none"
+          className="rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
         >
           {statuses.map((s) => (
             <option key={s.value} value={s.value}>
@@ -101,12 +101,12 @@ export function EntityListPage() {
       {/* Results */}
       {error && (
         <div className="mt-8 text-center">
-          <p className="text-destructive">
+          <p className="text-crit">
             Failed to load entities: {error.message}
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-3 inline-flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+            className="mt-3 inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm text-ink-muted hover:border-action hover:text-ink-2"
           >
             <RefreshCw className="h-4 w-4" />
             Retry
@@ -124,11 +124,11 @@ export function EntityListPage() {
 
       {data && data.entities.length === 0 && (
         <div className="mt-8 text-center">
-          <p className="text-text-muted">{COPY.home.empty}</p>
+          <p className="text-ink-muted">{COPY.home.empty}</p>
           {user && (
             <Link
               to="/entity/new"
-              className="mt-3 inline-flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+              className="mt-3 inline-flex items-center gap-2 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
             >
               <Plus className="h-4 w-4" />
               Create the first entry
@@ -152,26 +152,26 @@ export function EntityListPage() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className={cn(
-                  "flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm",
+                  "flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm",
                   page === 1
-                    ? "cursor-not-allowed text-text-muted opacity-50"
-                    : "text-text hover:border-arcane-purple",
+                    ? "cursor-not-allowed text-ink-muted opacity-50"
+                    : "text-ink-2 hover:border-action",
                 )}
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
               </button>
-              <span className="text-sm text-text-muted">
+              <span className="text-sm text-ink-muted">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className={cn(
-                  "flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm",
+                  "flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm",
                   page === totalPages
-                    ? "cursor-not-allowed text-text-muted opacity-50"
-                    : "text-text hover:border-arcane-purple",
+                    ? "cursor-not-allowed text-ink-muted opacity-50"
+                    : "text-ink-2 hover:border-action",
                 )}
               >
                 Next

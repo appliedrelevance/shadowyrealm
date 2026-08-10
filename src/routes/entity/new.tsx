@@ -84,24 +84,24 @@ function NewEntityPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="font-display text-3xl font-bold text-text-bright">
+      <h1 className="font-display text-3xl font-bold text-ink">
         {COPY.entity.addFigure}
       </h1>
-      <p className="mt-2 text-text-muted">
+      <p className="mt-2 text-ink-muted">
         {COPY.entity.subtitle}
       </p>
 
       {/* AI Search Section */}
       {mode === "ai" && !appliedData && (
         <div className="mt-8 space-y-4">
-          <div className="rounded-lg border border-arcane-blue/30 bg-arcane-blue/5 p-4">
+          <div className="rounded-lg border border-info/30 bg-info/5 p-4">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-arcane-blue" />
-              <h2 className="font-display text-lg font-semibold text-text-bright">
+              <Bot className="h-5 w-5 text-info" />
+              <h2 className="font-display text-lg font-semibold text-ink">
                 AI Research Assistant
               </h2>
             </div>
-            <p className="mt-1 text-sm text-text-muted">
+            <p className="mt-1 text-sm text-ink-muted">
               Enter a person, organization, or event name. AI will research and fill the form for you.
             </p>
 
@@ -112,13 +112,13 @@ function NewEntityPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="e.g. Marie Curie, United Nations, The Renaissance..."
-                className="flex-1 rounded border border-realm-border bg-realm-surface px-3 py-2 text-sm text-text focus:border-arcane-purple focus:outline-none"
+                className="flex-1 rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSearch}
                 disabled={isLoading || !searchQuery.trim()}
-                className="flex items-center gap-1 rounded bg-arcane-blue px-4 py-2 text-sm font-semibold text-text-bright hover:bg-arcane-blue/80 disabled:opacity-50"
+                className="flex items-center gap-1 rounded bg-info px-4 py-2 text-sm font-semibold text-ink hover:bg-info/80 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -131,7 +131,7 @@ function NewEntityPage() {
 
             <button
               onClick={handleManualMode}
-              className="mt-2 flex items-center gap-1 text-sm text-text-muted hover:text-text-bright"
+              className="mt-2 flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
             >
               <PenLine className="h-3.5 w-3.5" />
               Enter manually instead
@@ -140,11 +140,11 @@ function NewEntityPage() {
 
           {/* No results message */}
           {noResults && (
-            <div className="rounded-lg border border-realm-border bg-realm-surface p-4 text-center">
-              <p className="text-text-muted">No results found for "{searchQuery}"</p>
+            <div className="rounded-lg border border-line bg-surface-1 p-4 text-center">
+              <p className="text-ink-muted">No results found for "{searchQuery}"</p>
               <button
                 onClick={handleManualMode}
-                className="mt-2 text-sm text-arcane-purple-light hover:underline"
+                className="mt-2 text-sm text-action-ink hover:underline"
               >
                 Fill in the details manually
               </button>
@@ -166,7 +166,7 @@ function NewEntityPage() {
       {(mode === "manual" || appliedData) && (
         <div className="mt-8">
           {appliedData && !data && (
-            <div className="mb-4 flex items-center gap-2 text-sm text-text-muted">
+            <div className="mb-4 flex items-center gap-2 text-sm text-ink-muted">
               <AIContentBadge model={appliedData.model_used} />
               <span>AI suggestions applied — review and edit before submitting</span>
             </div>
@@ -194,7 +194,7 @@ function AIResultsPanel({
     <div className="space-y-4">
       {/* Wikipedia data */}
       {data.wikipedia && (
-        <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
+        <div className="rounded-lg border border-line bg-surface-1 p-4">
           <div className="flex gap-3">
             {data.wikipedia.thumbnail && (
               <img
@@ -204,35 +204,35 @@ function AIResultsPanel({
               />
             )}
             <div>
-              <h4 className="font-semibold text-text-bright">{data.wikipedia.title}</h4>
-              <p className="mt-1 line-clamp-3 text-sm text-text-muted">{data.wikipedia.extract}</p>
+              <h4 className="font-semibold text-ink">{data.wikipedia.title}</h4>
+              <p className="mt-1 line-clamp-3 text-sm text-ink-muted">{data.wikipedia.extract}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Detected type + scores */}
-      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
+      <div className="rounded-lg border border-line bg-surface-1 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AIContentBadge model={data.model_used} />
-            <span className="rounded bg-realm-surface-raised px-2 py-0.5 text-xs font-medium capitalize text-text-muted">
+            <span className="rounded bg-surface-2 px-2 py-0.5 text-xs font-medium capitalize text-ink-muted">
               {profile.detected_type}
             </span>
           </div>
-          <span className="text-xs text-text-muted">
+          <span className="text-xs text-ink-muted">
             Confidence: {(profile.confidence_level * 100).toFixed(0)}% — {confidenceLabel(profile.confidence_level)}
           </span>
         </div>
 
-        <p className="mt-3 text-sm text-text-muted">{profile.impact_summary}</p>
+        <p className="mt-3 text-sm text-ink-muted">{profile.impact_summary}</p>
 
         {/* Scores grid */}
         <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
           {Object.entries(profile.suggested_scores).map(([dim, score]) => (
-            <div key={dim} className="rounded border border-realm-border bg-realm-surface-raised p-2">
-              <div className="text-xs text-text-muted">{dim.replace("_", " ").toUpperCase()}</div>
-              <div className={`mt-1 font-mono font-bold ${score > 0 ? "text-spectral-green" : score < 0 ? "text-blood-red" : "text-text-muted"}`}>
+            <div key={dim} className="rounded border border-line bg-surface-2 p-2">
+              <div className="text-xs text-ink-muted">{dim.replace("_", " ").toUpperCase()}</div>
+              <div className={`mt-1 font-mono font-bold ${score > 0 ? "text-ok" : score < 0 ? "text-crit" : "text-ink-muted"}`}>
                 {score > 0 ? "+" : ""}{score}
               </div>
             </div>
@@ -242,12 +242,12 @@ function AIResultsPanel({
 
       {/* Bias warnings */}
       {data.bias_warnings.length > 0 && (
-        <div className="rounded-lg border border-shadow-gold/50 bg-shadow-gold/10 p-3">
-          <div className="flex items-center gap-1 text-sm font-semibold text-shadow-gold">
+        <div className="rounded-lg border border-gold/50 bg-gold/10 p-3">
+          <div className="flex items-center gap-1 text-sm font-semibold text-gold">
             <AlertTriangle className="h-4 w-4" />
             Bias Warnings
           </div>
-          <ul className="mt-1 space-y-1 text-sm text-text-muted">
+          <ul className="mt-1 space-y-1 text-sm text-ink-muted">
             {data.bias_warnings.map((w, i) => (
               <li key={i}>- {w}</li>
             ))}
@@ -259,13 +259,13 @@ function AIResultsPanel({
       <div className="flex gap-3">
         <button
           onClick={onApply}
-          className="flex-1 rounded bg-primary px-4 py-2.5 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+          className="flex-1 rounded bg-action px-4 py-2.5 text-sm font-semibold text-ink hover:bg-action-hi"
         >
           Apply to Form
         </button>
         <button
           onClick={onDismiss}
-          className="rounded border border-realm-border px-4 py-2.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+          className="rounded border border-line px-4 py-2.5 text-sm text-ink-muted hover:border-action hover:text-ink-2"
         >
           Dismiss
         </button>

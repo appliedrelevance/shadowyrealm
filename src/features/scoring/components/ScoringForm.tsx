@@ -93,7 +93,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
   };
 
   const inputClass =
-    "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text text-sm focus:border-arcane-purple focus:outline-none";
+    "mt-1 w-full rounded border border-line bg-surface-1 px-3 py-2 text-ink-2 text-sm focus:border-action focus:outline-none";
 
   const confidenceValue = watch("confidence_level") ?? 0.5;
   const confidencePct = (confidenceValue * 100).toFixed(0);
@@ -101,7 +101,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {mutation.isError && (
-        <p className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        <p className="rounded border border-crit/50 bg-crit/10 p-3 text-sm text-crit">
           {mutation.error.message}
         </p>
       )}
@@ -109,7 +109,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
       {/* Optional period selection */}
       {periods && periods.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Assessment Period
           </label>
           <select
@@ -135,14 +135,14 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
         return (
           <div
             key={dim.key}
-            className="rounded-lg border border-realm-border bg-realm-surface p-4"
+            className="rounded-lg border border-line bg-surface-1 p-4"
           >
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-text-bright">
+              <label className="text-sm font-semibold text-ink">
                 {dim.label}
               </label>
               <span
-                className={`font-mono text-lg font-bold ${scoreValue > 0 ? "text-spectral-green" : scoreValue < 0 ? "text-blood-red" : "text-text-muted"}`}
+                className={`font-mono text-lg font-bold ${scoreValue > 0 ? "text-ok" : scoreValue < 0 ? "text-crit" : "text-ink-muted"}`}
               >
                 {scoreValue > 0 ? "+" : ""}
                 {scoreValue}
@@ -155,9 +155,9 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
               max={10}
               step={1}
               {...register(scoreKey, { valueAsNumber: true })}
-              className="mt-2 w-full accent-arcane-purple"
+              className="mt-2 w-full accent-action"
             />
-            <div className="flex justify-between text-xs text-text-muted">
+            <div className="flex justify-between text-xs text-ink-muted">
               {TICK_MARKS.map((t) => (
                 <span key={t}>{t > 0 ? `+${t}` : t}</span>
               ))}
@@ -170,7 +170,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
               className={`${inputClass} mt-2`}
             />
             {errors[justKey] && (
-              <p className="mt-1 text-xs text-destructive">
+              <p className="mt-1 text-xs text-crit">
                 {(errors[justKey] as { message?: string })?.message}
               </p>
             )}
@@ -180,7 +180,7 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
 
       {/* Confidence */}
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Confidence: {confidencePct}% — {confidenceLabel(confidenceValue)}
         </label>
         <input
@@ -189,14 +189,14 @@ export function ScoringForm({ entityId, periods, onSuccess }: ScoringFormProps) 
           max={1}
           step={0.05}
           {...register("confidence_level", { valueAsNumber: true })}
-          className="mt-1 w-full accent-arcane-purple"
+          className="mt-1 w-full accent-action"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded bg-primary px-4 py-2.5 font-semibold text-text-bright hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        className="w-full rounded bg-action px-4 py-2.5 font-semibold text-ink hover:bg-action-hi disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
       >
         {isSubmitting ? COPY.entity.saving : "Submit Assessment"}
       </button>

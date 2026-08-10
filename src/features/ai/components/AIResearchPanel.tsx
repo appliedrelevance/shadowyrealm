@@ -86,10 +86,10 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
   };
 
   return (
-    <div className="rounded-lg border border-arcane-blue/30 bg-arcane-blue/5 p-4">
+    <div className="rounded-lg border border-info/30 bg-info/5 p-4">
       <div className="flex items-center gap-2">
-        <Bot className="h-5 w-5 text-arcane-blue" />
-        <h3 className="font-display text-lg font-semibold text-text-bright">
+        <Bot className="h-5 w-5 text-info" />
+        <h3 className="font-display text-lg font-semibold text-ink">
           AI Research Assistant
         </h3>
       </div>
@@ -101,12 +101,12 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Enter entity name to research..."
-          className="flex-1 rounded border border-realm-border bg-realm-surface px-3 py-2 text-sm text-text focus:border-arcane-purple focus:outline-none"
+          className="flex-1 rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
         />
         <button
           onClick={handleSearch}
           disabled={loading || !query.trim()}
-          className="flex items-center gap-1 rounded bg-arcane-blue px-4 py-2 text-sm font-semibold text-text-bright hover:bg-arcane-blue/80 disabled:opacity-50"
+          className="flex items-center gap-1 rounded bg-info px-4 py-2 text-sm font-semibold text-ink hover:bg-info/80 disabled:opacity-50"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -118,7 +118,7 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
       </div>
 
       {error && (
-        <div className="mt-3 flex items-center gap-2 rounded border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="mt-3 flex items-center gap-2 rounded border border-crit/50 bg-crit/10 p-3 text-sm text-crit">
           <AlertTriangle className="h-4 w-4" />
           {error} — You can still create the entity manually.
         </div>
@@ -128,7 +128,7 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
         <div className="mt-4 space-y-4">
           {/* Wikipedia data */}
           {result.wikipedia && (
-            <div className="rounded border border-realm-border bg-realm-surface p-3">
+            <div className="rounded border border-line bg-surface-1 p-3">
               <div className="flex gap-3">
                 {result.wikipedia.thumbnail && (
                   <img
@@ -138,17 +138,17 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
                   />
                 )}
                 <div>
-                  <h4 className="font-semibold text-text-bright">
+                  <h4 className="font-semibold text-ink">
                     {result.wikipedia.title}
                   </h4>
-                  <p className="mt-1 text-sm text-text-muted">
+                  <p className="mt-1 text-sm text-ink-muted">
                     {result.wikipedia.extract}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1">
                     {result.wikipedia.categories.slice(0, 5).map((c) => (
                       <span
                         key={c}
-                        className="rounded bg-realm-surface-raised px-1.5 py-0.5 text-xs text-text-muted"
+                        className="rounded bg-surface-2 px-1.5 py-0.5 text-xs text-ink-muted"
                       >
                         {c}
                       </span>
@@ -161,12 +161,12 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
 
           {/* Bias warnings */}
           {result.bias_warnings.length > 0 && (
-            <div className="rounded border border-shadow-gold/50 bg-shadow-gold/10 p-3">
-              <div className="flex items-center gap-1 text-sm font-semibold text-shadow-gold">
+            <div className="rounded border border-gold/50 bg-gold/10 p-3">
+              <div className="flex items-center gap-1 text-sm font-semibold text-gold">
                 <AlertTriangle className="h-4 w-4" />
                 Bias Warnings
               </div>
-              <ul className="mt-1 space-y-1 text-sm text-text-muted">
+              <ul className="mt-1 space-y-1 text-sm text-ink-muted">
                 {result.bias_warnings.map((w, i) => (
                   <li key={i}>• {w}</li>
                 ))}
@@ -179,8 +179,8 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
             <div className="space-y-3">
               <AIContentBadge model="Claude Sonnet" />
 
-              <div className="rounded border border-realm-border bg-realm-surface p-3 text-sm">
-                <p className="text-text-muted">
+              <div className="rounded border border-line bg-surface-1 p-3 text-sm">
+                <p className="text-ink-muted">
                   {result.ai_profile.impact_summary}
                 </p>
               </div>
@@ -190,13 +190,13 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
                   ([dim, score]) => (
                     <div
                       key={dim}
-                      className="rounded border border-realm-border bg-realm-surface-raised p-2"
+                      className="rounded border border-line bg-surface-2 p-2"
                     >
-                      <div className="text-xs text-text-muted">
+                      <div className="text-xs text-ink-muted">
                         {dim.replace("_", " ").toUpperCase()}
                       </div>
                       <div
-                        className={`mt-1 font-mono font-bold ${score > 0 ? "text-spectral-green" : score < 0 ? "text-blood-red" : "text-text-muted"}`}
+                        className={`mt-1 font-mono font-bold ${score > 0 ? "text-ok" : score < 0 ? "text-crit" : "text-ink-muted"}`}
                       >
                         {score > 0 ? "+" : ""}
                         {score}
@@ -216,7 +216,7 @@ export function AIResearchPanel({ onApply }: AIResearchPanelProps) {
                     aiModelUsed: "claude-sonnet-4-20250514",
                   })
                 }
-                className="w-full rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+                className="w-full rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
               >
                 Apply AI Suggestions to Form
               </button>

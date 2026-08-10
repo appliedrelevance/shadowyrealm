@@ -69,7 +69,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   return (
     <div
       className={cn(
-        "rounded-lg border border-realm-border bg-realm-surface px-4 py-3 text-sm text-text shadow-lg transition-opacity duration-200",
+        "rounded-lg border border-line bg-surface-1 px-4 py-3 text-sm text-ink-2 shadow-lg transition-opacity duration-200",
         toast.type === "success" ? "border-l-4 border-l-spectral-green" : "border-l-4 border-l-blood-red",
         visible ? "opacity-100" : "opacity-0",
       )}

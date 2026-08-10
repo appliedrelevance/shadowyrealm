@@ -52,16 +52,16 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
   };
 
   const inputClass =
-    "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text text-sm focus:border-arcane-purple focus:outline-none";
+    "mt-1 w-full rounded border border-line bg-surface-1 px-3 py-2 text-ink-2 text-sm focus:border-action focus:outline-none";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {mutation.isError && (
-        <p className="text-sm text-destructive">{mutation.error.message}</p>
+        <p className="text-sm text-crit">{mutation.error.message}</p>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Period Label *
         </label>
         <input
@@ -70,7 +70,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
           className={inputClass}
         />
         {errors.label && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-xs text-crit">
             {errors.label.message}
           </p>
         )}
@@ -78,7 +78,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Start Year *
           </label>
           <input
@@ -88,7 +88,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             End Year *
           </label>
           <input
@@ -97,7 +97,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
             className={inputClass}
           />
           {errors.end_year && (
-            <p className="mt-1 text-xs text-destructive">
+            <p className="mt-1 text-xs text-crit">
               {errors.end_year.message}
             </p>
           )}
@@ -105,7 +105,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Description
         </label>
         <textarea
@@ -117,7 +117,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Reach Factor (1-10)
           </label>
           <input
@@ -129,7 +129,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Persistence Factor (1-10)
           </label>
           <input
@@ -145,7 +145,7 @@ export function PeriodForm({ entityId, onSuccess }: PeriodFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover disabled:opacity-50"
+        className="rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi disabled:opacity-50"
       >
         {isSubmitting ? "Creating..." : "Create Period"}
       </button>

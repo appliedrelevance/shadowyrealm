@@ -283,8 +283,8 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
   };
 
   const inputClass =
-    "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text focus:border-arcane-purple focus:outline-none";
-  const labelClass = "block text-sm font-medium text-text-muted";
+    "mt-1 w-full rounded border border-line bg-surface-1 px-3 py-2 text-ink-2 focus:border-action focus:outline-none";
+  const labelClass = "block text-sm font-medium text-ink-muted";
 
   const fieldLabel = (name: string, label: string) => (
     <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {submitError && (
-        <p className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        <p className="rounded border border-crit/50 bg-crit/10 p-3 text-sm text-crit">
           {submitError}
         </p>
       )}
@@ -312,7 +312,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           className={inputClass}
         />
         {errors.name && (
-          <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
+          <p className="mt-1 text-sm text-crit">{errors.name.message}</p>
         )}
       </div>
 
@@ -346,7 +346,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           className={inputClass}
         />
         {errors.description && (
-          <p className="mt-1 text-sm text-destructive">{errors.description.message}</p>
+          <p className="mt-1 text-sm text-crit">{errors.description.message}</p>
         )}
       </div>
 
@@ -371,10 +371,10 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
             <img
               src={imageUrl}
               alt="Entity"
-              className="h-20 w-20 rounded border border-realm-border object-cover"
+              className="h-20 w-20 rounded border border-line object-cover"
             />
           )}
-          <label className="flex cursor-pointer items-center gap-2 rounded border border-realm-border bg-realm-surface-raised px-3 py-2 text-sm text-text-muted hover:border-arcane-purple hover:text-text">
+          <label className="flex cursor-pointer items-center gap-2 rounded border border-line bg-surface-2 px-3 py-2 text-sm text-ink-muted hover:border-action hover:text-ink-2">
             {uploading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -394,8 +394,8 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
 
       {/* Type-specific metadata fields */}
       {entityType === "person" && (
-        <fieldset className="space-y-4 rounded border border-realm-border p-4">
-          <legend className="px-2 text-sm font-medium text-text-muted">Person Details</legend>
+        <fieldset className="space-y-4 rounded border border-line p-4">
+          <legend className="px-2 text-sm font-medium text-ink-muted">Person Details</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="birth_date" className={labelClass}>{fieldLabel("birth_date", "Birth Date")}</label>
@@ -414,8 +414,8 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
       )}
 
       {entityType === "organization" && (
-        <fieldset className="space-y-4 rounded border border-realm-border p-4">
-          <legend className="px-2 text-sm font-medium text-text-muted">Organization Details</legend>
+        <fieldset className="space-y-4 rounded border border-line p-4">
+          <legend className="px-2 text-sm font-medium text-ink-muted">Organization Details</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="founded_date" className={labelClass}>{fieldLabel("founded_date", "Founded Date")}</label>
@@ -441,8 +441,8 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
       )}
 
       {entityType === "event" && (
-        <fieldset className="space-y-4 rounded border border-realm-border p-4">
-          <legend className="px-2 text-sm font-medium text-text-muted">Event Details</legend>
+        <fieldset className="space-y-4 rounded border border-line p-4">
+          <legend className="px-2 text-sm font-medium text-ink-muted">Event Details</legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="start_date" className={labelClass}>{fieldLabel("start_date", "Start Date")}</label>
@@ -476,8 +476,8 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
 
       {/* AI Impact Scores Section */}
       {aiScores && aiJustifications && (
-        <fieldset className="space-y-4 rounded border border-arcane-blue/30 bg-arcane-blue/5 p-4">
-          <legend className="flex items-center gap-2 px-2 text-sm font-medium text-text-muted">
+        <fieldset className="space-y-4 rounded border border-info/30 bg-info/5 p-4">
+          <legend className="flex items-center gap-2 px-2 text-sm font-medium text-ink-muted">
             Impact Assessment
             <AIContentBadge model={aiData?.model_used} />
           </legend>
@@ -485,10 +485,10 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           {SCORE_DIMENSIONS.map((dim) => {
             const score = aiScores[dim.key] ?? 0;
             return (
-              <div key={dim.key} className="rounded-lg border border-realm-border bg-realm-surface p-3">
+              <div key={dim.key} className="rounded-lg border border-line bg-surface-1 p-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-text-bright">{dim.label}</label>
-                  <span className={`font-mono text-lg font-bold ${score > 0 ? "text-spectral-green" : score < 0 ? "text-blood-red" : "text-text-muted"}`}>
+                  <label className="text-sm font-semibold text-ink">{dim.label}</label>
+                  <span className={`font-mono text-lg font-bold ${score > 0 ? "text-ok" : score < 0 ? "text-crit" : "text-ink-muted"}`}>
                     {score > 0 ? "+" : ""}{score}
                   </span>
                 </div>
@@ -499,7 +499,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
                   step={1}
                   value={score}
                   onChange={(e) => setAiScores((prev) => prev ? { ...prev, [dim.key]: Number(e.target.value) } : prev)}
-                  className="mt-2 w-full accent-arcane-purple"
+                  className="mt-2 w-full accent-action"
                 />
                 <textarea
                   rows={2}
@@ -514,7 +514,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           <button
             type="button"
             onClick={() => { setAiScores(null); setAiJustifications(null); }}
-            className="text-sm text-text-muted hover:text-destructive"
+            className="text-sm text-ink-muted hover:text-crit"
           >
             Remove impact scores
           </button>
@@ -524,7 +524,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded bg-primary px-4 py-2.5 font-semibold text-text-bright hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        className="w-full rounded bg-action px-4 py-2.5 font-semibold text-ink hover:bg-action-hi disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
       >
         {isSubmitting
           ? COPY.entity.saving

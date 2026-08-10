@@ -72,7 +72,7 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
   });
 
   const inputClass =
-    "mt-1 w-full rounded border border-realm-border bg-realm-surface px-3 py-2 text-text text-sm focus:border-arcane-purple focus:outline-none";
+    "mt-1 w-full rounded border border-line bg-surface-1 px-3 py-2 text-ink-2 text-sm focus:border-action focus:outline-none";
 
   const filteredEntities = (searchResults?.entities ?? []).filter(
     (e) => e.id !== sourceEntityId && e.name.toLowerCase().includes(search.toLowerCase()),
@@ -81,11 +81,11 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
   return (
     <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
       {mutation.isError && (
-        <p className="text-sm text-destructive">{mutation.error.message}</p>
+        <p className="text-sm text-crit">{mutation.error.message}</p>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Target Entity *
         </label>
         <input
@@ -107,14 +107,14 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
           ))}
         </select>
         {errors.target_entity_id && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-xs text-crit">
             {errors.target_entity_id.message}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Relationship Type *
         </label>
         <select {...register("relationship_type")} className={inputClass}>
@@ -126,12 +126,12 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-text-muted">
+        <label className="block text-sm font-medium text-ink-muted">
           Description *
         </label>
         <textarea rows={2} {...register("description")} className={inputClass} />
         {errors.description && (
-          <p className="mt-1 text-xs text-destructive">
+          <p className="mt-1 text-xs text-crit">
             {errors.description.message}
           </p>
         )}
@@ -139,7 +139,7 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Strength (0-1)
           </label>
           <input
@@ -148,11 +148,11 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
             max={1}
             step={0.1}
             {...register("strength", { valueAsNumber: true })}
-            className="mt-1 w-full accent-arcane-purple"
+            className="mt-1 w-full accent-action"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-text-muted">
+          <label className="block text-sm font-medium text-ink-muted">
             Temporal Overlap (0-1)
           </label>
           <input
@@ -161,7 +161,7 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
             max={1}
             step={0.1}
             {...register("temporal_overlap", { valueAsNumber: true })}
-            className="mt-1 w-full accent-arcane-purple"
+            className="mt-1 w-full accent-action"
           />
         </div>
       </div>
@@ -169,7 +169,7 @@ export function RelationshipForm({ sourceEntityId, onSuccess }: RelationshipForm
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover disabled:opacity-50"
+        className="rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi disabled:opacity-50"
       >
         {isSubmitting ? "Forging..." : "Forge Connection"}
       </button>

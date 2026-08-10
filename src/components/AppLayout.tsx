@@ -6,8 +6,8 @@ import { BarChart3, LogIn, LogOut, UserPlus, LayoutGrid, Scale, BookOpen, Menu, 
 import type { ReactNode } from "react";
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
-const navLinkIdle = "text-text-muted hover:text-text-bright";
-const navLinkActive = "text-text-bright border-b border-arcane-purple";
+const navLinkIdle = "text-ink-muted hover:text-ink";
+const navLinkActive = "text-ink border-b border-action";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
@@ -16,11 +16,11 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="min-h-screen bg-realm-bg text-text">
-      <header className="border-b border-realm-border bg-realm-surface">
+    <div className="min-h-screen bg-surface text-ink-2">
+      <header className="border-b border-line bg-surface-1">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-text-bright hover:text-arcane-purple-light">
-            <BarChart3 className="h-5 w-5 text-arcane-purple" />
+          <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-ink hover:text-action-ink">
+            <BarChart3 className="h-5 w-5 text-action" />
             {COPY.nav.brand}
           </Link>
 
@@ -64,7 +64,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           {/* Mobile hamburger button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center text-text-muted hover:text-text-bright md:hidden"
+            className="flex items-center text-ink-muted hover:text-ink md:hidden"
             aria-label="Toggle menu"
           >
             {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -73,7 +73,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
         {/* Mobile overlay menu */}
         {menuOpen && (
-          <div className="fixed inset-0 z-50 bg-realm-bg/90 md:hidden" onClick={closeMenu}>
+          <div className="fixed inset-0 z-50 bg-surface/90 md:hidden" onClick={closeMenu}>
             <div
               className="mx-auto flex max-w-sm flex-col gap-4 px-6 pt-20"
               onClick={(e) => e.stopPropagation()}
@@ -91,7 +91,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {COPY.nav.howItWorks}
               </Link>
 
-              <div className="my-2 border-t border-realm-border" />
+              <div className="my-2 border-t border-line" />
 
               {user ? (
                 <button
@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
               <button
                 onClick={closeMenu}
-                className="mt-4 flex items-center gap-1 text-sm text-text-muted hover:text-text-bright"
+                className="mt-4 flex items-center gap-1 text-sm text-ink-muted hover:text-ink"
               >
                 <X className="h-4 w-4" />
                 Close
@@ -128,7 +128,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
       <main className="animate-fade-in">{children}</main>
 
-      <footer className="border-t border-realm-border bg-realm-surface py-6 text-center text-sm text-text-muted">
+      <footer className="border-t border-line bg-surface-1 py-6 text-center text-sm text-ink-muted">
         {COPY.footer.tagline}
       </footer>
     </div>

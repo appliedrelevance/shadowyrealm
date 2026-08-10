@@ -9,7 +9,7 @@ const tierStyles: Record<ATISTier, string> = {
   legendary: "border-tier-legendary bg-tier-legendary/20 text-tier-legendary shadow-lg shadow-tier-legendary/30",
 };
 
-const negativeStyle = "border-blood-red bg-blood-red/20 text-blood-red";
+const negativeStyle = "border-crit bg-crit/20 text-crit";
 
 interface MagnitudeBadgeProps {
   tier: ATISTier;

@@ -18,28 +18,28 @@ const transitions: StatusTransition[] = [
     to: "submitted",
     label: "Submit for Review",
     icon: Send,
-    className: "bg-arcane-blue hover:bg-arcane-blue/80",
+    className: "bg-info hover:bg-info/80",
   },
   {
     from: "submitted",
     to: "under_review",
     label: "Begin Review",
     icon: CheckCircle,
-    className: "bg-shadow-gold text-realm-bg hover:bg-shadow-gold-light",
+    className: "bg-gold text-surface hover:bg-gold-light",
   },
   {
     from: "under_review",
     to: "published",
     label: "Publish",
     icon: CheckCircle,
-    className: "bg-spectral-green text-realm-bg hover:bg-spectral-green/80",
+    className: "bg-ok text-surface hover:bg-ok/80",
   },
   {
     from: "published",
     to: "archived",
     label: "Archive",
     icon: Archive,
-    className: "bg-realm-border hover:bg-realm-border/80",
+    className: "bg-line hover:bg-line/80",
   },
 ];
 
@@ -77,7 +77,7 @@ export function StatusWorkflow({ entity }: { entity: Entity }) {
             }
             disabled={mutation.isPending}
             className={cn(
-              "flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium text-text-bright disabled:opacity-50",
+              "flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium text-ink disabled:opacity-50",
               transition.className,
             )}
           >
@@ -91,7 +91,7 @@ export function StatusWorkflow({ entity }: { entity: Entity }) {
         );
       })}
       {mutation.isError && (
-        <p className="text-sm text-destructive">
+        <p className="text-sm text-crit">
           {mutation.error.message}
         </p>
       )}

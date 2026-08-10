@@ -6,13 +6,13 @@ interface SkeletonProps {
 
 export function Skeleton({ className }: SkeletonProps) {
   return (
-    <div className={cn("animate-pulse rounded bg-realm-surface-raised", className)} />
+    <div className={cn("animate-pulse rounded bg-surface-2", className)} />
   );
 }
 
 export function EntityCardSkeleton() {
   return (
-    <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
+    <div className="rounded-lg border border-line bg-surface-1 p-4">
       <div className="flex gap-4">
         <Skeleton className="h-20 w-20 shrink-0 rounded" />
         <div className="min-w-0 flex-1 space-y-2">

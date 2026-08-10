@@ -10,8 +10,7 @@ import {
   computeConsensusScores,
   type DimensionalScores,
 } from "@/lib/atis-calculator";
-
-const CHART_COLORS = ["#7c3aed", "#10b981", "#f59e0b", "#3b82f6", "#ec4899"];
+import { seriesColor } from "@/lib/chart-colors";
 
 const typeIcons: Record<string, typeof User> = {
   person: User,
@@ -78,10 +77,10 @@ export function ComparisonView() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="font-display text-3xl font-bold text-text-bright">
+      <h1 className="font-display text-3xl font-bold text-ink">
         Comparative Analysis
       </h1>
-      <p className="mt-2 text-text-muted">
+      <p className="mt-2 text-ink-muted">
         Select entities to compare side-by-side.
       </p>
 
@@ -89,29 +88,29 @@ export function ComparisonView() {
       <div className="relative mt-6">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-muted" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search entities to compare..."
-              className="w-full rounded border border-realm-border bg-realm-surface py-2 pl-9 pr-3 text-sm text-text focus:border-arcane-purple focus:outline-none"
+              className="w-full rounded border border-line bg-surface-1 py-2 pl-9 pr-3 text-sm text-ink-2 focus:border-action focus:outline-none"
             />
           </div>
         </div>
         {searchResults && searchResults.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded border border-realm-border bg-realm-surface shadow-lg">
+          <div className="absolute z-10 mt-1 w-full rounded border border-line bg-surface-1 shadow-lg">
             {searchResults.map((e) => {
               const TypeIcon = typeIcons[e.entity_type] ?? User;
               return (
                 <button
                   key={e.id}
                   onClick={() => addEntity(e.id)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-text hover:bg-realm-surface-raised"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-ink-2 hover:bg-surface-2"
                 >
-                  <TypeIcon className="h-4 w-4 text-text-muted" />
+                  <TypeIcon className="h-4 w-4 text-ink-muted" />
                   <span className="flex-1 text-left">{e.name}</span>
-                  <span className="text-xs text-text-muted capitalize">
+                  <span className="text-xs text-ink-muted capitalize">
                     {e.entity_type}
                   </span>
                 </button>
@@ -125,7 +124,7 @@ export function ComparisonView() {
       {selectedIds.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           {selectedIds.map((id, idx) => (
-            <EntityTag key={id} entityId={id} color={CHART_COLORS[idx % CHART_COLORS.length]} onRemove={() => removeEntity(id)} />
+            <EntityTag key={id} entityId={id} color={seriesColor(idx)} onRemove={() => removeEntity(id)} />
           ))}
         </div>
       )}
@@ -136,8 +135,8 @@ export function ComparisonView() {
       )}
 
       {selectedIds.length < 2 && (
-        <div className="mt-8 rounded-lg border border-dashed border-realm-border bg-realm-surface/50 p-6 text-center">
-          <p className="text-text-muted">
+        <div className="mt-8 rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center">
+          <p className="text-ink-muted">
             Search for figures above and add at least two to compare their impact side by side.
           </p>
         </div>
@@ -203,20 +202,20 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
         entity: d.data!.entity,
         scores,
         atis,
-        color: CHART_COLORS[idx % CHART_COLORS.length],
+        color: seriesColor(idx),
       };
     });
   }, [allLoaded, entityData]);
 
   if (!allLoaded || !chartData) {
-    return <p className="mt-8 text-text-muted">Loading comparison data...</p>;
+    return <p className="mt-8 text-ink-muted">Loading comparison data...</p>;
   }
 
   return (
     <div className="mt-8 space-y-6">
       {/* Radar overlay */}
-      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-        <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+      <div className="rounded-lg border border-line bg-surface-1 p-4">
+        <h3 className="mb-3 font-display text-lg font-semibold text-ink">
           Dimensional Comparison
         </h3>
         <ImpactRadarChart
@@ -232,7 +231,7 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
       <div className="flex flex-wrap gap-4">
         {chartData.map((d) => (
           <div key={d.entity.id} className="flex items-center gap-2">
-            <Link to="/entity/$slug" params={{ slug: d.entity.slug }} className="text-sm font-medium text-text hover:text-arcane-purple-light">
+            <Link to="/entity/$slug" params={{ slug: d.entity.slug }} className="text-sm font-medium text-ink-2 hover:text-action-ink">
               {d.entity.name}
             </Link>
             <MagnitudeBadge tier={d.atis.impact_class.tier} magnitude={d.atis.magnitude} />
@@ -241,13 +240,13 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
       </div>
 
       {/* Dimensional differences */}
-      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-        <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+      <div className="rounded-lg border border-line bg-surface-1 p-4">
+        <h3 className="mb-3 font-display text-lg font-semibold text-ink">
           Dimensional Differences
         </h3>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-realm-border text-left text-text-muted">
+            <tr className="border-b border-line text-left text-ink-muted">
               <th className="pb-2 pr-4 font-medium">Dimension</th>
               {chartData.map((d) => (
                 <th key={d.entity.id} className="pb-2 pr-4 font-medium" style={{ color: d.color }}>
@@ -258,8 +257,8 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
           </thead>
           <tbody>
             {DIMENSIONS.map((dim) => (
-              <tr key={dim} className="border-b border-realm-border/50">
-                <td className="py-2 pr-4 capitalize text-text-muted">
+              <tr key={dim} className="border-b border-line/50">
+                <td className="py-2 pr-4 capitalize text-ink-muted">
                   {dim.replace("_", " ")}
                 </td>
                 {chartData.map((d) => {
@@ -267,7 +266,7 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
                   return (
                     <td
                       key={d.entity.id}
-                      className={`py-2 pr-4 font-mono ${val > 0 ? "text-spectral-green" : val < 0 ? "text-blood-red" : "text-text-muted"}`}
+                      className={`py-2 pr-4 font-mono ${val > 0 ? "text-ok" : val < 0 ? "text-crit" : "text-ink-muted"}`}
                     >
                       {val > 0 ? "+" : ""}
                       {val.toFixed(1)}

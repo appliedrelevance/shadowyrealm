@@ -1,60 +1,100 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ---------------------------------------------------------------------------
+   ShadowyRealm — canonical AR token vocabulary.
+   See appliedrelevance/.kiro/steering/design-stack.md. Names are fixed
+   firm-wide; only the values here are ShadowyRealm's.
+
+   This property is deliberately dark-only — a twilight/arcane theme, not a
+   dashboard. There is no `.dark` block because there is no light mode to
+   switch to; the values below ARE the theme.
+   --------------------------------------------------------------------------- */
+
 @theme {
-  /* Twilight dark primaries */
-  --color-realm-bg: #181822;
-  --color-realm-surface: #1e1e2e;
-  --color-realm-surface-raised: #262636;
-  --color-realm-border: #333350;
+  /* ---- Surfaces: page ground → raised panel → highest ------------------ */
+  --color-surface: #181822;
+  --color-surface-1: #1e1e2e;
+  --color-surface-2: #262636;
 
-  /* Arcane accent palette */
-  --color-arcane-purple: #7c3aed;
-  --color-arcane-purple-light: #a78bfa;
-  --color-arcane-blue: #3b82f6;
-  --color-shadow-gold: #d4a843;
-  --color-shadow-gold-light: #e8c972;
-  --color-blood-red: #dc2626;
-  --color-ember-orange: #ea580c;
-  --color-spectral-green: #10b981;
+  /* ---- Ink ------------------------------------------------------------- */
+  --color-ink: #f8fafc; /* headings, key data          */
+  --color-ink-2: #e2e8f0; /* body copy — the html default */
+  --color-ink-muted: #94a3b8; /* labels, captions, metadata  */
 
-  /* ATIS magnitude tier colors */
+  /* ---- Lines ----------------------------------------------------------- */
+  --color-line: #333350;
+  --color-line-strong: #4a4a70;
+
+  /* ---- Action: the single interactive accent (arcane purple) ----------- */
+  --color-action: #7c3aed;
+  --color-action-hi: #6d28d9; /* hover — this brand deepens rather than lifts */
+  --color-action-ink: #a78bfa; /* legible as text on the dark ground          */
+  --color-on-action: #ffffff;
+
+  /* ---- Status: meaning, never decoration ------------------------------- */
+  --color-ok: #10b981;
+  --color-ok-soft: #06281f;
+  --color-warn: #f59e0b;
+  --color-warn-soft: #2e2005;
+  --color-crit: #dc2626;
+  --color-crit-soft: #2d0b0b;
+  --color-on-crit: #ffffff;
+  --color-info: #3b82f6;
+  --color-info-soft: #0a1c34;
+
+  /* ---- Brand ornament --------------------------------------------------
+     Not part of the semantic vocabulary and never a second interactive
+     accent. Shadow gold is decorative — seals, prose code, flourishes.
+     Named `gold` rather than `shadow-gold` because `shadow-*` collides with
+     Tailwind's box-shadow utilities and reads as one. */
+  --color-gold: #d4a843;
+  --color-gold-light: #e8c972;
+  --color-ember: #ea580c;
+
+  /* ---- Chart series — CATEGORICAL ---------------------------------------
+     Distinguishing one entity from another in a comparison, not conveying
+     good/bad. Lived as a hardcoded array inside ComparisonView; promoted here
+     so it is one palette rather than a third parallel copy. */
+  --color-series-1: #7c3aed;
+  --color-series-2: #10b981;
+  --color-series-3: #f59e0b;
+  --color-series-4: #3b82f6;
+  --color-series-5: #ec4899;
+
+  /* ---- ATIS magnitude tiers — CATEGORICAL, not semantic -----------------
+     Identity, not judgment: these label a magnitude tier for scanning, and
+     are deliberately distinct from the status palette above (tier-legendary
+     purple is not `action`; tier-significant amber is not `warn`). */
   --color-tier-minimal: #6b7280;
   --color-tier-moderate: #3b82f6;
   --color-tier-significant: #f59e0b;
   --color-tier-transformational: #ef4444;
   --color-tier-legendary: #a855f7;
 
-  /* Text — WCAG AA on dark backgrounds */
-  --color-text: #e2e8f0;
-  --color-text-muted: #94a3b8;
-  --color-text-bright: #f8fafc;
-
-  /* Semantic */
-  --color-primary: #7c3aed;
-  --color-primary-hover: #6d28d9;
-  --color-accent: #d4a843;
-  --color-destructive: #dc2626;
-
-  /* Typography — fantasy-inspired */
-  --font-family-display: "Cinzel", "Times New Roman", serif;
-  --font-family-sans: "Inter", system-ui, sans-serif;
-  --font-family-mono: "JetBrains Mono", monospace;
+  /* ---- Typography -------------------------------------------------------
+     Tailwind v4's font namespace is `--font-*`. These were previously
+     `--font-family-*`, which generates no utility at all: `font-display` was
+     used 34 times and silently did nothing while Cinzel was still being
+     downloaded on every page load. */
+  --font-display: "Cinzel", "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* Prose overrides for dark theme */
+/* Prose overrides for the dark ground */
 .prose {
-  --tw-prose-body: var(--color-text);
-  --tw-prose-headings: var(--color-text-bright);
-  --tw-prose-links: var(--color-arcane-purple-light);
-  --tw-prose-bold: var(--color-text-bright);
-  --tw-prose-code: var(--color-shadow-gold);
+  --tw-prose-body: var(--color-ink-2);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-links: var(--color-action-ink);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-code: var(--color-gold);
 }
 
 /* Base styles */
 html {
-  background-color: var(--color-realm-bg);
-  color: var(--color-text);
+  background-color: var(--color-surface);
+  color: var(--color-ink-2);
 }
 
 /* Page fade-in animation */

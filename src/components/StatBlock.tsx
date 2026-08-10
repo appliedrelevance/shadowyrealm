@@ -18,19 +18,19 @@ export function StatBlock({ scores }: { scores: DimensionalScores }) {
         return (
           <div
             key={dim.key}
-            className="flex flex-col items-center rounded border border-realm-border bg-realm-surface-raised p-2"
+            className="flex flex-col items-center rounded border border-line bg-surface-2 p-2"
           >
-            <span className="text-xs font-medium text-text-muted">
+            <span className="text-xs font-medium text-ink-muted">
               {dim.label}
             </span>
             <span
               className={cn(
                 "mt-1 font-mono text-xl font-bold",
                 rounded > 0
-                  ? "text-spectral-green"
+                  ? "text-ok"
                   : rounded < 0
-                    ? "text-blood-red"
-                    : "text-text-muted",
+                    ? "text-crit"
+                    : "text-ink-muted",
               )}
             >
               {rounded > 0 ? "+" : ""}

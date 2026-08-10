@@ -33,19 +33,19 @@ const typeIcons: Record<EntityType, typeof User> = {
 };
 
 const statusColors: Record<PublicationStatus, string> = {
-  draft: "bg-tier-minimal text-text-bright",
-  submitted: "bg-arcane-blue text-text-bright",
-  under_review: "bg-shadow-gold text-realm-bg",
-  published: "bg-spectral-green text-realm-bg",
-  archived: "bg-realm-border text-text-muted",
+  draft: "bg-tier-minimal text-ink",
+  submitted: "bg-info text-ink",
+  under_review: "bg-gold text-surface",
+  published: "bg-ok text-surface",
+  archived: "bg-line text-ink-muted",
 };
 
 function MetadataField({ icon: Icon, label, value }: { icon: typeof Calendar; label: string; value: string }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      <Icon className="h-4 w-4 text-text-muted" />
-      <span className="text-text-muted">{label}:</span>
-      <span className="text-text">{value}</span>
+      <Icon className="h-4 w-4 text-ink-muted" />
+      <span className="text-ink-muted">{label}:</span>
+      <span className="text-ink-2">{value}</span>
     </div>
   );
 }
@@ -61,10 +61,10 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   if (error) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-12 text-center">
-        <p className="text-destructive">{error.message}</p>
+        <p className="text-crit">{error.message}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-3 inline-flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+          className="mt-3 inline-flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm text-ink-muted hover:border-action hover:text-ink-2"
         >
           <RefreshCw className="h-4 w-4" />
           Retry
@@ -76,15 +76,15 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   if (!entity) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-12">
-        <h1 className="font-display text-3xl font-bold text-text-bright">
+        <h1 className="font-display text-3xl font-bold text-ink">
           {COPY.entity.notFound}
         </h1>
-        <p className="mt-4 text-text-muted">
+        <p className="mt-4 text-ink-muted">
           {COPY.entity.notFoundDescription}
         </p>
         <Link
           to="/"
-          className="mt-4 inline-block text-arcane-purple-light hover:underline"
+          className="mt-4 inline-block text-action-ink hover:underline"
         >
           {COPY.entity.returnToIndex}
         </Link>
@@ -101,18 +101,18 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
-      <div className="flex flex-col gap-6 border-b border-realm-border pb-8 sm:flex-row">
+      <div className="flex flex-col gap-6 border-b border-line pb-8 sm:flex-row">
         {/* Entity Image */}
         <div className="shrink-0">
           {entity.image_url ? (
             <img
               src={entity.image_url}
               alt={entity.name}
-              className="h-40 w-40 rounded-lg border-2 border-realm-border object-cover shadow-lg shadow-arcane-purple/20"
+              className="h-40 w-40 rounded-lg border-2 border-line object-cover shadow-lg shadow-action/20"
             />
           ) : (
-            <div className="flex h-40 w-40 items-center justify-center rounded-lg border-2 border-realm-border bg-realm-surface-raised shadow-lg shadow-arcane-purple/20">
-              <Icon className="h-16 w-16 text-text-muted" />
+            <div className="flex h-40 w-40 items-center justify-center rounded-lg border-2 border-line bg-surface-2 shadow-lg shadow-action/20">
+              <Icon className="h-16 w-16 text-ink-muted" />
             </div>
           )}
         </div>
@@ -120,11 +120,11 @@ export function EntityProfilePage({ slug }: { slug: string }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="font-display text-3xl font-bold text-text-bright">
+              <h1 className="font-display text-3xl font-bold text-ink">
                 {entity.name}
               </h1>
               <div className="mt-2 flex items-center gap-3">
-                <span className="flex items-center gap-1 text-sm text-text-muted">
+                <span className="flex items-center gap-1 text-sm text-ink-muted">
                   <Icon className="h-4 w-4" />
                   <span className="capitalize">{entityType}</span>
                 </span>
@@ -146,7 +146,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
                     to="/entity/$slug"
                     params={{ slug: entity.slug }}
                     search={{ edit: true }}
-                    className="flex items-center gap-1 rounded border border-realm-border px-3 py-1.5 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+                    className="flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm text-ink-muted hover:border-action hover:text-ink-2"
                   >
                     <Edit className="h-4 w-4" />
                     Edit
@@ -157,14 +157,14 @@ export function EntityProfilePage({ slug }: { slug: string }) {
             )}
           </div>
 
-          <p className="mt-4 text-text">{entity.description}</p>
+          <p className="mt-4 text-ink-2">{entity.description}</p>
         </div>
       </div>
 
       {/* Type-specific metadata */}
       {Object.keys(metadata).length > 0 && (
-        <div className="mt-8 rounded-lg border border-realm-border bg-realm-surface p-4">
-          <h2 className="font-display text-lg font-semibold text-text-bright">
+        <div className="mt-8 rounded-lg border border-line bg-surface-1 p-4">
+          <h2 className="font-display text-lg font-semibold text-ink">
             Details
           </h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -204,8 +204,8 @@ export function EntityProfilePage({ slug }: { slug: string }) {
 
       {/* Biography */}
       {entity.biography && (
-        <div className="mt-8 rounded-lg border border-realm-border bg-realm-surface p-4">
-          <h2 className="font-display text-lg font-semibold text-text-bright">
+        <div className="mt-8 rounded-lg border border-line bg-surface-1 p-4">
+          <h2 className="font-display text-lg font-semibold text-ink">
             Biography
           </h2>
           <div className="prose mt-3 max-w-none">
@@ -287,14 +287,14 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
   if (!assessments || assessments.length === 0) {
     return (
       <div className="mt-8 space-y-4">
-        <div className="rounded-lg border border-dashed border-realm-border bg-realm-surface/50 p-6 text-center">
-          <p className="text-text-muted">
+        <div className="rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center">
+          <p className="text-ink-muted">
             No impact assessments yet. Be the first to score this entity.
           </p>
           {isAuthenticated && (
             <button
               onClick={() => setShowScoringForm(true)}
-              className="mt-3 inline-flex items-center gap-1 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+              className="mt-3 inline-flex items-center gap-1 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
             >
               <Plus className="h-4 w-4" />
               Add Assessment
@@ -302,8 +302,8 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
           )}
         </div>
         {showScoringForm && (
-          <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-            <h3 className="font-display text-lg font-semibold text-text-bright">
+          <div className="rounded-lg border border-line bg-surface-1 p-4">
+            <h3 className="font-display text-lg font-semibold text-ink">
               Impact Assessment
             </h3>
             <div className="mt-4">
@@ -329,7 +329,7 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
               tier={atisResult.impact_class.tier}
               magnitude={atisResult.magnitude}
             />
-            <span className="text-sm text-text-muted">
+            <span className="text-sm text-ink-muted">
               {atisResult.impact_class.descriptor}
             </span>
           </div>
@@ -337,20 +337,20 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
           {achievements.length > 0 && <AchievementList achievements={achievements} />}
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-              <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+            <div className="rounded-lg border border-line bg-surface-1 p-4">
+              <h3 className="mb-3 font-display text-lg font-semibold text-ink">
                 Dimensional Scores
               </h3>
               <StatBlock scores={consensusScores} />
               {assessments.length > 1 && (
-                <p className="mt-2 text-xs text-text-muted">
+                <p className="mt-2 text-xs text-ink-muted">
                   Consensus of {assessments.length} assessments
                 </p>
               )}
             </div>
 
-            <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-              <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+            <div className="rounded-lg border border-line bg-surface-1 p-4">
+              <h3 className="mb-3 font-display text-lg font-semibold text-ink">
                 Impact Profile
               </h3>
               <ImpactRadarChart
@@ -358,7 +358,7 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
                   {
                     label: "Consensus",
                     scores: consensusScores,
-                    color: "#7c3aed",
+                    color: "var(--color-action)",
                   },
                 ]}
               />
@@ -366,12 +366,12 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
           </div>
 
           {/* ATIS Breakdown */}
-          <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-            <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+          <div className="rounded-lg border border-line bg-surface-1 p-4">
+            <h3 className="mb-3 font-display text-lg font-semibold text-ink">
               ATIS Calculation Breakdown
             </h3>
             <ATISBreakdown breakdown={atisResult.breakdown} />
-            <p className="mt-3 text-xs text-text-muted">
+            <p className="mt-3 text-xs text-ink-muted">
               Formula: I_final = I_base × D_temporal × C_consensus × N_network × U_uncertainty
               &nbsp;|&nbsp; Algorithm v{atisResult.algorithm_version}
             </p>
@@ -381,18 +381,18 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
 
       {/* Assessment periods */}
       {periods && periods.length > 0 && (
-        <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-          <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+        <div className="rounded-lg border border-line bg-surface-1 p-4">
+          <h3 className="mb-3 font-display text-lg font-semibold text-ink">
             Assessment Periods
           </h3>
           <div className="space-y-2">
             {periods.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between rounded border border-realm-border/50 bg-realm-surface-raised px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded border border-line/50 bg-surface-2 px-3 py-2 text-sm"
               >
-                <span className="font-medium text-text">{p.label}</span>
-                <span className="text-text-muted">
+                <span className="font-medium text-ink-2">{p.label}</span>
+                <span className="text-ink-muted">
                   {p.start_year} – {p.end_year} | Reach: {p.reach_factor} | Persistence: {p.persistence_factor}
                 </span>
               </div>
@@ -402,15 +402,15 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
       )}
 
       {/* Score history */}
-      <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-        <h3 className="mb-3 font-display text-lg font-semibold text-text-bright">
+      <div className="rounded-lg border border-line bg-surface-1 p-4">
+        <h3 className="mb-3 font-display text-lg font-semibold text-ink">
           Score History
         </h3>
         <div className="space-y-3">
           {assessments.map((a) => (
             <div
               key={a.id}
-              className="rounded border border-realm-border/50 bg-realm-surface-raised p-3 text-sm"
+              className="rounded border border-line/50 bg-surface-2 p-3 text-sm"
             >
               <div className="flex flex-wrap items-center gap-3 font-mono">
                 {[
@@ -420,7 +420,7 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
                   { label: "HLT", value: a.health_score },
                   { label: "CUL", value: a.cultural_score },
                 ].map((s) => (
-                  <span key={s.label} className={s.value > 0 ? "text-spectral-green" : s.value < 0 ? "text-blood-red" : "text-text-muted"}>
+                  <span key={s.label} className={s.value > 0 ? "text-ok" : s.value < 0 ? "text-crit" : "text-ink-muted"}>
                     {s.label}:{s.value > 0 ? "+" : ""}{s.value}
                   </span>
                 ))}
@@ -435,13 +435,13 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
                   else next.add(a.id);
                   return next;
                 })}
-                className="mt-2 cursor-pointer text-xs text-arcane-purple-light hover:underline"
+                className="mt-2 cursor-pointer text-xs text-action-ink hover:underline"
               >
                 {openJustifications.has(a.id) ? "Hide" : "View"} justifications
               </button>
               <div className="collapsible" data-open={openJustifications.has(a.id)}>
                 <div>
-                  <div className="mt-2 space-y-1 text-xs text-text-muted">
+                  <div className="mt-2 space-y-1 text-xs text-ink-muted">
                     <p><strong>Scientific:</strong> {a.scientific_justification}</p>
                     <p><strong>Economic:</strong> {a.economic_justification}</p>
                     <p><strong>Human Rights:</strong> {a.human_rights_justification}</p>
@@ -460,14 +460,14 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
         <div className="flex gap-3">
           <button
             onClick={() => setShowScoringForm(!showScoringForm)}
-            className="inline-flex items-center gap-1 rounded bg-primary px-4 py-2 text-sm font-semibold text-text-bright hover:bg-primary-hover"
+            className="inline-flex items-center gap-1 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
           >
             <Plus className="h-4 w-4" />
             Add Assessment
           </button>
           <button
             onClick={() => setShowPeriodForm(!showPeriodForm)}
-            className="inline-flex items-center gap-1 rounded border border-realm-border px-4 py-2 text-sm text-text-muted hover:border-arcane-purple hover:text-text"
+            className="inline-flex items-center gap-1 rounded border border-line px-4 py-2 text-sm text-ink-muted hover:border-action hover:text-ink-2"
           >
             <Plus className="h-4 w-4" />
             Add Period
@@ -476,8 +476,8 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
       )}
 
       {showScoringForm && (
-        <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-          <h3 className="font-display text-lg font-semibold text-text-bright">
+        <div className="rounded-lg border border-line bg-surface-1 p-4">
+          <h3 className="font-display text-lg font-semibold text-ink">
             Impact Assessment
           </h3>
           <div className="mt-4">
@@ -491,8 +491,8 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
       )}
 
       {showPeriodForm && (
-        <div className="rounded-lg border border-realm-border bg-realm-surface p-4">
-          <h3 className="font-display text-lg font-semibold text-text-bright">
+        <div className="rounded-lg border border-line bg-surface-1 p-4">
+          <h3 className="font-display text-lg font-semibold text-ink">
             New Assessment Period
           </h3>
           <div className="mt-4">
