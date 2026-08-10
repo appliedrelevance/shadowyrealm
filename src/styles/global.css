@@ -11,7 +11,13 @@
    switch to; the values below ARE the theme.
    --------------------------------------------------------------------------- */
 
-@theme {
+/* `@theme static` rather than `@theme`: Tailwind v4 tree-shakes theme
+   variables, emitting a custom property only when some utility references it.
+   Anything reading a token through `var(--color-…)` outside a utility — chart
+   props, inline SVG, a canvas — would then get nothing, and only by luck get
+   something when an unrelated utility happened to keep the token alive.
+   `static` emits them all. See appliedrelevance/.kiro/steering/design-stack.md */
+@theme static {
   /* ---- Surfaces: page ground → raised panel → highest ------------------ */
   --color-surface: #181822;
   --color-surface-1: #1e1e2e;
