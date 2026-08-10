@@ -1,7 +1,7 @@
 /**
  * oxlint JS plugin — AR design-system token adherence.
  *
- * Bans raw Tailwind palette utilities (`bg-slate-900`, `text-gray-500`) and raw
+ * Bans raw Tailwind palette utilities (`bg-<palette>-<shade>`) and raw
  * hex colors in source. Brands diverge in token *values*, never in token
  * *names*, so a literal palette reference is always a bug: it ignores the
  * brand's palette and silently breaks dark mode.
@@ -18,11 +18,30 @@ const PREFIX =
 const PALETTE =
   'slate|gray|grey|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose'
 
-// e.g. `bg-slate-900`, `hover:text-gray-500`, `dark:border-zinc-700/50`
+// e.g. a bg/text/border utility naming a stock palette + numeric shade,
+// with any variant prefix and an optional /opacity suffix.
+// NOTE: never write such a class literally in this file — Tailwind scans the
+// repo and would generate dead CSS for the example.
 const RAW_UTILITY = new RegExp(`\\b(?:${PREFIX})-(?:${PALETTE})-\\d{2,3}\\b`)
 
-// Bare `#abc` / `#aabbcc` / `#aabbccdd`, but not a hex inside a longer word.
-const RAW_HEX = /#[0-9a-fA-F]{3,8}\b/
+// A hex colour, but only where the text is actually being used as one.
+//
+// Matching a bare `#[0-9a-f]{3,8}` anywhere is too eager: it fires on prose
+// like "FAA Contract #123" and on issue references, and a rule that cries wolf
+// gets switched off. Require one of three unambiguous shapes instead:
+//
+//   1. the whole literal is a colour         — "#0f172a", "#FFF"
+//   2. a Tailwind arbitrary value            — "bg-[#E8F0FE]"
+//   3. a CSS value position                  — "color: #fff", "1px solid #ccc"
+//
+// Hex lengths are restricted to the ones CSS actually accepts (3, 4, 6, 8), so
+// "#12345" and "#123" in prose no longer match.
+const HEX = '#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})'
+const RAW_HEX = new RegExp(
+  `^\\s*${HEX}\\s*$` + // whole literal
+    `|\\[${HEX}\\]` + // Tailwind arbitrary value
+    `|(?::|\\bsolid\\b|\\bdashed\\b|\\bdotted\\b|,)\\s*${HEX}\\b`, // CSS value
+)
 
 const GUIDANCE =
   'Use the AR token vocabulary: surface/surface-1/surface-2, ink/ink-2/ink-muted, ' +

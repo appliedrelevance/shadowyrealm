@@ -21,6 +21,7 @@
   --color-ink: #f8fafc; /* headings, key data          */
   --color-ink-2: #e2e8f0; /* body copy — the html default */
   --color-ink-muted: #94a3b8; /* labels, captions, metadata  */
+  --color-ink-faint: #64748b; /* disabled, placeholder       */
 
   /* ---- Lines ----------------------------------------------------------- */
   --color-line: #333350;
@@ -30,6 +31,7 @@
   --color-action: #7c3aed;
   --color-action-hi: #6d28d9; /* hover — this brand deepens rather than lifts */
   --color-action-ink: #a78bfa; /* legible as text on the dark ground          */
+  --color-action-soft: #241b3d; /* tinted accent ground on dark  */
   --color-on-action: #ffffff;
 
   /* ---- Status: meaning, never decoration ------------------------------- */
