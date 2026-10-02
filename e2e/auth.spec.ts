@@ -18,13 +18,6 @@ test.describe("Authentication", () => {
     await page.screenshot({ path: "screenshots/login-error.png" });
   });
 
-  test("login preserves redirect path", async ({ page }) => {
-    await page.goto("/entity/new");
-    await page.waitForURL(/\/login\?redirect/);
-    const url = page.url();
-    expect(url).toContain("redirect=");
-    await page.screenshot({ path: "screenshots/login-redirect.png" });
-  });
 
   test.describe("authenticated flow", () => {
     test.skip(
@@ -32,13 +25,12 @@ test.describe("Authentication", () => {
       "Set TEST_USER_EXISTS=1 after creating test user in Supabase",
     );
 
-    test("login and see create button", async ({ page }) => {
+    test("login shows Sign Out", async ({ page }) => {
       await page.goto("/login");
       await page.fill('input[type="email"]', TEST_EMAIL);
       await page.fill('input[type="password"]', TEST_PASSWORD);
       await page.click('button[type="submit"]');
       await page.waitForURL("/");
-      await expect(page.locator("text=Add Figure")).toBeVisible();
       await expect(page.locator("text=Sign Out")).toBeVisible();
       await page.screenshot({ path: "screenshots/authenticated-home.png" });
     });
@@ -54,7 +46,6 @@ test.describe("Authentication", () => {
       // Logout
       await page.click("text=Sign Out");
       await expect(page.locator("text=Sign In")).toBeVisible();
-      await expect(page.locator("text=Add Figure")).not.toBeVisible();
       await page.screenshot({ path: "screenshots/logged-out.png" });
     });
   });

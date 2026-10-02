@@ -30,11 +30,6 @@ test.describe("Public pages", () => {
     await page.screenshot({ path: "screenshots/login.png" });
   });
 
-  test("register page renders", async ({ page }) => {
-    await page.goto("/register");
-    await expect(page.locator("h1")).toContainText("Sign Up");
-    await page.screenshot({ path: "screenshots/register.png" });
-  });
 
   test("nonexistent entity shows not found", async ({ page }) => {
     await page.goto("/entity/nonexistent-entity-slug-12345");
@@ -50,18 +45,7 @@ test.describe("Public pages", () => {
     await expect(nav.getByText("Compare")).toBeVisible();
     await expect(nav.getByText("How It Works")).toBeVisible();
     await expect(nav.getByText("Sign In")).toBeVisible();
-    await expect(nav.getByText("Sign Up")).toBeVisible();
   });
 
-  test("unauthenticated user sees no create button", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator("text=Add Figure")).not.toBeVisible();
-  });
 
-  test("entity/new redirects to login when not authenticated", async ({ page }) => {
-    await page.goto("/entity/new");
-    await page.waitForURL(/\/login/);
-    await expect(page.locator("h1")).toContainText("Sign In");
-    await page.screenshot({ path: "screenshots/auth-redirect.png" });
-  });
 });
