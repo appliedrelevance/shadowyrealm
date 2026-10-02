@@ -11,7 +11,12 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  // _landru/ symlinks into the whole Landru media/archive tree (thousands of .html
+  // files). Without these, dev-server startup scans and watches all of it and never
+  // finishes.
+  optimizeDeps: { entries: ["index.html"] },
   server: {
     allowedHosts: ["this-side-of-paradise.local"],
+    watch: { ignored: ["**/_landru/**"] },
   },
 });
