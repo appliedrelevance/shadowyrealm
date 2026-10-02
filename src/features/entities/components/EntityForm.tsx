@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
 import { useToast } from "@/components/Toast";
 import { AIContentBadge } from "@/components/AIContentBadge";
+import type { Json } from "@/lib/database.types";
 import { slugify } from "@/lib/utils";
 import type { Entity } from "../types";
 import type { AIEntityData } from "@/features/ai/types";
@@ -213,7 +214,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           description: data.description,
           biography: data.biography || null,
           image_url: imageUrl || null,
-          metadata: hasMetadata ? entityMetadata : null,
+          metadata: hasMetadata ? (entityMetadata as Json) : null,
           created_by: user.id,
         })
         .select("id")
@@ -231,7 +232,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           .from("assessments")
           .insert({
             entity_id: entityRow.id,
-            assessor_id: user.id,
+            created_by: user.id,
             scientific_score: aiScores.scientific,
             economic_score: aiScores.economic,
             human_rights_score: aiScores.human_rights,
@@ -269,7 +270,7 @@ export function EntityForm({ initialData, mode, aiData }: EntityFormProps) {
           description: data.description,
           biography: data.biography || null,
           image_url: imageUrl || null,
-          metadata: hasMetadata ? entityMetadata : null,
+          metadata: hasMetadata ? (entityMetadata as Json) : null,
         })
         .eq("id", initialData.id);
 
