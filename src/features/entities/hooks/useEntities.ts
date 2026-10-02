@@ -41,7 +41,7 @@ export function useEntity(slug: string) {
         .from("entities")
         .select("*")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
