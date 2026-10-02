@@ -78,6 +78,23 @@ async function audit(
   if (error) fail(`the change was saved but its "${action}" audit entry was not`, error);
 }
 
+// ---------- Identity ----------
+
+/**
+ * True when accessToken is a valid Supabase session for the owner account.
+ * An invalid or expired token is simply "not the operator"; any other failure
+ * (auth service unreachable, misconfigured key) throws instead of reading as "no".
+ */
+export async function isOperator(env: ServiceEnv, accessToken: string): Promise<boolean> {
+  const db = connect(env);
+  const { data, error } = await db.auth.getUser(accessToken);
+  if (error) {
+    if (error.status === 400 || error.status === 401 || error.status === 403) return false;
+    throw new Error(`verify session: ${error.message}`);
+  }
+  return data.user.id === env.OWNER_USER_ID;
+}
+
 // ---------- Reads ----------
 
 export async function listEntities(env: ServiceEnv, args: ListEntitiesInput) {

@@ -1,9 +1,9 @@
 /**
  * ShadowyRealm CF Worker entry point.
- * /mcp serves the MCP control surface; /api/* serves the web UI's handlers.
+ * /mcp serves the MCP control surface; /api/* serves the web UI's manual controls.
  * All other routes serve the static SPA.
  */
-import { research } from "../lib/research";
+import { handleApiRequest } from "./api";
 import type { Env, ExecutionContext } from "./env";
 import { handleMcpRequest } from "./mcp";
 
@@ -15,13 +15,10 @@ export default {
       return handleMcpRequest(request, env, ctx);
     }
 
-    // Superseded by the research_entity MCP tool; removed with the create form.
-    if (url.pathname === "/api/ai/research" && request.method === "POST") {
-      const { query, model } = (await request.json()) as { query: string; model?: string };
-      if (!query) {
-        return Response.json({ error: "query is required" }, { status: 400 });
-      }
-      return Response.json(await research(env, { query, model }));
+    if (url.pathname.startsWith("/api/")) {
+      const response = await handleApiRequest(request, env);
+      if (response) return response;
+      return Response.json({ error: "not found" }, { status: 404 });
     }
 
     // Serve SPA for all other routes
