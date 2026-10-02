@@ -64,12 +64,7 @@ export function StatusWorkflow({ entity }: { entity: Entity }) {
             key={transition.to}
             onClick={() =>
               mutation.mutate(
-                {
-                  entityId: entity.id,
-                  slug: entity.slug,
-                  oldStatus: entity.status,
-                  newStatus: transition.to,
-                },
+                { slug: entity.slug, newStatus: transition.to },
                 {
                   onSuccess: () => toast(`Status updated to ${transition.to.replace("_", " ")}`),
                 },

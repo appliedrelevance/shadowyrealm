@@ -9,19 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RegisterRouteImport } from './routes/register'
 import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as EntityNewRouteImport } from './routes/entity/new'
 import { Route as EntitySlugRouteImport } from './routes/entity/$slug'
 
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MethodologyRoute = MethodologyRouteImport.update({
   id: '/methodology',
   path: '/methodology',
@@ -42,11 +35,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EntityNewRoute = EntityNewRouteImport.update({
-  id: '/entity/new',
-  path: '/entity/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EntitySlugRoute = EntitySlugRouteImport.update({
   id: '/entity/$slug',
   path: '/entity/$slug',
@@ -58,18 +46,14 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
-  '/register': typeof RegisterRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/entity/new': typeof EntityNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
-  '/register': typeof RegisterRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/entity/new': typeof EntityNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,38 +61,20 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
-  '/register': typeof RegisterRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/entity/new': typeof EntityNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/compare'
-    | '/login'
-    | '/methodology'
-    | '/register'
-    | '/entity/$slug'
-    | '/entity/new'
+  fullPaths: '/' | '/compare' | '/login' | '/methodology' | '/entity/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/compare'
-    | '/login'
-    | '/methodology'
-    | '/register'
-    | '/entity/$slug'
-    | '/entity/new'
+  to: '/' | '/compare' | '/login' | '/methodology' | '/entity/$slug'
   id:
     | '__root__'
     | '/'
     | '/compare'
     | '/login'
     | '/methodology'
-    | '/register'
     | '/entity/$slug'
-    | '/entity/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,20 +82,11 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   LoginRoute: typeof LoginRoute
   MethodologyRoute: typeof MethodologyRoute
-  RegisterRoute: typeof RegisterRoute
   EntitySlugRoute: typeof EntitySlugRoute
-  EntityNewRoute: typeof EntityNewRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/methodology': {
       id: '/methodology'
       path: '/methodology'
@@ -158,13 +115,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/entity/new': {
-      id: '/entity/new'
-      path: '/entity/new'
-      fullPath: '/entity/new'
-      preLoaderRoute: typeof EntityNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/entity/$slug': {
       id: '/entity/$slug'
       path: '/entity/$slug'
@@ -180,9 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   LoginRoute: LoginRoute,
   MethodologyRoute: MethodologyRoute,
-  RegisterRoute: RegisterRoute,
   EntitySlugRoute: EntitySlugRoute,
-  EntityNewRoute: EntityNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

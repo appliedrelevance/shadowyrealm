@@ -1,75 +1,30 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
+import { operatorApi } from "@/lib/operator-api";
 import type { PublicationStatus } from "../types";
 
-export function useUpdateEntityStatus() {
+/** True when the signed-in account is the owner, who alone may use the manual controls. */
+export function useOperator() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      entityId,
-      slug,
-      oldStatus,
-      newStatus,
-    }: {
-      entityId: number;
-      slug: string;
-      oldStatus: PublicationStatus;
-      newStatus: PublicationStatus;
-    }) => {
-      if (!user) throw new Error("Not authenticated");
-
-      // Update entity status
-      const { error: updateError } = await supabase
-        .schema("shadowyrealm")
-        .from("entities")
-        .update({ status: newStatus })
-        .eq("id", entityId);
-
-      if (updateError) throw updateError;
-
-      // Write audit log
-      const { error: auditError } = await supabase
-        .schema("shadowyrealm")
-        .from("entity_audit_log")
-        .insert({
-          entity_id: entityId,
-          action: "status_change",
-          old_value: { status: oldStatus },
-          new_value: { status: newStatus },
-          performed_by: user.id,
-        });
-
-      if (auditError) throw auditError;
-
-      return { slug, newStatus };
-    },
-    onSuccess: ({ slug }) => {
-      queryClient.invalidateQueries({ queryKey: ["entity", slug] });
-      queryClient.invalidateQueries({ queryKey: ["entities"] });
-    },
+  return useQuery({
+    queryKey: ["operator", user?.id],
+    enabled: !!user,
+    queryFn: async () => (await operatorApi<{ operator: boolean }>("GET", "/api/session")).operator,
   });
 }
 
-export function useDeleteEntity() {
+export function useUpdateEntityStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ entityId }: { entityId: number }) => {
-      // Published entities get archived, not deleted (Req 1.7)
-      // Only draft entities can be permanently deleted
-      const { error } = await supabase
-        .schema("shadowyrealm")
-        .from("entities")
-        .delete()
-        .eq("id", entityId)
-        .eq("status", "draft");
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
+    mutationFn: ({ slug, newStatus }: { slug: string; newStatus: PublicationStatus }) =>
+      operatorApi<{ slug: string; from: PublicationStatus; to: PublicationStatus }>(
+        "POST",
+        `/api/entities/${encodeURIComponent(slug)}/status`,
+        { status: newStatus },
+      ),
+    onSuccess: ({ slug }) => {
+      queryClient.invalidateQueries({ queryKey: ["entity", slug] });
       queryClient.invalidateQueries({ queryKey: ["entities"] });
     },
   });

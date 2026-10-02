@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { User, Building2, Zap, Edit, Calendar, MapPin, Globe, Plus } from "lucide-react";
+import { User, Building2, Zap, Calendar, MapPin, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
 import {
   calculateATIS,
@@ -14,14 +13,13 @@ import {
 } from "@/lib/atis-calculator";
 import { useEntity } from "../hooks/useEntities";
 import { useAssessments, useAssessmentPeriods, useRelationships } from "@/features/scoring/hooks/useAssessments";
+import { useOperator } from "../hooks/useEntityMutations";
 import { StatusWorkflow } from "./StatusWorkflow";
 import { ImpactRadarChart } from "@/components/ImpactRadarChart";
 import { StatBlock } from "@/components/StatBlock";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { AchievementList } from "@/components/AchievementList";
 import { ATISBreakdown } from "@/components/ATISBreakdown";
-import { ScoringForm } from "@/features/scoring/components/ScoringForm";
-import { PeriodForm } from "@/features/scoring/components/PeriodForm";
 import { EntityProfileSkeleton } from "@/components/Skeleton";
 import { RefreshCw } from "lucide-react";
 import type { EntityType, PublicationStatus } from "../types";
@@ -51,7 +49,7 @@ function MetadataField({ icon: Icon, label, value }: { icon: typeof Calendar; la
 }
 
 export function EntityProfilePage({ slug }: { slug: string }) {
-  const { user } = useAuth();
+  const { data: isOperator } = useOperator();
   const { data: entity, isLoading, error } = useEntity(slug);
 
   if (isLoading) {
@@ -95,7 +93,6 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   const entityType = entity.entity_type as EntityType;
   const entityStatus = entity.status as PublicationStatus;
   const Icon = typeIcons[entityType];
-  const isCreator = user?.id === entity.created_by;
   const metadata = (entity.metadata ?? {}) as Record<string, string>;
 
   return (
@@ -139,19 +136,8 @@ export function EntityProfilePage({ slug }: { slug: string }) {
               </div>
             </div>
 
-            {isCreator && (
+            {isOperator && (
               <div className="flex items-center gap-2">
-                {entityStatus === "draft" && (
-                  <Link
-                    to="/entity/$slug"
-                    params={{ slug: entity.slug }}
-                    search={{ edit: true }}
-                    className="flex items-center gap-1 rounded border border-line px-3 py-1.5 text-sm text-ink-muted hover:border-action hover:text-ink-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                    Edit
-                  </Link>
-                )}
                 <StatusWorkflow entity={entity} />
               </div>
             )}
@@ -215,17 +201,15 @@ export function EntityProfilePage({ slug }: { slug: string }) {
       )}
 
       {/* Character Sheet - Impact Scores */}
-      <CharacterSheet entityId={entity.id} isAuthenticated={!!user} />
+      <CharacterSheet entityId={entity.id} />
     </div>
   );
 }
 
-function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAuthenticated: boolean }) {
+function CharacterSheet({ entityId }: { entityId: number }) {
   const { data: assessments } = useAssessments(entityId);
   const { data: periods } = useAssessmentPeriods(entityId);
   const { data: relationships } = useRelationships(entityId);
-  const [showScoringForm, setShowScoringForm] = useState(false);
-  const [showPeriodForm, setShowPeriodForm] = useState(false);
   const [openJustifications, setOpenJustifications] = useState<Set<number>>(new Set());
 
   const atisResult = useMemo(() => {
@@ -286,36 +270,9 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
 
   if (!assessments || assessments.length === 0) {
     return (
-      <div className="mt-8 space-y-4">
-        <div className="rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center">
-          <p className="text-ink-muted">
-            No impact assessments yet. Be the first to score this entity.
-          </p>
-          {isAuthenticated && (
-            <button
-              onClick={() => setShowScoringForm(true)}
-              className="mt-3 inline-flex items-center gap-1 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
-            >
-              <Plus className="h-4 w-4" />
-              Add Assessment
-            </button>
-          )}
-        </div>
-        {showScoringForm && (
-          <div className="rounded-lg border border-line bg-surface-1 p-4">
-            <h3 className="font-display text-lg font-semibold text-ink">
-              Impact Assessment
-            </h3>
-            <div className="mt-4">
-              <ScoringForm
-                entityId={entityId}
-                periods={periods?.map((p) => ({ id: p.id, label: p.label }))}
-                onSuccess={() => setShowScoringForm(false)}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      <p className="mt-8 rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center text-ink-muted">
+        No impact assessments yet.
+      </p>
     );
   }
 
@@ -454,55 +411,6 @@ function CharacterSheet({ entityId, isAuthenticated }: { entityId: number; isAut
           ))}
         </div>
       </div>
-
-      {/* Action buttons */}
-      {isAuthenticated && (
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowScoringForm(!showScoringForm)}
-            className="inline-flex items-center gap-1 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
-          >
-            <Plus className="h-4 w-4" />
-            Add Assessment
-          </button>
-          <button
-            onClick={() => setShowPeriodForm(!showPeriodForm)}
-            className="inline-flex items-center gap-1 rounded border border-line px-4 py-2 text-sm text-ink-muted hover:border-action hover:text-ink-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Period
-          </button>
-        </div>
-      )}
-
-      {showScoringForm && (
-        <div className="rounded-lg border border-line bg-surface-1 p-4">
-          <h3 className="font-display text-lg font-semibold text-ink">
-            Impact Assessment
-          </h3>
-          <div className="mt-4">
-            <ScoringForm
-              entityId={entityId}
-              periods={periods?.map((p) => ({ id: p.id, label: p.label }))}
-              onSuccess={() => setShowScoringForm(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {showPeriodForm && (
-        <div className="rounded-lg border border-line bg-surface-1 p-4">
-          <h3 className="font-display text-lg font-semibold text-ink">
-            New Assessment Period
-          </h3>
-          <div className="mt-4">
-            <PeriodForm
-              entityId={entityId}
-              onSuccess={() => setShowPeriodForm(false)}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

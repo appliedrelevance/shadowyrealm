@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
-import { BarChart3, LogIn, LogOut, UserPlus, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
+import { BarChart3, LogIn, LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
@@ -53,10 +53,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   <LogIn className="h-4 w-4" />
                   {COPY.nav.signIn}
                 </Link>
-                <Link to="/register" className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
-                  <UserPlus className="h-4 w-4" />
-                  {COPY.nav.signUp}
-                </Link>
               </>
             )}
           </div>
@@ -106,10 +102,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   <Link to="/login" search={{ redirect: "/" }} onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
                     <LogIn className="h-5 w-5" />
                     {COPY.nav.signIn}
-                  </Link>
-                  <Link to="/register" onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
-                    <UserPlus className="h-5 w-5" />
-                    {COPY.nav.signUp}
                   </Link>
                 </>
               )}

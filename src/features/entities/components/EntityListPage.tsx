@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
 import { useEntities } from "../hooks/useEntities";
 import { EntityCard } from "./EntityCard";
@@ -29,7 +27,6 @@ const statuses: { value: PublicationStatus | ""; label: string }[] = [
 ];
 
 export function EntityListPage() {
-  const { user } = useAuth();
   const [typeFilter, setTypeFilter] = useState<EntityType | "">("");
   const [statusFilter, setStatusFilter] = useState<PublicationStatus | "">("");
   const [page, setPage] = useState(1);
@@ -54,15 +51,6 @@ export function EntityListPage() {
             {COPY.home.subtitle}
           </p>
         </div>
-        {user && (
-          <Link
-            to="/entity/new"
-            className="flex items-center gap-2 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
-          >
-            <Plus className="h-4 w-4" />
-            {COPY.home.addFigure}
-          </Link>
-        )}
       </div>
 
       {/* Filters */}
@@ -125,15 +113,6 @@ export function EntityListPage() {
       {data && data.entities.length === 0 && (
         <div className="mt-8 text-center">
           <p className="text-ink-muted">{COPY.home.empty}</p>
-          {user && (
-            <Link
-              to="/entity/new"
-              className="mt-3 inline-flex items-center gap-2 rounded bg-action px-4 py-2 text-sm font-semibold text-ink hover:bg-action-hi"
-            >
-              <Plus className="h-4 w-4" />
-              Create the first entry
-            </Link>
-          )}
         </div>
       )}
 
