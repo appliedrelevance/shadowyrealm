@@ -20,7 +20,12 @@ function MethodologyPage() {
       <div className="prose prose-invert mt-8 max-w-none">
         <h2 className="font-display text-ink">The Formula</h2>
         <div className="rounded-lg border border-line bg-surface-1 p-4 font-mono text-lg text-action-ink">
-          I<sub>final</sub> = I<sub>base</sub> × D<sub>temporal</sub> × C<sub>consensus</sub> × N<sub>network</sub> × U<sub>uncertainty</sub>
+          <div>
+            Level = I<sub>base</sub> × C<sub>consensus</sub> × N<sub>network</sub> × U<sub>uncertainty</sub>
+          </div>
+          <div className="mt-2">
+            Score = area under the level curve, in influence-centuries
+          </div>
         </div>
 
         <h2 className="font-display text-ink">Dimensional Scoring</h2>
@@ -47,21 +52,49 @@ function MethodologyPage() {
 
         <h2 className="font-display text-ink">Base Impact (I<sub>base</sub>)</h2>
         <p>
-          The weighted dimensional score is multiplied by reach and persistence
-          factors (1-10 each), using power scaling to create truly unbounded
-          scores for legendary figures.
+          The weighted dimensional score is multiplied by a reach factor (1-10),
+          using power scaling so that figures with global reach stand well apart
+          from local ones. How long an impact lasts is not a multiplier: it is
+          what the influence curve below records.
         </p>
         <p className="text-sm text-ink-muted">
           Extraordinary achievement bonus: scores beyond ±10 receive a power-law
           multiplier of (|score|/10)<sup>1.2</sup>.
         </p>
 
-        <h2 className="font-display text-ink">Temporal Decay (D<sub>temporal</sub>)</h2>
+        <h2 className="font-display text-ink">The Influence Curve</h2>
         <p>
-          Impact decays over time using a {DEFAULT_ATIS_CONFIG.temporalDecayShape} curve
-          with rate {DEFAULT_ATIS_CONFIG.temporalDecayRate}. Logarithmic decay maintains a
-          floor value (~30%) to preserve the lasting significance of historical figures.
+          Every assessment belongs to one period: a window of years with its own
+          reach and its own level of impact. Laid end to end, the periods are the
+          curve of an entity's influence over time. A legacy that grows after
+          death is simply a run of later periods with a higher level, and a
+          legacy that fades is a run with a lower one. The score is the area
+          under the curve up to the present, in influence-centuries (level ×
+          years ÷ 100). It has no ceiling: it grows with duration.
         </p>
+        <p className="text-sm text-ink-muted">
+          Several assessments of the same period are averaged, not added.
+          Periods that overlap add. Years between periods count for nothing.
+          Assessments that are not attached to a period are not counted.
+        </p>
+        <p>
+          When the last period ends before the present, its level fades from
+          there. The persistence factor sets how fast, as the time in years for
+          the legacy to fall to 1/e of its level:
+        </p>
+        <table>
+          <thead>
+            <tr><th>Persistence</th><th>Time constant</th></tr>
+          </thead>
+          <tbody>
+            {DEFAULT_ATIS_CONFIG.persistenceTimeConstants.map((years, i) => (
+              <tr key={i}>
+                <td>{i + 1}</td>
+                <td>{Number.isFinite(years) ? `${years} years` : "never fades"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <h2 className="font-display text-ink">Consensus Weight (C<sub>consensus</sub>)</h2>
         <p>
@@ -83,6 +116,10 @@ function MethodologyPage() {
         </p>
 
         <h2 className="font-display text-ink">Magnitude Tiers</h2>
+        <p className="text-sm text-ink-muted">
+          Ranges are in influence-centuries. They have not yet been re-anchored
+          to the influence-curve score.
+        </p>
         <table>
           <thead>
             <tr><th>Tier</th><th>Range</th><th>Description</th></tr>

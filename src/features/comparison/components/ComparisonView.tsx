@@ -10,6 +10,7 @@ import {
   computeConsensusScores,
   type DimensionalScores,
 } from "@/lib/atis-calculator";
+import { buildATISInputs } from "@/lib/atis-inputs";
 import { seriesColor } from "@/lib/chart-colors";
 
 const typeIcons: Record<string, typeof User> = {
@@ -22,13 +23,26 @@ function useEntityWithScores(entityId: number) {
   return useQuery({
     queryKey: ["entity-comparison", entityId],
     queryFn: async () => {
-      const [entityRes, assessRes] = await Promise.all([
+      const [entityRes, assessRes, periodRes, relRes] = await Promise.all([
         supabase.schema("shadowyrealm").from("entities").select("*").eq("id", entityId).single(),
         supabase.schema("shadowyrealm").from("assessments").select("*").eq("entity_id", entityId),
+        supabase.schema("shadowyrealm").from("assessment_periods").select("*").eq("entity_id", entityId),
+        supabase
+          .schema("shadowyrealm")
+          .from("relationships")
+          .select("*")
+          .or(`source_entity_id.eq.${entityId},target_entity_id.eq.${entityId}`),
       ]);
       if (entityRes.error) throw entityRes.error;
       if (assessRes.error) throw assessRes.error;
-      return { entity: entityRes.data, assessments: assessRes.data };
+      if (periodRes.error) throw periodRes.error;
+      if (relRes.error) throw relRes.error;
+      return {
+        entity: entityRes.data,
+        assessments: assessRes.data,
+        periods: periodRes.data,
+        relationships: relRes.data,
+      };
     },
   });
 }
@@ -181,22 +195,8 @@ function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
         })),
       );
 
-      const atis = calculateATIS(
-        assessments.map((a) => ({
-          scores: {
-            scientific: a.scientific_score,
-            economic: a.economic_score,
-            human_rights: a.human_rights_score,
-            health: a.health_score,
-            cultural: a.cultural_score,
-          },
-          confidence_level: Number(a.confidence_level) || 0.5,
-          controversy_level: Number(a.controversy_level) || 0,
-          consensus_score: 0.5,
-        })),
-        [],
-        [],
-      );
+      const inputs = buildATISInputs(assessments, d.data!.periods, d.data!.relationships);
+      const atis = calculateATIS(inputs.assessments, inputs.periods, inputs.relationships);
 
       return {
         entity: d.data!.entity,

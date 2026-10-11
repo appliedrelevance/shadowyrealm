@@ -7,10 +7,8 @@ import {
   calculateATIS,
   computeConsensusScores,
   getAchievements,
-  type AssessmentInput,
-  type PeriodInput,
-  type RelationshipInput,
 } from "@/lib/atis-calculator";
+import { buildATISInputs } from "@/lib/atis-inputs";
 import { useEntity } from "../hooks/useEntities";
 import { useAssessments, useAssessmentPeriods, useRelationships } from "@/features/scoring/hooks/useAssessments";
 import { useOperator } from "../hooks/useEntityMutations";
@@ -215,37 +213,12 @@ function CharacterSheet({ entityId }: { entityId: number }) {
   const atisResult = useMemo(() => {
     if (!assessments || assessments.length === 0) return null;
 
-    const assessmentInputs: AssessmentInput[] = assessments.map((a) => ({
-      scores: {
-        scientific: a.scientific_score,
-        economic: a.economic_score,
-        human_rights: a.human_rights_score,
-        health: a.health_score,
-        cultural: a.cultural_score,
-      },
-      confidence_level: Number(a.confidence_level) || 0.5,
-      controversy_level: Number(a.controversy_level) || 0,
-      consensus_score: 0.5,
-    }));
-
-    const periodInputs: PeriodInput[] = (periods ?? []).map((p) => ({
-      label: p.label,
-      end_year: p.end_year,
-      reach_factor: p.reach_factor,
-      persistence_factor: p.persistence_factor,
-    }));
-
-    const allRels = [
+    const inputs = buildATISInputs(assessments, periods ?? [], [
       ...(relationships?.outgoing ?? []),
       ...(relationships?.incoming ?? []),
-    ];
-    const relInputs: RelationshipInput[] = allRels.map((r) => ({
-      relationship_type: r.relationship_type as RelationshipInput["relationship_type"],
-      strength: Number(r.strength) || 0.5,
-      temporal_overlap: Number(r.temporal_overlap) || 0.5,
-    }));
+    ]);
 
-    return calculateATIS(assessmentInputs, periodInputs, relInputs);
+    return calculateATIS(inputs.assessments, inputs.periods, inputs.relationships);
   }, [assessments, periods, relationships]);
 
   const consensusScores = useMemo(() => {
@@ -327,10 +300,23 @@ function CharacterSheet({ entityId }: { entityId: number }) {
             <h3 className="mb-3 font-display text-lg font-semibold text-ink">
               ATIS Calculation Breakdown
             </h3>
-            <ATISBreakdown breakdown={atisResult.breakdown} />
+            <ATISBreakdown breakdown={atisResult.breakdown} tail={atisResult.tail} />
+            {atisResult.unplaced_assessments > 0 && (
+              <p className="mt-3 text-sm text-warn">
+                {atisResult.unplaced_assessments} assessment
+                {atisResult.unplaced_assessments === 1 ? " is" : "s are"} not attached to a
+                period and {atisResult.unplaced_assessments === 1 ? "is" : "are"} not counted.
+              </p>
+            )}
             <p className="mt-3 text-xs text-ink-muted">
-              Formula: I_final = I_base × D_temporal × C_consensus × N_network × U_uncertainty
-              &nbsp;|&nbsp; Algorithm v{atisResult.algorithm_version}
+              Score: {atisResult.overall_score.toFixed(1)} influence-centuries up to{" "}
+              {atisResult.as_of_year}
+              &nbsp;|&nbsp; Peak level {atisResult.peak_level.toFixed(1)}
+              &nbsp;|&nbsp; Level now {atisResult.current_level.toFixed(1)}
+            </p>
+            <p className="mt-1 text-xs text-ink-muted">
+              Level = I_base × C_consensus × N_network × U_uncertainty; score = area under
+              the level curve &nbsp;|&nbsp; Algorithm v{atisResult.algorithm_version}
             </p>
           </div>
         </>
