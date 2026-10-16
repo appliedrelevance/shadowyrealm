@@ -10,6 +10,8 @@ export const COPY = {
   home: {
     heading: "Impact Index",
     subtitle: "Who shaped the world — for better or worse?",
+    heroAlt:
+      "A stone beast's head carved into a jungle cliff, its open mouth glowing red above a flight of steps",
     empty: "No entries yet",
     loading: "Loading...",
   },

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COPY } from "@/lib/copy";
+import gateOfTheRealm from "@/assets/gate-of-the-realm.jpg";
 import { useEntities } from "../hooks/useEntities";
 import { EntityCard } from "./EntityCard";
 import { EntityCardSkeleton } from "@/components/Skeleton";
@@ -42,7 +43,7 @@ export function EntityListPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold text-ink">
             {COPY.home.heading}
@@ -51,6 +52,13 @@ export function EntityListPage() {
             {COPY.home.subtitle}
           </p>
         </div>
+        <img
+          src={gateOfTheRealm}
+          alt={COPY.home.heroAlt}
+          width={512}
+          height={512}
+          className="w-44 rounded-lg border border-line shadow-lg shadow-crit/25 md:w-80"
+        />
       </div>
 
       {/* Filters */}
