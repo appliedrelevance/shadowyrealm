@@ -46,11 +46,44 @@
   - $0.24 per million input tokens; output is free.
   - Answer shape, confirmed in the napkin-sketch-triage build: `{ type, score, legend, probabilities: { "0": …, "1": …, … }, confidence }`. `suggest.ts` reads it strictly and throws on anything unusable.
   - The Worker already has the `AI` binding and `AI_GATEWAY_NAME`. Passing `{ gateway: { id } }` as the third argument routes through the gateway, as `suggest.ts` does.
-  - The model page does not state a maximum number of levels for a `score` question.
+  - The model page does not state a maximum number of levels for a `score` question. The experiment below found it is 10.
 - **Implications**:
   - One request per period: 5 dimensions × a benefit question and a harm question is 10 questions, well under 64.
   - The expected value from `probabilities` gives a continuous score, and the probability spread gives `confidence_level` directly.
   - The provider secrets can go.
+
+### Rubric experiment, 2026-10-26
+- **Context**: Run a few entities through the proposed benefit/harm rubric before fixing the requirements.
+- **Sources Consulted**:
+  - Clef over Workers AI REST: 10 calls, 122,576 input tokens, about $0.03.
+  - Wikipedia article extracts as evidence, plus one synthetic control ("Uncle Bob", a short invented biography of an ordinary man).
+  - The real `calculateATIS`, run once on benefit + harm and once on benefit − harm.
+  - Hand-set links: Jesus → Catholic Church 0.8, Catholic Church → First Crusade 0.5.
+  - Scratch script and raw answers stayed in the session scratchpad.
+- **Findings**:
+  - **A `score` question takes at most 10 levels.** 11 is rejected with HTTP 422. Ten levels, read as 0–9 and scaled to 0–10, work.
+  - **The answer's `score` field is the probability-weighted expected value**, so no client-side arithmetic is needed.
+  - **Clef's `confidence` runs about 0.2 even on a sharply peaked answer.** Through `calculateUncertaintyFactor` that always lands on the 0.7 floor, so the uncertainty factor is a constant in practice.
+  - **Total magnitude, in influence-centuries:**
+
+    | Entity | Total magnitude |
+    |---|---|
+    | Catholic Church | 455 |
+    | Jesus | 406 (own 41, credited 364) |
+    | Shakespeare | 72 |
+    | First Crusade | 43 |
+    | 9/11 | 7.3 |
+    | Harry Potter | 6.9 |
+    | Uncle Bob | 1.0 |
+
+  - **Benefit share of magnitude:** Shakespeare 86%, Harry Potter 77%, Bob 76%, Jesus 55%, Church 54%, First Crusade 26%, 9/11 14%.
+  - **Jesus's own 41.4 is 41.2 tail.** His ministry's persistence (8) keeps its level fading across 1,996 years, on top of the 364 credited through the Church. The legacy is counted twice: once as his tail and once as credit.
+  - **The First Crusade's 42.8 is 41.7 tail**, from persistence 6 over 927 years. The four-year event itself is 1.1.
+  - **Recent entities are small by construction.** 9/11 and Harry Potter have had 25–29 years to accumulate area.
+- **Implications**:
+  - The rubric is 10 levels.
+  - Drop the uncertainty factor, or replace it with something that varies.
+  - A tail should not run for an entity whose legacy is carried by credited descendants. That is a change to Requirements 2 and 6.
 
 ### Shared database schema
 - **Context**: What do the graph and scoring work have to fit?
@@ -198,7 +231,6 @@
 
 ## Risks & Mitigations
 - **pgRouting drops zero-cost edges** (strength 1.00). Clamp the cost to a small positive minimum and confirm on a throwaway database before the shared install.
-- **Clef's maximum number of `score` levels is undocumented.** Confirm a 7-level rubric with a real call before fixing the rubric.
 - **Drafts are publicly readable, and signed-in accounts can write directly.** Hand off the policy tightening before any score is published.
 - **Extensions and policies on the shared database belong to the monorepo root.** Every DDL item goes in a handoff for a session rooted there, with the exact SQL and a verification query.
 - **The local and cloud databases have drifted.** Align `ltree`, `pg_graphql` and `pgrouting` in the same handoff, so `bun run db:types` and the e2e suite match production.
