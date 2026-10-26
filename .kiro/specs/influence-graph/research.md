@@ -48,7 +48,7 @@
   - The Worker already has the `AI` binding and `AI_GATEWAY_NAME`. Passing `{ gateway: { id } }` as the third argument routes through the gateway, as `suggest.ts` does.
   - The model page does not state a maximum number of levels for a `score` question.
 - **Implications**:
-  - One request per period: 5 dimensions × a magnitude question and a direction question is 10 questions, well under 64.
+  - One request per period: 5 dimensions × a benefit question and a harm question is 10 questions, well under 64.
   - The expected value from `probabilities` gives a continuous score, and the probability spread gives `confidence_level` directly.
   - The provider secrets can go.
 
@@ -125,9 +125,15 @@
   1. Net benefit (keep as is).
   2. Magnitude plus direction.
   3. Report both, labelled.
-- **Selected Approach**: 2. Magnitude is the weighted mean of absolute dimension scores; direction is the signed weighted mean. Both are carried through the curve and credit.
-- **Rationale**: Geordie's own rules (founders credited for movements, intent immaterial) only make sense if credit doesn't depend on moral direction.
-- **Status**: Claude's pick, 2026-10-25; Geordie did not object.
+- **Selected Approach**: 2.
+  - Each dimension stores a benefit level and a harm level, 0–10, in place of one signed score.
+  - Magnitude is the weighted mean of benefit + harm; the signed level is the weighted mean of benefit − harm. Both are carried through the curve and credit.
+  - Direction is signed total ÷ magnitude total, from −1 to +1.
+- **Rationale**:
+  - Geordie's own rules (founders credited for movements, intent immaterial) only make sense if credit doesn't depend on moral direction.
+  - Taking the absolute value of a signed score would still lose a dimension that is large in both directions (+9 benefit, −6 harm nets to +3). Storing benefit and harm keeps it.
+  - The column change is free now: cloud holds no assessments.
+- **Status**: Influence over net benefit: Claude's pick, 2026-10-25; Geordie did not object. Benefit and harm columns: Claude's pick, 2026-10-26, when writing requirements.
 
 ### Decision: Reality is irrelevant
 - **Selected Approach**: Fictional characters and legal fictions are entities like any other, scored on what the idea of them did. No field records existence.
@@ -159,11 +165,11 @@
 
 ### Decision: Clef scores; no generative model in the Worker
 - **Selected Approach**:
-  - `research_entity` asks Clef, per period, a magnitude `score` question and a direction question for each dimension, with the period's evidence text as `state`.
-  - The expected value from `probabilities` is the score; the spread is the confidence.
+  - A new `score_period` tool asks Clef, per period, a benefit `score` question and a harm `score` question for each dimension, with evidence text supplied by the MCP client as `state`. It writes the assessment directly, marked `ai_suggested`. Entity status already gates what the public sees.
+  - The expected value from `probabilities` is the level; the mean of the answers' `confidence` is the assessment's confidence.
   - The evidence excerpt goes in the required justification column.
   - There is no fallback model, as in napkin-sketch-triage.
-  - Biography and metadata drafting stays with the MCP client.
+  - `research_entity` keeps only the Wikipedia lookup. Biography and metadata drafting stays with the MCP client.
 - **Status**: Raised by Geordie, 2026-10-25; approach is Claude's pick.
 
 ### Decision: Shares in Postgres, area in TypeScript, scores served by the Worker
@@ -173,9 +179,16 @@
   - The result is exposed as an MCP tool and a `GET /api/scores` endpoint. The UI displays it, so one entity cannot score differently on two screens.
 - **Status**: Claude's pick.
 
-### Decision: Remove network amplification
-- **Selected Approach**: Graph credit replaces the capped multiplier. Its `ATISBreakdown` column and its methodology section go too.
-- **Status**: Claude's pick; follows from the credit decision.
+### Decision: Remove network amplification, consensus and controversy
+- **Selected Approach**:
+  - Graph credit replaces the capped network multiplier.
+  - The consensus factor (hardcoded 0.5) and the controversy penalty (never settable) are dead in practice and go.
+  - Their `ATISBreakdown` column and methodology sections go too.
+- **Status**: Claude's pick; follows from the credit decision and from Geordie's 2026-10-02 objection to dead constants.
+
+### Decision: The credit share view is not public
+- **Selected Approach**: The view is granted to the service role only. Public scores reach readers through `GET /api/scores`, which counts published entities only, so drafts never leak through the view. Links get `strength NOT NULL`, since the column is nullable today.
+- **Status**: Claude's pick, 2026-10-26.
 
 ### Decision: Re-anchor tiers after the benchmark
 - **Selected Approach**:
