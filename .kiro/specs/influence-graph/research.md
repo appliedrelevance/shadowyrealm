@@ -152,21 +152,32 @@
 
 ## Design Decisions
 
-### Decision: The score measures influence; direction is separate
-- **Context**: Netting harm against benefit measured net benefit, not influence (2026-10-11 benchmark).
+### Decision: The score is a ten-number profile; magnitude only ranks
+- **Context**:
+  - Netting harm against benefit measured net benefit, not influence (2026-10-11 benchmark).
+  - On 2026-10-26 Geordie objected to collapsing impact to one or two numbers: that would make Jesus "as consequential as my uncle Bob".
 - **Alternatives Considered**:
   1. Net benefit (keep as is).
-  2. Magnitude plus direction.
-  3. Report both, labelled.
-- **Selected Approach**: 2.
+  2. Magnitude plus a −1 to +1 direction.
+  3. Keep the ten numbers (benefit and harm per dimension) all the way through.
+- **Selected Approach**: 3.
   - Each dimension stores a benefit level and a harm level, 0–10, in place of one signed score.
-  - Magnitude is the weighted mean of benefit + harm; the signed level is the weighted mean of benefit − harm. Both are carried through the curve and credit.
-  - Direction is signed total ÷ magnitude total, from −1 to +1.
+  - Each of the ten numbers gets its own level, curve, tail and credit. The arithmetic is linear, so the ten areas add up exactly to magnitude.
+  - Magnitude ranks entities and assigns tiers. Nothing computes a net score or a direction.
+  - The extraordinary-achievement bonus goes, because its power curve would break that linearity.
 - **Rationale**:
-  - Geordie's own rules (founders credited for movements, intent immaterial) only make sense if credit doesn't depend on moral direction.
-  - Taking the absolute value of a signed score would still lose a dimension that is large in both directions (+9 benefit, −6 harm nets to +3). Storing benefit and harm keeps it.
+  - A direction near 0 reads like "did little" even when it is enormous harm balanced by enormous benefit.
+  - Geordie's own rules (founders credited for movements, intent immaterial) need credit that doesn't depend on moral direction.
   - The column change is free now: cloud holds no assessments.
-- **Status**: Influence over net benefit: Claude's pick, 2026-10-25; Geordie did not object. Benefit and harm columns: Claude's pick, 2026-10-26, when writing requirements.
+- **Status**:
+  - Influence over net benefit: Claude's pick, 2026-10-25; Geordie did not object.
+  - Benefit and harm columns: Claude's pick, 2026-10-26.
+  - Ten-number profile, no direction: approved by Geordie, 2026-10-26 ("yes, revise the requirements").
+
+### Decision: No tail when descendants carry the legacy
+- **Context**: In the rubric experiment, 41.2 of Jesus's own 41.4 was the tail of his ministry. That tail sat on top of 364 credited through the Church, so his legacy was counted twice.
+- **Selected Approach**: An entity with at least one outgoing credit-bearing link gets no tail after its last period. An entity with none keeps its tail; the First Crusade, for example, still fades over the following centuries.
+- **Status**: Approved by Geordie, 2026-10-26.
 
 ### Decision: Reality is irrelevant
 - **Selected Approach**: Fictional characters and legal fictions are entities like any other, scored on what the idea of them did. No field records existence.
@@ -177,7 +188,7 @@
 - **Selected Approach**:
   - Links point from cause to consequence (Jesus → Church, Church → Crusades, 9/11 → War on Terror).
   - An ancestor's share of a descendant is the largest product of `strength` over any chain between them.
-  - `score(entity) = own area + Σ best_share × own area(descendant)`.
+  - For each of the ten profile numbers: `total(entity) = own(entity) + Σ best_share × own(descendant)`.
   - `influence` and `mentorship` carry credit. `collaboration` and `opposition` are descriptive. A reaction is recorded as `influence` from whatever provoked it, since intent doesn't matter.
 - **Status**:
   - Multi-hop: decided by Geordie, 2026-10-25.
@@ -198,8 +209,10 @@
 
 ### Decision: Clef scores; no generative model in the Worker
 - **Selected Approach**:
-  - A new `score_period` tool asks Clef, per period, a benefit `score` question and a harm `score` question for each dimension, with evidence text supplied by the MCP client as `state`. It writes the assessment directly, marked `ai_suggested`. Entity status already gates what the public sees.
-  - The expected value from `probabilities` is the level; the mean of the answers' `confidence` is the assessment's confidence.
+  - A new `score_period` tool asks Clef, per period, twelve `score` questions with evidence text supplied by the MCP client as `state`: a benefit and a harm question for each dimension, plus the period's reach and persistence.
+  - It writes the assessment directly, marked `ai_suggested`, and sets the period's reach and persistence factors. Entity status already gates what the public sees.
+  - Benefit and harm use a ten-level intensity rubric (Clef's maximum), with breadth left to the reach question so reach is not counted twice. Clef's `score` field, an expected value from 0 to 9, is scaled to 0–10.
+  - The mean of the answers' `confidence` is stored, but the calculator no longer uses it.
   - The evidence excerpt goes in the required justification column.
   - There is no fallback model, as in napkin-sketch-triage.
   - `research_entity` keeps only the Wikipedia lookup. Biography and metadata drafting stays with the MCP client.
@@ -212,12 +225,14 @@
   - The result is exposed as an MCP tool and a `GET /api/scores` endpoint. The UI displays it, so one entity cannot score differently on two screens.
 - **Status**: Claude's pick.
 
-### Decision: Remove network amplification, consensus and controversy
+### Decision: Remove network amplification, consensus, controversy, uncertainty and the extraordinary bonus
 - **Selected Approach**:
   - Graph credit replaces the capped network multiplier.
   - The consensus factor (hardcoded 0.5) and the controversy penalty (never settable) are dead in practice and go.
-  - Their `ATISBreakdown` column and methodology sections go too.
-- **Status**: Claude's pick; follows from the credit decision and from Geordie's 2026-10-02 objection to dead constants.
+  - The uncertainty factor goes because Clef's confidence (about 0.2) always pins it at its 0.7 floor.
+  - The extraordinary-achievement bonus goes for linearity (see the profile decision).
+  - Their `ATISBreakdown` columns and methodology sections go too.
+- **Status**: Approved by Geordie, 2026-10-26. Follows from the credit decision, the rubric experiment, and his 2026-10-02 objection to dead constants.
 
 ### Decision: The credit share view is not public
 - **Selected Approach**: The view is granted to the service role only. Public scores reach readers through `GET /api/scores`, which counts published entities only, so drafts never leak through the view. Links get `strength NOT NULL`, since the column is nullable today.
