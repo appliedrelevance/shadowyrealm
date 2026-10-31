@@ -30,8 +30,6 @@
     { "pattern": "nurograf.com", "custom_domain": true },
     { "pattern": "www.nurograf.com", "custom_domain": true },
     { "pattern": "poolagua.com", "custom_domain": true },
-    { "pattern": "www.poolagua.com", "custom_domain": true },
-    { "pattern": "strawyer.com", "custom_domain": true },
-    { "pattern": "www.strawyer.com", "custom_domain": true }
+    { "pattern": "www.poolagua.com", "custom_domain": true }
   ]
 }
