@@ -45,9 +45,11 @@
   --color-ok-soft: #06281f;
   --color-warn: #f59e0b;
   --color-warn-soft: #2e2005;
-  --color-crit: #dc2626;
+  /* crit doubles as error and negative-score text, so it is light enough to
+     read on every surface (5.4:1 on surface-2); on-crit is dark to match. */
+  --color-crit: #f87171;
   --color-crit-soft: #2d0b0b;
-  --color-on-crit: #ffffff;
+  --color-on-crit: #181822;
   --color-info: #3b82f6;
   --color-info-soft: #0a1c34;
 
