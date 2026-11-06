@@ -4,8 +4,22 @@
     {
       "name": "shadowyrealm-dev",
       "runtimeExecutable": "bun",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 35420
+    },
+    {
+      "name": "shadowyrealm-worker",
+      "runtimeExecutable": "bunx",
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--port",
+        "35421"
+      ],
+      "port": 35421
     }
   ]
 }

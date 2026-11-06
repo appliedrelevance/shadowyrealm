@@ -7,14 +7,15 @@
     "directory": "./dist",
     "not_found_handling": "single-page-application",
     "binding": "ASSETS",
-    "run_worker_first": ["/mcp", "/api/*"]
+    "run_worker_first": ["/mcp", "/api/*", "/sitemap.xml", "/entity/*"]
   },
   "ai": {
     "binding": "AI"
   },
   "vars": {
     "AI_GATEWAY_NAME": "applied-relevance",
-    "SUPABASE_URL": "https://qgfmwstgkwyqqwyqroav.supabase.co"
+    "SUPABASE_URL": "https://qgfmwstgkwyqqwyqroav.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZm13c3Rna3d5cXF3eXFyb2F2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTExOTksImV4cCI6MjA4OTU4NzE5OX0.csDJSmOYhJ9QyGu4uPcQBnmWzb3-PPLqeNJefaS_pcw"
   },
   "observability": {
     "enabled": true

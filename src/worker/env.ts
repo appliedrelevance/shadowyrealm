@@ -1,15 +1,15 @@
 import type { ResearchEnv } from "../lib/research";
 import type { ServiceEnv } from "../lib/sr-service";
+import type { PagesEnv } from "./pages";
 
 /**
  * Worker bindings and secrets.
  *
- * vars (wrangler.json):   AI_GATEWAY_NAME, SUPABASE_URL
+ * vars (wrangler.json):   AI_GATEWAY_NAME, SUPABASE_URL, SUPABASE_ANON_KEY (public; the SPA ships it too)
  * secrets (wrangler secret put): MCP_API_KEY, SUPABASE_SERVICE_ROLE_KEY,
  *                                OWNER_USER_ID, ANTHROPIC_API_KEY, OPENROUTER_API_KEY
  */
-export interface Env extends ServiceEnv, ResearchEnv {
-  ASSETS: { fetch: (request: Request) => Promise<Response> };
+export interface Env extends ServiceEnv, ResearchEnv, PagesEnv {
   /** Bearer token for /mcp. Unset means the endpoint answers 503, never open. */
   MCP_API_KEY: string;
 }
