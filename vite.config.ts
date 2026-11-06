@@ -5,7 +5,7 @@ import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import { resolve } from "path";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), TanStackRouterVite()],
+  plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react(), tailwindcss()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
