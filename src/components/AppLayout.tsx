@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
-import { BarChart3, LogIn, LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
+import { BarChart3, LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
@@ -39,7 +39,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               {COPY.nav.howItWorks}
             </Link>
 
-            {user ? (
+            {user && (
               <button
                 onClick={() => signOut()}
                 className={`${navLinkBase} ${navLinkIdle}`}
@@ -47,13 +47,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 <LogOut className="h-4 w-4" />
                 {COPY.nav.signOut}
               </button>
-            ) : (
-              <>
-                <Link to="/login" search={{ redirect: "/" }} className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
-                  <LogIn className="h-4 w-4" />
-                  {COPY.nav.signIn}
-                </Link>
-              </>
             )}
           </div>
 
@@ -62,6 +55,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center text-ink-muted hover:text-ink md:hidden"
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
           >
             {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -87,22 +81,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {COPY.nav.howItWorks}
               </Link>
 
-              <div className="my-2 border-t border-line" />
-
-              {user ? (
-                <button
-                  onClick={() => { signOut(); closeMenu(); }}
-                  className={`${navLinkBase} text-lg ${navLinkIdle}`}
-                >
-                  <LogOut className="h-5 w-5" />
-                  {COPY.nav.signOut}
-                </button>
-              ) : (
+              {user && (
                 <>
-                  <Link to="/login" search={{ redirect: "/" }} onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
-                    <LogIn className="h-5 w-5" />
-                    {COPY.nav.signIn}
-                  </Link>
+                  <div className="my-2 border-t border-line" />
+                  <button
+                    onClick={() => { signOut(); closeMenu(); }}
+                    className={`${navLinkBase} text-lg ${navLinkIdle}`}
+                  >
+                    <LogOut className="h-5 w-5" />
+                    {COPY.nav.signOut}
+                  </button>
                 </>
               )}
 

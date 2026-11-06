@@ -2,8 +2,10 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COPY } from "@/lib/copy";
+import { usePageTitle } from "@/lib/usePageTitle";
 import gateOfTheRealm from "@/assets/gate-of-the-realm.jpg";
 import { useEntities } from "../hooks/useEntities";
+import { useOperator } from "../hooks/useEntityMutations";
 import { EntityCard } from "./EntityCard";
 import { EntityCardSkeleton } from "@/components/Skeleton";
 import { RefreshCw } from "lucide-react";
@@ -31,6 +33,8 @@ export function EntityListPage() {
   const [typeFilter, setTypeFilter] = useState<EntityType | "">("");
   const [statusFilter, setStatusFilter] = useState<PublicationStatus | "">("");
   const [page, setPage] = useState(1);
+  const { data: isOperator } = useOperator();
+  usePageTitle();
 
   const { data, isLoading, error } = useEntities({
     entityType: typeFilter || undefined,
@@ -69,6 +73,7 @@ export function EntityListPage() {
             setTypeFilter(e.target.value as EntityType | "");
             setPage(1);
           }}
+          aria-label="Entity type"
           className="rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
         >
           {entityTypes.map((t) => (
@@ -78,20 +83,24 @@ export function EntityListPage() {
           ))}
         </select>
 
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value as PublicationStatus | "");
-            setPage(1);
-          }}
-          className="rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
-        >
-          {statuses.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+        {/* Visitors only ever see published entities; the owner also sees their drafts. */}
+        {isOperator && (
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value as PublicationStatus | "");
+              setPage(1);
+            }}
+            aria-label="Publication status"
+            className="rounded border border-line bg-surface-1 px-3 py-2 text-sm text-ink-2 focus:border-action focus:outline-none"
+          >
+            {statuses.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Results */}
@@ -128,7 +137,7 @@ export function EntityListPage() {
         <>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {data.entities.map((entity) => (
-              <EntityCard key={entity.id} entity={entity} />
+              <EntityCard key={entity.id} entity={entity} showStatus={!!isOperator} />
             ))}
           </div>
 

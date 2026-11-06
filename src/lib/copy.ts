@@ -1,10 +1,12 @@
 export const COPY = {
+  site: {
+    title: "ShadowyRealm — Impact Assessment Through the Ages",
+  },
   nav: {
     brand: "ShadowyRealm",
     index: "Index",
     compare: "Compare",
     howItWorks: "How It Works",
-    signIn: "Sign In",
     signOut: "Sign Out",
   },
   home: {

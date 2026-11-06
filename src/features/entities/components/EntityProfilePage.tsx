@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { User, Building2, Zap, Calendar, MapPin, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { COPY } from "@/lib/copy";
+import { usePageTitle } from "@/lib/usePageTitle";
 import {
   calculateATIS,
   computeConsensusScores,
@@ -49,6 +50,7 @@ function MetadataField({ icon: Icon, label, value }: { icon: typeof Calendar; la
 export function EntityProfilePage({ slug }: { slug: string }) {
   const { data: isOperator } = useOperator();
   const { data: entity, isLoading, error } = useEntity(slug);
+  usePageTitle(entity ? entity.name : isLoading ? undefined : COPY.entity.notFound);
 
   if (isLoading) {
     return <EntityProfileSkeleton />;
@@ -123,14 +125,16 @@ export function EntityProfilePage({ slug }: { slug: string }) {
                   <Icon className="h-4 w-4" />
                   <span className="capitalize">{entityType}</span>
                 </span>
-                <span
-                  className={cn(
-                    "rounded px-2 py-0.5 text-xs font-medium transition-colors duration-200",
-                    statusColors[entityStatus],
-                  )}
-                >
-                  {entityStatus}
-                </span>
+                {isOperator && (
+                  <span
+                    className={cn(
+                      "rounded px-2 py-0.5 text-xs font-medium transition-colors duration-200",
+                      statusColors[entityStatus],
+                    )}
+                  >
+                    {entityStatus}
+                  </span>
+                )}
               </div>
             </div>
 

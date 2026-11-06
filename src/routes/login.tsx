@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
+import { usePageTitle } from "@/lib/usePageTitle";
 import { GoogleIcon } from "@/components/GoogleIcon";
 
 export const Route = createFileRoute("/login")({
@@ -23,6 +24,7 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
+  usePageTitle(COPY.auth.signInHeading);
 
   const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
   if (!siteKey) throw new Error("VITE_TURNSTILE_SITE_KEY is not set");

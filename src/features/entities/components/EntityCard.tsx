@@ -17,7 +17,8 @@ const statusColors: Record<PublicationStatus, string> = {
   archived: "bg-line text-ink-muted",
 };
 
-export function EntityCard({ entity }: { entity: Entity }) {
+/** `showStatus` is for the owner; visitors only ever see published entities. */
+export function EntityCard({ entity, showStatus }: { entity: Entity; showStatus: boolean }) {
   const Icon = typeIcons[entity.entity_type];
 
   return (
@@ -44,14 +45,16 @@ export function EntityCard({ entity }: { entity: Entity }) {
             <h3 className="truncate font-display text-lg font-semibold text-ink group-hover:text-action-ink">
               {entity.name}
             </h3>
-            <span
-              className={cn(
-                "shrink-0 rounded px-1.5 py-0.5 text-xs font-medium",
-                statusColors[entity.status],
-              )}
-            >
-              {entity.status}
-            </span>
+            {showStatus && (
+              <span
+                className={cn(
+                  "shrink-0 rounded px-1.5 py-0.5 text-xs font-medium",
+                  statusColors[entity.status],
+                )}
+              >
+                {entity.status}
+              </span>
+            )}
           </div>
 
           <div className="mt-1 flex items-center gap-2 text-sm text-ink-muted">

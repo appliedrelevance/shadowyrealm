@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { X, Search, User, Building2, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
 import { ImpactRadarChart } from "@/components/ImpactRadarChart";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/lib/atis-calculator";
 import { buildATISInputs } from "@/lib/atis-inputs";
 import { seriesColor } from "@/lib/chart-colors";
+import { COPY } from "@/lib/copy";
+import { usePageTitle } from "@/lib/usePageTitle";
 
 const typeIcons: Record<string, typeof User> = {
   person: User,
@@ -19,8 +21,8 @@ const typeIcons: Record<string, typeof User> = {
   event: Zap,
 };
 
-function useEntityWithScores(entityId: number) {
-  return useQuery({
+function entityWithScoresQuery(entityId: number) {
+  return queryOptions({
     queryKey: ["entity-comparison", entityId],
     queryFn: async () => {
       const [entityRes, assessRes, periodRes, relRes] = await Promise.all([
@@ -77,6 +79,7 @@ export function ComparisonView() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const { data: searchResults } = useSearchEntities(searchQuery);
+  usePageTitle(COPY.nav.compare);
 
   const addEntity = (id: number) => {
     if (!selectedIds.includes(id)) {
@@ -108,6 +111,7 @@ export function ComparisonView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search entities to compare..."
+              aria-label="Search entities to compare"
               className="w-full rounded border border-line bg-surface-1 py-2 pl-9 pr-3 text-sm text-ink-2 focus:border-action focus:outline-none"
             />
           </div>
@@ -160,14 +164,14 @@ export function ComparisonView() {
 }
 
 function EntityTag({ entityId, color, onRemove }: { entityId: number; color: string; onRemove: () => void }) {
-  const { data } = useEntityWithScores(entityId);
+  const { data } = useQuery(entityWithScoresQuery(entityId));
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
       style={{ borderColor: color, color }}
     >
       {data?.entity.name ?? `Entity ${entityId}`}
-      <button onClick={onRemove} className="hover:opacity-70">
+      <button onClick={onRemove} className="hover:opacity-70" aria-label={`Remove ${data?.entity.name ?? "entity"}`}>
         <X className="h-3 w-3" />
       </button>
     </span>
@@ -175,7 +179,8 @@ function EntityTag({ entityId, color, onRemove }: { entityId: number; color: str
 }
 
 function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
-  const entityData = entityIds.map((id) => useEntityWithScores(id));
+  // One query per selected entity; useQueries keeps the hook count fixed as the selection grows.
+  const entityData = useQueries({ queries: entityIds.map(entityWithScoresQuery) });
   const allLoaded = entityData.every((d) => d.data);
 
   const chartData = useMemo(() => {

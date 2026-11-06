@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DIMENSION_WEIGHTS, TIER_THRESHOLDS, DEFAULT_ATIS_CONFIG } from "@/lib/atis-calculator";
 import { COPY } from "@/lib/copy";
+import { usePageTitle } from "@/lib/usePageTitle";
 
 export const Route = createFileRoute("/methodology")({
   component: MethodologyPage,
 });
 
 function MethodologyPage() {
+  usePageTitle(COPY.methodology.heading);
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="font-display text-4xl font-bold text-ink">
@@ -140,13 +142,6 @@ function MethodologyPage() {
             ))}
           </tbody>
         </table>
-
-        <h2 className="font-display text-ink">AI Content</h2>
-        <p>
-          AI-generated content is always marked with a visible badge. AI suggestions
-          are editable drafts requiring explicit human confirmation. Bias warnings
-          are surfaced for every AI-assisted assessment.
-        </p>
       </div>
     </div>
   );
