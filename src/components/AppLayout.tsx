@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
-import { BarChart3, LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
+import { Logo } from "@/components/Logo";
+import { LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
@@ -20,7 +21,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <header className="border-b border-line bg-surface-1">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-ink hover:text-action-ink">
-            <BarChart3 className="h-5 w-5 text-action" />
+            <Logo className="h-6 w-6" />
             {COPY.nav.brand}
           </Link>
 
