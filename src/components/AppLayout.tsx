@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
 import { Logo } from "@/components/Logo";
-import { LogOut, LayoutGrid, Scale, BookOpen, Menu, X } from "lucide-react";
+import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
@@ -30,6 +30,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <Link to="/" className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }} activeOptions={{ exact: true }}>
               <LayoutGrid className="h-4 w-4" />
               {COPY.nav.index}
+            </Link>
+            <Link to="/realm" className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
+              <Network className="h-4 w-4" />
+              {COPY.nav.lineage}
             </Link>
             <Link to="/compare" className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
               <Scale className="h-4 w-4" />
@@ -72,6 +76,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <Link to="/" onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }} activeOptions={{ exact: true }}>
                 <LayoutGrid className="h-5 w-5" />
                 {COPY.nav.index}
+              </Link>
+              <Link to="/realm" onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
+                <Network className="h-5 w-5" />
+                {COPY.nav.lineage}
               </Link>
               <Link to="/compare" onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
                 <Scale className="h-5 w-5" />

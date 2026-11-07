@@ -10,22 +10,6 @@ export function Skeleton({ className }: SkeletonProps) {
   );
 }
 
-export function EntityCardSkeleton() {
-  return (
-    <div className="rounded-lg border border-line bg-surface-1 p-4">
-      <div className="flex gap-4">
-        <Skeleton className="h-20 w-20 shrink-0 rounded" />
-        <div className="min-w-0 flex-1 space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/3" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function EntityProfileSkeleton() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 space-y-8">

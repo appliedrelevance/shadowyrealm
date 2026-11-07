@@ -24,8 +24,8 @@ export function useUpdateEntityStatus() {
         { status: newStatus },
       ),
     onSuccess: ({ slug }) => {
-      queryClient.invalidateQueries({ queryKey: ["entity", slug] });
-      queryClient.invalidateQueries({ queryKey: ["entities"] });
+      queryClient.invalidateQueries({ queryKey: ["entity-profile", slug] });
+      queryClient.invalidateQueries({ queryKey: ["realm"] });
     },
   });
 }

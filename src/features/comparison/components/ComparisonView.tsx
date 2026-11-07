@@ -1,288 +1,232 @@
-import { useState, useMemo } from "react";
-import { X, Search, User, Building2, Zap } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { supabase } from "@/lib/supabase";
-import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
-import { ImpactRadarChart } from "@/components/ImpactRadarChart";
+import { useQueries } from "@tanstack/react-query";
+import { Search, X } from "lucide-react";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
-import {
-  calculateATIS,
-  computeConsensusScores,
-  type DimensionalScores,
-} from "@/lib/atis-calculator";
-import { buildATISInputs } from "@/lib/atis-inputs";
+import { useOperator } from "@/features/entities/hooks/useEntityMutations";
+import { profileQuery, useRealm, type EntityProfile } from "@/features/realm/api";
+import { AXIS_TEXT, bucketUnit, formatMagnitude, GRID, LineKey, TimeAxis, useWidth } from "@/features/realm/chart";
+import { DIMENSION_LABELS } from "@/features/realm/ProfileCharts";
+import { DIMENSIONS } from "@/lib/atis-calculator";
 import { seriesColor } from "@/lib/chart-colors";
 import { COPY } from "@/lib/copy";
+import { BUCKET_COUNT } from "@/lib/timeline";
 import { usePageTitle } from "@/lib/usePageTitle";
 
-const typeIcons: Record<string, typeof User> = {
-  person: User,
-  organization: Building2,
-  event: Zap,
-};
-
-function entityWithScoresQuery(entityId: number) {
-  return queryOptions({
-    queryKey: ["entity-comparison", entityId],
-    queryFn: async () => {
-      const [entityRes, assessRes, periodRes, relRes] = await Promise.all([
-        supabase.schema("shadowyrealm").from("entities").select("*").eq("id", entityId).single(),
-        supabase.schema("shadowyrealm").from("assessments").select("*").eq("entity_id", entityId),
-        supabase.schema("shadowyrealm").from("assessment_periods").select("*").eq("entity_id", entityId),
-        supabase
-          .schema("shadowyrealm")
-          .from("relationships")
-          .select("*")
-          .or(`source_entity_id.eq.${entityId},target_entity_id.eq.${entityId}`),
-      ]);
-      if (entityRes.error) throw entityRes.error;
-      if (assessRes.error) throw assessRes.error;
-      if (periodRes.error) throw periodRes.error;
-      if (relRes.error) throw relRes.error;
-      return {
-        entity: entityRes.data,
-        assessments: assessRes.data,
-        periods: periodRes.data,
-        relationships: relRes.data,
-      };
-    },
-  });
-}
-
-function useSearchEntities(query: string) {
-  return useQuery({
-    queryKey: ["entity-search", query],
-    enabled: query.length >= 2,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .schema("shadowyrealm")
-        .from("entities")
-        .select("id, name, entity_type")
-        .eq("status", "published")
-        .ilike("name", `%${query}%`)
-        .limit(5);
-      if (error) throw error;
-      return data;
-    },
-  });
-}
-
-const DIMENSIONS: (keyof DimensionalScores)[] = [
-  "scientific",
-  "economic",
-  "human_rights",
-  "health",
-  "cultural",
-];
+const MAX_SELECTED = 5;
+const OPENING = ["jesus", "muhammad", "the-buddha"];
 
 export function ComparisonView() {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: searchResults } = useSearchEntities(searchQuery);
   usePageTitle(COPY.nav.compare);
+  const { data: realm } = useRealm();
+  const { data: operator } = useOperator();
+  const [chosen, setChosen] = useState<string[] | null>(null);
+  const [query, setQuery] = useState("");
 
-  const addEntity = (id: number) => {
-    if (!selectedIds.includes(id)) {
-      setSelectedIds([...selectedIds, id]);
-    }
-    setSearchQuery("");
-  };
+  const known = useMemo(() => new Map((realm?.entities ?? []).map((e) => [e.slug, e])), [realm]);
+  const selected = chosen ?? OPENING.filter((s) => known.has(s));
+  const matches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2 || !realm) return [];
+    return realm.entities.filter((e) => e.name.toLowerCase().includes(q) && !selected.includes(e.slug)).slice(0, 6);
+  }, [query, realm, selected]);
 
-  const removeEntity = (id: number) => {
-    setSelectedIds(selectedIds.filter((i) => i !== id));
+  const profiles = useQueries({ queries: selected.map((slug) => profileQuery(slug, !!operator)) });
+  const loaded = profiles.map((p) => p.data).filter((p): p is EntityProfile => !!p);
+  const ready = loaded.length === selected.length && selected.length > 0;
+
+  const add = (slug: string) => {
+    if (selected.length < MAX_SELECTED) setChosen([...selected, slug]);
+    setQuery("");
   };
+  const remove = (slug: string) => setChosen(selected.filter((s) => s !== slug));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="font-display text-3xl font-bold text-ink">
-        Comparative Analysis
-      </h1>
+      <h1 className="font-display text-3xl font-bold text-ink">Compare</h1>
       <p className="mt-2 text-ink-muted">
-        Select entities to compare side-by-side.
+        Set up to {MAX_SELECTED} entities side by side: their total influence over time and their ten-number profiles.
       </p>
 
-      {/* Search and add */}
-      <div className="relative mt-6">
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-muted" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search entities to compare..."
-              aria-label="Search entities to compare"
-              className="w-full rounded border border-line bg-surface-1 py-2 pl-9 pr-3 text-sm text-ink-2 focus:border-action focus:outline-none"
-            />
-          </div>
-        </div>
-        {searchResults && searchResults.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded border border-line bg-surface-1 shadow-lg">
-            {searchResults.map((e) => {
-              const TypeIcon = typeIcons[e.entity_type] ?? User;
-              return (
+      <div className="relative mt-6 max-w-md">
+        <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-muted" aria-hidden="true" />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={selected.length >= MAX_SELECTED ? "Remove one to add another" : "Add an entity…"}
+          disabled={selected.length >= MAX_SELECTED}
+          aria-label="Search entities to compare"
+          className="w-full rounded border border-line bg-surface-1 py-2 pl-9 pr-3 text-sm text-ink-2 focus:border-action focus:outline-none disabled:opacity-50"
+        />
+        {matches.length > 0 && (
+          <ul className="absolute z-10 mt-1 w-full rounded border border-line bg-surface-1 shadow-lg">
+            {matches.map((e) => (
+              <li key={e.slug}>
                 <button
-                  key={e.id}
-                  onClick={() => addEntity(e.id)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-ink-2 hover:bg-surface-2"
+                  onClick={() => add(e.slug)}
+                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-ink-2 hover:bg-surface-2"
                 >
-                  <TypeIcon className="h-4 w-4 text-ink-muted" />
-                  <span className="flex-1 text-left">{e.name}</span>
-                  <span className="text-xs text-ink-muted capitalize">
-                    {e.entity_type}
-                  </span>
+                  {e.name}
+                  <span className="text-xs capitalize text-ink-muted">{e.entity_type}</span>
                 </button>
-              );
-            })}
-          </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
-      {/* Selected entities */}
-      {selectedIds.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {selectedIds.map((id, idx) => (
-            <EntityTag key={id} entityId={id} color={seriesColor(idx)} onRemove={() => removeEntity(id)} />
+      {selected.length > 0 && (
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {selected.map((slug, i) => (
+            <li key={slug} className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-1 py-1 pl-3 pr-2 text-sm text-ink-2">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: seriesColor(i) }} aria-hidden="true" />
+              {known.get(slug)?.name ?? slug}
+              <button onClick={() => remove(slug)} aria-label={`Remove ${known.get(slug)?.name ?? slug}`} className="text-ink-muted hover:text-ink">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
-      {/* Comparison charts */}
-      {selectedIds.length >= 2 && (
-        <ComparisonCharts entityIds={selectedIds} />
+      {selected.length === 0 && (
+        <p className="mt-8 rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center text-ink-muted">
+          Search above to add entities.
+        </p>
       )}
-
-      {selectedIds.length < 2 && (
-        <div className="mt-8 rounded-lg border border-dashed border-line bg-surface-1/50 p-6 text-center">
-          <p className="text-ink-muted">
-            Search for figures above and add at least two to compare their impact side by side.
-          </p>
-        </div>
+      {selected.length > 0 && !ready && <div className="mt-8 h-80 animate-pulse rounded-lg bg-surface-1" />}
+      {ready && (
+        <>
+          <section className="mt-8 rounded-lg border border-line bg-surface-1 p-4">
+            <h2 className="font-display text-lg font-semibold text-ink">Total influence over time</h2>
+            <p className="mb-3 mt-1 text-sm text-ink-muted">
+              Own plus credited influence per year: benefit above the line, harm below it.
+            </p>
+            <CompareCurves profiles={loaded} />
+          </section>
+          <CompareTable profiles={loaded} />
+        </>
       )}
     </div>
   );
 }
 
-function EntityTag({ entityId, color, onRemove }: { entityId: number; color: string; onRemove: () => void }) {
-  const { data } = useQuery(entityWithScoresQuery(entityId));
+function CompareCurves({ profiles }: { profiles: EntityProfile[] }) {
+  const { ref, width } = useWidth<HTMLDivElement>();
+  const W = Math.max(width, 300);
+  const H = 320;
+  const M = { top: 14, right: 10, bottom: 28, left: 10 };
+  const asOf = profiles[0].as_of_year;
+
+  const series = profiles.map((p) => {
+    const { from, own, credited } = p.curves;
+    return {
+      p,
+      from,
+      benefit: own.benefit.map((v, k) => v + credited.benefit[k]),
+      harm: own.harm.map((v, k) => v + credited.harm[k]),
+    };
+  });
+  const first = Math.min(...series.map((s) => s.from));
+  const last = Math.max(...series.map((s) => s.from + s.benefit.length));
+  const fromUnit = first / BUCKET_COUNT;
+  const toUnit = last / BUCKET_COUNT;
+  const x = (u: number) => M.left + ((u - fromUnit) / (toUnit - fromUnit || 1)) * (W - M.left - M.right);
+  const max = Math.max(1e-9, ...series.flatMap((s) => [...s.benefit, ...s.harm]));
+  const half = (H - M.top - M.bottom) / 2;
+  const mid = M.top + half;
+
+  const line = (s: (typeof series)[number], values: number[], sign: 1 | -1) => {
+    let d = "";
+    for (let i = first; i < last; i++) {
+      const k = i - s.from;
+      const v = k >= 0 && k < values.length ? values[k] : 0;
+      d += `${d ? "L" : "M"}${x(bucketUnit(i)).toFixed(1)},${(mid - sign * (v / max) * half).toFixed(1)}`;
+    }
+    return d;
+  };
+
   return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
-      style={{ borderColor: color, color }}
-    >
-      {data?.entity.name ?? `Entity ${entityId}`}
-      <button onClick={onRemove} className="hover:opacity-70" aria-label={`Remove ${data?.entity.name ?? "entity"}`}>
-        <X className="h-3 w-3" />
-      </button>
-    </span>
+    <figure className="m-0">
+      <div ref={ref} className="w-full">
+        <svg width={W} height={H} role="img" aria-label="Total influence over time for the selected entities">
+          <TimeAxis asOfYear={asOf} x={x} fromUnit={fromUnit} toUnit={toUnit} top={M.top} bottom={H - M.bottom} />
+          <line x1={M.left} x2={W - M.right} y1={mid} y2={mid} stroke={GRID} />
+          {series.map((s, i) => (
+            <g key={s.p.entity.slug} fill="none" stroke={seriesColor(i)} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round">
+              <path d={line(s, s.benefit, 1)} />
+              <path d={line(s, s.harm, -1)} />
+            </g>
+          ))}
+          <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
+            Benefit ↑
+          </text>
+          <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
+            Harm ↓
+          </text>
+        </svg>
+      </div>
+      <figcaption className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-muted">
+        {series.map((s, i) => (
+          <span key={s.p.entity.slug} className="flex items-center gap-1.5">
+            <LineKey color={seriesColor(i)} />
+            {s.p.entity.name}
+          </span>
+        ))}
+      </figcaption>
+    </figure>
   );
 }
 
-function ComparisonCharts({ entityIds }: { entityIds: number[] }) {
-  // One query per selected entity; useQueries keeps the hook count fixed as the selection grows.
-  const entityData = useQueries({ queries: entityIds.map(entityWithScoresQuery) });
-  const allLoaded = entityData.every((d) => d.data);
-
-  const chartData = useMemo(() => {
-    if (!allLoaded) return null;
-
-    return entityData.map((d, idx) => {
-      const assessments = d.data!.assessments;
-      const scores = computeConsensusScores(
-        assessments.map((a) => ({
-          scores: {
-            scientific: a.scientific_score,
-            economic: a.economic_score,
-            human_rights: a.human_rights_score,
-            health: a.health_score,
-            cultural: a.cultural_score,
-          },
-        })),
-      );
-
-      const inputs = buildATISInputs(assessments, d.data!.periods, d.data!.relationships);
-      const atis = calculateATIS(inputs.assessments, inputs.periods, inputs.relationships);
-
-      return {
-        entity: d.data!.entity,
-        scores,
-        atis,
-        color: seriesColor(idx),
-      };
-    });
-  }, [allLoaded, entityData]);
-
-  if (!allLoaded || !chartData) {
-    return <p className="mt-8 text-ink-muted">Loading comparison data...</p>;
-  }
-
+function CompareTable({ profiles }: { profiles: EntityProfile[] }) {
+  const rows: { label: string; values: number[]; strong?: boolean }[] = [
+    { label: "Total influence", values: profiles.map((p) => p.score.total_magnitude), strong: true },
+    { label: "Own", values: profiles.map((p) => p.score.own_magnitude) },
+    { label: "Credited", values: profiles.map((p) => p.score.credited_magnitude) },
+    { label: "Benefit", values: profiles.map((p) => p.score.benefit_total) },
+    { label: "Harm", values: profiles.map((p) => p.score.harm_total) },
+    ...DIMENSIONS.flatMap((d) => [
+      { label: `${DIMENSION_LABELS[d]} benefit`, values: profiles.map((p) => p.score.profile.total.benefit[d]) },
+      { label: `${DIMENSION_LABELS[d]} harm`, values: profiles.map((p) => p.score.profile.total.harm[d]) },
+    ]),
+  ];
   return (
-    <div className="mt-8 space-y-6">
-      {/* Radar overlay */}
-      <div className="rounded-lg border border-line bg-surface-1 p-4">
-        <h3 className="mb-3 font-display text-lg font-semibold text-ink">
-          Dimensional Comparison
-        </h3>
-        <ImpactRadarChart
-          series={chartData.map((d) => ({
-            label: d.entity.name,
-            scores: d.scores,
-            color: d.color,
-          }))}
-        />
-      </div>
-
-      {/* ATIS tiers */}
-      <div className="flex flex-wrap gap-4">
-        {chartData.map((d) => (
-          <div key={d.entity.id} className="flex items-center gap-2">
-            <Link to="/entity/$slug" params={{ slug: d.entity.slug }} className="text-sm font-medium text-ink-2 hover:text-action-ink">
-              {d.entity.name}
-            </Link>
-            <MagnitudeBadge tier={d.atis.impact_class.tier} magnitude={d.atis.magnitude} />
-          </div>
-        ))}
-      </div>
-
-      {/* Dimensional differences */}
-      <div className="rounded-lg border border-line bg-surface-1 p-4">
-        <h3 className="mb-3 font-display text-lg font-semibold text-ink">
-          Dimensional Differences
-        </h3>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-line text-left text-ink-muted">
-              <th className="pb-2 pr-4 font-medium">Dimension</th>
-              {chartData.map((d) => (
-                <th key={d.entity.id} className="pb-2 pr-4 font-medium" style={{ color: d.color }}>
-                  {d.entity.name}
-                </th>
+    <section className="mt-6 overflow-x-auto rounded-lg border border-line">
+      <table className="w-full min-w-[560px] text-sm">
+        <thead className="bg-surface-1 text-left">
+          <tr>
+            <th scope="col" className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-ink-muted">
+              In influence-centuries
+            </th>
+            {profiles.map((p, i) => (
+              <th key={p.entity.slug} scope="col" className="px-3 py-2 text-right font-medium text-ink">
+                <Link to="/entity/$slug" params={{ slug: p.entity.slug }} className="inline-flex items-center gap-1.5 hover:text-action-ink">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: seriesColor(i) }} aria-hidden="true" />
+                  {p.entity.name}
+                </Link>
+                <div className="mt-1">
+                  <MagnitudeBadge tier={p.score.tier} magnitude={p.score.total_magnitude} showMagnitude={false} />
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.label} className="border-t border-line">
+              <th scope="row" className={`px-3 py-1.5 text-left font-normal ${r.strong ? "text-ink" : "text-ink-muted"}`}>
+                {r.label}
+              </th>
+              {r.values.map((v, i) => (
+                <td key={i} className={`px-3 py-1.5 text-right font-mono tabular-nums ${r.strong ? "text-ink" : "text-ink-2"}`}>
+                  {formatMagnitude(v)}
+                </td>
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {DIMENSIONS.map((dim) => (
-              <tr key={dim} className="border-b border-line/50">
-                <td className="py-2 pr-4 capitalize text-ink-muted">
-                  {dim.replace("_", " ")}
-                </td>
-                {chartData.map((d) => {
-                  const val = d.scores[dim];
-                  return (
-                    <td
-                      key={d.entity.id}
-                      className={`py-2 pr-4 font-mono ${val > 0 ? "text-ok" : val < 0 ? "text-crit" : "text-ink-muted"}`}
-                    >
-                      {val > 0 ? "+" : ""}
-                      {val.toFixed(1)}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 }

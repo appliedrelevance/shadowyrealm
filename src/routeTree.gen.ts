@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RealmRouteImport } from './routes/realm'
 import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EntitySlugRouteImport } from './routes/entity/$slug'
 
+const RealmRoute = RealmRouteImport.update({
+  id: '/realm',
+  path: '/realm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MethodologyRoute = MethodologyRouteImport.update({
   id: '/methodology',
   path: '/methodology',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
+  '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
+  '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
 }
 export interface FileRoutesById {
@@ -61,19 +69,27 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/login': typeof LoginRoute
   '/methodology': typeof MethodologyRoute
+  '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/compare' | '/login' | '/methodology' | '/entity/$slug'
+  fullPaths:
+    | '/'
+    | '/compare'
+    | '/login'
+    | '/methodology'
+    | '/realm'
+    | '/entity/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/compare' | '/login' | '/methodology' | '/entity/$slug'
+  to: '/' | '/compare' | '/login' | '/methodology' | '/realm' | '/entity/$slug'
   id:
     | '__root__'
     | '/'
     | '/compare'
     | '/login'
     | '/methodology'
+    | '/realm'
     | '/entity/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -82,11 +98,19 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   LoginRoute: typeof LoginRoute
   MethodologyRoute: typeof MethodologyRoute
+  RealmRoute: typeof RealmRoute
   EntitySlugRoute: typeof EntitySlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/realm': {
+      id: '/realm'
+      path: '/realm'
+      fullPath: '/realm'
+      preLoaderRoute: typeof RealmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/methodology': {
       id: '/methodology'
       path: '/methodology'
@@ -130,6 +154,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   LoginRoute: LoginRoute,
   MethodologyRoute: MethodologyRoute,
+  RealmRoute: RealmRoute,
   EntitySlugRoute: EntitySlugRoute,
 }
 export const routeTree = rootRouteImport

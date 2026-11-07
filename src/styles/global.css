@@ -65,12 +65,23 @@
   /* ---- Chart series — CATEGORICAL ---------------------------------------
      Distinguishing one entity from another in a comparison, not conveying
      good/bad. Lived as a hardcoded array inside ComparisonView; promoted here
-     so it is one palette rather than a third parallel copy. */
-  --color-series-1: #7c3aed;
-  --color-series-2: #10b981;
-  --color-series-3: #f59e0b;
-  --color-series-4: #3b82f6;
-  --color-series-5: #ec4899;
+     so it is one palette rather than a third parallel copy. Re-stepped to
+     OKLCH L 0.65 / C 0.14 on the same hue families so every slot sits in the
+     dataviz validator's dark band and clears 3:1 on surface-1. */
+  --color-series-1: #9d79d7;
+  --color-series-2: #1da871;
+  --color-series-3: #c47d04;
+  --color-series-4: #3496de;
+  --color-series-5: #cd689b;
+
+  /* ---- Benefit and harm — DIVERGING ---------------------------------------
+     Brand extension for the impact charts: benefit rises above the axis and
+     harm falls below it, so position carries the polarity and colour repeats
+     it. Not status: these colour data, never state or controls. Blue/red was
+     chosen over gold/red because the gold pair collapses under deuteranopia;
+     this pair passes the dataviz validator on the dark ground (CVD ΔE 20). */
+  --color-benefit: #3e9ad6;
+  --color-harm: #d9534f;
 
   /* ---- ATIS magnitude tiers — CATEGORICAL, not semantic -----------------
      Identity, not judgment: these label a magnitude tier for scanning, and

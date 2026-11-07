@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { EntityListPage } from "@/features/entities/components/EntityListPage";
+import { RealmHome } from "@/features/realm/RealmHome";
 
 export const Route = createFileRoute("/")({
-  component: EntityListPage,
+  component: RealmHome,
 });

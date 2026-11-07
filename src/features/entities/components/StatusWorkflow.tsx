@@ -2,7 +2,7 @@ import { Send, CheckCircle, Archive, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/Toast";
 import { useUpdateEntityStatus } from "../hooks/useEntityMutations";
-import type { Entity, PublicationStatus } from "../types";
+import type { PublicationStatus } from "../types";
 
 interface StatusTransition {
   from: PublicationStatus;
@@ -43,11 +43,11 @@ const transitions: StatusTransition[] = [
   },
 ];
 
-export function StatusWorkflow({ entity }: { entity: Entity }) {
+export function StatusWorkflow({ slug, status }: { slug: string; status: PublicationStatus }) {
   const mutation = useUpdateEntityStatus();
   const { toast } = useToast();
 
-  const available = transitions.filter((t) => t.from === entity.status);
+  const available = transitions.filter((t) => t.from === status);
 
   if (available.length === 0) return null;
 
@@ -64,7 +64,7 @@ export function StatusWorkflow({ entity }: { entity: Entity }) {
             key={transition.to}
             onClick={() =>
               mutation.mutate(
-                { slug: entity.slug, newStatus: transition.to },
+                { slug, newStatus: transition.to },
                 {
                   onSuccess: () => toast(`Status updated to ${transition.to.replace("_", " ")}`),
                 },
