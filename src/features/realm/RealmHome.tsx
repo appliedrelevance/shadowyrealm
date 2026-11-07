@@ -63,7 +63,7 @@ export function RealmHome() {
         </h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">{COPY.home.riverSubtitle}</p>
         {error && <LoadError message={error.message} />}
-        {isLoading && <div className="h-[480px] animate-pulse rounded bg-surface-2" />}
+        {isLoading && <div className="h-[560px] animate-pulse rounded bg-surface-2" />}
         {realm && realm.entities.length > 0 && <ImpactRiver realm={realm} />}
         {realm && realm.entities.length === 0 && <p className="py-12 text-center text-ink-muted">{COPY.home.empty}</p>}
       </section>

@@ -101,10 +101,21 @@ export function LineageGraph({ realm }: { realm: Realm }) {
   }, [realm, credit, W]);
 
   const bySlug = useMemo(() => new Map(nodes.map((n) => [n.entity.slug, n])), [nodes]);
-  const defaultFocus = useMemo(
-    () => realm.entities.find((e) => credit.some((l) => l.source === e.slug || l.target === e.slug))?.slug ?? null,
-    [realm, credit],
-  );
+  // Open on the entity with the longest lineage, so the first view shows credit travelling many hops.
+  const defaultFocus = useMemo(() => {
+    const forward = new Map<string, string[]>();
+    const backward = new Map<string, string[]>();
+    for (const l of credit) {
+      forward.set(l.source, [...(forward.get(l.source) ?? []), l.target]);
+      backward.set(l.target, [...(backward.get(l.target) ?? []), l.source]);
+    }
+    let best: { slug: string; size: number } | null = null;
+    for (const e of realm.entities) {
+      const size = reach(e.slug, forward).size + reach(e.slug, backward).size;
+      if (size > 0 && (!best || size > best.size)) best = { slug: e.slug, size };
+    }
+    return best?.slug ?? null;
+  }, [realm, credit]);
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const focus = hovered ?? selected ?? defaultFocus;

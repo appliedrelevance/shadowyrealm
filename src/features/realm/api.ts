@@ -12,11 +12,18 @@ export type RealmEntity = Realm["entities"][number];
 export type RealmLink = Realm["links"][number];
 export type EntityProfile = NonNullable<Awaited<ReturnType<typeof getEntityProfile>>>;
 
-/** GET with the session token when there is one; null on 404. */
+/**
+ * GET with the session token when there is one; null on 404. The browser
+ * revalidates every time, so it never shows scores older than the Worker's
+ * one-minute edge cache, whatever lifetime the zone puts on the response.
+ */
 async function read<T>(path: string): Promise<T | null> {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  const response = await fetch(path, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined);
+  const response = await fetch(path, {
+    cache: "no-cache",
+    ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+  });
   if (response.status === 404) return null;
   const json = (await response.json()) as T & { error?: string };
   if (!response.ok) throw new Error(json.error ?? `GET ${path} failed: HTTP ${response.status}`);

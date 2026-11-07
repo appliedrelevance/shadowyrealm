@@ -33,7 +33,7 @@ interface Layer {
 }
 
 const MIN_WIDTH = 680;
-const LABEL_LAYERS = 18;
+const LABEL_LAYERS = 40;
 
 export function ImpactRiver({ realm }: { realm: Realm }) {
   const { ref, width } = useWidth<HTMLDivElement>();
@@ -41,7 +41,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
   const [hover, setHover] = useState<{ slug: string; px: number; py: number } | null>(null);
 
   const W = Math.max(width, MIN_WIDTH);
-  const H = W < 900 ? 380 : 480;
+  const H = W < 900 ? 420 : 560;
   const M = { top: 18, right: 14, bottom: 30, left: 14 };
   const innerW = W - M.left - M.right;
   const half = (H - M.top - M.bottom) / 2;
@@ -121,9 +121,9 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
           if (t > peak.t) peak = { t, side };
         }
       }
-      if (peak.t < 12) continue;
+      if (peak.t < 9) continue;
       let k = 0;
-      while (k < layer.b1.length - 1 && thickness(k, peak.side) < Math.max(12, peak.t * 0.7)) k++;
+      while (k < layer.b1.length - 1 && thickness(k, peak.side) < Math.max(9, peak.t * 0.7)) k++;
       const w = layer.entity.name.length * 6.6;
       const px = x(bucketUnit(layer.start + k)) + 4;
       const py =
@@ -240,7 +240,7 @@ const Bands = memo(function Bands({
   onOpen: (slug: string) => void;
 }) {
   return (
-    <g stroke={SURFACE} strokeWidth={0.6} style={{ cursor: "pointer" }}>
+    <g stroke={SURFACE} strokeWidth={0.25} strokeOpacity={0.8} style={{ cursor: "pointer" }}>
       {paths.map((p) => {
         const opacity = hovered && hovered !== p.slug ? 0.3 : 0.92;
         return (
