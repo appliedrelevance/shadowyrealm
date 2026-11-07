@@ -5,8 +5,8 @@
  * them on the same scale, so the two always line up.
  */
 
-/** The axis starts at the invention of writing. */
-export const TIMELINE_START = -3200;
+/** The axis starts with the first cities and the invention of writing. */
+export const TIMELINE_START = -3500;
 
 /** Years of offset that keep the present from sitting at infinity. */
 const NEAR = 40;

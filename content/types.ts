@@ -26,6 +26,8 @@ export interface RealmEntity {
   description: string;
   metadata?: Record<string, string>;
   periods: RealmPeriod[];
+  /** Why it belongs in the index. Kept with the content; the loader does not send it. */
+  why?: string;
 }
 
 export interface RealmLink {

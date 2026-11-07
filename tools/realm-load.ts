@@ -183,9 +183,10 @@ async function detail(slug: string): Promise<EntityDetail | null> {
 async function main() {
   const content = (await import(`${process.cwd()}/${file}`)).default as RealmContent;
   const entities = content.entities.filter((e) => !only || only.has(e.slug));
+  // A link may point at an entity already in the index rather than in this file.
   const slugs = new Set(content.entities.map((e) => e.slug));
-  for (const l of content.links) {
-    if (!slugs.has(l.from) || !slugs.has(l.to)) throw new Error(`Link ${l.from} -> ${l.to} names an unknown entity`);
+  for (const slug of new Set(content.links.flatMap((l) => [l.from, l.to]))) {
+    if (!slugs.has(slug) && !(await detail(slug))) throw new Error(`A link names "${slug}", which is neither in this file nor in the index`);
   }
 
   for (const e of entities) {
