@@ -137,7 +137,7 @@ export function InfluenceCurve({ profile }: { profile: EntityProfile }) {
           {hover && <line x1={hover.px} x2={hover.px} y1={M.top} y2={H - M.bottom} stroke="var(--color-ink-muted)" />}
         </svg>
         {hover && row && (
-          <Tooltip x={hover.px} y={hover.py} width={W}>
+          <Tooltip x={hover.px} y={hover.py} width={W} height={H}>
             <p className="mb-1 text-ink-muted">Around {formatYear(yearOf(hover.k))}, per year</p>
             {[
               { label: "Own benefit", value: row.ob, color: BENEFIT, dashed: false },

@@ -139,6 +139,10 @@ function MethodologyPage() {
         </p>
 
         <h2 className="font-display text-ink">Tiers</h2>
+        <p>
+          Tiers are set from the spread of the index itself: their boundaries are the round numbers nearest the
+          20th, 50th, 80th and 95th percentiles of total influence.
+        </p>
         <table>
           <thead>
             <tr>
@@ -150,7 +154,7 @@ function MethodologyPage() {
           <tbody>
             {TIER_THRESHOLDS.map((t, i) => (
               <tr key={t.tier}>
-                <td className="capitalize">{t.tier}</td>
+                <td>{t.label}</td>
                 <td>
                   {t.min.toLocaleString("en-US")}
                   {i + 1 < TIER_THRESHOLDS.length ? `–${TIER_THRESHOLDS[i + 1].min.toLocaleString("en-US")}` : "+"}

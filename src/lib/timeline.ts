@@ -45,17 +45,20 @@ export function bucketEdges(asOfYear: number): number[] {
 }
 
 /** Tick years for the axis labels. */
-export const TIMELINE_TICKS = [-3000, -2000, -1000, -500, 0, 500, 1000, 1500, 1700, 1800, 1900, 1950, 2000];
+export const TIMELINE_TICKS = [-3000, -2000, -1000, -500, 1, 500, 1000, 1500, 1700, 1800, 1900, 1950, 2000];
 
-/** "500 BCE", "1066", "2001". */
+/** "500 BCE", "30 CE", "1066". Years before 1000 CE carry their era so they cannot be misread. */
 export function formatYear(year: number): string {
   const y = Math.round(year);
-  return y < 0 ? `${-y} BCE` : y === 0 ? "1 BCE" : `${y}`;
+  if (y <= 0) return `${y === 0 ? 1 : -y} BCE`;
+  return y < 1000 ? `${y} CE` : `${y}`;
 }
 
-/** "1096–1099", "4 BCE–30", "since 1948". */
+/** "1096–1099", "28–30 CE", "27 BCE–14 CE", "since 1948". */
 export function formatSpan(start: number, end: number, asOfYear: number): string {
   if (end >= asOfYear) return `since ${formatYear(start)}`;
   if (start === end) return formatYear(start);
+  if (start > 0 && end < 1000) return `${start}–${end} CE`;
+  if (end <= 0) return `${start === 0 ? 1 : -start}–${-end} BCE`;
   return `${formatYear(start)}–${formatYear(end)}`;
 }

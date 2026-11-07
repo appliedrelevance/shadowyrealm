@@ -143,13 +143,18 @@ export const DIMENSION_WEIGHTS: Dimensions = {
  */
 export const PERSISTENCE_TIME_CONSTANTS = [1, 3, 10, 25, 70, 150, 300, 700, 2000, Infinity];
 
-/** Tier thresholds, in influence-centuries of total magnitude. Set from the benchmark run in research.md. */
-export const TIER_THRESHOLDS: { tier: ATISTier; min: number; descriptor: string }[] = [
-  { tier: "minimal", min: 0, descriptor: "Limited local impact" },
-  { tier: "moderate", min: 10, descriptor: "Regional or specialized impact" },
-  { tier: "significant", min: 50, descriptor: "National or cross-domain impact" },
-  { tier: "transformational", min: 200, descriptor: "Global or epoch-defining impact" },
-  { tier: "legendary", min: 500, descriptor: "Civilization-altering impact" },
+/**
+ * Tier thresholds, in influence-centuries of total magnitude: the round values
+ * nearest the 20th, 50th, 80th and 95th percentiles of the 2026-11-07 run over
+ * 114 entities (research.md). The keys name the colour tokens; the labels are
+ * what readers see.
+ */
+export const TIER_THRESHOLDS: { tier: ATISTier; min: number; label: string; descriptor: string }[] = [
+  { tier: "minimal", min: 0, label: "Notable", descriptor: "Influence concentrated in one era or field" },
+  { tier: "moderate", min: 100, label: "Major", descriptor: "Wide influence across a nation or a field" },
+  { tier: "significant", min: 200, label: "Great", descriptor: "Influence across nations and generations" },
+  { tier: "transformational", min: 500, label: "Epochal", descriptor: "Defined an epoch for much of humanity" },
+  { tier: "legendary", min: 2000, label: "Legendary", descriptor: "Shaped civilisations for millennia" },
 ];
 
 /** Years per unit of area. */
@@ -385,4 +390,8 @@ export function classifyMagnitude(magnitude: number): { tier: ATISTier; descript
   let found = TIER_THRESHOLDS[0];
   for (const t of TIER_THRESHOLDS) if (magnitude >= t.min) found = t;
   return { tier: found.tier, descriptor: found.descriptor };
+}
+
+export function tierLabel(tier: ATISTier): string {
+  return TIER_THRESHOLDS.find((t) => t.tier === tier)!.label;
 }

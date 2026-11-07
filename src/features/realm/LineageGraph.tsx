@@ -15,7 +15,7 @@ import { AXIS_TEXT, BENEFIT, formatMagnitude, HARM, SURFACE, TimeAxis, useWidth 
 
 const CREDIT_TYPES = new Set(["influence", "mentorship"]);
 const MIN_WIDTH = 980;
-const LANE = 34;
+const LANE = 30;
 
 interface Node {
   entity: RealmEntity;
@@ -48,7 +48,7 @@ function reach(start: string, next: Map<string, string[]>): Set<string> {
 export function LineageGraph({ realm }: { realm: Realm }) {
   const { ref, width } = useWidth<HTMLDivElement>();
   const W = Math.max(width, MIN_WIDTH);
-  const H = 640;
+  const H = 780;
   const M = { top: 24, right: 150, bottom: 30, left: 24 };
   const innerW = W - M.left - M.right;
   const lanes = Math.floor((H - M.top - M.bottom) / LANE);
@@ -81,7 +81,7 @@ export function LineageGraph({ realm }: { realm: Realm }) {
         .sort((a, b) => b.share - a.share)[0];
       const preferred = parent ? laneOf.get(parent.slug)! : order[0];
       const clear = (lane: number) =>
-        occupied[lane].every((o) => Math.abs(o.x - node.x) > o.r + node.r + 70);
+        occupied[lane].every((o) => Math.abs(o.x - node.x) > o.r + node.r + 84);
       const candidates = [...Array(lanes).keys()].sort(
         (a, b) => Math.abs(a - preferred) - Math.abs(b - preferred) || order.indexOf(a) - order.indexOf(b),
       );
@@ -194,7 +194,7 @@ export function LineageGraph({ realm }: { realm: Realm }) {
                 <g
                   key={n.entity.slug}
                   transform={`translate(${n.x},${n.y})`}
-                  opacity={on ? 1 : 0.22}
+                  opacity={on ? 1 : 0.3}
                   style={{ cursor: "pointer", transition: "opacity 120ms" }}
                   onPointerEnter={() => setHovered(n.entity.slug)}
                   onClick={() => setSelected(n.entity.slug)}

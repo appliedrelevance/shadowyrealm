@@ -60,7 +60,7 @@ export function TimeAxis({
   toUnit = 1,
   top,
   bottom,
-  minSpacing = 44,
+  minSpacing = 58,
 }: {
   asOfYear: number;
   x: (unit: number) => number;
@@ -70,36 +70,55 @@ export function TimeAxis({
   bottom: number;
   minSpacing?: number;
 }) {
+  const left = x(fromUnit);
+  const right = x(toUnit);
   const ticks: { year: number; px: number }[] = [];
-  for (const year of TIMELINE_TICKS) {
+  // Most recent first, so the readable end of the axis keeps its labels.
+  for (const year of [...TIMELINE_TICKS].reverse()) {
     const u = yearToUnit(year, asOfYear);
     if (u < fromUnit || u > toUnit) continue;
     const px = x(u);
-    if (ticks.length > 0 && px - ticks[ticks.length - 1].px < minSpacing) continue;
+    if (ticks.length > 0 && ticks[ticks.length - 1].px - px < minSpacing) continue;
     ticks.push({ year, px });
   }
   return (
     <g aria-hidden="true">
-      {ticks.map((t) => (
-        <g key={t.year}>
-          <line x1={t.px} x2={t.px} y1={top} y2={bottom} stroke={GRID} strokeWidth={1} />
-          <text x={t.px} y={bottom + 16} textAnchor="middle" fontSize={11} fill={AXIS_TEXT}>
-            {formatYear(t.year)}
-          </text>
-        </g>
-      ))}
+      {ticks.map((t) => {
+        const anchor = t.px - left < 24 ? "start" : right - t.px < 24 ? "end" : "middle";
+        return (
+          <g key={t.year}>
+            <line x1={t.px} x2={t.px} y1={top} y2={bottom} stroke={GRID} strokeWidth={1} />
+            <text x={t.px} y={bottom + 16} textAnchor={anchor} fontSize={11} fill={AXIS_TEXT}>
+              {formatYear(t.year)}
+            </text>
+          </g>
+        );
+      })}
     </g>
   );
 }
 
-/** A floating readout placed inside its chart's box. */
-export function Tooltip({ x, y, width, children }: { x: number; y: number; width: number; children: React.ReactNode }) {
+/** A floating readout kept inside its chart's box: beside the pointer, and above it in the lower half. */
+export function Tooltip({
+  x,
+  y,
+  width,
+  height,
+  children,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  children: React.ReactNode;
+}) {
   const left = Math.min(Math.max(x + 14, 4), width - 236);
+  const below = y < height / 2;
   return (
     <div
       role="status"
       className="pointer-events-none absolute z-10 w-56 rounded-md border border-line bg-surface-1 px-3 py-2 text-xs text-ink-2 shadow-lg shadow-surface"
-      style={{ left, top: Math.max(y - 12, 0) }}
+      style={below ? { left, top: Math.max(y - 12, 0) } : { left, bottom: Math.max(height - y - 12, 0) }}
     >
       {children}
     </div>

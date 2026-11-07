@@ -15,7 +15,8 @@ test.describe("Mobile (375px)", () => {
     test(`${path} has no horizontal page scroll`, async ({ page }) => {
       await page.goto(path);
       await expect(page.locator("h1")).toBeVisible();
-      await page.waitForLoadState("networkidle");
+      // The sign-in page's Turnstile widget keeps polling, so it never goes network-idle.
+      await page.waitForLoadState(path === "/login" ? "load" : "networkidle");
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow).toBeLessThanOrEqual(0);
     });

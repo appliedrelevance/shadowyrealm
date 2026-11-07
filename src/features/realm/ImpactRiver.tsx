@@ -93,26 +93,31 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
     return `${top}${bottom}Z`;
   };
 
+  // Label the largest bands where they enter the river, so the names read as a timeline.
   const labels = useMemo(() => {
     const placed: { slug: string; name: string; px: number; py: number; w: number }[] = [];
     const biggest = [...layers].sort((a, b) => b.entity.own_magnitude - a.entity.own_magnitude).slice(0, LABEL_LAYERS);
     for (const layer of biggest) {
-      let best = { thickness: 0, k: 0, side: "benefit" as "benefit" | "harm" };
+      const thickness = (k: number, side: "benefit" | "harm") =>
+        side === "benefit" ? yUp(layer.b0[k]) - yUp(layer.b1[k]) : yDown(layer.h1[k]) - yDown(layer.h0[k]);
+      let peak = { t: 0, side: "benefit" as "benefit" | "harm" };
       for (let k = 0; k < layer.b1.length; k++) {
-        const tb = yUp(layer.b0[k]) - yUp(layer.b1[k]);
-        const th = yDown(layer.h1[k]) - yDown(layer.h0[k]);
-        if (tb > best.thickness) best = { thickness: tb, k, side: "benefit" };
-        if (th > best.thickness) best = { thickness: th, k, side: "harm" };
+        for (const side of ["benefit", "harm"] as const) {
+          const t = thickness(k, side);
+          if (t > peak.t) peak = { t, side };
+        }
       }
-      if (best.thickness < 13) continue;
-      const px = x(bucketUnit(layer.start + best.k));
+      if (peak.t < 12) continue;
+      let k = 0;
+      while (k < layer.b1.length - 1 && thickness(k, peak.side) < Math.max(12, peak.t * 0.7)) k++;
+      const w = layer.entity.name.length * 6.6;
+      const px = x(bucketUnit(layer.start + k)) + 4;
       const py =
-        best.side === "benefit"
-          ? (yUp(layer.b0[best.k]) + yUp(layer.b1[best.k])) / 2
-          : (yDown(layer.h0[best.k]) + yDown(layer.h1[best.k])) / 2;
-      const w = layer.entity.name.length * 6.1;
-      const clash = placed.some((p) => Math.abs(p.px - px) < (p.w + w) / 2 + 6 && Math.abs(p.py - py) < 13);
-      if (clash || px - w / 2 < M.left || px + w / 2 > W - M.right) continue;
+        peak.side === "benefit"
+          ? (yUp(layer.b0[k]) + yUp(layer.b1[k])) / 2
+          : (yDown(layer.h0[k]) + yDown(layer.h1[k])) / 2;
+      const clash = placed.some((p) => px < p.px + p.w + 8 && p.px < px + w + 8 && Math.abs(p.py - py) < 14);
+      if (clash || px + w > W - M.right) continue;
       placed.push({ slug: layer.entity.slug, name: layer.entity.name, px, py, w });
     }
     return placed;
@@ -176,8 +181,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
                   key={l.slug}
                   x={l.px}
                   y={l.py + 4}
-                  textAnchor="middle"
-                  fontSize={11}
+                  fontSize={12}
                   fontWeight={600}
                   fill={SURFACE}
                   opacity={hover && hover.slug !== l.slug ? 0.35 : 1}
@@ -188,7 +192,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
             </g>
           </svg>
           {hover && hovered && (
-            <Tooltip x={hover.px} y={hover.py} width={W}>
+            <Tooltip x={hover.px} y={hover.py} width={W} height={H}>
               <p className="font-semibold text-ink">{hovered.entity.name}</p>
               <p className="text-ink-muted">
                 <span className="capitalize">{hovered.entity.entity_type}</span>

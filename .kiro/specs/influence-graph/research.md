@@ -140,6 +140,38 @@
 - **Findings**: Start from each entity's outgoing influence links and step one hop at a time, multiplying the shares. `CYCLE entity_id SET is_cycle USING path` stops loops, and `max(share)` per pair keeps the strongest chain.
 - **Implications**: It returns the same matrix as `pgr_johnson`, so the two implementations cross-check each other.
 
+### Benchmark and launch run, 2026-11-07
+- **Context**: Requirement 10. Score the benchmark end to end and set the tiers from the spread.
+- **Sources Consulted**:
+  - The 114-entity launch set in `content/`, which includes all eleven benchmark entities.
+  - Scored through the production MCP tools: 140 periods, one Clef request each, with Wikipedia evidence of up to 7,800 characters per period.
+  - Scores read with `get_scores` (`include_drafts: true`) before publishing.
+- **Findings**:
+
+  | Entity | Rank of 114 | Total | Own | Credited | Benefit | Harm |
+  |---|---|---|---|---|---|---|
+  | Catholic Church | 1 | 4,351.2 | 3,575.7 | 775.5 | 2,053.3 | 2,297.9 |
+  | Jesus | 3 | 3,481.9 | 0.9 | 3,481.0 | 1,643.3 | 1,838.6 |
+  | Buddhism | 4 | 2,874.3 | 2,874.3 | 0.0 | 2,003.2 | 871.1 |
+  | The Buddha | 6 | 2,605.8 | 18.9 | 2,586.9 | 1,816.5 | 789.3 |
+  | Islam | 8 | 1,834.3 | 1,826.9 | 7.4 | 1,003.6 | 830.7 |
+  | Muhammad | 9 | 1,667.3 | 16.5 | 1,650.9 | 909.6 | 757.7 |
+  | First Crusade | 36 | 264.6 | 264.6 | 0.0 | 63.3 | 201.3 |
+  | William Shakespeare | 61 | 153.5 | 153.5 | 0.0 | 122.8 | 30.7 |
+  | Osama bin Laden | 85 | 97.0 | 45.0 | 52.0 | 20.9 | 76.0 |
+  | al-Qaeda | 95 | 74.2 | 48.7 | 25.6 | 16.5 | 57.7 |
+  | War on Terror | 108 | 43.9 | 43.9 | 0.0 | 11.4 | 32.5 |
+  | Harry Potter | 112 | 32.5 | 32.5 | 0.0 | 26.9 | 5.6 |
+  | September 11 attacks | 114 | 28.4 | 2.0 | 26.4 | 7.3 | 21.0 |
+
+  - Totals over all 114 entities run from 28.4 (September 11 attacks) to 4,351.2 (Catholic Church), with a median of 161.3.
+  - Duration dominates. Institutions that have lasted millennia lead (Catholic Church, Judaism, Buddhism, Roman Empire). Founders rank beside them on credit alone: Jesus's own 0.9 is his three-year ministry.
+  - The tail rule ranks short events with linked consequences low. World War II has its own six years (30.2) plus credit from the Cold War and the United Nations, 185.4 in all, and ranks 51st, below the Holodomor (191.5), which has no consequences linked and keeps its tail. The September 11 attacks rank last for the same reason.
+  - Credit through drafts and through the published set matched, because every launch entity was published.
+- **Implications**:
+  - Tier rule: the boundaries are the round values nearest the 20th, 50th, 80th and 95th percentiles of total magnitude, which were 76.3, 161.3, 571.6 and 2,239.7. That gives `TIER_THRESHOLDS` of 100, 200, 500 and 2,000, with 32, 33, 23, 19 and 7 entities from lowest to highest tier. Readers see the labels Notable, Major, Great, Epochal and Legendary; the tier keys still name the colour tokens.
+  - Open question for Geordie: whether an event's tail should survive when its consequences carry only part of its legacy, for example by scaling the tail by 1 − (the shares it passes on).
+
 ## Architecture Pattern Evaluation
 
 | Option | Description | Strengths | Risks / Limitations | Notes |

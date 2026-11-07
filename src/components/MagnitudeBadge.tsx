@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { ATISTier } from "@/lib/atis-calculator";
+import { tierLabel, type ATISTier } from "@/lib/atis-calculator";
 
 const tierStyles: Record<ATISTier, string> = {
   minimal: "border-tier-minimal bg-tier-minimal/20 text-ink-2",
@@ -26,7 +26,7 @@ export function MagnitudeBadge({ tier, magnitude, showMagnitude = true, classNam
         className,
       )}
     >
-      <span>{tier}</span>
+      <span>{tierLabel(tier)}</span>
       {showMagnitude && <span className="font-mono opacity-75">{Math.round(magnitude).toLocaleString("en-US")}</span>}
     </span>
   );

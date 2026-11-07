@@ -17,7 +17,7 @@ function LineagePage() {
       <p className="mt-2 max-w-3xl text-ink-2">{COPY.lineage.lede}</p>
       <div className="mt-6">
         {error && <p className="text-crit">Failed to load: {error.message}</p>}
-        {isLoading && <div className="h-[640px] animate-pulse rounded-lg bg-surface-1" />}
+        {isLoading && <div className="h-[780px] animate-pulse rounded-lg bg-surface-1" />}
         {realm && <LineageGraph realm={realm} />}
       </div>
     </div>
