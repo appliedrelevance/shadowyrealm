@@ -4,9 +4,9 @@
  * nearest the axis. Only own influence is drawn, so nothing is counted twice:
  * credit is a share of a band already on the chart.
  */
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { BUCKET_COUNT, formatSpan, formatYear, unitToYear } from "@/lib/timeline";
+import { BUCKET_COUNT, formatSpan, formatYear, TIMELINE_START, unitToYear } from "@/lib/timeline";
 import type { Realm, RealmEntity } from "./api";
 import {
   AXIS_TEXT,
@@ -79,19 +79,33 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
   const yUp = (v: number) => mid - Math.sqrt(v / max) * half;
   const yDown = (v: number) => mid + Math.sqrt(v / max) * half;
 
-  const band = (layer: Layer, lo: number[], hi: number[], y: (v: number) => number) => {
-    let top = "";
-    let bottom = "";
-    for (let k = 0; k < hi.length; k++) {
-      const px = x(bucketUnit(layer.start + k)).toFixed(1);
-      top += `${k === 0 ? "M" : "L"}${px},${y(hi[k]).toFixed(1)}`;
-    }
-    for (let k = lo.length - 1; k >= 0; k--) {
-      const px = x(bucketUnit(layer.start + k)).toFixed(1);
-      bottom += `L${px},${y(lo[k]).toFixed(1)}`;
-    }
-    return `${top}${bottom}Z`;
-  };
+  // Path strings depend only on the data and the size, so hovering never rebuilds them.
+  const paths = useMemo(() => {
+    const band = (layer: Layer, lo: number[], hi: number[], y: (v: number) => number) => {
+      let top = "";
+      let bottom = "";
+      for (let k = 0; k < hi.length; k++) {
+        const px = x(bucketUnit(layer.start + k)).toFixed(1);
+        top += `${k === 0 ? "M" : "L"}${px},${y(hi[k]).toFixed(1)}`;
+      }
+      for (let k = lo.length - 1; k >= 0; k--) {
+        const px = x(bucketUnit(layer.start + k)).toFixed(1);
+        bottom += `L${px},${y(lo[k]).toFixed(1)}`;
+      }
+      return `${top}${bottom}Z`;
+    };
+    return layers.map((layer) => ({
+      slug: layer.entity.slug,
+      benefit: band(layer, layer.b0, layer.b1, yUp),
+      harm: band(layer, layer.h0, layer.h1, yDown),
+    }));
+  }, [layers, W, H, max]);
+
+  const onBandMove = useCallback((slug: string, e: React.PointerEvent) => {
+    const box = (e.currentTarget as SVGPathElement).ownerSVGElement!.getBoundingClientRect();
+    setHover({ slug, px: e.clientX - box.left, py: e.clientY - box.top });
+  }, []);
+  const onBandOpen = useCallback((slug: string) => navigate({ to: "/entity/$slug", params: { slug } }), [navigate]);
 
   // Label the largest bands where they enter the river, so the names read as a timeline.
   const labels = useMemo(() => {
@@ -134,8 +148,6 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
     return i >= 0 && i < values.length ? values[i] : 0;
   };
 
-  const open = (slug: string) => navigate({ to: "/entity/$slug", params: { slug } });
-
   return (
     <figure className="m-0">
       <div ref={ref} className="relative w-full overflow-x-auto">
@@ -144,30 +156,11 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
             width={W}
             height={H}
             role="img"
-            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(-3200)} to ${realm.as_of_year}, benefit above the axis and harm below`}
+            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(TIMELINE_START)} to ${realm.as_of_year}, benefit above the axis and harm below`}
             onPointerLeave={() => setHover(null)}
           >
             <TimeAxis asOfYear={realm.as_of_year} x={x} top={M.top} bottom={H - M.bottom} />
-            {layers.map((layer) => {
-              const dim = hover && hover.slug !== layer.entity.slug;
-              const handlers = {
-                onPointerMove: (e: React.PointerEvent) => {
-                  const box = (e.currentTarget as SVGPathElement).ownerSVGElement!.getBoundingClientRect();
-                  setHover({ slug: layer.entity.slug, px: e.clientX - box.left, py: e.clientY - box.top });
-                },
-                onClick: () => open(layer.entity.slug),
-                style: { cursor: "pointer", transition: "opacity 120ms" },
-                opacity: dim ? 0.3 : 0.92,
-                stroke: SURFACE,
-                strokeWidth: 0.6,
-              };
-              return (
-                <g key={layer.entity.slug}>
-                  <path d={band(layer, layer.b0, layer.b1, yUp)} fill={BENEFIT} {...handlers} />
-                  <path d={band(layer, layer.h0, layer.h1, yDown)} fill={HARM} {...handlers} />
-                </g>
-              );
-            })}
+            <Bands paths={paths} hovered={hover?.slug ?? null} onMove={onBandMove} onOpen={onBandOpen} />
             <line x1={M.left} x2={W - M.right} y1={mid} y2={mid} stroke={GRID} strokeWidth={1} />
             <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
               Benefit ↑
@@ -233,3 +226,30 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
     </figure>
   );
 }
+
+/** Every band, re-rendered only when the hovered band changes, not on every pointer move. */
+const Bands = memo(function Bands({
+  paths,
+  hovered,
+  onMove,
+  onOpen,
+}: {
+  paths: { slug: string; benefit: string; harm: string }[];
+  hovered: string | null;
+  onMove: (slug: string, e: React.PointerEvent) => void;
+  onOpen: (slug: string) => void;
+}) {
+  return (
+    <g stroke={SURFACE} strokeWidth={0.6} style={{ cursor: "pointer" }}>
+      {paths.map((p) => {
+        const opacity = hovered && hovered !== p.slug ? 0.3 : 0.92;
+        return (
+          <g key={p.slug} opacity={opacity} onPointerMove={(e) => onMove(p.slug, e)} onClick={() => onOpen(p.slug)}>
+            <path d={p.benefit} fill={BENEFIT} />
+            <path d={p.harm} fill={HARM} />
+          </g>
+        );
+      })}
+    </g>
+  );
+});

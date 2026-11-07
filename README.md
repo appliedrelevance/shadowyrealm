@@ -15,7 +15,7 @@ It measures influence, not virtue. Every entity carries ten numbers, a benefit a
 
 1. An entity's direct activity is divided into **periods**: a reign, a ministry, a war, a company's platform era.
 2. **Clef**, Cloudflare's decision model, scores each period in one request: benefit and harm for each dimension, plus reach and persistence. It works from evidence text taken from Wikipedia, which is stored with the score.
-3. A **TypeScript calculator** turns each period into a level per year (dimension weight × value × reach) and integrates the curve into influence-centuries. A fading tail follows the last period unless consequences carry the legacy.
+3. A **TypeScript calculator** turns each period into a level per year (dimension weight × value × reach) and integrates the curve into influence-centuries. A fading tail follows the last period, shrunk by the share of the legacy that its consequences carry.
 4. **Postgres** computes the credit: `shadowyrealm.credit_shares()` is a recursive CTE that walks every chain of links, stops at cycles, and keeps each pair's strongest chain. It was cross-checked against pgRouting's `pgr_johnson` with edge cost −ln(strength) (`.kiro/specs/influence-graph/pgrouting-crosscheck.sql`).
 5. The **Worker** adds each descendant's own profile × share and serves one computation to every page and to the MCP tools.
 

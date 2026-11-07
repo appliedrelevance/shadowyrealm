@@ -15,7 +15,7 @@ import { AXIS_TEXT, BENEFIT, formatMagnitude, HARM, SURFACE, TimeAxis, useWidth 
 
 const CREDIT_TYPES = new Set(["influence", "mentorship"]);
 const MIN_WIDTH = 980;
-const LANE = 30;
+const LANE = 28;
 
 interface Node {
   entity: RealmEntity;
@@ -48,7 +48,8 @@ function reach(start: string, next: Map<string, string[]>): Set<string> {
 export function LineageGraph({ realm }: { realm: Realm }) {
   const { ref, width } = useWidth<HTMLDivElement>();
   const W = Math.max(width, MIN_WIDTH);
-  const H = 780;
+  // Room grows with the index: about a dozen entities per lane.
+  const H = Math.min(60, Math.max(26, Math.ceil(realm.entities.length / 12))) * LANE + 54;
   const M = { top: 24, right: 150, bottom: 30, left: 24 };
   const innerW = W - M.left - M.right;
   const lanes = Math.floor((H - M.top - M.bottom) / LANE);
