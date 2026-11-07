@@ -1,10 +1,10 @@
 /**
- * The next 500 candidates for the index, drafted 2026-11-07 and not yet loaded.
+ * The second wave: 500 entities drafted, loaded, scored and published on 2026-11-07.
  * Every Wikipedia title was checked against the API, duplicates of the launch
  * set were removed, and the links fit the 1.00 incoming-credit cap together
- * with the launch links. Load with:
+ * with the launch links. Loaded with:
  *
- *   MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/next-500.ts
+ *   MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/next-500.ts --publish --concurrency 4
  */
 import type { RealmContent } from "./types";
 

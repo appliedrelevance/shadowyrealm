@@ -47,4 +47,4 @@ Content lives in `content/` and is loaded through the MCP tools:
 MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts --publish
 ```
 
-The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/NEXT-500.md` lists the next candidates.
+The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/realm.ts` is the whole index: 614 entities, 712 periods and 289 links. `content/NEXT-500.md` is a readable list of the second wave of 500.

@@ -217,6 +217,14 @@
 - **Result**: World War II moved to 42nd (277.7), above the Holocaust (251.2) and World War I (245.4). The September 11 attacks rose from 28.4 to 48.0. Jesus's own rose from 0.9 to 40.2.
 - **Status**: Claude's pick, made during the unattended run Geordie asked for. Reverting is one line in `calculateImpact`.
 
+### Second wave, 2026-11-07
+- **Context**: 500 more entities, drafted by era and domain (`content/next-500.ts`), loaded through the production MCP tools four at a time and published. Scored with the proportional tail.
+- **Findings**:
+  - The index holds 614 entities, 712 Clef-scored periods, 289 links and 936 credit pairs. The assessments table is 19 MB.
+  - Totals run from 6.4 to 5,393.6, with a median of 186.5. The leaders are long-lived civilisations and religions: Ancient Egypt, the Maya, Hinduism, the Catholic Church, the Bantu expansion, Judaism.
+  - The 20th, 50th, 80th and 95th percentiles are 82.4, 186.5, 607.1 and 1,686.5, so the tier rule still gives 100, 200, 500 and 2,000. That puts 159, 165, 147, 123 and 20 entities in the tiers from Notable to Legendary.
+  - `/api/realm` is 195 KB gzipped and the first computation took 0.6 s.
+
 ### Decision: Reality is irrelevant
 - **Selected Approach**: Fictional characters and legal fictions are entities like any other, scored on what the idea of them did. No field records existence.
 - **Status**: Decided by Geordie, 2026-10-25.

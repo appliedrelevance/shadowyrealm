@@ -1,12 +1,12 @@
-# The next 500 for ShadowyRealm
+# The second 500
 
-Candidates drafted on 2026-11-07 to follow the 114 launch entities: 270 people, 115 organizations and 115 events, with 204 links of cause and consequence. Each has one or two periods of direct activity ready for Clef to score. The loadable file is `content/next-500.ts`.
+The second wave after the 114 launch entities, loaded, scored and published on 2026-11-07: 270 people, 115 organizations and 115 events, with 204 links of cause and consequence. Each has one or two periods of direct activity, scored by Clef from Wikipedia evidence. The source file is `content/next-500.ts`.
 
-## Loading notes
+## Notes
 
 - Every Wikipedia title resolves, none of the 500 repeats a launch entity, and every consequence's incoming credit stays at or under 1.00 together with the launch links.
-- Six launch entities gain their first credit link, which replaces their fading tail with credit: Confucius → Confucianism, Qin Shi Huang → Qin dynasty, Alexander Fleming → Penicillin, Thirty Years' War → Peace of Westphalia, War on Terror → Iraq War, Spanish conquest of the Aztec Empire → Spanish Empire.
-- Load with `MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/next-500.ts --publish`. That is 572 periods, one Clef request each.
+- Six launch entities gain their first credit link, which shrinks their fading tail by the share passed on: Confucius → Confucianism, Qin Shi Huang → Qin dynasty, Alexander Fleming → Penicillin, Thirty Years' War → Peace of Westphalia, War on Terror → Iraq War, Spanish conquest of the Aztec Empire → Spanish Empire.
+- Loaded with `MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/next-500.ts --publish --concurrency 4`: 572 periods, one Clef request each.
 
 ## Before 500 BCE (38)
 
