@@ -22,7 +22,7 @@ const only = args.includes("--only") ? new Set(args[args.indexOf("--only") + 1].
 const rescore = args.includes("--rescore");
 const publish = args.includes("--publish");
 
-const WIKI_HEADERS = { "User-Agent": "ShadowyRealm/1.0 (https://shadowyrealm.com; geveritt@appliedrelevance.com)" };
+const WIKI_HEADERS = { "User-Agent": "ShadowyRealm/1.0 (https://shadowyrealm.com)" };
 const EVIDENCE_MAX = 7800;
 const SKIP_SECTIONS = /^(see also|references|further reading|external links|notes|bibliography|sources|citations|footnotes|works cited|gallery|explanatory notes)$/i;
 
