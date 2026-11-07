@@ -1,5 +1,10 @@
 # Handoff: remove signed-in write access to the `shadowyrealm` schema
 
+> **Executed 2026-11-07.** The SQL below went out as part of migration
+> `20261107000827_shadowyrealm_influence_graph` (monorepo commit `b8ba8265`), which also
+> made child rows readable only for published entities. Verified afterwards: `anon` and
+> `authenticated` hold only `SELECT`, and every remaining policy is a `SELECT` policy.
+
 **Execute from:** the appliedrelevance monorepo root checkout
 (`/Volumes/Berthold/Landru/code/appliedrelevance/appliedrelevance`), on the branch it is on.
 The shared Supabase project (`qgfmwstgkwyqqwyqroav`) and its migrations belong to that repo.
