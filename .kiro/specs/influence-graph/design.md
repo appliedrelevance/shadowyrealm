@@ -37,7 +37,7 @@ Migration `20261107000827_shadowyrealm_influence_graph` (monorepo `supabase/migr
 ### `src/lib/atis-calculator.ts`
 - `calculateImpact(assessments, periods, { hasCreditDescendants, asOfYear })` returns the ten-number `profile`, `magnitude` (their sum), `benefit_total`, `harm_total`, per-period `breakdown`, the `tail`, and the `curve` (segments plus fading tail parts).
 - Level per number = weight × value × `reachMultiplier(reach)`, the mean over the period's assessments. Area = level × years / 100.
-- The tail runs only when `hasCreditDescendants` is false (Requirements 2.4, 2.5).
+- The tail is scaled by `1 − creditPassedOn`, the sum of the entity's outgoing credit shares, and disappears at 1 or more. This refines Requirements 2.4 and 2.5; see research.md.
 - `curveAreaBetween` and `sampleCurve` integrate the curve exactly. A bucket's value is its mean level, so a four-year event keeps its area inside a fifty-year bucket.
 - Removed: the extraordinary bonus, consensus, controversy, uncertainty and network amplification (Requirement 2.8).
 
@@ -95,6 +95,7 @@ Migration `20261107000827_shadowyrealm_influence_graph` (monorepo `supabase/migr
 | 8.7 "return the stored row" | The stored row without its five justifications, plus a note | Each justification holds the evidence (up to 8,000 characters), so returning all five would make every response 40 KB. |
 | 8 reruns | `score_period` replaces the period's earlier Clef assessment | A rerun is a correction; averaging it with the run it corrects would keep the error. |
 | 7.3 one endpoint | `/api/scores` as specified, plus `/api/realm` and `/api/entities/:slug` | The river and the profile need curves and lineage. All three call the same `loadScoring` and `composeScores`. |
+| 2.4, 2.5 tail | The tail is scaled by 1 − the credit shares passed on, rather than removed by any link | The all-or-nothing rule ranked World War II 51st once it was linked to the Cold War and the UN |
 | 9 handoff | Applied directly with Geordie's authorization (2026-11-07) and committed in the monorepo as `b8ba8265` | Recorded in the migration file. `ltree` and `pg_graphql` drift on gideon is untouched; this work did not use gideon. |
 | 10.1 benchmark on local | The benchmark and the launch content were loaded into the shared project as drafts through a local `wrangler dev`, then published | The benchmark entities are launch content, so loading them twice would duplicate the work. |
 | 10.5 e2e seeding | The e2e suite seeds nothing and writes nothing | Content arrives through the MCP tools. The old global setup deleted every entity in the target database. |

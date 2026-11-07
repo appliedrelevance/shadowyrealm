@@ -170,7 +170,7 @@
   - Credit through drafts and through the published set matched, because every launch entity was published.
 - **Implications**:
   - Tier rule: the boundaries are the round values nearest the 20th, 50th, 80th and 95th percentiles of total magnitude, which were 76.3, 161.3, 571.6 and 2,239.7. That gives `TIER_THRESHOLDS` of 100, 200, 500 and 2,000, with 32, 33, 23, 19 and 7 entities from lowest to highest tier. Readers see the labels Notable, Major, Great, Epochal and Legendary; the tier keys still name the colour tokens.
-  - Open question for Geordie: whether an event's tail should survive when its consequences carry only part of its legacy, for example by scaling the tail by 1 − (the shares it passes on).
+  - The all-or-nothing tail rule was then replaced (see the next decision).
 
 ## Architecture Pattern Evaluation
 
@@ -210,6 +210,12 @@
 - **Context**: In the rubric experiment, 41.2 of Jesus's own 41.4 was the tail of his ministry. That tail sat on top of 364 credited through the Church, so his legacy was counted twice.
 - **Selected Approach**: An entity with at least one outgoing credit-bearing link gets no tail after its last period. An entity with none keeps its tail; the First Crusade, for example, still fades over the following centuries.
 - **Status**: Approved by Geordie, 2026-10-26.
+
+### Decision: The tail shrinks by the credit passed on (2026-11-07)
+- **Context**: Under the all-or-nothing rule, any outgoing credit link removed an entity's tail. In the launch run World War II ranked 51st, below the Holodomor and Santa Claus, because its links to the Cold War and the United Nations (0.7 in all) removed the tail of a six-year event. The September 11 attacks ranked last for the same reason.
+- **Selected Approach**: The tail is scaled by `max(0, 1 − Σ outgoing credit shares)`. An entity that passes on all of itself keeps no tail, as before, and the double count the original rule prevented stays prevented. Jesus passes 0.8 to the Church and keeps a fifth of his ministry's tail.
+- **Result**: World War II moved to 42nd (277.7), above the Holocaust (251.2) and World War I (245.4). The September 11 attacks rose from 28.4 to 48.0. Jesus's own rose from 0.9 to 40.2.
+- **Status**: Claude's pick, made during the unattended run Geordie asked for. Reverting is one line in `calculateImpact`.
 
 ### Decision: Reality is irrelevant
 - **Selected Approach**: Fictional characters and legal fictions are entities like any other, scored on what the idea of them did. No field records existence.

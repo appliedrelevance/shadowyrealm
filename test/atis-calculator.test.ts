@@ -30,7 +30,7 @@ function assessment(period_id: number | null, benefit: Partial<Dimensions>, harm
 describe("calculateImpact", () => {
   test("a period's area is weight × value × reach × years / 100", () => {
     const r = calculateImpact([assessment(1, { scientific: 8 })], [period(1, 1900, 1999)], {
-      hasCreditDescendants: true,
+      creditPassedOn: 1,
       asOfYear: AS_OF,
     });
     // reach 5 multiplies by 3; scientific weight 1.0; 100 years is one century.
@@ -43,7 +43,7 @@ describe("calculateImpact", () => {
     const r = calculateImpact(
       [assessment(1, { cultural: 8 }, { human_rights: 9, health: 9 })],
       [period(1, 1900, 1999)],
-      { hasCreditDescendants: true, asOfYear: AS_OF },
+      { creditPassedOn: 1, asOfYear: AS_OF },
     );
     expect(r.benefit_total).toBeGreaterThan(0);
     expect(r.harm_total).toBeGreaterThan(r.benefit_total);
@@ -58,7 +58,7 @@ describe("calculateImpact", () => {
         assessment(2, { economic: 9 }, { economic: 2 }),
       ],
       [period(1, -500, -400, 7, 9), period(2, 100, 300, 4, 3)],
-      { hasCreditDescendants: false, asOfYear: AS_OF },
+      { creditPassedOn: 0, asOfYear: AS_OF },
     );
     expect(r.magnitude).toBeCloseTo(profileMagnitude(r.profile), 10);
     expect(r.magnitude).toBeCloseTo(sumDimensions(r.profile.benefit) + sumDimensions(r.profile.harm), 10);
@@ -66,30 +66,35 @@ describe("calculateImpact", () => {
 
   test("several assessments of one period are averaged, not added", () => {
     const one = calculateImpact([assessment(1, { health: 6 })], [period(1, 1950, 1959)], {
-      hasCreditDescendants: true,
+      creditPassedOn: 1,
       asOfYear: AS_OF,
     });
     const two = calculateImpact(
       [assessment(1, { health: 4 }), assessment(1, { health: 8 })],
       [period(1, 1950, 1959)],
-      { hasCreditDescendants: true, asOfYear: AS_OF },
+      { creditPassedOn: 1, asOfYear: AS_OF },
     );
     expect(two.magnitude).toBeCloseTo(one.magnitude, 10);
   });
 
-  test("a tail runs only when no descendant carries the legacy", () => {
-    const inputs = [[assessment(1, { cultural: 5 })], [period(1, 1600, 1610, 5, 9)]] as const;
-    const alone = calculateImpact([...inputs[0]], [...inputs[1]], { hasCreditDescendants: false, asOfYear: AS_OF });
-    const carried = calculateImpact([...inputs[0]], [...inputs[1]], { hasCreditDescendants: true, asOfYear: AS_OF });
-    expect(alone.tail).not.toBeNull();
+  test("the tail shrinks by the credit passed on, and goes when all of it is", () => {
+    const run = (creditPassedOn: number) =>
+      calculateImpact([assessment(1, { cultural: 5 })], [period(1, 1600, 1610, 5, 9)], { creditPassedOn, asOfYear: AS_OF });
+    const alone = run(0);
+    const partly = run(0.7);
+    const carried = run(1);
     expect(alone.tail!.from_year).toBe(1611);
+    expect(partly.tail!.kept).toBeCloseTo(0.3, 10);
+    expect(profileMagnitude(partly.tail!.area)).toBeCloseTo(0.3 * profileMagnitude(alone.tail!.area), 10);
     expect(carried.tail).toBeNull();
-    expect(alone.magnitude).toBeGreaterThan(carried.magnitude);
+    expect(run(1.4).tail).toBeNull();
+    const whole = curveAreaBetween(partly.curve, -5000, 3000);
+    expect((whole.benefit + whole.harm) / 100).toBeCloseTo(partly.magnitude, 6);
   });
 
   test("a permanent legacy keeps its level to the as-of year", () => {
     const r = calculateImpact([assessment(1, { scientific: 5 })], [period(1, 1900, 1925, 5, 10)], {
-      hasCreditDescendants: false,
+      creditPassedOn: 0,
       asOfYear: AS_OF,
     });
     const level = 5 * 3;
@@ -98,7 +103,7 @@ describe("calculateImpact", () => {
 
   test("assessments without a known period are counted as unplaced and add nothing", () => {
     const r = calculateImpact([assessment(null, { health: 10 }), assessment(99, { health: 10 })], [period(1, 1, 2)], {
-      hasCreditDescendants: false,
+      creditPassedOn: 0,
       asOfYear: AS_OF,
     });
     expect(r.unplaced_assessments).toBe(2);
@@ -109,7 +114,7 @@ describe("calculateImpact", () => {
     const r = calculateImpact(
       [assessment(1, { economic: 5 }), assessment(2, { economic: 5 })],
       [period(1, 2000, 2050), period(2, 2030, 2040)],
-      { hasCreditDescendants: false, asOfYear: AS_OF },
+      { creditPassedOn: 0, asOfYear: AS_OF },
     );
     expect(r.breakdown).toHaveLength(1);
     expect(r.breakdown[0].years).toBe(27);
@@ -122,7 +127,7 @@ describe("the curve", () => {
     const r = calculateImpact(
       [assessment(1, { scientific: 6 }, { health: 3 }), assessment(2, { cultural: 4 }, { economic: 1 })],
       [period(1, -300, -200, 6, 7), period(2, -250, 50, 3, 8)],
-      { hasCreditDescendants: false, asOfYear: AS_OF },
+      { creditPassedOn: 0, asOfYear: AS_OF },
     );
     const whole = curveAreaBetween(r.curve, -5000, 3000);
     expect((whole.benefit + whole.harm) / 100).toBeCloseTo(r.magnitude, 6);
@@ -130,7 +135,7 @@ describe("the curve", () => {
 
   test("bucket means keep the area of an event shorter than its bucket", () => {
     const r = calculateImpact([assessment(1, { human_rights: 7 })], [period(1, 1096, 1099)], {
-      hasCreditDescendants: true,
+      creditPassedOn: 1,
       asOfYear: AS_OF,
     });
     const edges = [1000, 1050, 1100, 1150];

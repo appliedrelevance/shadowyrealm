@@ -122,7 +122,9 @@ export function EntityProfilePage({ slug }: { slug: string }) {
         <h2 className="font-display text-lg font-semibold text-ink">Influence over time</h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">
           {score.tail
-            ? `Its own periods, then a legacy fading from ${formatYear(score.tail.from_year)}.`
+            ? score.tail.kept < 1
+              ? `Its own periods, then ${Math.round(score.tail.kept * 100)}% of its legacy fading from ${formatYear(score.tail.from_year)}; its consequences carry the rest as credit.`
+              : `Its own periods, then a legacy fading from ${formatYear(score.tail.from_year)}.`
             : score.credited_magnitude > 0
               ? "Its own periods, plus the share of its consequences' influence credited back to it."
               : "Its own periods."}

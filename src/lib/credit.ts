@@ -117,18 +117,18 @@ export function composeScores(
   for (const a of assessments) {
     assessmentsBy.set(a.entity_id, [...(assessmentsBy.get(a.entity_id) ?? []), toAssessmentInput(a)]);
   }
-  const carried = new Set(
-    links
-      .filter((l) => isCreditType(l.relationship_type) && num(l.strength) > 0 && ids.has(l.target_entity_id))
-      .map((l) => l.source_entity_id),
-  );
+  const passedOn = new Map<number, number>();
+  for (const l of links) {
+    if (!isCreditType(l.relationship_type) || !ids.has(l.target_entity_id)) continue;
+    passedOn.set(l.source_entity_id, (passedOn.get(l.source_entity_id) ?? 0) + num(l.strength));
+  }
 
   const own = new Map<number, ImpactResult>();
   for (const id of entityIds) {
     own.set(
       id,
       calculateImpact(assessmentsBy.get(id) ?? [], periodsBy.get(id) ?? [], {
-        hasCreditDescendants: carried.has(id),
+        creditPassedOn: passedOn.get(id) ?? 0,
         asOfYear,
       }),
     );

@@ -727,7 +727,12 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
         total: roundProfile(score.total),
       },
       tail: score.own.tail
-        ? { from_year: score.own.tail.from_year, years: score.own.tail.years, magnitude: round(profileTotal(score.own.tail.area)) }
+        ? {
+            from_year: score.own.tail.from_year,
+            years: score.own.tail.years,
+            kept: round(score.own.tail.kept, 3),
+            magnitude: round(profileTotal(score.own.tail.area)),
+          }
         : null,
       unplaced_assessments: score.own.unplaced_assessments,
       algorithm_version: score.own.algorithm_version,

@@ -116,9 +116,10 @@ function MethodologyPage() {
           </tbody>
         </table>
         <p>
-          An entity whose legacy is carried by its consequences gets <strong>no tail</strong>. Jesus's ministry lasted
-          three years; his legacy is the Church, and it reaches him as credit rather than as a tail on top of it,
-          which would count it twice.
+          The part of a legacy that its consequences carry comes back as credit instead, so the tail{" "}
+          <strong>shrinks by the credit an entity passes on</strong>. Jesus passes 80% to the Church, so a fifth of
+          his ministry's tail remains and the rest reaches him as credit from the Church, rather than being counted
+          twice. An entity that passes on all of itself keeps no tail.
         </p>
 
         <h2 className="font-display text-ink">Credit flows from consequence to cause</h2>

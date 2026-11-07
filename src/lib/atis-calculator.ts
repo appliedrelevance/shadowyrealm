@@ -18,10 +18,12 @@
  * the as-of year, in influence-centuries (level × years / 100). Periods that
  * overlap add; years between periods add nothing.
  *
- * When the last period ends before the as-of year and the entity has no
- * credit-bearing descendants, its levels fade exponentially from there, at a
- * rate set by that period's persistence factor. An entity whose legacy is
- * carried by descendants gets no tail: the descendants' credit is its legacy.
+ * When the last period ends before the as-of year, its levels fade
+ * exponentially from there, at a rate set by that period's persistence factor.
+ * The part of a legacy that consequences carry comes back as credit instead, so
+ * the tail is scaled by 1 − the credit shares the entity passes on: a founder
+ * who passes 80% to a church keeps a fifth of the tail, and an entity that
+ * passes on 100% or more keeps none.
  *
  * Magnitude, the sum of the ten areas, only ranks entities and sets tiers.
  */
@@ -75,6 +77,8 @@ export interface PeriodBreakdown {
 export interface LegacyTail {
   from_year: number;
   years: number;
+  /** The share of the tail kept after what consequences carry: 1 − credit passed on. */
+  kept: number;
   /** In influence-centuries. */
   area: Profile;
 }
@@ -119,8 +123,8 @@ export interface ImpactResult {
 }
 
 export interface ImpactOptions {
-  /** True when the entity has at least one outgoing credit-bearing link; it then gets no tail. */
-  hasCreditDescendants: boolean;
+  /** Sum of the strengths of the entity's outgoing credit-bearing links; the tail keeps 1 − this, never below 0. */
+  creditPassedOn: number;
   asOfYear?: number;
 }
 
@@ -291,7 +295,8 @@ export function calculateImpact(
   // Legacy tail: only the periods that end last carry on, fading from their level.
   let tail: LegacyTail | null = null;
   let curveTail: InfluenceCurve["tail"] = null;
-  if (breakdown.length > 0 && !options.hasCreditDescendants) {
+  const kept = Math.max(0, 1 - options.creditPassedOn);
+  if (breakdown.length > 0 && kept > 0) {
     const latestEnd = Math.max(...placed.map((p) => p.end_year));
     if (latestEnd < asOfYear) {
       const yearsAfter = asOfYear - latestEnd;
@@ -305,14 +310,14 @@ export function calculateImpact(
           faded.benefit[d] = calculateTailArea(row.level.benefit[d], timeConstant, yearsAfter);
           faded.harm[d] = calculateTailArea(row.level.harm[d], timeConstant, yearsAfter);
         }
-        tailArea = addScaled(tailArea, faded, 1 / YEARS_PER_UNIT);
+        tailArea = addScaled(tailArea, faded, kept / YEARS_PER_UNIT);
         parts.push({
-          benefit: sumDimensions(row.level.benefit),
-          harm: sumDimensions(row.level.harm),
+          benefit: kept * sumDimensions(row.level.benefit),
+          harm: kept * sumDimensions(row.level.harm),
           time_constant: Number.isFinite(timeConstant) ? timeConstant : null,
         });
       }
-      tail = { from_year: latestEnd + 1, years: yearsAfter, area: tailArea };
+      tail = { from_year: latestEnd + 1, years: yearsAfter, kept, area: tailArea };
       curveTail = { from_year: latestEnd + 1, parts };
       profile = addScaled(profile, tailArea);
     }
