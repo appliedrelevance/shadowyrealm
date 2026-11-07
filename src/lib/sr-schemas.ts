@@ -23,7 +23,7 @@ export const relationshipTypeSchema = z.enum([
 ]);
 
 const slug = z.string().min(1).describe('The entity slug, e.g. "marie-curie"');
-const score = z.number().int().min(-10).max(10);
+const level = z.number().min(0).max(10);
 const justification = z.string().min(1);
 const unit = z.number().min(0).max(1);
 const metadata = z
@@ -41,11 +41,7 @@ export const listEntitiesInput = z.object({
 export const getEntityInput = z.object({ slug });
 
 export const researchEntityInput = z.object({
-  query: z.string().min(1).describe('Who or what to research, e.g. "Marie Curie"'),
-  model: z
-    .string()
-    .optional()
-    .describe('Defaults to "claude-sonnet-4-5". An id containing "/" is routed to OpenRouter.'),
+  query: z.string().min(1).describe('A Wikipedia article title, e.g. "Marie Curie"'),
 });
 
 export const createEntityInput = z.object({
@@ -73,11 +69,16 @@ export const deleteEntityInput = z.object({ slug });
 
 export const addAssessmentInput = z.object({
   slug,
-  scientific_score: score,
-  economic_score: score,
-  human_rights_score: score,
-  health_score: score,
-  cultural_score: score,
+  scientific_benefit: level,
+  scientific_harm: level,
+  economic_benefit: level,
+  economic_harm: level,
+  human_rights_benefit: level,
+  human_rights_harm: level,
+  health_benefit: level,
+  health_harm: level,
+  cultural_benefit: level,
+  cultural_harm: level,
   scientific_justification: justification,
   economic_justification: justification,
   human_rights_justification: justification,
@@ -87,10 +88,24 @@ export const addAssessmentInput = z.object({
   period_id: z
     .number()
     .int()
-    .optional()
     .describe("An assessment period of the same entity (ids are in get_entity)"),
   ai_suggested: z.boolean().optional(),
   ai_model_used: z.string().optional(),
+});
+
+export const scorePeriodInput = z.object({
+  slug,
+  period_id: z.number().int().describe("An assessment period of the same entity (ids are in get_entity)"),
+  evidence: z
+    .string()
+    .min(200)
+    .max(8000)
+    .describe("Evidence about this period, from a source such as Wikipedia: 200 to 8,000 characters"),
+  source_url: z.string().url().optional().describe("Where the evidence came from"),
+});
+
+export const getScoresInput = z.object({
+  include_drafts: z.boolean().default(false).describe("Score every status, not only published entities"),
 });
 
 export const addPeriodInput = z
@@ -109,11 +124,11 @@ export const addPeriodInput = z
   });
 
 export const addRelationshipInput = z.object({
-  source_slug: slug.describe("The entity the relationship points from"),
-  target_slug: slug.describe("The entity it points to"),
+  source_slug: slug.describe("The cause"),
+  target_slug: slug.describe("The consequence"),
   relationship_type: relationshipTypeSchema,
   description: z.string().min(1),
-  strength: unit.default(0.5),
+  strength: unit.describe("For influence and mentorship, the share of the consequence credited to the cause"),
   temporal_overlap: unit.default(0.5),
 });
 
@@ -125,5 +140,7 @@ export type UpdateEntityInput = z.infer<typeof updateEntityInput>;
 export type SetEntityStatusInput = z.infer<typeof setEntityStatusInput>;
 export type DeleteEntityInput = z.infer<typeof deleteEntityInput>;
 export type AddAssessmentInput = z.infer<typeof addAssessmentInput>;
+export type ScorePeriodInput = z.infer<typeof scorePeriodInput>;
+export type GetScoresInput = z.infer<typeof getScoresInput>;
 export type AddPeriodInput = z.infer<typeof addPeriodInput>;
 export type AddRelationshipInput = z.infer<typeof addRelationshipInput>;

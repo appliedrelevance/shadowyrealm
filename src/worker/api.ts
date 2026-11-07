@@ -12,6 +12,13 @@ function bearer(request: Request): string {
   return auth.startsWith("Bearer ") ? auth.slice(7) : "";
 }
 
+/** Drafts are included only when the owner asks for them. */
+async function wantsDrafts(request: Request, env: Env, url: URL): Promise<boolean> {
+  if (url.searchParams.get("drafts") !== "1") return false;
+  const token = bearer(request);
+  return token ? service.isOperator(env, token) : false;
+}
+
 /** Returns null when the path is not an API route handled here. */
 export async function handleApiRequest(request: Request, env: Env): Promise<Response | null> {
   const url = new URL(request.url);
@@ -21,6 +28,27 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
   if (url.pathname === "/api/session" && request.method === "GET") {
     const operator = token ? await service.isOperator(env, token) : false;
     return Response.json({ operator });
+  }
+
+  // GET /api/scores -> every published entity's score, largest first
+  if (url.pathname === "/api/scores" && request.method === "GET") {
+    return Response.json(await service.getScores(env, { include_drafts: false }));
+  }
+
+  // GET /api/realm[?drafts=1] -> curves and links for the timeline and the graph
+  if (url.pathname === "/api/realm" && request.method === "GET") {
+    return Response.json(await service.getRealm(env, await wantsDrafts(request, env, url)));
+  }
+
+  // GET /api/entities/:slug[?drafts=1] -> one entity's profile
+  const profile = url.pathname.match(/^\/api\/entities\/([^/]+)$/);
+  if (profile && request.method === "GET") {
+    const found = await service.getEntityProfile(
+      env,
+      decodeURIComponent(profile[1]),
+      await wantsDrafts(request, env, url),
+    );
+    return found ? Response.json(found) : Response.json({ error: "not found" }, { status: 404 });
   }
 
   // POST /api/entities/:slug/status  { status }

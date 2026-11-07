@@ -13,14 +13,20 @@ import type { Env, ExecutionContext } from "./env";
 
 const SERVER_INFO = { name: "shadowyrealm", version: "1.0.0" };
 
-const INSTRUCTIONS = `ShadowyRealm is a historical impact index. An entity is a person, organization or event. \
-Each assessment scores an entity on five dimensions (scientific, economic, human_rights, health, cultural) from -10 \
-(devastating) to +10 (transformative), with a written justification for each. Assessment periods carry reach and \
-persistence (1-10 each). Relationships link entities. Only entities with status "published" are public.
+const INSTRUCTIONS = `ShadowyRealm is a historical impact index that measures influence, not net good. An entity is \
+a person, organization or event; whether it really existed does not matter. Each entity has periods (spans of years \
+with reach and persistence, 1-10), and each period has assessments that rate a BENEFIT and a HARM from 0 to 10 for \
+five dimensions (scientific, economic, human_rights, health, cultural). The score is a ten-number profile; benefit \
+and harm are never netted. Magnitude, the sum of the ten, ranks entities.
 
-Read freely: list_entities, get_entity, research_entity. Confirm with the user before set_entity_status to \
-"published" or "archived" (both change what the public sees) and before delete_entity (irreversible). \
-research_entity only drafts — review it with the user before turning it into create_entity and add_assessment calls.`;
+Links point from cause to consequence. influence and mentorship links carry credit: strength is the share of the \
+consequence credited to the cause, and credit flows up any number of hops by the strongest chain. A reaction is \
+recorded as influence from whatever provoked it.
+
+The usual flow: research_entity for the Wikipedia summary, create_entity, add_period for each phase of its activity, \
+add_relationship for its causes and consequences, then score_period for each period with evidence text. \
+Read freely: list_entities, get_entity, research_entity, get_scores. Confirm with the user before set_entity_status \
+to "published" or "archived" (both change what the public sees) and before delete_entity (irreversible).`;
 
 /** Safe to call without side effects. */
 const READ = { readOnlyHint: true, openWorldHint: false } as const;
@@ -77,10 +83,10 @@ export function buildMcpServer(env: Env): McpServer {
     "get_entity",
     {
       description:
-        "Fetch one entity by slug with everything attached: its assessments (five signed -10..+10 scores with " +
-        "justifications, confidence, provenance), assessment periods (reach and persistence 1-10), relationships " +
-        "in both directions (each with the other entity's slug and name), and the 50 most recent audit-log entries. " +
-        "Errors if the slug does not exist or is shared by more than one entity.",
+        "Fetch one entity by slug with everything attached: its assessments (benefit and harm 0-10 for each " +
+        "dimension, justifications cut to 300 characters, confidence, provenance), assessment periods (reach and " +
+        "persistence 1-10), relationships in both directions (each with the other entity's slug and name), and the " +
+        "50 most recent audit-log entries. Errors if the slug does not exist or is shared by more than one entity.",
       inputSchema: schemas.getEntityInput,
       annotations: READ,
     },
@@ -91,14 +97,12 @@ export function buildMcpServer(env: Env): McpServer {
     "research_entity",
     {
       description:
-        "Look a person, organization or event up on Wikipedia and ask an LLM for a structured draft: detected type, " +
-        "description, biography, metadata, suggested -10..+10 scores with justifications, confidence and bias " +
-        "warnings. Writes nothing — review the draft, then use create_entity and add_assessment. Calls Wikipedia and " +
-        "an LLM through the AI Gateway, so it spends tokens and takes around 30 seconds.",
+        "Look an article up on Wikipedia: its title, summary extract, thumbnail, categories and page URL. Writes " +
+        "nothing and calls no model. Use it to draft create_entity, and gather score_period evidence from the article.",
       inputSchema: schemas.researchEntityInput,
-      annotations: READ,
+      annotations: { readOnlyHint: true, openWorldHint: true },
     },
-    async (args) => guard(() => research(env, args)),
+    async (args) => guard(() => research(args)),
   );
 
   server.registerTool(
@@ -161,11 +165,11 @@ export function buildMcpServer(env: Env): McpServer {
     "add_assessment",
     {
       description:
-        "Add an impact assessment to an entity: five integer scores from -10 to +10 (scientific, economic, " +
-        "human_rights, health, cultural), each with a non-empty justification. confidence_level (0-1) defaults to " +
-        "0.5. period_id optionally ties it to an assessment period of the same entity (ids come from get_entity). " +
-        "Set ai_suggested and ai_model_used when the scores came from research_entity. Records an audit-log " +
-        "entry. Returns the created row.",
+        "Add a hand-made assessment to one period of an entity: a benefit and a harm level from 0 to 10 for each " +
+        "dimension (scientific, economic, human_rights, health, cultural) and a non-empty justification per " +
+        "dimension. Benefit and harm rate intensity for the people affected; breadth belongs to the period's reach. " +
+        "Several assessments of one period are averaged. confidence_level (0-1) defaults to 0.5. Prefer " +
+        "score_period, which has Clef do the rating. Records an audit-log entry. Returns the created row.",
       inputSchema: schemas.addAssessmentInput,
       annotations: WRITE,
     },
@@ -173,12 +177,43 @@ export function buildMcpServer(env: Env): McpServer {
   );
 
   server.registerTool(
+    "score_period",
+    {
+      description:
+        "Score one period of an entity with Clef (@cf/cloudflare/clef) from the evidence you supply, 200 to 8,000 " +
+        "characters about that period, typically from Wikipedia. One Clef request asks twelve questions: benefit and " +
+        "harm for each dimension, plus the period's reach and persistence. Stores the period's reach and " +
+        "persistence factors and one assessment (ai_suggested, the evidence as each justification, the source URL " +
+        "if given), replacing any earlier Clef assessment of the same period. Writes nothing if Clef's answers are " +
+        "unusable. Link the entity's consequences first: their effects are left out of this period's score.",
+      inputSchema: schemas.scorePeriodInput,
+      annotations: { ...WRITE, openWorldHint: true },
+    },
+    async (args) => guard(() => service.scorePeriod(env, args)),
+  );
+
+  server.registerTool(
+    "get_scores",
+    {
+      description:
+        "Every entity's score, largest first: total magnitude and tier; own magnitude (its own periods) and " +
+        "credited magnitude (shares of its descendants); the ten-number profile split into own, credited and " +
+        "total; benefit and harm totals; and the five largest credit contributors. Published entities only " +
+        "unless include_drafts is true, which scores every status and labels each entity's status.",
+      inputSchema: schemas.getScoresInput,
+      annotations: READ,
+    },
+    async (args) => guard(() => service.getScores(env, args)),
+  );
+
+  server.registerTool(
     "add_period",
     {
       description:
-        "Add an assessment period to an entity: a labelled span of years (negative for BCE; end_year >= " +
-        "start_year) with reach_factor and persistence_factor, each an integer 1-10. Returns the created row " +
-        "including its id, which add_assessment accepts as period_id.",
+        "Add an assessment period to an entity: a labelled span of years of its own direct activity (negative " +
+        "for BCE; end_year >= start_year) with reach_factor and persistence_factor, each an integer 1-10 " +
+        "(score_period replaces both with Clef's). Returns the created row including its id, which score_period " +
+        "and add_assessment take as period_id.",
       inputSchema: schemas.addPeriodInput,
       annotations: WRITE,
     },
@@ -189,9 +224,12 @@ export function buildMcpServer(env: Env): McpServer {
     "add_relationship",
     {
       description:
-        "Link two entities by slug: source -> target with a type (influence, mentorship, collaboration or " +
-        "opposition), a description, and strength and temporal_overlap (0-1, default 0.5). The same source, " +
-        "target and type can only be linked once; an entity cannot link to itself. Returns the created row.",
+        "Link two entities by slug, from cause (source) to consequence (target): Jesus -> Catholic Church, " +
+        "Catholic Church -> First Crusade. A reaction is recorded as influence from whatever provoked it. " +
+        "influence and mentorship carry credit, and strength (0-1) is the share of the consequence credited to " +
+        "the cause; collaboration and opposition only describe. A consequence's credit-bearing incoming strengths " +
+        "may total at most 1.00, and the call is rejected with the current total if it would exceed that. The same " +
+        "source, target and type can only be linked once; an entity cannot link to itself. Returns the created row.",
       inputSchema: schemas.addRelationshipInput,
       annotations: WRITE,
     },

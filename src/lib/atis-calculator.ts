@@ -1,66 +1,49 @@
 /**
  * ATIS (Advanced Temporal Impact Scoring) Calculator
  *
- * Ported from NefariousMeter, then reworked so that time is a curve rather
- * than a decay. Pure functions with zero dependencies. Runs entirely in the
- * browser.
+ * Pure functions with zero dependencies. The Worker runs them; the browser only
+ * displays what the Worker returns, so an entity cannot score differently on
+ * two screens.
  *
- * Every assessment belongs to one period: a window of years with its own
- * impact level.
+ * An entity's impact is a profile of ten numbers: a benefit and a harm for each
+ * of the five dimensions. Nothing here nets one against the other.
  *
- *   level = I_base(dimensions, reach) × C_consensus × N_network × U_uncertainty
+ * Every assessment belongs to one period, a window of years. Within a period,
+ * each profile number has a level:
  *
- * The periods, laid end to end, are the influence curve. A figure whose legacy
- * grows after death simply has later periods with a higher level. The score is
- * the area under that curve up to the as-of year, in influence-centuries
- * (level × years / 100). It is unbounded: it grows with duration.
+ *   level = dimension weight × assessed 0–10 value × reach multiplier
  *
- * Decay survives in one place only. When the last period ends before the as-of
- * year, its level fades exponentially, at a rate set by that period's
- * persistence factor. Years before the first period and years between periods
- * contribute nothing. Periods that overlap add.
+ * averaged over the period's assessments. Laid end to end, the periods are the
+ * influence curve, and each number's score is the area under its curve up to
+ * the as-of year, in influence-centuries (level × years / 100). Periods that
+ * overlap add; years between periods add nothing.
+ *
+ * When the last period ends before the as-of year and the entity has no
+ * credit-bearing descendants, its levels fade exponentially from there, at a
+ * rate set by that period's persistence factor. An entity whose legacy is
+ * carried by descendants gets no tail: the descendants' credit is its legacy.
+ *
+ * Magnitude, the sum of the ten areas, only ranks entities and sets tiers.
  */
 
 // ---------- Types ----------
 
-export interface ATISConfig {
-  /**
-   * Years for a fading legacy to fall to 1/e of its level, indexed by
-   * persistence factor − 1. Infinity never fades. The values follow the
-   * wording of the persistence rubric: 1 faded within a year … 10 permanent.
-   */
-  persistenceTimeConstants: number[];
-  maxNetworkAmplification: number;
-  relationshipDecayDistance: number;
-  controversyPenalty: number;
-  consensusBonus: number;
-  uncertaintyPenalty: number;
-  dataCompletenessWeight: number;
-}
+export const DIMENSIONS = ["scientific", "economic", "human_rights", "health", "cultural"] as const;
+export type Dimension = (typeof DIMENSIONS)[number];
+export type Dimensions = Record<Dimension, number>;
 
-export interface DimensionalScores {
-  scientific: number;
-  economic: number;
-  human_rights: number;
-  health: number;
-  cultural: number;
-}
-
-export interface DimensionalJustifications {
-  scientific: string;
-  economic: string;
-  human_rights: string;
-  health: string;
-  cultural: string;
+/** Benefit and harm for each dimension. */
+export interface Profile {
+  benefit: Dimensions;
+  harm: Dimensions;
 }
 
 export interface AssessmentInput {
-  scores: DimensionalScores;
-  confidence_level: number;
-  controversy_level: number;
-  consensus_score: number;
   /** The period this assessment describes. An assessment without one cannot be placed on the curve. */
-  period_id?: number | null;
+  period_id: number | null;
+  /** Each value 0–10. */
+  benefit: Dimensions;
+  harm: Dimensions;
 }
 
 export interface PeriodInput {
@@ -72,84 +55,80 @@ export interface PeriodInput {
   persistence_factor: number;
 }
 
-export interface RelationshipInput {
-  relationship_type: "influence" | "mentorship" | "collaboration" | "opposition";
-  strength: number;
-  temporal_overlap: number;
-}
-
-export type ATISTier =
-  | "minimal"
-  | "moderate"
-  | "significant"
-  | "transformational"
-  | "legendary";
-
-export interface ImpactClassification {
-  tier: ATISTier;
-  descriptor: string;
-  range: [number, number];
-  color_scheme: string;
-  interpretation: string;
-}
+export type ATISTier = "minimal" | "moderate" | "significant" | "transformational" | "legendary";
 
 export interface PeriodBreakdown {
+  period_id: number;
   period: string;
   start_year: number;
   end_year: number;
   /** Years of this window that fall on or before the as-of year. */
   years: number;
   assessments: number;
-  baseImpact: number;
-  consensusWeight: number;
-  networkAmplification: number;
-  uncertaintyFactor: number;
-  /** Impact per year while the period lasts (mean of its assessments). */
-  level: number;
+  reach_multiplier: number;
+  /** Impact per year while the period lasts. */
+  level: Profile;
   /** level × years / 100, in influence-centuries. */
-  area: number;
-  dominant_factors: string[];
+  area: Profile;
 }
 
 export interface LegacyTail {
   from_year: number;
   years: number;
   /** In influence-centuries. */
-  area: number;
-  level_at_as_of: number;
+  area: Profile;
 }
 
-export interface ATISResult {
-  /** Area under the influence curve, in influence-centuries. */
-  overall_score: number;
+/** One stretch of the curve at a constant level, years [start_year, end_year] inclusive. */
+export interface CurveSegment {
+  start_year: number;
+  end_year: number;
+  benefit: number;
+  harm: number;
+}
+
+/** A fading part of the tail; time_constant is null when it never fades. */
+export interface TailPart {
+  benefit: number;
+  harm: number;
+  time_constant: number | null;
+}
+
+/** The influence curve summed over the five dimensions, enough to sample or integrate it anywhere. */
+export interface InfluenceCurve {
+  segments: CurveSegment[];
+  tail: { from_year: number; parts: TailPart[] } | null;
+  /** The curve stops at the end of this year. */
+  as_of_year: number;
+}
+
+export interface ImpactResult {
+  /** Area under each number's curve, in influence-centuries. */
+  profile: Profile;
+  /** Sum of the ten areas. */
   magnitude: number;
-  impact_class: ImpactClassification;
+  benefit_total: number;
+  harm_total: number;
   breakdown: PeriodBreakdown[];
   tail: LegacyTail | null;
-  /** The level of greatest magnitude the curve reaches, with its sign. */
-  peak_level: number;
-  /** The level of the curve in the as-of year. */
-  current_level: number;
+  curve: InfluenceCurve;
   as_of_year: number;
   /** Assessments with no period, or a period that is not in the list. They contribute nothing. */
   unplaced_assessments: number;
-  uncertainty_range: [number, number];
   algorithm_version: string;
+}
+
+export interface ImpactOptions {
+  /** True when the entity has at least one outgoing credit-bearing link; it then gets no tail. */
+  hasCreditDescendants: boolean;
+  asOfYear?: number;
 }
 
 // ---------- Constants ----------
 
-export const DEFAULT_ATIS_CONFIG: ATISConfig = {
-  persistenceTimeConstants: [1, 3, 10, 25, 70, 150, 300, 700, 2000, Infinity],
-  maxNetworkAmplification: 5.0,
-  relationshipDecayDistance: 0.3,
-  controversyPenalty: 0.8,
-  consensusBonus: 1.2,
-  uncertaintyPenalty: 0.7,
-  dataCompletenessWeight: 0.8,
-};
+export const ALGORITHM_VERSION = "4.0.0-profile";
 
-export const DIMENSION_WEIGHTS: DimensionalScores = {
+export const DIMENSION_WEIGHTS: Dimensions = {
   scientific: 1.0,
   economic: 1.0,
   human_rights: 1.2,
@@ -157,124 +136,76 @@ export const DIMENSION_WEIGHTS: DimensionalScores = {
   cultural: 0.9,
 };
 
-/** Tier thresholds, in influence-centuries. Not yet re-anchored to the curve model. */
-export const TIER_THRESHOLDS: { tier: ATISTier; min: number; max: number }[] = [
-  { tier: "minimal", min: 0, max: 10 },
-  { tier: "moderate", min: 10, max: 50 },
-  { tier: "significant", min: 50, max: 200 },
-  { tier: "transformational", min: 200, max: 500 },
-  { tier: "legendary", min: 500, max: Infinity },
+/**
+ * Years for a fading legacy to fall to 1/e of its level, indexed by
+ * persistence factor − 1. Infinity never fades. The values follow the wording
+ * of the persistence rubric: 1 faded within a year … 10 permanent.
+ */
+export const PERSISTENCE_TIME_CONSTANTS = [1, 3, 10, 25, 70, 150, 300, 700, 2000, Infinity];
+
+/** Tier thresholds, in influence-centuries of total magnitude. Set from the benchmark run in research.md. */
+export const TIER_THRESHOLDS: { tier: ATISTier; min: number; descriptor: string }[] = [
+  { tier: "minimal", min: 0, descriptor: "Limited local impact" },
+  { tier: "moderate", min: 10, descriptor: "Regional or specialized impact" },
+  { tier: "significant", min: 50, descriptor: "National or cross-domain impact" },
+  { tier: "transformational", min: 200, descriptor: "Global or epoch-defining impact" },
+  { tier: "legendary", min: 500, descriptor: "Civilization-altering impact" },
 ];
 
 /** Years per unit of area. */
 const YEARS_PER_UNIT = 100;
 
+// ---------- Profile arithmetic ----------
+
+export function emptyDimensions(): Dimensions {
+  return { scientific: 0, economic: 0, human_rights: 0, health: 0, cultural: 0 };
+}
+
+export function emptyProfile(): Profile {
+  return { benefit: emptyDimensions(), harm: emptyDimensions() };
+}
+
+/** a + factor × b, number by number. */
+export function addScaled(a: Profile, b: Profile, factor = 1): Profile {
+  const out = emptyProfile();
+  for (const d of DIMENSIONS) {
+    out.benefit[d] = a.benefit[d] + factor * b.benefit[d];
+    out.harm[d] = a.harm[d] + factor * b.harm[d];
+  }
+  return out;
+}
+
+export function scaleProfile(p: Profile, factor: number): Profile {
+  return addScaled(emptyProfile(), p, factor);
+}
+
+export function sumDimensions(d: Dimensions): number {
+  return DIMENSIONS.reduce((sum, k) => sum + d[k], 0);
+}
+
+export function profileMagnitude(p: Profile): number {
+  return sumDimensions(p.benefit) + sumDimensions(p.harm);
+}
+
 // ---------- Core Algorithm ----------
 
-export function calculateUnboundedBaseImpact(
-  scores: DimensionalScores,
-  reachFactor = 5,
-): number {
-  let weightedScore =
-    (scores.scientific * DIMENSION_WEIGHTS.scientific +
-      scores.economic * DIMENSION_WEIGHTS.economic +
-      scores.human_rights * DIMENSION_WEIGHTS.human_rights +
-      scores.health * DIMENSION_WEIGHTS.health +
-      scores.cultural * DIMENSION_WEIGHTS.cultural) /
-    5.0;
-
-  // Extraordinary achievement bonus
-  if (Math.abs(weightedScore) > 10) {
-    const extraordinaryFactor = Math.pow(Math.abs(weightedScore) / 10.0, 1.2);
-    weightedScore = weightedScore * extraordinaryFactor;
-  }
-
-  // Power scaling for reach. Persistence is no longer a multiplier here: how
-  // long an impact lasts is what the curve itself records.
-  const reachMultiplier = Math.pow(reachFactor / 5.0, 1.8) * 3.0;
-
-  return weightedScore * reachMultiplier;
+/** Power scaling for reach, so that global figures stand well apart from local ones. */
+export function reachMultiplier(reachFactor: number): number {
+  return Math.pow(reachFactor / 5.0, 1.8) * 3.0;
 }
 
 /** Years for a fading legacy to fall to 1/e of its level. */
-export function persistenceTimeConstant(
-  persistenceFactor: number,
-  config: ATISConfig = DEFAULT_ATIS_CONFIG,
-): number {
-  const constants = config.persistenceTimeConstants;
-  const index = Math.min(Math.max(Math.round(persistenceFactor), 1), constants.length) - 1;
-  return constants[index];
+export function persistenceTimeConstant(persistenceFactor: number): number {
+  const index =
+    Math.min(Math.max(Math.round(persistenceFactor), 1), PERSISTENCE_TIME_CONSTANTS.length) - 1;
+  return PERSISTENCE_TIME_CONSTANTS[index];
 }
 
 /** Area (level × years, not yet divided into centuries) under an exponentially fading level. */
-export function calculateTailArea(
-  level: number,
-  timeConstant: number,
-  years: number,
-): number {
+export function calculateTailArea(level: number, timeConstant: number, years: number): number {
   if (years <= 0) return 0;
   if (!Number.isFinite(timeConstant)) return level * years;
   return level * timeConstant * (1 - Math.exp(-years / timeConstant));
-}
-
-export function calculateNetworkAmplification(
-  relationships: RelationshipInput[] = [],
-  config: ATISConfig = DEFAULT_ATIS_CONFIG,
-): number {
-  if (relationships.length === 0) return 1.0;
-
-  const typeMultipliers: Record<RelationshipInput["relationship_type"], number> =
-    {
-      mentorship: 1.3,
-      opposition: 0.9,
-      collaboration: 1.2,
-      influence: 1.1,
-    };
-
-  let amplification = 1.0;
-
-  for (const rel of relationships) {
-    const typeMultiplier = typeMultipliers[rel.relationship_type];
-    const relAmplification =
-      1.0 + rel.strength * rel.temporal_overlap * typeMultiplier * 0.4;
-    amplification *= relAmplification;
-  }
-
-  return Math.min(amplification, config.maxNetworkAmplification);
-}
-
-export function calculateConsensusWeight(
-  controversyLevel: number,
-  consensusScore: number,
-  config: ATISConfig = DEFAULT_ATIS_CONFIG,
-): number {
-  let weight = 1.0;
-  if (controversyLevel > 0.7) {
-    weight *= config.controversyPenalty;
-  } else if (consensusScore > 0.8) {
-    weight *= config.consensusBonus;
-  }
-  return weight;
-}
-
-export function calculateUncertaintyFactor(
-  confidenceLevel: number,
-  dataCompleteness = 0.8,
-  config: ATISConfig = DEFAULT_ATIS_CONFIG,
-): number {
-  const confidenceWeight = Math.max(0.3, confidenceLevel);
-  const completenessWeight = Math.max(0.5, dataCompleteness);
-  const factor =
-    (confidenceWeight + completenessWeight * config.dataCompletenessWeight) / 2;
-
-  if (factor < config.uncertaintyPenalty) return config.uncertaintyPenalty;
-  return Math.min(1.0, factor);
-}
-
-// ---------- Main Calculator ----------
-
-function mean(values: number[]): number {
-  return values.reduce((sum, v) => sum + v, 0) / values.length;
 }
 
 /** Years of a period that fall on or before the as-of year. Years are plain integers; BCE is negative. */
@@ -282,19 +213,31 @@ function activeYears(period: PeriodInput, asOfYear: number): number {
   return Math.max(0, Math.min(period.end_year, asOfYear) - period.start_year + 1);
 }
 
-export function calculateATIS(
+/** One period's level: weighted values × reach, averaged over its assessments. */
+function periodLevel(group: AssessmentInput[], reach: number): Profile {
+  let level = emptyProfile();
+  for (const a of group) {
+    level = addScaled(level, { benefit: a.benefit, harm: a.harm }, 1 / group.length);
+  }
+  const out = emptyProfile();
+  for (const d of DIMENSIONS) {
+    out.benefit[d] = DIMENSION_WEIGHTS[d] * level.benefit[d] * reach;
+    out.harm[d] = DIMENSION_WEIGHTS[d] * level.harm[d] * reach;
+  }
+  return out;
+}
+
+export function calculateImpact(
   assessments: AssessmentInput[],
   periods: PeriodInput[],
-  relationships: RelationshipInput[] = [],
-  config: ATISConfig = DEFAULT_ATIS_CONFIG,
-  asOfYear: number = new Date().getFullYear(),
-): ATISResult {
+  options: ImpactOptions,
+): ImpactResult {
+  const asOfYear = options.asOfYear ?? new Date().getFullYear();
   const periodById = new Map(periods.map((p) => [p.id, p]));
   const assessmentsByPeriod = new Map<number, AssessmentInput[]>();
   let unplaced = 0;
   for (const assessment of assessments) {
-    const period =
-      assessment.period_id == null ? undefined : periodById.get(assessment.period_id);
+    const period = assessment.period_id == null ? undefined : periodById.get(assessment.period_id);
     if (!period) {
       unplaced += 1;
       continue;
@@ -304,250 +247,142 @@ export function calculateATIS(
     assessmentsByPeriod.set(period.id, list);
   }
 
+  // The curve only runs up to the as-of year; a period that has not started yet does nothing.
   const placed = periods
-    .filter((p) => assessmentsByPeriod.has(p.id))
+    .filter((p) => assessmentsByPeriod.has(p.id) && p.start_year <= asOfYear)
     .sort((a, b) => a.start_year - b.start_year || a.end_year - b.end_year);
 
-  if (placed.length === 0) {
-    return {
-      overall_score: 0,
-      magnitude: 0,
-      impact_class: classifyMagnitude(0),
-      breakdown: [],
-      tail: null,
-      peak_level: 0,
-      current_level: 0,
-      as_of_year: asOfYear,
-      unplaced_assessments: unplaced,
-      uncertainty_range: [0, 0],
-      algorithm_version: "3.0.0-atis",
-    };
-  }
-
-  const networkAmplification = calculateNetworkAmplification(relationships, config);
-
   const breakdown: PeriodBreakdown[] = [];
-  const levels = new Map<number, number>();
-  let totalArea = 0;
+  const segments: CurveSegment[] = [];
+  let profile = emptyProfile();
 
   for (const period of placed) {
     const group = assessmentsByPeriod.get(period.id)!;
-    const baseImpacts = group.map((a) => calculateUnboundedBaseImpact(a.scores, period.reach_factor));
-    const consensusWeights = group.map((a) =>
-      calculateConsensusWeight(a.controversy_level, a.consensus_score, config),
-    );
-    const uncertaintyFactors = group.map((a) =>
-      calculateUncertaintyFactor(a.confidence_level, 0.8, config),
-    );
-
-    // Several assessments of one period are competing opinions of the same
-    // thing, so they are averaged, not added.
-    const level =
-      mean(group.map((_, i) => baseImpacts[i] * consensusWeights[i] * uncertaintyFactors[i])) *
-      networkAmplification;
+    const multiplier = reachMultiplier(period.reach_factor);
+    const level = periodLevel(group, multiplier);
     const years = activeYears(period, asOfYear);
-    const area = (level * years) / YEARS_PER_UNIT;
+    const area = scaleProfile(level, years / YEARS_PER_UNIT);
+    profile = addScaled(profile, area);
 
-    levels.set(period.id, level);
-    totalArea += area;
-
-    const baseImpact = mean(baseImpacts);
-    const consensusWeight = mean(consensusWeights);
-    const uncertaintyFactor = mean(uncertaintyFactors);
     breakdown.push({
+      period_id: period.id,
       period: period.label,
       start_year: period.start_year,
       end_year: period.end_year,
       years,
       assessments: group.length,
-      baseImpact,
-      consensusWeight,
-      networkAmplification,
-      uncertaintyFactor,
+      reach_multiplier: multiplier,
       level,
       area,
-      dominant_factors: identifyDominantFactors({
-        baseImpact,
-        consensusWeight,
-        networkAmplification,
-        uncertaintyFactor,
-      }),
+    });
+    segments.push({
+      start_year: period.start_year,
+      end_year: Math.min(period.end_year, asOfYear),
+      benefit: sumDimensions(level.benefit),
+      harm: sumDimensions(level.harm),
     });
   }
 
-  // The curve only runs up to the as-of year; a period that has not started yet does nothing.
-  const live = placed.filter((p) => p.start_year <= asOfYear);
-
   // Legacy tail: only the periods that end last carry on, fading from their level.
   let tail: LegacyTail | null = null;
-  let tailLevelAtAsOf = 0;
-  if (live.length > 0) {
-    const latestEnd = Math.max(...live.map((p) => p.end_year));
+  let curveTail: InfluenceCurve["tail"] = null;
+  if (breakdown.length > 0 && !options.hasCreditDescendants) {
+    const latestEnd = Math.max(...placed.map((p) => p.end_year));
     if (latestEnd < asOfYear) {
       const yearsAfter = asOfYear - latestEnd;
-      let tailArea = 0;
-      for (const period of live.filter((p) => p.end_year === latestEnd)) {
-        const level = levels.get(period.id)!;
-        const timeConstant = persistenceTimeConstant(period.persistence_factor, config);
-        tailArea += calculateTailArea(level, timeConstant, yearsAfter);
-        tailLevelAtAsOf += Number.isFinite(timeConstant)
-          ? level * Math.exp(-yearsAfter / timeConstant)
-          : level;
+      let tailArea = emptyProfile();
+      const parts: TailPart[] = [];
+      for (const row of breakdown.filter((b) => b.end_year === latestEnd)) {
+        const period = periodById.get(row.period_id)!;
+        const timeConstant = persistenceTimeConstant(period.persistence_factor);
+        const faded = emptyProfile();
+        for (const d of DIMENSIONS) {
+          faded.benefit[d] = calculateTailArea(row.level.benefit[d], timeConstant, yearsAfter);
+          faded.harm[d] = calculateTailArea(row.level.harm[d], timeConstant, yearsAfter);
+        }
+        tailArea = addScaled(tailArea, faded, 1 / YEARS_PER_UNIT);
+        parts.push({
+          benefit: sumDimensions(row.level.benefit),
+          harm: sumDimensions(row.level.harm),
+          time_constant: Number.isFinite(timeConstant) ? timeConstant : null,
+        });
       }
-      tail = {
-        from_year: latestEnd + 1,
-        years: yearsAfter,
-        area: tailArea / YEARS_PER_UNIT,
-        level_at_as_of: tailLevelAtAsOf,
-      };
-      totalArea += tail.area;
+      tail = { from_year: latestEnd + 1, years: yearsAfter, area: tailArea };
+      curveTail = { from_year: latestEnd + 1, parts };
+      profile = addScaled(profile, tailArea);
     }
   }
 
-  // The curve is piecewise constant, changing only where a period starts or
-  // just after one ends, so its extremes are at those years.
-  const levelAt = (year: number) =>
-    live.reduce(
-      (sum, p) => (p.start_year <= year && year <= p.end_year ? sum + levels.get(p.id)! : sum),
-      0,
-    );
-  const breakpoints = new Set<number>();
-  for (const p of live) {
-    breakpoints.add(p.start_year);
-    if (p.end_year + 1 <= asOfYear) breakpoints.add(p.end_year + 1);
-  }
-  let peakLevel = 0;
-  for (const year of breakpoints) {
-    const value = levelAt(year);
-    if (Math.abs(value) > Math.abs(peakLevel)) peakLevel = value;
-  }
-  const currentLevel = levelAt(asOfYear) + tailLevelAtAsOf;
-
-  const placedAssessments = [...assessmentsByPeriod.values()].flat();
-  const avgConfidence = mean(placedAssessments.map((a) => a.confidence_level));
-  const uncertaintyWidth = totalArea * (1 - avgConfidence);
-  const magnitude = Math.abs(totalArea);
-
   return {
-    overall_score: totalArea,
-    magnitude,
-    impact_class: classifyMagnitude(magnitude),
+    profile,
+    magnitude: profileMagnitude(profile),
+    benefit_total: sumDimensions(profile.benefit),
+    harm_total: sumDimensions(profile.harm),
     breakdown,
     tail,
-    peak_level: peakLevel,
-    current_level: currentLevel,
+    curve: { segments, tail: curveTail, as_of_year: asOfYear },
     as_of_year: asOfYear,
     unplaced_assessments: unplaced,
-    uncertainty_range: [totalArea - uncertaintyWidth, totalArea + uncertaintyWidth],
-    algorithm_version: "3.0.0-atis",
+    algorithm_version: ALGORITHM_VERSION,
   };
+}
+
+// ---------- The curve ----------
+
+/**
+ * Area (level × years) under the curve between two instants. Year y occupies
+ * the interval [y, y + 1), so a period from 1096 to 1099 covers [1096, 1100).
+ */
+export function curveAreaBetween(curve: InfluenceCurve, from: number, to: number): { benefit: number; harm: number } {
+  let benefit = 0;
+  let harm = 0;
+  const end = Math.min(to, curve.as_of_year + 1);
+  if (end <= from) return { benefit, harm };
+
+  for (const s of curve.segments) {
+    const overlap = Math.min(end, s.end_year + 1) - Math.max(from, s.start_year);
+    if (overlap > 0) {
+      benefit += s.benefit * overlap;
+      harm += s.harm * overlap;
+    }
+  }
+
+  if (curve.tail) {
+    const t0 = curve.tail.from_year;
+    const a = Math.max(from, t0) - t0;
+    const b = end - t0;
+    if (b > a) {
+      for (const part of curve.tail.parts) {
+        const tau = part.time_constant;
+        const factor = tau === null ? b - a : tau * (Math.exp(-a / tau) - Math.exp(-b / tau));
+        benefit += part.benefit * factor;
+        harm += part.harm * factor;
+      }
+    }
+  }
+  return { benefit, harm };
+}
+
+/**
+ * The curve's mean level in each bucket between consecutive edges. Averaging
+ * keeps area, so an event shorter than its bucket still shows, in proportion.
+ */
+export function sampleCurve(curve: InfluenceCurve, edges: number[]): { benefit: number[]; harm: number[] } {
+  const benefit: number[] = [];
+  const harm: number[] = [];
+  for (let i = 0; i < edges.length - 1; i++) {
+    const width = edges[i + 1] - edges[i];
+    const area = curveAreaBetween(curve, edges[i], edges[i + 1]);
+    benefit.push(width > 0 ? area.benefit / width : 0);
+    harm.push(width > 0 ? area.harm / width : 0);
+  }
+  return { benefit, harm };
 }
 
 // ---------- Classification ----------
 
-export function classifyMagnitude(magnitude: number): ImpactClassification {
-  if (magnitude < 10)
-    return {
-      tier: "minimal",
-      descriptor: "Limited local impact",
-      range: [0, 10],
-      color_scheme: "gray",
-      interpretation: "Little lasting effect beyond immediate context",
-    };
-  if (magnitude < 50)
-    return {
-      tier: "moderate",
-      descriptor: "Regional or specialized impact",
-      range: [10, 50],
-      color_scheme: "blue",
-      interpretation: "Meaningful impact within specific domain or region",
-    };
-  if (magnitude < 200)
-    return {
-      tier: "significant",
-      descriptor: "National or cross-domain impact",
-      range: [50, 200],
-      color_scheme: "orange",
-      interpretation: "Major impact affecting multiple areas or large populations",
-    };
-  if (magnitude < 500)
-    return {
-      tier: "transformational",
-      descriptor: "Global or epoch-defining impact",
-      range: [200, 500],
-      color_scheme: "red",
-      interpretation: "Fundamental changes affecting humanity's trajectory",
-    };
-  return {
-    tier: "legendary",
-    descriptor: "Civilization-altering impact",
-    range: [500, Infinity],
-    color_scheme: "purple",
-    interpretation: "Rare figures who fundamentally changed the course of history",
-  };
-}
-
-// ---------- Helpers ----------
-
-/** Compute consensus (mean) scores from multiple assessments */
-export function computeConsensusScores(
-  assessments: { scores: DimensionalScores }[],
-): DimensionalScores {
-  if (assessments.length === 0)
-    return { scientific: 0, economic: 0, human_rights: 0, health: 0, cultural: 0 };
-
-  const sum = assessments.reduce(
-    (acc, a) => ({
-      scientific: acc.scientific + a.scores.scientific,
-      economic: acc.economic + a.scores.economic,
-      human_rights: acc.human_rights + a.scores.human_rights,
-      health: acc.health + a.scores.health,
-      cultural: acc.cultural + a.scores.cultural,
-    }),
-    { scientific: 0, economic: 0, human_rights: 0, health: 0, cultural: 0 },
-  );
-
-  const n = assessments.length;
-  return {
-    scientific: sum.scientific / n,
-    economic: sum.economic / n,
-    human_rights: sum.human_rights / n,
-    health: sum.health / n,
-    cultural: sum.cultural / n,
-  };
-}
-
-/** Get achievement labels for extreme scores */
-export function getAchievements(scores: DimensionalScores): string[] {
-  const achievements: string[] = [];
-  const labels: Record<string, { positive: string; negative: string }> = {
-    scientific: { positive: "Scientific Pioneer", negative: "Scientific Menace" },
-    economic: { positive: "Economic Titan", negative: "Economic Devastator" },
-    human_rights: { positive: "Champion of Rights", negative: "Rights Violator" },
-    health: { positive: "Health Savior", negative: "Health Menace" },
-    cultural: { positive: "Cultural Icon", negative: "Cultural Destroyer" },
-  };
-
-  for (const [dim, value] of Object.entries(scores)) {
-    const label = labels[dim];
-    if (!label) continue;
-    if (value >= 8) achievements.push(label.positive);
-    if (value <= -8) achievements.push(label.negative);
-  }
-
-  return achievements;
-}
-
-function identifyDominantFactors(factors: {
-  baseImpact: number;
-  consensusWeight: number;
-  networkAmplification: number;
-  uncertaintyFactor: number;
-}): string[] {
-  const dominant: string[] = [];
-  if (Math.abs(factors.baseImpact) > 50) dominant.push("base_impact");
-  if (factors.consensusWeight < 0.9) dominant.push("controversy");
-  if (factors.networkAmplification > 1.5) dominant.push("network_effects");
-  if (factors.uncertaintyFactor < 0.8) dominant.push("uncertainty");
-  return dominant.length > 0 ? dominant : ["base_impact"];
+export function classifyMagnitude(magnitude: number): { tier: ATISTier; descriptor: string } {
+  let found = TIER_THRESHOLDS[0];
+  for (const t of TIER_THRESHOLDS) if (magnitude >= t.min) found = t;
+  return { tier: found.tier, descriptor: found.descriptor };
 }

@@ -89,18 +89,23 @@ export type Database = {
           created_at: string
           created_by: string
           cultural_justification: string
-          cultural_score: number
+          cultural_benefit: number
+          cultural_harm: number
           economic_justification: string
-          economic_score: number
+          economic_benefit: number
+          economic_harm: number
           entity_id: number
           health_justification: string
-          health_score: number
+          health_benefit: number
+          health_harm: number
           human_rights_justification: string
-          human_rights_score: number
+          human_rights_benefit: number
+          human_rights_harm: number
           id: number
           period_id: number | null
           scientific_justification: string
-          scientific_score: number
+          scientific_benefit: number
+          scientific_harm: number
           sources: string[] | null
           updated_at: string
         }
@@ -113,18 +118,23 @@ export type Database = {
           created_at?: string
           created_by: string
           cultural_justification: string
-          cultural_score: number
+          cultural_benefit: number
+          cultural_harm: number
           economic_justification: string
-          economic_score: number
+          economic_benefit: number
+          economic_harm: number
           entity_id: number
           health_justification: string
-          health_score: number
+          health_benefit: number
+          health_harm: number
           human_rights_justification: string
-          human_rights_score: number
+          human_rights_benefit: number
+          human_rights_harm: number
           id?: never
           period_id?: number | null
           scientific_justification: string
-          scientific_score: number
+          scientific_benefit: number
+          scientific_harm: number
           sources?: string[] | null
           updated_at?: string
         }
@@ -137,18 +147,23 @@ export type Database = {
           created_at?: string
           created_by?: string
           cultural_justification?: string
-          cultural_score?: number
+          cultural_benefit?: number
+          cultural_harm?: number
           economic_justification?: string
-          economic_score?: number
+          economic_benefit?: number
+          economic_harm?: number
           entity_id?: number
           health_justification?: string
-          health_score?: number
+          health_benefit?: number
+          health_harm?: number
           human_rights_justification?: string
-          human_rights_score?: number
+          human_rights_benefit?: number
+          human_rights_harm?: number
           id?: never
           period_id?: number | null
           scientific_justification?: string
-          scientific_score?: number
+          scientific_benefit?: number
+          scientific_harm?: number
           sources?: string[] | null
           updated_at?: string
         }
@@ -263,7 +278,7 @@ export type Database = {
           id: number
           relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
           source_entity_id: number
-          strength: number | null
+          strength: number
           target_entity_id: number
           temporal_overlap: number | null
         }
@@ -274,7 +289,7 @@ export type Database = {
           id?: never
           relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
           source_entity_id: number
-          strength?: number | null
+          strength?: number
           target_entity_id: number
           temporal_overlap?: number | null
         }
@@ -285,7 +300,7 @@ export type Database = {
           id?: never
           relationship_type?: Database["shadowyrealm"]["Enums"]["relationship_type"]
           source_entity_id?: number
-          strength?: number | null
+          strength?: number
           target_entity_id?: number
           temporal_overlap?: number | null
         }
@@ -311,7 +326,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      credit_shares: {
+        Args: { published_only?: boolean }
+        Returns: {
+          ancestor_id: number
+          descendant_id: number
+          share: number
+        }[]
+      }
     }
     Enums: {
       entity_type: "person" | "organization" | "event"
