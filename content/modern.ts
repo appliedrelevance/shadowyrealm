@@ -783,6 +783,33 @@ export const modern: RealmContent = {
       ],
     },
     {
+      slug: "jimmy-wales",
+      name: "Jimmy Wales",
+      type: "person",
+      wiki: "Jimmy Wales",
+      description: "American and British internet entrepreneur who co-founded Wikipedia in 2001 and created the Wikimedia Foundation to host it.",
+      metadata: { birth_date: "1966", nationality: "American and British" },
+      periods: [
+        {
+          label: "Founding Wikipedia",
+          start: 2000,
+          end: 2003,
+          description:
+            "Funded Nupedia through his web company Bomis, launched Wikipedia with Larry Sanger in January 2001 and created the Wikimedia Foundation in 2003.",
+          sections: ["Lead-up to Wikipedia", "Wikipedia", "Wikimedia Foundation"],
+        },
+        {
+          label: "Community founder",
+          start: 2004,
+          end: 2026,
+          description:
+            "Held the Wikimedia board's community founder seat as Wikipedia's public face, co-founded the wiki host Fandom and launched WikiTribune and Trust Café.",
+          sections: ["Role", "Wikia and later pursuits"],
+        },
+      ],
+      why: "Wales co-founded Wikipedia, kept it free of advertising and gave it a nonprofit home.",
+    },
+    {
       slug: "steve-jobs",
       name: "Steve Jobs",
       type: "person",
@@ -970,6 +997,9 @@ export const modern: RealmContent = {
     { from: "mahatma-gandhi", to: "civil-rights-movement", share: 0.1, why: "King adopted Gandhi's nonviolent resistance." },
     { from: "martin-luther-king-jr", to: "civil-rights-movement", share: 0.4, why: "King was the movement's leading figure." },
     { from: "tim-berners-lee", to: "world-wide-web", share: 0.6, why: "Berners-Lee invented the web." },
+    { from: "jimmy-wales", to: "wikipedia", share: 0.35, why: "Wales co-founded Wikipedia, ruled out advertising and founded the Wikimedia Foundation to host it." },
+    { from: "world-wide-web", to: "wikipedia", share: 0.1, why: "Wikipedia is a website that anyone can edit from a browser." },
+    { from: "wikipedia", to: "openai", share: 0.05, why: "OpenAI trained GPT-3 on Wikipedia among other text." },
     { from: "steve-jobs", to: "apple-inc", share: 0.4, why: "Jobs co-founded Apple and led its greatest products." },
     { from: "j-k-rowling", to: "harry-potter", share: 0.9, why: "Rowling created Harry Potter." },
     { from: "mark-zuckerberg", to: "facebook", share: 0.6, why: "Zuckerberg founded and controls Facebook." },

@@ -277,9 +277,18 @@ function Periods({ profile }: { profile: EntityProfile }) {
                         {a.model} · confidence {a.confidence_level ?? "—"}
                         {a.sources?.[0] && (
                           <>
-                            {" · "}
+                            {" · text from "}
                             <a href={a.sources[0]} target="_blank" rel="noreferrer" className="text-action-ink hover:underline">
-                              source
+                              Wikipedia
+                            </a>
+                            {", "}
+                            <a
+                              href="https://creativecommons.org/licenses/by-sa/4.0/"
+                              target="_blank"
+                              rel="noreferrer license"
+                              className="text-action-ink hover:underline"
+                            >
+                              CC BY-SA 4.0
                             </a>
                           </>
                         )}
