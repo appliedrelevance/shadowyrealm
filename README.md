@@ -41,6 +41,8 @@ bunx wrangler deploy  # deploy the Worker and assets
 bun run e2e           # read-only browser tests, against production by default
 ```
 
+CI (`.github/workflows/ci.yml`) runs the lint, the design-token check, the unit tests and the build on every push to `main` and every pull request. Deploys stay manual.
+
 Content lives in `content/` and is loaded through the MCP tools:
 
 ```bash
