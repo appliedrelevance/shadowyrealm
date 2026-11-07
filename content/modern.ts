@@ -810,6 +810,33 @@ export const modern: RealmContent = {
       why: "Wales co-founded Wikipedia, kept it free of advertising and gave it a nonprofit home.",
     },
     {
+      slug: "larry-sanger",
+      name: "Larry Sanger",
+      type: "person",
+      wiki: "Larry Sanger",
+      description: "American philosopher who co-founded Wikipedia in 2001, named it and wrote its first policies, and later became its most outspoken critic.",
+      metadata: { birth_date: "1968", nationality: "American" },
+      periods: [
+        {
+          label: "Nupedia and Wikipedia",
+          start: 2000,
+          end: 2002,
+          description:
+            "Edited Nupedia from February 2000, proposed the wiki that launched as Wikipedia in January 2001, named it and drafted its first policies, including neutral point of view, until he was laid off in March 2002.",
+          sections: ["Nupedia and Wikipedia", "Status as Wikipedia co-founder"],
+        },
+        {
+          label: "Wikipedia critic",
+          start: 2003,
+          end: 2026,
+          description:
+            "Argued that Wikipedia lacked respect for expertise and later neutrality, founded Citizendium in 2006 to compete with it and in 2019 set up the Knowledge Standards Foundation.",
+          sections: ["Criticism of Wikipedia", "Accuracy", "Neutrality", "Citizendium", "Other projects"],
+        },
+      ],
+      why: "Sanger proposed the wiki that became Wikipedia, named it and drafted the neutrality policy it still runs on.",
+    },
+    {
       slug: "steve-jobs",
       name: "Steve Jobs",
       type: "person",
@@ -998,6 +1025,7 @@ export const modern: RealmContent = {
     { from: "martin-luther-king-jr", to: "civil-rights-movement", share: 0.4, why: "King was the movement's leading figure." },
     { from: "tim-berners-lee", to: "world-wide-web", share: 0.6, why: "Berners-Lee invented the web." },
     { from: "jimmy-wales", to: "wikipedia", share: 0.35, why: "Wales co-founded Wikipedia, ruled out advertising and founded the Wikimedia Foundation to host it." },
+    { from: "larry-sanger", to: "wikipedia", share: 0.25, why: "Sanger proposed the wiki, named it Wikipedia and drafted its neutral point of view and verifiability policies." },
     { from: "world-wide-web", to: "wikipedia", share: 0.1, why: "Wikipedia is a website that anyone can edit from a browser." },
     { from: "wikipedia", to: "openai", share: 0.05, why: "OpenAI trained GPT-3 on Wikipedia among other text." },
     { from: "steve-jobs", to: "apple-inc", share: 0.4, why: "Jobs co-founded Apple and led its greatest products." },

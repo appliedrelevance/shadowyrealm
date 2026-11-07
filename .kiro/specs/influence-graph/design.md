@@ -80,7 +80,7 @@ Migration `20261107000827_shadowyrealm_influence_graph` (monorepo `supabase/migr
 
 ## Content
 
-- `content/*.ts` holds the launch set: 115 entities, 142 periods and 88 links, from Hammurabi to the COVID-19 pandemic.
+- `content/*.ts` holds the launch set: 116 entities, 144 periods and 89 links, from Hammurabi to the COVID-19 pandemic.
 - `tools/realm-load.ts` loads a content file through the MCP tools. It creates entities with Wikipedia thumbnails, adds periods and links, then scores every period with `score_period`.
 - Evidence per period is the article's lead plus the sections that mention the period's years, capped at 7,800 characters.
 - The loader is re-runnable and skips anything already present.
