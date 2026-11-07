@@ -166,7 +166,18 @@ function IndexTable({ realm }: { realm: Realm }) {
                       params={{ slug: e.slug }}
                       className="flex items-center gap-2 font-medium text-ink hover:text-action-ink"
                     >
-                      <Icon className="h-4 w-4 shrink-0 text-ink-muted" aria-label={e.entity_type} />
+                      {e.image_url ? (
+                        <img
+                          src={e.image_url}
+                          alt=""
+                          loading="lazy"
+                          className="h-7 w-7 shrink-0 rounded-full border border-line object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2">
+                          <Icon className="h-3.5 w-3.5 text-ink-muted" aria-label={e.entity_type} />
+                        </span>
+                      )}
                       {e.name}
                       {isOperator && "status" in e && e.status !== "published" && (
                         <span className="rounded bg-surface-2 px-1.5 py-0.5 text-xs font-normal text-ink-muted">
