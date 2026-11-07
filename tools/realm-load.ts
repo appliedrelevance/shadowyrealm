@@ -7,7 +7,10 @@
  * and a period is scored only if it has no Clef assessment yet (--rescore
  * scores every period again).
  *
- *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore] [--publish]
+ *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore] [--publish] [--concurrency 4]
+ *
+ * --concurrency creates and scores that many entities at once; links are
+ * always added one at a time, so the credit cap is checked in order.
  */
 import type { RealmContent, RealmEntity, RealmPeriod } from "../content/types";
 
@@ -21,6 +24,7 @@ if (!file) throw new Error("Pass the content file, e.g. content/realm.ts");
 const only = args.includes("--only") ? new Set(args[args.indexOf("--only") + 1].split(",")) : null;
 const rescore = args.includes("--rescore");
 const publish = args.includes("--publish");
+const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
 
 const WIKI_HEADERS = { "User-Agent": "ShadowyRealm/1.0 (https://shadowyrealm.com)" };
 const EVIDENCE_MAX = 7800;
@@ -180,6 +184,15 @@ async function detail(slug: string): Promise<EntityDetail | null> {
   }
 }
 
+/** Run fn over items, at most n at a time; the first failure stops the run. */
+async function inPool<T>(items: T[], n: number, fn: (item: T) => Promise<void>) {
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) await fn(items[next++]);
+  };
+  await Promise.all(Array.from({ length: Math.max(1, n) }, worker));
+}
+
 async function main() {
   const content = (await import(`${process.cwd()}/${file}`)).default as RealmContent;
   const entities = content.entities.filter((e) => !only || only.has(e.slug));
@@ -189,7 +202,7 @@ async function main() {
     if (!slugs.has(slug) && !(await detail(slug))) throw new Error(`A link names "${slug}", which is neither in this file nor in the index`);
   }
 
-  for (const e of entities) {
+  await inPool(entities, concurrency, async (e) => {
     let d = await detail(e.slug);
     if (!d) {
       const wiki = await thumbnail(e.wiki);
@@ -217,7 +230,7 @@ async function main() {
       });
       console.log(`  period ${e.slug} / ${p.label}`);
     }
-  }
+  });
 
   for (const l of content.links) {
     if (only && !only.has(l.from) && !only.has(l.to)) continue;
@@ -236,7 +249,7 @@ async function main() {
     console.log(`link ${l.from} -> ${l.to} (${type} ${l.share})`);
   }
 
-  for (const e of entities) {
+  await inPool(entities, concurrency, async (e) => {
     const d = (await detail(e.slug))!;
     for (const p of e.periods) {
       const period = d.periods.find((x) => x.label === p.label)!;
@@ -260,7 +273,7 @@ async function main() {
       await call("set_entity_status", { slug: e.slug, status: "published" });
       console.log(`  published ${e.slug}`);
     }
-  }
+  });
 }
 
 await main();
