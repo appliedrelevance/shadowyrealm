@@ -106,6 +106,87 @@ export const modern: RealmContent = {
       ],
     },
     {
+      slug: "charles-taze-russell",
+      name: "Charles Taze Russell",
+      type: "person",
+      wiki: "Charles Taze Russell",
+      description: "American Adventist minister from Pittsburgh who founded the Bible Student movement and the Watch Tower Society, from which Jehovah's Witnesses grew.",
+      metadata: { birth_date: "1852", death_date: "1916", nationality: "American" },
+      periods: [
+        {
+          label: "Bible Student ministry",
+          start: 1870,
+          end: 1916,
+          description:
+            "Formed a Bible study group in Pittsburgh in 1870, began publishing Zion's Watch Tower in 1879, co-founded the Watch Tower Society in 1881 and printed nearly 20 million copies of his Studies in the Scriptures.",
+          sections: ["Beginnings", "Watch Tower Society", "Publications", "Legacy"],
+        },
+      ],
+      why: "Russell founded the movement that became Jehovah's Witnesses and built the publishing house that still runs it.",
+    },
+    {
+      slug: "joseph-franklin-rutherford",
+      name: "Joseph Franklin Rutherford",
+      type: "person",
+      wiki: "Joseph Franklin Rutherford",
+      description: "American lawyer and second president of the Watch Tower Society, who turned the Bible Students into a centralized preaching organization and named it Jehovah's witnesses in 1931.",
+      metadata: { birth_date: "1869", death_date: "1942", nationality: "American" },
+      periods: [
+        {
+          label: "Watch Tower president",
+          start: 1917,
+          end: 1942,
+          description:
+            "Took control of the Watch Tower Society in 1917, was jailed in 1918 over The Finished Mystery, abolished elected elders, required every member to preach door to door and report it, and condemned flag salutes and military service.",
+          sections: ["Administrative changes"],
+        },
+      ],
+      why: "Rutherford gave Jehovah's Witnesses their name, their door-to-door preaching and the central control they keep today.",
+    },
+    {
+      slug: "jehovahs-witnesses",
+      name: "Jehovah's Witnesses",
+      type: "organization",
+      wiki: "Jehovah's Witnesses",
+      description: "Nontrinitarian Christian denomination known for door-to-door preaching, The Watchtower and its refusal of military service and blood transfusions, with more than 9 million members.",
+      metadata: { founded_date: "1879", headquarters: "Warwick, New York", organization_type: "institution" },
+      periods: [
+        {
+          label: "Bible Students",
+          start: 1879,
+          end: 1916,
+          description:
+            "Gathered around Russell's Zion's Watch Tower into autonomous congregations served by colporteurs and traveling preachers, with 50,000 people associated worldwide by 1910.",
+          sections: ["Background"],
+        },
+        {
+          label: "Rutherford's reorganization",
+          start: 1917,
+          end: 1941,
+          description:
+            "Lost most of Russell's followers while Rutherford centralized control in Brooklyn, took the name Jehovah's witnesses in 1931 and refused flag salutes and military service, which brought mob violence, Nazi concentration camps and court cases over religious freedom.",
+          sections: ["Joseph Rutherford", "Government interactions"],
+        },
+        {
+          label: "Worldwide expansion",
+          start: 1942,
+          end: 1975,
+          description:
+            "Under Nathan Knorr it trained missionaries, opened branches worldwide, published the New World Translation, banned blood transfusions from 1945 and grew past two million active members as it pointed to 1975.",
+          sections: ["Nathan Knorr", "Further development", "Rejection of blood transfusions"],
+        },
+        {
+          label: "Governing Body",
+          start: 1976,
+          end: 2026,
+          description:
+            "Run by its Governing Body since 1976, it grew to more than 9 million members while shunning those who leave or are expelled and facing inquiries into how it handled child sexual abuse.",
+          sections: ["Disciplinary action", "Handling of sexual abuse cases"],
+        },
+      ],
+      why: "It grew from a Pittsburgh Bible study into a worldwide denomination whose court cases widened religious freedom and whose blood ban and shunning have cost lives and families.",
+    },
+    {
       slug: "marie-curie",
       name: "Marie Curie",
       type: "person",
@@ -986,6 +1067,8 @@ export const modern: RealmContent = {
   links: [
     { from: "arthur-conan-doyle", to: "sherlock-holmes", share: 0.9, why: "Conan Doyle created Holmes." },
     { from: "saint-nicholas", to: "santa-claus", share: 0.4, why: "Santa Claus grew from the legend of Saint Nicholas the gift-giver." },
+    { from: "charles-taze-russell", to: "jehovahs-witnesses", share: 0.3, why: "Russell founded the Bible Student movement, its Watch Tower magazine and the society that still publishes it." },
+    { from: "joseph-franklin-rutherford", to: "jehovahs-witnesses", share: 0.3, why: "Rutherford centralized the movement, made door-to-door preaching every member's duty and named it Jehovah's witnesses." },
     { from: "karl-marx", to: "russian-revolution", share: 0.3, why: "The Bolsheviks seized power in the name of Marxism." },
     { from: "vladimir-lenin", to: "russian-revolution", share: 0.5, why: "Lenin planned and led the October Revolution." },
     { from: "world-war-i", to: "russian-revolution", share: 0.2, why: "The war's losses and hunger brought down the tsar." },
