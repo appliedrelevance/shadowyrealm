@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Building2, RefreshCw, Search, User, Zap } from "lucide-react";
+import { ArrowRight, Building2, ExternalLink, RefreshCw, Search, User, Zap } from "lucide-react";
 import gateOfTheRealm from "@/assets/gate-of-the-realm.jpg";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
@@ -46,6 +46,14 @@ export function RealmHome() {
             <Link to="/methodology" className="inline-flex items-center gap-1 text-action-ink hover:underline">
               {COPY.home.toMethod} <ArrowRight className="h-4 w-4" />
             </Link>
+            <a
+              href={COPY.home.storyUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-action-ink hover:underline"
+            >
+              {COPY.home.toStory} <ExternalLink className="h-4 w-4" />
+            </a>
           </div>
         </div>
         <img

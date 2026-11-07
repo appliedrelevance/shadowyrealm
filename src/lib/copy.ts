@@ -17,6 +17,8 @@ export const COPY = {
       "Benefit and harm are kept apart, never netted, and every consequence passes a share of its weight back to its causes.",
     toLineage: "Trace the lineage",
     toMethod: "How the score works",
+    toStory: "How it was built",
+    storyUrl: "https://ciqsi.net/blog/vibe-coding-history",
     riverHeading: "The river of influence",
     riverSubtitle:
       "Every entity's own influence, year by year. Benefit rises above the line and harm falls below it.",
