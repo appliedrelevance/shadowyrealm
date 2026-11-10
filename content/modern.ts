@@ -106,6 +106,52 @@ export const modern: RealmContent = {
       ],
     },
     {
+      slug: "ellen-g-white",
+      name: "Ellen G. White",
+      type: "person",
+      wiki: "Ellen G. White",
+      description: "American author, prophet and co-founder of the Seventh-day Adventist Church, whose writings on health and diet made her a leading figure in American vegetarianism.",
+      metadata: { birth_date: "1827", death_date: "1915", nationality: "American" },
+      periods: [
+        {
+          label: "Prophet and co-founder",
+          start: 1844,
+          end: 1915,
+          description:
+            "Reported her first vision in December 1844 after the Great Disappointment, co-founded the Seventh-day Adventist Church in 1863, founded the Battle Creek and Loma Linda sanitariums and wrote more than 5,000 articles and 40 books.",
+          sections: ["Millerite movement", "Visions", "Health reform", "Vegetarian food"],
+        },
+      ],
+      why: "White's visions and writings set the theology, health message and schools of a church of 23 million.",
+    },
+    {
+      slug: "seventh-day-adventist-church",
+      name: "Seventh-day Adventist Church",
+      type: "organization",
+      wiki: "Seventh-day Adventist Church",
+      description: "Protestant denomination that keeps Saturday as the Sabbath and expects Christ's imminent return, grew out of the Millerite movement and runs a worldwide network of schools and hospitals.",
+      metadata: { founded_date: "1863", headquarters: "Silver Spring, Maryland", organization_type: "institution" },
+      periods: [
+        {
+          label: "Founding and health reform",
+          start: 1863,
+          end: 1915,
+          description:
+            "Founded in Battle Creek, Michigan, in 1863, it grew to 75,000 members by 1901 with a medical school, 27 hospitals and 13 publishing houses, and its Battle Creek Sanitarium gave the world corn flakes.",
+          sections: ["History", "Development of Sabbatarianism", "Organization and recognition", "Health and diet"],
+        },
+        {
+          label: "Worldwide church",
+          start: 1916,
+          end: 2026,
+          description:
+            "Grew to 23 million members in more than 200 countries, running the world's second-largest school system, the AdventHealth hospitals and the relief agency ADRA, while its members' diet made Loma Linda a Blue Zone of longevity.",
+          sections: ["Health and diet", "Adventist mission", "Education", "Medical", "Humanitarian aid"],
+        },
+      ],
+      why: "It built the second-largest school system in the world and a global hospital network, and its health message gave the West breakfast cereal and meat substitutes.",
+    },
+    {
       slug: "charles-taze-russell",
       name: "Charles Taze Russell",
       type: "person",
@@ -589,6 +635,68 @@ export const modern: RealmContent = {
       ],
     },
     {
+      slug: "l-ron-hubbard",
+      name: "L. Ron Hubbard",
+      type: "person",
+      wiki: "L. Ron Hubbard",
+      description: "American pulp science fiction writer who published Dianetics in 1950, founded Scientology and led its church until his death in 1986.",
+      metadata: { birth_date: "1911", death_date: "1986", nationality: "American" },
+      periods: [
+        {
+          label: "Dianetics",
+          start: 1950,
+          end: 1951,
+          description:
+            "Published Dianetics: The Modern Science of Mental Health in 1950 and set up foundations to sell its auditing, which went bankrupt in 1952.",
+          sections: ["In the Dianetics era"],
+        },
+        {
+          label: "Founder of Scientology",
+          start: 1952,
+          end: 1966,
+          description:
+            "Created Scientology in 1952 after losing the rights to Dianetics, declared it a religion in 1954 and ran its growing network of churches.",
+          sections: ["Pivot to Scientology", "In the Church of Scientology era"],
+        },
+        {
+          label: "Commodore of the Sea Org",
+          start: 1967,
+          end: 1986,
+          description:
+            "Ran Scientology from a fleet of ships as commodore of the Sea Org, was convicted of fraud in France in 1978 and spent his last years in hiding in the California desert.",
+          sections: ["In the Sea Org era"],
+        },
+      ],
+      why: "Hubbard invented Dianetics and Scientology and wrote every one of their scriptures.",
+    },
+    {
+      slug: "church-of-scientology",
+      name: "Church of Scientology",
+      type: "organization",
+      wiki: "Church of Scientology",
+      description: "Network of organizations L. Ron Hubbard founded in 1953 to practice and sell Scientology, led since 1987 by David Miscavige and known for paid auditing and its campaigns against critics.",
+      metadata: { founded_date: "1953", headquarters: "Los Angeles", organization_type: "institution" },
+      periods: [
+        {
+          label: "Hubbard's church",
+          start: 1953,
+          end: 1986,
+          description:
+            "Incorporated in 1953 and declared a religion in 1954, it spread across Europe, lost its US tax exemption in 1967 and ran Operation Snow White, the infiltration of US federal agencies that sent its executives to prison in 1979.",
+          sections: ["History", "Illegal activities"],
+        },
+        {
+          label: "Under Miscavige",
+          start: 1987,
+          end: 2026,
+          description:
+            "Led by David Miscavige since 1987, it regained its US tax exemption in 1993, built $1.7 billion in assets, faced criminal charges over Lisa McPherson's death in 1995 and was convicted of fraud in France in 2009.",
+          sections: ["Finances", "Classification", "Members' health and safety"],
+        },
+      ],
+      why: "It turned a self-help book into a worldwide church with US tax exemption, and pursued its critics with lawsuits, espionage and harassment.",
+    },
+    {
       slug: "cold-war",
       name: "Cold War",
       type: "event",
@@ -1067,8 +1175,10 @@ export const modern: RealmContent = {
   links: [
     { from: "arthur-conan-doyle", to: "sherlock-holmes", share: 0.9, why: "Conan Doyle created Holmes." },
     { from: "saint-nicholas", to: "santa-claus", share: 0.4, why: "Santa Claus grew from the legend of Saint Nicholas the gift-giver." },
+    { from: "ellen-g-white", to: "seventh-day-adventist-church", share: 0.4, why: "White co-founded the church, and her visions and writings shaped its theology, health message and schools." },
     { from: "charles-taze-russell", to: "jehovahs-witnesses", share: 0.3, why: "Russell founded the Bible Student movement, its Watch Tower magazine and the society that still publishes it." },
     { from: "joseph-franklin-rutherford", to: "jehovahs-witnesses", share: 0.3, why: "Rutherford centralized the movement, made door-to-door preaching every member's duty and named it Jehovah's witnesses." },
+    { from: "l-ron-hubbard", to: "church-of-scientology", share: 0.6, why: "Hubbard founded the church, wrote all of its scripture and ran it until his death." },
     { from: "karl-marx", to: "russian-revolution", share: 0.3, why: "The Bolsheviks seized power in the name of Marxism." },
     { from: "vladimir-lenin", to: "russian-revolution", share: 0.5, why: "Lenin planned and led the October Revolution." },
     { from: "world-war-i", to: "russian-revolution", share: 0.2, why: "The war's losses and hunger brought down the tsar." },
