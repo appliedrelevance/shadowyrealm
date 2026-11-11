@@ -10941,7 +10941,8 @@ const content: RealmContent = {
           "label": "General Secretary of the CCP",
           "start": 2012,
           "end": 2026,
-          "description": "Led the anti-corruption campaign, the Belt and Road Initiative and the Xinjiang and Hong Kong crackdowns."
+          "description": "Led the anti-corruption campaign, the Belt and Road Initiative and the Xinjiang and Hong Kong crackdowns.",
+          "sections": ["Anti-corruption campaign", "Xinjiang"]
         }
       ],
       "why": "He leads the world's second-largest economy and its largest military by personnel."
@@ -11009,13 +11010,15 @@ const content: RealmContent = {
           "label": "First presidency",
           "start": 2017,
           "end": 2021,
-          "description": "Imposed tariffs on China, withdrew from the Paris Agreement and Iran deal, and contested his 2020 defeat."
+          "description": "Imposed tariffs on China, withdrew from the Paris Agreement and Iran deal, and contested his 2020 defeat.",
+          "sections": ["Foreign policy", "Judiciary", "COVID-19 pandemic", "2020 presidential election"]
         },
         {
           "label": "Second presidency",
           "start": 2025,
           "end": 2026,
-          "description": "Imposed broad tariffs on US trading partners and cut federal agencies and foreign aid."
+          "description": "Imposed broad tariffs on US trading partners and cut federal agencies and foreign aid.",
+          "sections": ["Early actions", "Mass terminations", "Targeting political opponents", "Immigration (2025", "Tariffs", "Middle East wars"]
         }
       ],
       "why": "He has redirected the policies of the world's largest economy and military and inspired nationalist movements abroad."
