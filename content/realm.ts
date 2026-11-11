@@ -1,5 +1,5 @@
 /**
- * ShadowyRealm content: the 123-entity launch set and the 500-entity second
+ * ShadowyRealm content: the 124-entity launch set and the 500-entity second
  * wave, with the periods of their direct activity and the links that pass
  * credit from consequence back to cause.
  *

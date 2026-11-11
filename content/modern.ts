@@ -1134,6 +1134,41 @@ export const modern: RealmContent = {
       ],
     },
     {
+      slug: "volodymyr-zelenskyy",
+      name: "Volodymyr Zelenskyy",
+      type: "person",
+      wiki: "Volodymyr Zelenskyy",
+      description: "Ukrainian comedian and actor who was elected president of Ukraine in 2019 and has led its defence against the full-scale Russian invasion since 2022.",
+      metadata: { birth_date: "1978", nationality: "Ukrainian" },
+      periods: [
+        {
+          label: "Kvartal 95 and Servant of the People",
+          start: 2003,
+          end: 2018,
+          description:
+            "Co-founded the production company Kvartal 95 and from 2015 starred in Servant of the People as a history teacher who becomes president, then founded a party of the same name in 2018.",
+          sections: ["Kvartal 95 Studio"],
+        },
+        {
+          label: "Peacetime president",
+          start: 2019,
+          end: 2021,
+          description:
+            "Won the 2019 election with 73.23 percent of the second-round vote, ended parliamentary immunity, led Ukraine through the COVID-19 pandemic and sought to end the Donbas war through the Minsk agreements.",
+          sections: ["Early presidency"],
+        },
+        {
+          label: "Wartime president",
+          start: 2022,
+          end: 2026,
+          description:
+            "Stayed in Kyiv when Russia invaded in February 2022, declared martial law and general mobilisation, rallied Western military aid and sanctions, applied to join NATO and put forward Ukraine's Peace Formula.",
+          sections: ["First phase of the invasion"],
+        },
+      ],
+      why: "He held Ukraine together when Russia invaded in 2022 and rallied the West behind its defence.",
+    },
+    {
       slug: "covid-19-pandemic",
       name: "COVID-19 pandemic",
       type: "event",
@@ -1225,6 +1260,7 @@ export const modern: RealmContent = {
     { from: "j-k-rowling", to: "harry-potter", share: 0.9, why: "Rowling created Harry Potter." },
     { from: "mark-zuckerberg", to: "facebook", share: 0.6, why: "Zuckerberg founded and controls Facebook." },
     { from: "george-w-bush", to: "war-on-terror", share: 0.3, why: "Bush declared and directed the War on Terror." },
+    { from: "volodymyr-zelenskyy", to: "vladimir-putin", share: 0, type: "opposition", why: "Zelenskyy has led Ukraine's resistance to Putin's invasion since 2022." },
     { from: "industrial-revolution", to: "climate-change", share: 0.6, why: "Burning coal to power industry began the rise in carbon dioxide." },
     { from: "islam", to: "al-qaeda", share: 0.1, why: "Al-Qaeda acts in the name of its reading of Islam." },
   ],
