@@ -7,10 +7,10 @@
 
 - [ ] 2. Site config and the scoring core
   - [ ] 2.1 `src/sites/types.ts`, `rubrics.ts`, `shadowyrealm.ts` and the registry, with ShadowyRealm's config built from today's constants (Requirements 1, 2)
-  - [ ] 2.2 The calculator and the credit composer take a `ScoringConfig`; period length moves into `periodYears` (Requirement 3)
-  - [ ] 2.3 Run the calculator tests once per registered config, and add `test/site-config.test.ts` (Requirements 2.4, 3.2)
+  - [ ] 2.2 The calculator and the credit composer take a `ScoringConfig` (Requirement 3)
+  - [ ] 2.3 Run the calculator tests once per registered config, and add `test/site-config.test.ts` (Requirements 2.3, 3.2)
   - [ ] 2.4 `buildClefRequest(site, period)`, with the byte-identity test against the fixtures from 1.2 (Requirement 6)
-  - [ ] 2.5 `timeline.ts` takes a `Timeline` (Requirement 3.3)
+  - [ ] 2.5 `timeline.ts` takes a `Timeline` (Requirement 2.1)
 
 - [ ] 3. Service, transport and crawler pages
   - [ ] 3.1 `schemasFor(site)`; the service's schema client, select lists and `SiteTables`; the link-endpoint check; the earliest start; the tier gate (Requirements 5.5, 8.2–8.4, 10)

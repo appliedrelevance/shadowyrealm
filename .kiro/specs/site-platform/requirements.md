@@ -9,7 +9,7 @@ The platform rests on three rules:
 - **One Postgres schema per site.** Each site gets its own schema in the shared Supabase project, built from ShadowyRealm's table shapes with columns named after its own dimensions. The code already reads profile columns as `{dimension}_benefit` and `{dimension}_harm`, so a site with different dimensions needs no new data model.
 - **One deployment per site.** Each site has its own Worker, secrets, cache, domain and sitemap. A bad deploy of one site leaves the others up.
 
-ShadowyRealm is the first site and keeps its behaviour exactly. The inventions site (spec `inventions-site`) is the second. A current-events site is planned as a spec of its own, and this spec keeps the dimension count, the rubrics and the time unit open for it.
+ShadowyRealm is the first site and keeps its behaviour exactly. The inventions site (spec `inventions-site`) is the second. Every site on the platform works in years. Placing events by day is a different app.
 
 Forecasting is shelved. A forecaster would learn from what was known at each date, so Requirement 12 keeps that record from now on: every score a period has had, and the exact revision of the evidence each score was computed from.
 
@@ -28,7 +28,6 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
   - links or shared entities between sites, and any combined view of several sites.
 - **Adjacent expectations**:
   - Every change to the shared database is executed by a session rooted in the appliedrelevance monorepo, from a `handoff.md` in the spec of the site that needs it. This repo writes no migrations.
-  - The current-events spec adds a `day` time unit and the date columns it needs. This spec puts the time unit in the config and keeps period length and axis placement each in one function, so that change stays local.
 
 ## Requirements
 
@@ -47,7 +46,7 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
 4. No module other than a site config shall declare a list of dimensions, entity types, link types, credit-bearing link types, rubric levels, persistence time constants or timeline ticks.
 
 ### Requirement 2: What a site may vary
-**Objective:** As the operator, I want every field-specific choice to be a config value, so that a site about inventions or current events can be as specific as its field needs.
+**Objective:** As the operator, I want every field-specific choice to be a config value, so that each site can be as specific as its field needs.
 
 #### Acceptance Criteria
 1. A site config shall set:
@@ -57,12 +56,11 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
    - the influence unit: the years per unit and the unit's name;
    - its entity types, each with labels, a Clef subject phrase, and the link type of which it must have at least one outgoing link, where the site requires one;
    - its link types, each with whether it carries credit, the entity types allowed at each end, and a label for each end;
-   - its timeline: time unit, start, axis ticks, near offset and bucket count;
+   - its timeline, in years: start, axis ticks, near offset and bucket count;
    - its tiers, or `null` while they are not calibrated;
    - its copy, brand and MCP server text.
-2. The only time unit in this spec shall be `year`.
-3. Each dimension key shall be a lowercase SQL identifier that, with its `_justification` suffix, fits Postgres's 63-character limit.
-4. A unit test shall check every registered config against criteria 1 and 3, and check that every link type names only that site's entity types.
+2. Each dimension key shall be a lowercase SQL identifier that, with its `_justification` suffix, fits Postgres's 63-character limit.
+3. A unit test shall check every registered config against criteria 1 and 2, and check that every link type names only that site's entity types.
 
 ### Requirement 3: A pure scoring core
 **Objective:** As the operator, I want the calculator and the credit composer to take a site's scoring config as an argument, so that one implementation scores every site and its tests run against every config.
@@ -70,7 +68,6 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
 #### Acceptance Criteria
 1. The ATIS Calculator and the credit composer shall receive the site's scoring config as an argument and read no module-level dimension list, weights, rubric constants or tiers.
 2. The calculator's unit tests shall run once for each registered site config.
-3. Period length and the time axis shall each be computed in one function that takes the site's timeline, so that a later time unit changes those two functions only.
 
 ### Requirement 4: One deployment per site
 **Objective:** As the operator, I want each site built and deployed on its own, so that a deploy, a cache or a secret of one site cannot reach another.

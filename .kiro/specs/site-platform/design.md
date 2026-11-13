@@ -75,8 +75,7 @@ export interface ScoringConfig {
 }
 
 export interface Timeline {
-  unit: "year";
-  start: number;
+  start: number;          // years; negative for BCE
   ticks: readonly number[];
   near: number;           // log-axis offset that keeps the present off infinity
   buckets: number;
@@ -98,7 +97,7 @@ export interface SiteConfig {
 }
 ```
 
-`src/sites/rubrics.ts` exports today's intensity, reach and persistence levels and time constants as `HISTORICAL_RUBRICS`. ShadowyRealm and the inventions site both use it, and a site on a shorter timescale defines its own.
+`src/sites/rubrics.ts` exports today's intensity, reach and persistence levels and time constants as `HISTORICAL_RUBRICS`. ShadowyRealm and the inventions site both use it, and a site whose field needs other wording defines its own.
 
 The reach multiplier, `(reach / 5)^1.8 × 3`, stays shared code. It shapes how breadth compares with depth, not what a field means.
 
@@ -138,7 +137,7 @@ The generated types are per schema, but the service needs one shape. `SiteTables
 | Module | Change |
 |---|---|
 | `src/sites/` (new) | `types.ts`, `rubrics.ts`, `shadowyrealm.ts`, `index.ts` (registry and `siteFor(key)`) |
-| `src/lib/atis-calculator.ts` | `DIMENSIONS`, `Dimension`, `DIMENSION_WEIGHTS`, `PERSISTENCE_TIME_CONSTANTS`, `TIER_THRESHOLDS` and `YEARS_PER_UNIT` leave. `calculateImpact`, the profile arithmetic and `classifyMagnitude` take a `ScoringConfig`. `Dimensions` becomes `Record<string, number>`, checked against the config at the boundaries. Period length moves into one function, `periodYears(period, asOf, timeline)`. |
+| `src/lib/atis-calculator.ts` | `DIMENSIONS`, `Dimension`, `DIMENSION_WEIGHTS`, `PERSISTENCE_TIME_CONSTANTS`, `TIER_THRESHOLDS` and `YEARS_PER_UNIT` leave. `calculateImpact`, the profile arithmetic and `classifyMagnitude` take a `ScoringConfig`. `Dimensions` becomes `Record<string, number>`, checked against the config at the boundaries. |
 | `src/lib/credit.ts` | `CREDIT_TYPES` comes from `site.linkTypes`. `AssessmentRow` becomes the fixed columns plus the config's `{key}_benefit` and `{key}_harm`. |
 | `src/lib/clef.ts` | `AREAS` and the three level lists leave. `buildClefRequest(site, period)` takes the subject from the entity type, the wording from each dimension and the rubrics from `scoring.rubrics`. |
 | `src/lib/sr-schemas.ts` | `schemasFor(site)` builds the zod enums for entity and link types and the per-dimension assessment fields. The minimum start comes from `site.timeline.start`. |
@@ -187,8 +186,8 @@ The generated types are per schema, but the service needs one shape. `SiteTables
 | DDL generated from the config | A schema and its config cannot disagree, and each new site's handoff is the same reviewed template |
 | A deployment per site, not one Worker choosing by hostname | Separate secrets, caches, sitemaps and deploys. A bad deploy of one site leaves the others up. |
 | Up to 31 dimensions | Clef takes at most 64 questions per request. Two per dimension, plus reach and persistence, fits 31. |
-| Rubrics and time constants in the config | A site on a timescale of weeks needs "faded within days" as a level; ShadowyRealm's lowest is "faded within a year" |
-| Year is the only time unit here | Day placement needs date columns and a different axis, and the current-events spec is the right place to design them against real events. Period length and axis placement each sit in one function so that spec changes two functions. |
+| Rubrics and time constants in the config | They are constants today, so moving them costs nothing, and a field can word its levels in its own terms |
+| Years only | Placing events by day needs date columns, a different axis and different evidence. That is a different app, not a site on this platform. |
 | Tiers are `null` until calibrated, and publishing is refused meanwhile | Borrowed thresholds would label entities on a distribution that does not exist yet |
 | Forecasting shelved, its record kept | A forecaster learns from what was known at each date. Keeping replaced scores in the audit log and pinning evidence to a Wikipedia revision costs no schema change and alters no score. A history that was never recorded cannot be recovered. |
 | Replaced scores in the audit log, not a history table | `entity_audit_log` already has `old_value jsonb`, so the history needs no handoff. A forecasting spec can move it into a table of its own if it needs to query it. |

@@ -57,7 +57,7 @@ The three `originated` labels come from `labelsByTarget`, keyed by the consequen
 ### Scoring, timeline and tiers
 
 - Rubrics: `HISTORICAL_RUBRICS`. Unit: `{ years: 100, name: "influence-centuries" }`.
-- Timeline: `{ unit: "year", start: -10000, ticks: [-10000, -5000, -3000, -1000, 1, 1000, 1500, 1700, 1800, 1900, 1950, 2000], near: 40, buckets: 200 }`.
+- Timeline: `{ start: -10000, ticks: [-10000, -5000, -3000, -1000, 1, 1000, 1500, 1700, 1800, 1900, 1950, 2000], near: 40, buckets: 200 }`.
 - Tiers: `null` until the launch run. The labels are ShadowyRealm's, with the descriptors in Requirement 8.2.
 
 ## Data model
