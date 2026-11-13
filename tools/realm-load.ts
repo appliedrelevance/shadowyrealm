@@ -226,7 +226,7 @@ function linkTypeOf(site: SiteConfig, l: { from: string; to: string; type?: stri
 }
 
 async function main() {
-  const mod = (await import(`${process.cwd()}/${file}`)) as { default: SiteContent<string, string>; site?: string };
+  const mod = (await import(file.startsWith("/") ? file : `${process.cwd()}/${file}`)) as { default: SiteContent<string, string>; site?: string };
   if (!mod.site) throw new Error(`${file} must export \`site\`, the key of the site it belongs to`);
   const site = siteFor(mod.site);
   WIKI_HEADERS = { "User-Agent": site.brand.userAgent };
