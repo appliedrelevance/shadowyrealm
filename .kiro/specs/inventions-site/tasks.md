@@ -25,13 +25,13 @@ Starts when `site-platform` is complete.
   - [x] 5.2 Load and score it as drafts through the site's MCP tools (Requirement 10.2)
   - [x] 5.3 Record the results and the five expectations in `research.md`; explain any that fail (Requirements 10.3, 10.4)
 
-- [ ] 6. Launch set
-  - [ ] 6.1 `content/inventions/launch.ts` to 150 entities, held to the content rules in the design
-  - [ ] 6.2 Load and score it
-  - [ ] 6.3 Measure `credit_shares(false)` with `EXPLAIN ANALYZE`; hand off the relaxation if it exceeds 500 ms, and verify agreement on the benchmark (Requirement 7)
-  - [ ] 6.4 Set the tier thresholds and record them (Requirement 10.5)
+- [x] 6. Launch set
+  - [x] 6.1 `content/inventions/launch.ts` to 150 entities, held to the content rules in the design
+  - [x] 6.2 Load and score it
+  - [x] 6.3 Measure `credit_shares(false)` with `EXPLAIN ANALYZE` (Requirement 7): 332 pairs in 5.8 ms over 186 links, so the relaxation is not needed
+  - [x] 6.4 Set the tier thresholds and record them (Requirement 10.5): 50, 100, 200, 2,000
 
-- [ ] 7. Launch
-  - [ ] 7.1 Final brand: logo, hero, Open Graph image, tokens (Requirement 9.3)
-  - [ ] 7.2 Deploy the final build to priorart.shadowyrealm.com (Requirement 9.2)
-  - [ ] 7.3 Publish the launch set; run the site-neutral e2e project against the site
+- [x] 7. Launch
+  - [x] 7.1 Final brand: logo, hero, Open Graph image, tokens (Requirement 9.3)
+  - [x] 7.2 Deploy the final build to priorart.shadowyrealm.com (Requirement 9.2)
+  - [x] 7.3 Publish the launch set (150 entities); the site-neutral e2e project passes against priorart.shadowyrealm.com, 11 of 11

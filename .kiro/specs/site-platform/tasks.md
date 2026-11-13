@@ -33,7 +33,7 @@
   - [x] 6.2 Load `site-schema.ts shadowyrealm` into a throwaway `supabase/postgres` container and compare its catalog with the cloud's `shadowyrealm`: identical in all twelve categories (Requirement 5.3)
   - [x] 6.3 `db:types` lists every site's schema, plus `test/site-tables.typetest.ts` (Requirements 5.4, 5.5)
 
-- [ ] 7. Verify and ship
+- [x] 7. Verify and ship
   - [x] 7.1 Compare the refactor against production, using the same data and as-of year (Requirement 11.1): a preview version (`wrangler versions upload --preview-alias platform`) returned `/api/scores`, `/api/realm` and five profiles byte for byte identical to production on 2026-11-13
   - [x] 7.2 Unit tests pass; e2e split into the ShadowyRealm and site-neutral projects, 28 of 28 passing against the preview (Requirements 11.2, 7)
-  - [ ] 7.3 Deploy ShadowyRealm and run its e2e suite against production (Requirement 11.3)
+  - [x] 7.3 Deploy ShadowyRealm and run its e2e suite against production (Requirement 11.3): deployed 2026-11-13, 28 of 28 passing
