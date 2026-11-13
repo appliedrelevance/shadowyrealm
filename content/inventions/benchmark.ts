@@ -1081,13 +1081,13 @@ export const benchmark: InventionsContent = {
       type: "person",
       wiki: "Johannes Gutenberg",
       description: "German goldsmith who introduced movable-type printing to Europe and printed the Gutenberg Bible.",
-      metadata: { birth_date: "c. 1400", death_date: "1468", nationality: "German", field: "printing" },
+      metadata: { death_date: "1468", nationality: "German", field: "printing" },
       periods: [
         {
           label: "Printing in Mainz",
           start: 1440,
           end: 1468,
-          description: "Gutenberg developed his press, metal type and oil-based ink and printed the Bible around 1455.",
+          description: "Gutenberg developed his press, metal type and oil-based ink and completed the Gutenberg Bible by 1455.",
         },
       ],
     },
@@ -1097,7 +1097,7 @@ export const benchmark: InventionsContent = {
       type: "invention",
       wiki: "Printing press",
       description: "A press for printing text and images from movable type, which made books cheap and spread literacy.",
-      metadata: { invented_date: "c. 1440", place: "Mainz", field: "printing" },
+      metadata: { invented_date: "1440", place: "Mainz", field: "printing" },
       periods: [
         {
           label: "Incunabula",
@@ -1217,7 +1217,7 @@ export const benchmark: InventionsContent = {
     { from: "general-motors", to: "chlorofluorocarbons", type: "originated", share: 0.3, why: "The work was done for Frigidaire, GM's refrigerator division." },
 
     // ---------- Electric light ----------
-    { from: "michael-faraday", to: "electromagnetic-induction", type: "originated", share: 0.7, why: "Faraday discovered induction in 1831. Rival: Joseph Henry, who found it independently around the same time." },
+    { from: "michael-faraday", to: "electromagnetic-induction", type: "originated", share: 0.7, why: "Faraday discovered induction in 1831. Rival: Joseph Henry, who found it independently in 1832." },
     { from: "electromagnetic-induction", to: "incandescent-light-bulb", type: "builds_on", share: 0.05, why: "Electric light became practical only with induction generators to power it." },
     { from: "joseph-swan", to: "incandescent-light-bulb", type: "originated", share: 0.25, why: "Swan demonstrated a working carbon-filament bulb in 1878 and 1879. Rival: Edison." },
     { from: "thomas-edison", to: "incandescent-light-bulb", type: "originated", share: 0.3, why: "Edison made a long-lasting carbon-filament bulb in 1879 and the system to power it. Rivals: Swan, Lodygin, Woodward and Evans." },
@@ -1228,7 +1228,7 @@ export const benchmark: InventionsContent = {
     { from: "incandescent-light-bulb", to: "led-lamp", type: "supersedes", share: 0, why: "LED lamps replaced incandescent bulbs." },
 
     // ---------- Scale pair ----------
-    { from: "johannes-gutenberg", to: "printing-press", type: "originated", share: 0.6, why: "Gutenberg introduced movable-type printing to Europe. Earlier: Bi Sheng's movable type in China around 1040 and Korean metal type." },
+    { from: "johannes-gutenberg", to: "printing-press", type: "originated", share: 0.6, why: "Gutenberg introduced movable-type printing to Europe. Earlier: Bi Sheng's movable type in China in the 1040s and Korean metal type in 1377." },
     { from: "sony", to: "walkman", type: "made", share: 0.6, why: "Sony designed and sold the Walkman, at Akio Morita's insistence." },
   ],
 };
