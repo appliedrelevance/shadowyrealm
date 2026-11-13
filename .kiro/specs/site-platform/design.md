@@ -193,3 +193,15 @@ The generated types are per schema, but the service needs one shape. `SiteTables
 | Replaced scores in the audit log, not a history table | `entity_audit_log` already has `old_value jsonb`, so the history needs no handoff. A forecasting spec can move it into a table of its own if it needs to query it. |
 | "Site", not "realm" | "Realm" already names the lineage page, `/api/realm` and `content/realm.ts` |
 | Hand-written `SiteTables` with a type test | The service needs one row shape for every schema, and the type test catches a schema that drifts from it |
+
+## Decisions that refine the design
+
+| Design | Built as | Why |
+|---|---|---|
+| The Vite mode selects the site | A `SITE` environment variable selects it; the mode stays `development` or `production` | A custom mode makes Vite load `.env` instead of `.env.production`, and `.env` points at the local stack on gideon. A production build would have shipped local Supabase URLs. |
+| Token values imported through an `@site` alias | ShadowyRealm's values stay in `@theme`; each other site's values live in `src/sites/<site>/tokens.css`, scoped to `:root[data-site="<site>"]`, which `index.html` sets per build | The vocabulary's names never change and Tailwind needs one `@theme`; an unlayered override wins over the theme layer without any build-time resolution |
+| `@site` alias for logo, hero and methodology | `src/sites/ui.ts` picks the active site's `SiteUi` (Logo, Hero, type icons, Methodology) from a registry | Fully typed with no alias magic; the other site's assets cost only a few kilobytes in each bundle |
+| `test/site-tables.typetest.ts` | `src/lib/site-tables.typetest.ts` | `tsconfig.json` includes `src/` only, and the check must run in every `tsc` |
+| Compare the generated shadowyrealm DDL with the local stack | Compared with the live cloud schema, category by category | gideon never received migration `20261107000827`, so its `shadowyrealm` is behind the cloud |
+| `bun run db:types` regenerates every schema | The inventions block was generated from gideon and spliced in beside the existing shadowyrealm block | Regenerating from gideon would regress shadowyrealm's types to the pre-influence-graph columns until gideon catches up |
+| Requirement 9.4, sibling links | The nav and footer of every site link the platform's other sites | Added on 2026-11-13: Prior Art serves at priorart.shadowyrealm.com as one of ShadowyRealm's indexes |

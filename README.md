@@ -2,7 +2,9 @@
 
 **[shadowyrealm.com](https://shadowyrealm.com)** ranks people, institutions and events by their influence across five thousand years: who shaped the world, for better and for worse.
 
-It measures influence, not virtue. Every entity carries ten numbers, a benefit and a harm for each of five dimensions (scientific, economic, human rights, health, cultural). They are never netted against each other. Influence also flows backward through history: each consequence passes a share of its weight to its causes, so the First Crusade credits the Catholic Church, and the Church credits Jesus.
+The same engine runs a second site, **[Prior Art](https://priorart.shadowyrealm.com)**, which scores inventions, inventors and products on dimensions of their own. Each site is a config in `src/sites/`, a Postgres schema and a Worker deployment (spec: [`.kiro/specs/site-platform/`](.kiro/specs/site-platform/)).
+
+ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a benefit and a harm for each of five dimensions (scientific, economic, human rights, health, cultural). They are never netted against each other. Influence also flows backward through history: each consequence passes a share of its weight to its causes, so the First Crusade credits the Catholic Church, and the Church credits Jesus.
 
 ## What's on the site
 
@@ -25,28 +27,34 @@ The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/
 
 | Layer | What it is |
 |---|---|
+| Sites | `src/sites/<site>.ts` holds everything specific to a field: dimensions, weights, Clef wording, rubrics, entity and link types, timeline, tiers, copy and brand. `shadowyrealm` and `inventions` (Prior Art) are registered. |
 | Front end | React 19, Vite, TanStack Router and Query, Tailwind v4 on the Applied Relevance design tokens, d3-scale and d3-shape for the charts |
 | Worker | One Cloudflare Worker serves the SPA, `/api/*` (reads plus the owner's status control), `/mcp`, and crawler-friendly `/entity/*` pages and `/sitemap.xml` |
 | Control layer | An MCP server with 12 tools (`src/worker/mcp.ts`) over a single service layer (`src/lib/sr-service.ts`). Every write, including content loading, goes through it. |
-| Data | Supabase Postgres, schema `shadowyrealm`. Row-level security lets anyone read published entities only, and only the Worker's service role can write. |
+| Data | Supabase Postgres, one schema per site (`shadowyrealm`, `inventions`), generated from the site config by `tools/site-schema.ts`. Row-level security lets anyone read published entities only, and only the Worker's service role can write. |
 | Scoring model | `@cf/cloudflare/clef` on Workers AI, through AI Gateway |
 
 ## Working on it
 
 ```bash
 bun install
-bun run test          # calculator unit tests
-bun run build         # typecheck and build the SPA into dist/
-bunx wrangler deploy  # deploy the Worker and assets
-bun run e2e           # read-only browser tests, against production by default
+bun run test                          # unit tests, run against every site's config
+bun run build                         # typecheck, then build each site into dist/<site>/
+bunx wrangler deploy                  # deploy ShadowyRealm
+bunx wrangler deploy --env inventions # deploy Prior Art
+bun run e2e                           # read-only browser tests, against shadowyrealm.com by default
+E2E_SITE=inventions E2E_BASE_URL=https://priorart.shadowyrealm.com bunx playwright test --project=site
+SITE=inventions bunx vite             # a dev server for one site
 ```
 
 CI (`.github/workflows/ci.yml`) runs the lint, the design-token check, the unit tests and the build on every push to `main` and every pull request. Deploys stay manual.
 
-Content lives in `content/` and is loaded through the MCP tools:
+Content lives in `content/` (ShadowyRealm) and `content/inventions/` (Prior Art). Check a content index, then load it through that site's MCP tools:
 
 ```bash
+bun tools/content-check.ts content/inventions/index.ts
 MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts --publish
+MCP_URL=https://priorart.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/inventions/index.ts --publish
 ```
 
 The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/realm.ts` is the whole index: 624 entities, 733 periods and 298 links. `content/NEXT-500.md` is a readable list of the second wave of 500.
