@@ -91,3 +91,10 @@ With the shared project's secret key, `POST /rest/v1/rpc/credit_shares` returned
 3. Apply the DDL to the cloud project as a migration, then to gideon, and copy the file into the monorepo under the cloud's version.
 4. Only then add the schema to the cloud's `pgrst.db_schemas` and the monorepo's `config.toml`, and reload PostgREST's config and schema cache.
 5. `bun run db:types`, or splice the new schema's generated block into `src/lib/database.types.ts`, and add the site to `src/lib/site-tables.typetest.ts`.
+
+## Sign-in on the subdomain
+
+- **Supabase Auth redirect allow-list** (cloud project, set through the management API on 2026-11-13): `https://priorart.shadowyrealm.com/**` was appended. `https://shadowyrealm.com/**` does not cover subdomains, so without it Google sign-in could not return to Prior Art. The other ten entries and `site_url` (`https://auth.appliedrelevance.com`) were left unchanged.
+- **Turnstile:** the shared widget lists `shadowyrealm.com`, and Turnstile accepts its subdomains, so `priorart.shadowyrealm.com` needed no widget change. The widget is at Cloudflare's limit of 10 hostnames.
+- **Verified:** Geordie signed in on priorart.shadowyrealm.com from Chrome on 2026-11-13. In the Claude desktop browser pane, which runs under automation, Turnstile returns error 600010 and the sign-in can fail; that is Turnstile doing its job, not a misconfiguration.
+- **Next site:** add its origin to the redirect allow-list the same way, and check whether its hostname falls under one already on the widget.
