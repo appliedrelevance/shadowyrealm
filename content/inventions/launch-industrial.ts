@@ -1,0 +1,1011 @@
+/**
+ * Prior Art launch set, the industrial era (1700–1945): textiles, railways and
+ * steel, wired and wireless communication, recorded sound and photography,
+ * vaccines and germ theory, explosives and the machine gun, flight and the
+ * petrol engine. Links run between these entries and from the benchmark into
+ * them; credit into the benchmark stays inside the budget each entry allows.
+ */
+import type { InventionsContent } from "../types";
+
+export const launchIndustrial: InventionsContent = {
+  entities: [
+    // ---------- Textiles and cotton ----------
+    {
+      slug: "spinning-jenny",
+      name: "Spinning jenny",
+      type: "invention",
+      wiki: "Spinning jenny",
+      description: "A hand-powered multi-spindle spinning frame that let one worker spin eight or more threads at once, an early machine of the cotton industry.",
+      metadata: { invented_date: "1764", place: "Stanhill, Lancashire", field: "textiles" },
+      periods: [
+        {
+          label: "Hargreaves's jenny",
+          start: 1764,
+          end: 1769,
+          description: "Hargreaves built jennies for himself and his neighbours; as the price of yarn fell, Blackburn spinners broke into his house in 1768 and smashed his machines.",
+        },
+        {
+          label: "Cotton spinning",
+          start: 1770,
+          end: 1810,
+          description: "Jennies spread through the Lancashire cotton and fustian trades, multiplying each spinner's output and cheapening yarn, until the spinning mule replaced them.",
+          sections: ["Success"],
+        },
+      ],
+    },
+    {
+      slug: "james-hargreaves",
+      name: "James Hargreaves",
+      type: "person",
+      wiki: "James Hargreaves",
+      description: "Lancashire weaver and carpenter who invented the spinning jenny, one of the machines that mechanised cotton spinning.",
+      metadata: { birth_date: "1720", death_date: "1778", nationality: "English", field: "textile machinery" },
+      periods: [
+        {
+          label: "Weaver at Stanhill",
+          start: 1764,
+          end: 1768,
+          description: "Hargreaves, an illiterate hand-loom weaver, built the spinning jenny and sold several to neighbours until a mob of spinners destroyed his machines.",
+        },
+        {
+          label: "Nottingham",
+          start: 1768,
+          end: 1778,
+          description: "Hargreaves made jennies for the Nottingham hosiery trade, patented the machine in 1770 and ran a small mill with Thomas James.",
+        },
+      ],
+    },
+    {
+      slug: "cotton-gin",
+      name: "Cotton gin",
+      type: "invention",
+      wiki: "Cotton gin",
+      description: "Eli Whitney's machine for pulling cotton fibre from its seeds, which made short-staple cotton profitable and entrenched and expanded slavery in the American South.",
+      metadata: { invented_date: "1793", place: "Mulberry Grove, Georgia", field: "agricultural machinery" },
+      periods: [
+        {
+          label: "Whitney's gin",
+          start: 1793,
+          end: 1807,
+          description: "Whitney's gin cleaned fifty pounds of short-staple lint a day, and planters across the South built copies while his patent went unenforced until 1807.",
+          sections: ["Eli Whitney's patent"],
+        },
+        {
+          label: "Cotton and slavery",
+          start: 1808,
+          end: 1865,
+          description: "The gin made upland cotton the South's most profitable crop, production rose from 750,000 bales in 1830 to 2.85 million in 1850, and planters bought ever more enslaved people to pick it until the Civil War ended slavery.",
+          sections: ["Effects in the United States"],
+        },
+        {
+          label: "Power gins",
+          start: 1866,
+          end: 2026,
+          description: "After the Civil War gins ran on steam and Munger's system ginning; modern gins clean up to fifteen tonnes of cotton an hour.",
+          sections: ["Munger system gin", "Modern cotton gins"],
+        },
+      ],
+    },
+    {
+      slug: "eli-whitney",
+      name: "Eli Whitney",
+      type: "person",
+      wiki: "Eli Whitney",
+      description: "American inventor of the cotton gin, whose machine strengthened slavery in the South, and a promoter of interchangeable parts in musket-making.",
+      metadata: { birth_date: "1765", death_date: "1825", nationality: "American", field: "mechanical engineering" },
+      periods: [
+        {
+          label: "The cotton gin",
+          start: 1793,
+          end: 1797,
+          description: "Whitney built the gin at Mulberry Grove, patented it in 1794 and, with Phineas Miller, charged planters two-fifths of their cotton for ginning, losing his profits to copiers and lawsuits.",
+        },
+        {
+          label: "Musket contracts",
+          start: 1798,
+          end: 1825,
+          description: "Whitney took a government contract for 10,000 muskets in 1798, delivered them in 1809, promoted interchangeable parts with a staged demonstration in 1801 and ran his New Haven armory until his death.",
+        },
+      ],
+    },
+
+    // ---------- Railways and steel ----------
+    {
+      slug: "steam-locomotive",
+      name: "Steam locomotive",
+      type: "invention",
+      wiki: "Steam locomotive",
+      description: "A self-propelled steam engine on rails, which hauled the railways' passengers and freight for more than a century.",
+      metadata: { invented_date: "1804", place: "Pen-y-darren, Wales", field: "rail transport" },
+      periods: [
+        {
+          label: "First locomotives",
+          start: 1804,
+          end: 1829,
+          description: "Trevithick's 1804 engine at Pen-y-darren, Murray's Salamanca and Stephenson's colliery engines hauled coal on wagonways, and Rocket won the Rainhill Trials in 1829.",
+          sections: ["Britain", "George Stephenson"],
+        },
+        {
+          label: "The railway age",
+          start: 1830,
+          end: 1949,
+          description: "Steam locomotives hauled the world's rail passengers and freight, burning coal whose smoke fouled cities and tunnels and drove railways to electrify.",
+        },
+        {
+          label: "End of steam",
+          start: 1950,
+          end: 1999,
+          description: "Diesel and electric locomotives replaced steam in North America in the 1950s and in continental Europe by the 1970s, and most steam locomotives were retired from regular service by the 1980s.",
+          sections: ["The end of steam in general use"],
+        },
+      ],
+    },
+    {
+      slug: "george-stephenson",
+      name: "George Stephenson",
+      type: "person",
+      wiki: "George Stephenson",
+      description: "English engineer, the 'Father of Railways', who built the first public steam railways and set the standard gauge.",
+      metadata: { birth_date: "1781", death_date: "1848", nationality: "English", field: "civil and mechanical engineering" },
+      periods: [
+        {
+          label: "Killingworth enginewright",
+          start: 1811,
+          end: 1824,
+          description: "Stephenson maintained the Killingworth colliery engines, built his first locomotive, Blücher, in 1814 and devised a miners' safety lamp in 1815.",
+        },
+        {
+          label: "The first public railways",
+          start: 1825,
+          end: 1830,
+          description: "Stephenson built the Stockton and Darlington Railway, where Locomotion No. 1 hauled the first passengers on a public line, and the Liverpool and Manchester, the first inter-city railway.",
+        },
+        {
+          label: "Railway builder",
+          start: 1831,
+          end: 1848,
+          description: "Stephenson built railways across the Midlands, advised on lines abroad and invested in the Derbyshire coal seams his tunnels exposed.",
+        },
+      ],
+    },
+    {
+      slug: "bessemer-process",
+      name: "Bessemer process",
+      type: "invention",
+      wiki: "Bessemer process",
+      description: "The first cheap way to mass-produce steel, by blowing air through molten pig iron to burn out its carbon.",
+      metadata: { invented_date: "1856", place: "England", field: "metallurgy" },
+      periods: [
+        {
+          label: "Bessemer's converter",
+          start: 1856,
+          end: 1864,
+          description: "Licensees of the 1856 process made poor steel until Mushet's spiegeleisen fixed the carbon, and Bessemer's own Sheffield works undersold rival steelmakers.",
+          sections: ["Patent"],
+        },
+        {
+          label: "Cheap steel",
+          start: 1865,
+          end: 1895,
+          description: "Bessemer steel cut the price of steel from £40 to £6–7 a ton and went into rails, bridges and machines; the mills ran on coke-smelted iron and filled steel towns such as Sheffield and Pittsburgh with coal smoke.",
+          sections: ["Industrial revolution", "Importance"],
+        },
+        {
+          label: "Decline",
+          start: 1896,
+          end: 1968,
+          description: "Open-hearth furnaces overtook the Bessemer converter in the 1890s; the basic Bessemer process lasted longer in Europe, and US production ended in 1968.",
+          sections: ["Obsolescence"],
+        },
+      ],
+    },
+    {
+      slug: "henry-bessemer",
+      name: "Henry Bessemer",
+      type: "person",
+      wiki: "Henry Bessemer",
+      description: "English inventor of the Bessemer process, the first cheap method of mass-producing steel.",
+      metadata: { birth_date: "1813", death_date: "1898", nationality: "English", field: "metallurgy" },
+      periods: [
+        {
+          label: "Early inventions",
+          start: 1838,
+          end: 1854,
+          description: "Bessemer made his first fortune with steam-powered machines for making bronze powder and patented processes for plate glass.",
+        },
+        {
+          label: "Steel",
+          start: 1855,
+          end: 1883,
+          description: "Bessemer developed his converter to make cheap steel for artillery, built steelworks in Sheffield, earned more than a million pounds in royalties and paid Mushet, whose method made it work, a pension.",
+        },
+      ],
+    },
+
+    // ---------- Wired communication ----------
+    {
+      slug: "electrical-telegraph",
+      name: "Electrical telegraph",
+      type: "invention",
+      wiki: "Electrical telegraph",
+      description: "Communication by electric signals sent over wire between stations, the first electrical telecommunication system.",
+      metadata: { invented_date: "1837", place: "London", field: "telecommunications" },
+      periods: [
+        {
+          label: "First working systems",
+          start: 1837,
+          end: 1849,
+          description: "Cooke and Wheatstone's needle telegraph went into service on the Great Western Railway in 1838 and Morse's line opened between Washington and Baltimore in 1844, displacing semaphore towers for urgent messages.",
+        },
+        {
+          label: "The wired world",
+          start: 1850,
+          end: 1920,
+          description: "Telegraph networks reached the towns of the industrial nations and submarine cables crossed the Atlantic in 1866; armies used the telegraph from the Crimean War on, and Britain cut Germany's cables in the First World War.",
+          sections: ["Expansion", "Oceanic telegraph cables", "Telegraphy in war"],
+        },
+        {
+          label: "Teleprinters and decline",
+          start: 1921,
+          end: 1999,
+          description: "Teleprinters and telex replaced Morse operators, the telephone took most of the telegraph's traffic, and email made dedicated telegraph networks obsolete in the 1990s.",
+          sections: ["Teleprinters", "End of the telegraph era"],
+        },
+      ],
+    },
+    {
+      slug: "samuel-morse",
+      name: "Samuel Morse",
+      type: "person",
+      wiki: "Samuel Morse",
+      description: "American painter who co-developed the single-wire telegraph and Morse code, and who campaigned against Catholic immigrants and defended slavery.",
+      metadata: { birth_date: "1791", death_date: "1872", nationality: "American", field: "painting and telegraphy" },
+      periods: [
+        {
+          label: "Portrait painter",
+          start: 1810,
+          end: 1831,
+          description: "Morse trained at the Royal Academy in London, painted portraits and The House of Representatives, and founded the National Academy of Design in 1826.",
+          sections: ["Painting"],
+        },
+        {
+          label: "The telegraph",
+          start: 1832,
+          end: 1847,
+          description: "Morse conceived a single-wire telegraph in 1832, demonstrated it with Alfred Vail in 1838 and opened the Washington–Baltimore line in 1844; in 1836 he ran for mayor of New York on an anti-immigrant Nativist ticket.",
+        },
+        {
+          label: "Patents and politics",
+          start: 1848,
+          end: 1872,
+          description: "Morse won his patent fight in O'Reilly v. Morse in 1853, defended slavery as ordained by God in the 1850s and backed the transatlantic cable.",
+        },
+      ],
+    },
+    {
+      slug: "telephone",
+      name: "Telephone",
+      type: "invention",
+      wiki: "Telephone",
+      description: "A device that turns the voice into electric signals and back, letting people talk at a distance.",
+      metadata: { invented_date: "1876", place: "Boston", field: "telecommunications" },
+      periods: [
+        {
+          label: "Invention and the first exchanges",
+          start: 1876,
+          end: 1899,
+          description: "Bell patented the telephone in 1876, switchboard exchanges soon connected subscribers, and more than 150,000 Americans had telephones by 1886.",
+        },
+        {
+          label: "The telephone network",
+          start: 1900,
+          end: 1972,
+          description: "Desk sets, rotary dials and automatic exchanges brought telephones into homes and offices across the industrial nations, joined in a worldwide switched network.",
+        },
+        {
+          label: "Digital and mobile telephones",
+          start: 1973,
+          end: 2026,
+          description: "Handheld mobile phones arrived in 1973 and digital and internet telephony followed; by the end of 2009 the world had 1.26 billion fixed-line and 4.6 billion mobile subscribers.",
+          sections: ["Digital telephones and voice over IP", "Mobile phones"],
+        },
+      ],
+    },
+    {
+      slug: "alexander-graham-bell",
+      name: "Alexander Graham Bell",
+      type: "person",
+      wiki: "Alexander Graham Bell",
+      description: "Scottish-born teacher of the deaf who patented the telephone, co-founded AT&T and later chaired the scientific board of the Eugenics Record Office.",
+      metadata: { birth_date: "1847", death_date: "1922", nationality: "Scottish-born Canadian-American", field: "speech and invention" },
+      periods: [
+        {
+          label: "Teacher of the deaf and the telephone",
+          start: 1871,
+          end: 1879,
+          description: "Bell taught deaf pupils in Boston, became a professor of vocal physiology in 1872, patented the telephone in 1876 and helped found the Bell Telephone Company in 1877.",
+        },
+        {
+          label: "Volta Laboratory and later work",
+          start: 1880,
+          end: 1922,
+          description: "Bell invented the photophone with Charles Tainter, developed the graphophone, built hydrofoils and aircraft, and studied the heredity of deafness, chairing the scientific board of Davenport's Eugenics Record Office from 1910.",
+        },
+      ],
+    },
+    {
+      slug: "elisha-gray",
+      name: "Elisha Gray",
+      type: "person",
+      wiki: "Elisha Gray",
+      description: "American electrical engineer who co-founded Western Electric and filed for a telephone on the same day as Bell.",
+      metadata: { birth_date: "1835", death_date: "1901", nationality: "American", field: "electrical engineering" },
+      periods: [
+        {
+          label: "Telegraph equipment and Western Electric",
+          start: 1865,
+          end: 1873,
+          description: "Gray invented a self-adjusting telegraph relay and co-founded Gray & Barton in 1869 to supply Western Union; it became the Western Electric Manufacturing Company in 1872.",
+        },
+        {
+          label: "Harmonic telegraph and the telephone",
+          start: 1874,
+          end: 1886,
+          description: "Gray built a musical telegraph, an early electric instrument, and on 14 February 1876 filed a caveat for a liquid-transmitter telephone, losing the priority fight to Bell.",
+        },
+        {
+          label: "Telautograph and later work",
+          start: 1887,
+          end: 1901,
+          description: "Gray invented the telautograph, which sent handwriting over wires, and worked on underwater signalling for ships until his death.",
+        },
+      ],
+    },
+
+    // ---------- Electricity, sound and image ----------
+    {
+      slug: "electric-generator",
+      name: "Electric generator",
+      type: "invention",
+      wiki: "Electric generator",
+      description: "A machine that turns mechanical energy into electric current, the source of most of the world's electricity.",
+      metadata: { invented_date: "1831", place: "Royal Institution, London", field: "electrical engineering" },
+      periods: [
+        {
+          label: "Faraday disk",
+          start: 1831,
+          end: 1865,
+          description: "Faraday's copper disk of 1831 and the permanent-magnet machines that followed generated small currents for laboratories.",
+          sections: ["Faraday disk generator", "Jedlik and the self-excitation phenomenon"],
+        },
+        {
+          label: "Dynamos and alternators",
+          start: 1866,
+          end: 1899,
+          description: "Self-excited dynamos from 1866 and alternators from the 1880s powered arc lighting, incandescent lamps, electric motors and the first power stations.",
+          sections: ["Direct current generators", "Synchronous generators (alternating current generators)"],
+        },
+        {
+          label: "Power stations",
+          start: 1900,
+          end: 2026,
+          description: "Turbine-driven generators in power stations came to supply most of the world's electricity, much of it from burning coal and gas, the largest source of carbon dioxide emissions.",
+          sections: ["Power station"],
+        },
+      ],
+    },
+    {
+      slug: "phonograph",
+      name: "Phonograph",
+      type: "invention",
+      wiki: "Phonograph",
+      description: "A machine that records sound as a groove and plays it back, the first means of reproducing recorded sound.",
+      metadata: { invented_date: "1877", place: "Menlo Park, New Jersey", field: "sound recording" },
+      periods: [
+        {
+          label: "Tinfoil and wax cylinders",
+          start: 1877,
+          end: 1891,
+          description: "Edison's tinfoil phonograph of 1877 amazed the public but recorded poorly; Bell's Volta Laboratory and Edison developed wax cylinders, used first in dictation machines and coin-operated players.",
+          sections: ["The early phonographs", "Improvements at the Volta Laboratory"],
+        },
+        {
+          label: "Records in every home",
+          start: 1892,
+          end: 1981,
+          description: "Berliner's flat disc records, sold from 1892, became the century's main way of distributing music, and the phonograph became the first audio equipment people owned at home.",
+          sections: ["Introduction of the disc record", "Dominance of the disc record"],
+        },
+        {
+          label: "Decline and revival",
+          start: 1982,
+          end: 2026,
+          description: "Cassettes and the compact disc of 1982 pushed records to the margins of home audio until a vinyl revival from the late 2000s.",
+          sections: ["Contemporary use and models"],
+        },
+      ],
+    },
+    {
+      slug: "daguerreotype",
+      name: "Daguerreotype",
+      type: "invention",
+      wiki: "Daguerreotype",
+      description: "The first public photographic process, which fixed a camera image on a polished silver plate developed in mercury vapour.",
+      metadata: { invented_date: "1839", place: "Paris", field: "photography" },
+      periods: [
+        {
+          label: "Daguerreotype studios",
+          start: 1839,
+          end: 1856,
+          description: "Released free by the French government in 1839, the process filled portrait studios across Europe and the Americas, giving people of modest means their first exact likenesses, while operators developed plates over heated mercury with few precautions.",
+          sections: ["Portraiture", "Proliferation"],
+        },
+        {
+          label: "Superseded by collodion",
+          start: 1857,
+          end: 1879,
+          description: "Cheaper ambrotypes and tintypes made by the collodion process replaced the daguerreotype in studios, and astronomers kept it for its dimensional stability.",
+          sections: ["Astronomical applications in the 19th century", "Late and modern use"],
+        },
+      ],
+    },
+
+    // ---------- Medicine ----------
+    {
+      slug: "smallpox-vaccine",
+      name: "Smallpox vaccine",
+      type: "invention",
+      wiki: "Smallpox vaccine",
+      description: "The first vaccine, made from cowpox and later vaccinia virus, which protected against smallpox and made its eradication possible.",
+      metadata: { invented_date: "1796", place: "Berkeley, Gloucestershire", field: "medicine" },
+      periods: [
+        {
+          label: "Arm-to-arm vaccination",
+          start: 1796,
+          end: 1879,
+          description: "Vaccination spread from Jenner's trials across Europe and, through the Balmis Expedition, the Spanish Empire; states made it compulsory from 1806, and arm-to-arm transfer of the vaccine also passed on syphilis.",
+          sections: ["Early vaccination"],
+        },
+        {
+          label: "Calf lymph",
+          start: 1880,
+          end: 1957,
+          description: "Vaccine grown on the skin of calves replaced arm-to-arm transfer, which Britain banned in 1898, and freeze-dried vaccine from the late 1940s kept in hot climates.",
+          sections: ["Developments in production"],
+        },
+        {
+          label: "Eradication",
+          start: 1958,
+          end: 1980,
+          description: "A WHO campaign of vaccination and outbreak searches ended smallpox, with the last natural case in Somalia in 1977 and eradication declared in 1980; the live vaccine killed one to ten of every million people vaccinated.",
+          sections: ["Eradication of smallpox"],
+        },
+      ],
+    },
+    {
+      slug: "edward-jenner",
+      name: "Edward Jenner",
+      type: "person",
+      wiki: "Edward Jenner",
+      description: "English country doctor who created the smallpox vaccine, the world's first vaccine.",
+      metadata: { birth_date: "1749", death_date: "1823", nationality: "English", field: "medicine" },
+      periods: [
+        {
+          label: "Surgeon and naturalist",
+          start: 1770,
+          end: 1795,
+          description: "Jenner trained under John Hunter in London, practised as a surgeon in Berkeley and was elected to the Royal Society in 1788 for his study of the cuckoo.",
+        },
+        {
+          label: "Vaccination",
+          start: 1796,
+          end: 1823,
+          description: "Jenner inoculated James Phipps with cowpox in 1796, published his Inquiry in 1798 and spent the rest of his life promoting vaccination, for which Parliament granted him £10,000 in 1802 and £20,000 more five years later.",
+          sections: ["Invention of the vaccine", "Later life"],
+        },
+      ],
+    },
+    {
+      slug: "germ-theory",
+      name: "Germ theory of disease",
+      type: "discovery",
+      wiki: "Germ theory of disease",
+      description: "The theory that microorganisms cause infectious disease, which replaced the miasma theory and founded modern hygiene and medicine.",
+      metadata: { discovered_date: "1857", field: "microbiology" },
+      periods: [
+        {
+          label: "Pasteur, Lister and Koch",
+          start: 1857,
+          end: 1890,
+          description: "Pasteur showed that microbes cause fermentation and decay and disproved spontaneous generation; Lister used the theory to justify antiseptic surgery in 1867, and Koch set out his postulates in 1884.",
+          sections: ["Louis Pasteur, France", "Robert Koch, Germany", "Joseph Lister, UK"],
+        },
+        {
+          label: "Aseptic medicine",
+          start: 1891,
+          end: 2026,
+          description: "Germ theory displaced the miasma theory; surgeons sterilised instruments in autoclaves and wore gloves and gowns, and bacteriologists identified the organisms behind many diseases.",
+          wiki: "Asepsis",
+          sections: ["History"],
+        },
+      ],
+    },
+    {
+      slug: "pasteurization",
+      name: "Pasteurization",
+      type: "invention",
+      wiki: "Pasteurization",
+      description: "Heating food or drink to a mild temperature to kill the microbes that spoil it or cause disease.",
+      metadata: { invented_date: "1864", place: "Arbois, France", field: "food preservation" },
+      periods: [
+        {
+          label: "Wine and beer",
+          start: 1864,
+          end: 1885,
+          description: "Pasteur found in 1864 that briefly heating young wine to 50–60 °C killed the microbes that soured it, and the method was first used to keep wine and beer.",
+          sections: ["History"],
+        },
+        {
+          label: "Milk pasteurization",
+          start: 1886,
+          end: 1949,
+          description: "Soxhlet proposed pasteurizing milk in 1886 and New York City made it mandatory in 1910, curbing milk-borne tuberculosis, which killed 65,000 people in England and Wales between 1912 and 1937.",
+          sections: ["Milk"],
+        },
+        {
+          label: "Continuous processing",
+          start: 1950,
+          end: 2026,
+          description: "Continuous high-temperature short-time and UHT systems came to treat most milk, juice and other liquid foods, and the US required pasteurized milk in interstate commerce from 1973.",
+          sections: ["Pasteurization process"],
+        },
+      ],
+    },
+    {
+      slug: "louis-pasteur",
+      name: "Louis Pasteur",
+      type: "person",
+      wiki: "Louis Pasteur",
+      description: "French chemist and microbiologist who showed that microbes cause fermentation and disease, invented pasteurization and made the first rabies vaccine.",
+      metadata: { birth_date: "1822", death_date: "1895", nationality: "French", field: "chemistry and microbiology" },
+      periods: [
+        {
+          label: "Crystals and fermentation",
+          start: 1848,
+          end: 1862,
+          description: "Pasteur discovered molecular asymmetry in 1848, showed at Lille and Paris that living microbes cause fermentation, and disproved spontaneous generation with his swan-neck flasks.",
+          sections: ["Molecular asymmetry", "Fermentation and germ theory of diseases", "Spontaneous generation"],
+        },
+        {
+          label: "Wine, beer and silkworms",
+          start: 1863,
+          end: 1877,
+          description: "Pasteur devised the heating of wine that became pasteurization, published studies of the diseases of wine and beer, and beat the pébrine disease that was ruining French silkworm farms.",
+          sections: ["Fermentation and germ theory of diseases", "Silkworm disease"],
+        },
+        {
+          label: "Vaccines and the Pasteur Institute",
+          start: 1878,
+          end: 1895,
+          description: "Pasteur's laboratory made vaccines for chicken cholera, anthrax and rabies, which he tried on the boy Joseph Meister in 1885 without a medical licence, and he directed the Pasteur Institute from 1887; his notebooks show he misled rivals.",
+          sections: ["Immunology and vaccination", "Controversies"],
+        },
+      ],
+    },
+    {
+      slug: "penicillin",
+      name: "Penicillin",
+      type: "invention",
+      wiki: "Penicillin",
+      description: "The first antibiotic, a group of drugs from Penicillium moulds that kill many bacteria and made once-fatal infections curable.",
+      metadata: { invented_date: "1928", place: "St Mary's Hospital, London", field: "medicine" },
+      periods: [
+        {
+          label: "Discovery and purification",
+          start: 1928,
+          end: 1941,
+          description: "Fleming found in 1928 that a Penicillium mould killed staphylococci, and Florey and Chain's Oxford team purified penicillin in 1940.",
+          sections: ["Discovery", "Development and medical application"],
+        },
+        {
+          label: "Mass production",
+          start: 1942,
+          end: 1959,
+          description: "American firms mass-produced penicillin for the Allied war effort, it reached US civilians in 1945, and John Sheehan synthesised it in 1957.",
+          sections: ["Mass production", "Structure determination and total synthesis"],
+        },
+        {
+          label: "Semi-synthetic penicillins and resistance",
+          start: 1960,
+          end: 2026,
+          description: "Semi-synthetic penicillins widened the range of bacteria treated, while heavy use bred resistant bacteria that made penicillin no longer the first choice for many infections.",
+          sections: ["Developments from penicillin", "Resistance"],
+        },
+      ],
+    },
+    {
+      slug: "alexander-fleming",
+      name: "Alexander Fleming",
+      type: "person",
+      wiki: "Alexander Fleming",
+      description: "Scottish bacteriologist who discovered lysozyme and penicillin, the first antibiotic.",
+      metadata: { birth_date: "1881", death_date: "1955", nationality: "Scottish", field: "bacteriology" },
+      periods: [
+        {
+          label: "St Mary's and the Western Front",
+          start: 1906,
+          end: 1920,
+          description: "Fleming worked under Almroth Wright at St Mary's Hospital and in battlefield hospitals in France, showing in 1917 why antiseptics killed more wounded soldiers than infection did.",
+        },
+        {
+          label: "Lysozyme and penicillin",
+          start: 1921,
+          end: 1941,
+          description: "Fleming discovered lysozyme in 1921 and penicillin in 1928, but could not purify it, and his 1929 paper drew little notice.",
+        },
+        {
+          label: "Penicillin's champion",
+          start: 1942,
+          end: 1955,
+          description: "Fleming cured Harry Lambert with purified penicillin in 1942, pressed the government for mass production, shared the 1945 Nobel Prize and warned that misuse would breed resistant bacteria.",
+        },
+      ],
+    },
+
+    // ---------- Explosives and weapons ----------
+    {
+      slug: "dynamite",
+      name: "Dynamite",
+      type: "invention",
+      wiki: "Dynamite",
+      description: "An explosive of nitroglycerin absorbed in diatomaceous earth, the first explosive stronger than black powder that was safe to handle and transport.",
+      metadata: { invented_date: "1866", place: "Krümmel, near Hamburg", field: "explosives" },
+      periods: [
+        {
+          label: "Nobel's dynamite",
+          start: 1867,
+          end: 1901,
+          description: "Patented in 1867, dynamite rapidly replaced black powder and raw nitroglycerin for blasting in mines and quarries, under licences Nobel tightly controlled.",
+          sections: ["History"],
+        },
+        {
+          label: "Gold-mine explosive",
+          start: 1902,
+          end: 1985,
+          description: "South Africa became the largest producer, making dynamite for the Witwatersrand gold mines, and explosions at its factories killed workers.",
+          sections: ["South Africa", "United States"],
+        },
+        {
+          label: "Replaced by emulsions",
+          start: 1986,
+          end: 2026,
+          description: "Trade-union pressure ended dynamite production in South Africa after 1985, safer ammonium nitrate emulsions took over, and one US plant still makes it.",
+          sections: ["South Africa", "United States"],
+        },
+      ],
+    },
+    {
+      slug: "alfred-nobel",
+      name: "Alfred Nobel",
+      type: "person",
+      wiki: "Alfred Nobel",
+      description: "Swedish chemist who invented dynamite, built an explosives and arms business including Bofors, and left his fortune to found the Nobel Prizes.",
+      metadata: { birth_date: "1833", death_date: "1896", nationality: "Swedish", field: "chemistry" },
+      periods: [
+        {
+          label: "Nitroglycerin and dynamite",
+          start: 1857,
+          end: 1874,
+          description: "Nobel invented the blasting cap and dynamite; a nitroglycerin explosion at the family works in 1864 killed five people, including his brother Emil.",
+        },
+        {
+          label: "Explosives from Paris",
+          start: 1875,
+          end: 1890,
+          description: "Living in Paris, Nobel ran explosives companies across Europe and America and invented gelignite and ballistite, a forerunner of smokeless military powders.",
+        },
+        {
+          label: "Bofors and the Nobel Prizes",
+          start: 1891,
+          end: 1896,
+          description: "Accused of treason for selling ballistite to Italy, Nobel moved to Sanremo, bought Bofors in 1894 and turned it into a cannon maker, and willed his fortune to the Nobel Prizes.",
+        },
+      ],
+    },
+    {
+      slug: "maxim-gun",
+      name: "Maxim gun",
+      type: "invention",
+      wiki: "Maxim gun",
+      description: "The first fully automatic machine gun, which used its own recoil to fire 600 rounds a minute and became the weapon most associated with imperial conquest.",
+      metadata: { invented_date: "1884", place: "Hatton Garden, London", field: "firearms" },
+      periods: [
+        {
+          label: "Colonial conquest",
+          start: 1884,
+          end: 1913,
+          description: "Colonial armies used Maxim guns in the Scramble for Africa; at the Shangani in 1893, 700 soldiers with five Maxims fought off 5,000 Matabele warriors.",
+          sections: ["Use in colonial warfare (1886–1914)"],
+        },
+        {
+          label: "World wars",
+          start: 1914,
+          end: 1945,
+          description: "Maxim's design, as the British Vickers, the German MG 08 and the Russian Pulemyot Maxima, armed the infantry of the First World War and the Russian Civil War.",
+          sections: ["World War I (1914–1918)"],
+        },
+        {
+          label: "Later service",
+          start: 1946,
+          end: 2026,
+          description: "The Vickers stayed in British service until 1968, and old Russian Maxims were fired by both sides in the Russo-Ukrainian War.",
+          sections: ["Russo-Ukrainian War"],
+        },
+      ],
+    },
+    {
+      slug: "hiram-maxim",
+      name: "Hiram Maxim",
+      type: "person",
+      wiki: "Hiram Maxim",
+      description: "American-born British inventor of the Maxim gun, the first fully automatic machine gun.",
+      metadata: { birth_date: "1840", death_date: "1916", nationality: "American-British", field: "invention" },
+      periods: [
+        {
+          label: "Electric lighting",
+          start: 1878,
+          end: 1880,
+          description: "Maxim installed the first electric lights in a New York City building, co-founded the United States Electric Lighting Company in 1878 and fought Edison over the light bulb.",
+        },
+        {
+          label: "The Maxim gun",
+          start: 1881,
+          end: 1899,
+          description: "Moving to Britain, Maxim invented the recoil-operated machine gun, founded the Maxim Gun Company with Vickers money in 1884, sold it to the world's armies, and tested a giant steam-powered flying machine in 1894.",
+          sections: ["Maxim gun", "Flying machines"],
+        },
+        {
+          label: "Flying machines and knighthood",
+          start: 1900,
+          end: 1916,
+          description: "Maxim was knighted in 1901 and built the Captive Flying Machine fairground ride to fund his flight research.",
+          sections: ["Captive Flying Machines", "Emigration and knighthood"],
+        },
+      ],
+    },
+
+    // ---------- Wireless ----------
+    {
+      slug: "radio",
+      name: "Radio",
+      type: "invention",
+      wiki: "Radio",
+      description: "Communication by radio waves, first as wireless telegraphy and then as broadcast sound.",
+      metadata: { invented_date: "1895", place: "Bologna, Italy", field: "telecommunications" },
+      periods: [
+        {
+          label: "Wireless telegraphy",
+          start: 1895,
+          end: 1919,
+          description: "Spark transmitters sent Morse code across the sea, bringing rescue to shipwrecks such as the Titanic's in 1912, and from 1908 great transoceanic stations linked industrial powers with their colonies and navies.",
+          wiki: "History of radio",
+          sections: ["Marconi and radio telegraphy", "Nautical and transatlantic transmissions"],
+        },
+        {
+          label: "Broadcasting",
+          start: 1920,
+          end: 2026,
+          description: "Broadcast stations, more than 500 in the US alone by 1922, carried news, music and entertainment into homes worldwide, and governments used national and shortwave stations for propaganda.",
+          wiki: "Radio broadcasting",
+          sections: ["Radio", "Expansion", "International broadcasting"],
+        },
+      ],
+    },
+    {
+      slug: "guglielmo-marconi",
+      name: "Guglielmo Marconi",
+      type: "person",
+      wiki: "Guglielmo Marconi",
+      description: "Italian engineer who built the first practical radio telegraph, founded the Marconi Company and later served Mussolini's Fascist regime.",
+      metadata: { birth_date: "1874", death_date: "1937", nationality: "Italian", field: "radio engineering" },
+      periods: [
+        {
+          label: "Wireless telegraphy",
+          start: 1894,
+          end: 1909,
+          description: "Marconi sent Morse code by radio over growing distances from 1895, founded the Wireless Telegraph & Signal Company in Britain in 1897, sent the first transatlantic signal in 1901 and shared the 1909 Nobel Prize in Physics.",
+        },
+        {
+          label: "Ship wireless and war",
+          start: 1910,
+          end: 1922,
+          description: "Marconi Company operators sent the Titanic's distress calls in 1912, and Marconi ran the Italian military's radio service in the First World War.",
+        },
+        {
+          label: "Fascism",
+          start: 1923,
+          end: 1937,
+          description: "Marconi joined the Fascist Party in 1923, presided over the Royal Academy of Italy from 1930 and kept Jews out of it, defended the invasion of Ethiopia, and set up Vatican Radio in 1931.",
+        },
+      ],
+    },
+
+    // ---------- Flight and the petrol engine ----------
+    {
+      slug: "wright-flyer",
+      name: "Wright Flyer",
+      type: "product",
+      wiki: "Wright Flyer",
+      description: "The Wright brothers' 1903 biplane, the first powered, controlled aeroplane to make a sustained flight.",
+      metadata: { introduced_date: "1903", maker: "Wright brothers" },
+      periods: [
+        {
+          label: "Kitty Hawk flights",
+          start: 1903,
+          end: 1903,
+          description: "On 17 December 1903 the Flyer made four flights at Kill Devil Hills, the longest 852 feet, before a gust wrecked it; it never flew again.",
+        },
+        {
+          label: "Flyer II and Flyer III",
+          start: 1904,
+          end: 1905,
+          description: "The Wrights rebuilt the design as the Flyer II and the Flyer III, which in October 1905 circled Huffman Prairie for 24 miles, the first practical aeroplane.",
+          wiki: "Wright Flyer III",
+        },
+        {
+          label: "Museum piece",
+          start: 1916,
+          end: 2026,
+          description: "Orville exhibited the restored Flyer, lent it to London's Science Museum in 1928 in protest at the Smithsonian's claims for Langley's Aerodrome, and the Smithsonian has displayed it since 1948.",
+          sections: ["Debate with the Smithsonian", "In the Smithsonian"],
+        },
+      ],
+    },
+    {
+      slug: "wright-brothers",
+      name: "Wright brothers",
+      type: "person",
+      wiki: "Wright brothers",
+      description: "Wilbur and Orville Wright, Ohio bicycle makers who invented three-axis flight control and built and flew the first successful aeroplane.",
+      metadata: {
+        birth_date: "1867 (Wilbur), 1871 (Orville)",
+        death_date: "1912 (Wilbur), 1948 (Orville)",
+        nationality: "American",
+        field: "aviation",
+      },
+      periods: [
+        {
+          label: "Bicycles and gliders",
+          start: 1892,
+          end: 1902,
+          description: "The brothers ran a Dayton bicycle shop, tested kites and gliders at Kitty Hawk from 1900 and built a wind tunnel in 1901 that corrected the lift data of their day.",
+        },
+        {
+          label: "Powered flight",
+          start: 1903,
+          end: 1908,
+          description: "The brothers flew the Flyer in 1903 and the practical Flyer III in 1905, then won US Army and French contracts in 1908; their passenger Thomas Selfridge died in a crash at Fort Myer that year.",
+        },
+        {
+          label: "The Wright Company and the patent war",
+          start: 1909,
+          end: 1948,
+          description: "The brothers founded the Wright Company in 1909, sold aeroplanes to the US Army, whose Wright machines killed eleven men by 1913, and fought Glenn Curtiss over their patent; after Wilbur died in 1912, Orville feuded with the Smithsonian until 1942.",
+        },
+      ],
+    },
+    {
+      slug: "gottlieb-daimler",
+      name: "Gottlieb Daimler",
+      type: "person",
+      wiki: "Gottlieb Daimler",
+      description: "German engineer who, with Wilhelm Maybach, built the first high-speed petrol engines, the first motorcycle and one of the first motor cars.",
+      metadata: { birth_date: "1834", death_date: "1900", nationality: "German", field: "engineering" },
+      periods: [
+        {
+          label: "Deutz and the Otto engine",
+          start: 1872,
+          end: 1881,
+          description: "As technical director of Deutz, Daimler improved the production of Otto's gas engines until the two men fell out.",
+        },
+        {
+          label: "High-speed petrol engines",
+          start: 1882,
+          end: 1889,
+          description: "In Cannstatt Daimler and Maybach built small high-speed petrol engines from 1883 and fitted them to the first motorcycle in 1885 and to a coach and a boat in 1886.",
+        },
+        {
+          label: "Daimler Motoren Gesellschaft",
+          start: 1890,
+          end: 1900,
+          description: "Daimler founded Daimler Motoren Gesellschaft in 1890, which sold its first car in 1892 and built the Phönix engine.",
+        },
+      ],
+    },
+    {
+      slug: "thomas-savery",
+      name: "Thomas Savery",
+      type: "person",
+      wiki: "Thomas Savery",
+      description: "English military engineer who patented the first commercially used steam pump, built to drain mines and supply water.",
+      metadata: { birth_date: "1650", death_date: "1715", nationality: "English", field: "engineering" },
+      periods: [
+        {
+          label: "The steam pump",
+          start: 1698,
+          end: 1711,
+          description: "Savery patented a pistonless steam pump in 1698, extended by the 1699 Fire Engine Act, and installed pumps for London water supplies, though high-pressure steam blew open their joints.",
+          sections: ["Steam-powered pump", "Fire Engine Act", "Application of the steam pump"],
+        },
+        {
+          label: "Partnership with Newcomen",
+          start: 1712,
+          end: 1715,
+          description: "Savery's broad patent on raising water by fire forced Newcomen into partnership, and Newcomen's engines were sold under it.",
+          sections: ["Fire Engine Act", "Comparison with Newcomen steam engine"],
+        },
+      ],
+    },
+  ],
+
+  links: [
+    // ---------- Textiles and cotton ----------
+    { from: "james-hargreaves", to: "spinning-jenny", type: "originated", share: 0.5, why: "Hargreaves built the first jenny at Stanhill and patented it in 1770. Rival: Thomas Highs, who claimed to have invented both the jenny and the spinning frame." },
+    { from: "eli-whitney", to: "cotton-gin", type: "originated", share: 0.4, why: "Whitney built the first gin that could clean short-staple upland cotton in 1793. Earlier: the Indian roller gin; rivals: Hodgen Holmes's saw gin, and Catharine Greene, credited with the brushes by an 1883 pamphlet." },
+
+    // ---------- Railways and steel ----------
+    { from: "george-stephenson", to: "steam-locomotive", type: "originated", share: 0.2, why: "Stephenson built Blücher in 1814 and Locomotion No. 1 in 1825 and made locomotives work on public railways. Rivals: Richard Trevithick, who built the first working locomotive in 1804, Matthew Murray and William Hedley." },
+    { from: "watt-steam-engine", to: "steam-locomotive", type: "builds_on", share: 0.1, why: "Trevithick's locomotives came from high-pressure refinements of Watt's engine, a direction Watt thought too dangerous." },
+    { from: "henry-bessemer", to: "bessemer-process", type: "originated", share: 0.4, why: "Bessemer patented the converter in 1856. Rival: William Kelly, who claimed the same process from 1851; Robert Mushet's spiegeleisen and Göran Göransson's pure iron made it work." },
+
+    // ---------- Wired communication ----------
+    { from: "samuel-morse", to: "electrical-telegraph", type: "originated", share: 0.2, why: "Morse and Alfred Vail built the single-wire telegraph and its code, demonstrated in 1838 and in service from 1844. Rivals: Cooke and Wheatstone, whose needle telegraph went into commercial use in 1837, and Schilling, Gauss and Weber before them." },
+    { from: "alexander-graham-bell", to: "telephone", type: "originated", share: 0.3, why: "Bell won the first telephone patent, applied for on 14 February 1876, and made the first clear transmission of speech. Rivals: Elisha Gray, who filed a caveat the same day, and Antonio Meucci." },
+    { from: "elisha-gray", to: "telephone", type: "originated", share: 0.15, why: "Gray designed a liquid-transmitter telephone and filed a caveat for it on the same day as Bell's application. Rivals: Bell, whose patent the courts upheld, and Meucci." },
+    { from: "thomas-edison", to: "telephone", type: "originated", share: 0.05, why: "Edison's carbon transmitter of 1877 gave the telephone a stronger signal, and the Bell company bought his patents in 1879." },
+    { from: "electrical-telegraph", to: "telephone", type: "builds_on", share: 0.15, why: "The telephone grew out of work on the harmonic telegraph and was patented as an improvement in telegraphy." },
+    { from: "electromagnetic-induction", to: "telephone", type: "builds_on", share: 0.05, why: "Bell's electromagnetic telephone induced its current from a diaphragm vibrating in a magnet's field." },
+    { from: "electrical-telegraph", to: "telephone", type: "supersedes", share: 0, why: "The telephone took most of the telegraph's traffic and pushed telegraphy into specialist uses." },
+    { from: "alexander-graham-bell", to: "elisha-gray", type: "rivalry", share: 0, why: "Bell and Gray filed for the telephone on the same day in 1876 and fought over priority in the Patent Office and the courts." },
+
+    // ---------- Electricity, sound and image ----------
+    { from: "michael-faraday", to: "electric-generator", type: "originated", share: 0.25, why: "Faraday built the first generator, the Faraday disk, in 1831. Rivals: Ányos Jedlik, working independently; the industrial dynamo came from Wheatstone, Siemens and Varley in 1866 and 1867." },
+    { from: "electromagnetic-induction", to: "electric-generator", type: "builds_on", share: 0.3, why: "A generator is induction put to work: a conductor moving through a magnetic field." },
+    { from: "electric-generator", to: "incandescent-light-bulb", type: "builds_on", share: 0.1, why: "Electric lamps became practical only with dynamos to power whole lighting systems." },
+    { from: "thomas-edison", to: "phonograph", type: "originated", share: 0.5, why: "Edison built the first machine that recorded and played back sound in 1877. Rivals: Charles Cros, who described a playback method months earlier but never built it, and Scott de Martinville's phonautograph, which recorded but could not play back." },
+    { from: "alexander-graham-bell", to: "phonograph", type: "originated", share: 0.05, why: "Bell's Volta Laboratory devised the wax-coated graphophone cylinder, which made recording practical." },
+    { from: "telephone", to: "phonograph", type: "builds_on", share: 0.1, why: "Edison conceived the phonograph while working to transmit speech by telephone." },
+    { from: "electrical-telegraph", to: "phonograph", type: "builds_on", share: 0.05, why: "Edison conceived the phonograph while trying to play back recorded telegraph messages." },
+    { from: "thomas-edison", to: "alexander-graham-bell", type: "rivalry", share: 0, why: "Edison's phonograph competed with the graphophone of Bell's Volta Laboratory, and his carbon transmitter with Bell's telephone patents." },
+    { from: "thomas-edison", to: "hiram-maxim", type: "rivalry", share: 0, why: "Maxim's United States Electric Lighting Company competed with Edison, and the two fought patent disputes over the light bulb." },
+    { from: "samuel-morse", to: "daguerreotype", type: "collaboration", share: 0, why: "Morse met Daguerre in Paris in 1839, reported the process to American readers and introduced it to the first American daguerreotypists." },
+
+    // ---------- Medicine ----------
+    { from: "edward-jenner", to: "smallpox-vaccine", type: "originated", share: 0.45, why: "Jenner proved cowpox inoculation protected against smallpox in 1796 and published the method in 1798. Earlier: Benjamin Jesty in 1774 and Peter Plett in 1791 tried cowpox inoculation, but Jenner's trials and writing spread it." },
+    { from: "louis-pasteur", to: "germ-theory", type: "originated", share: 0.3, why: "Pasteur's work on fermentation, spontaneous generation and silkworm disease showed that microbes cause decay and disease. Rivals and co-founders: Robert Koch; earlier Fracastoro, Bassi, Semmelweis and Snow." },
+    { from: "louis-pasteur", to: "pasteurization", type: "originated", share: 0.55, why: "Pasteur found in 1864 that mild heating killed the microbes that soured wine. Earlier: the heating of wine in China from 1117 and Appert's canning." },
+    { from: "germ-theory", to: "pasteurization", type: "builds_on", share: 0.2, why: "Pasteurization rests on Pasteur's finding that living microbes cause spoilage." },
+    { from: "germ-theory", to: "penicillin", type: "builds_on", share: 0.1, why: "Penicillin was found and developed by bacteriologists searching for agents that kill disease-causing bacteria, the search germ theory set." },
+    { from: "alexander-fleming", to: "penicillin", type: "originated", share: 0.3, why: "Fleming discovered penicillin's antibacterial action in 1928. Florey, Chain and Heatley's Oxford team purified it and made it a drug, and earlier workers had reported Penicillium's effect on bacteria." },
+
+    // ---------- Explosives and weapons ----------
+    { from: "alfred-nobel", to: "dynamite", type: "originated", share: 0.6, why: "Nobel invented dynamite in 1866 by absorbing nitroglycerin into diatomaceous earth, after inventing the blasting cap. Ascanio Sobrero, who first made nitroglycerin in 1847, opposed its use." },
+    { from: "hiram-maxim", to: "maxim-gun", type: "originated", share: 0.6, why: "Maxim built the first fully automatic machine gun in 1884, using recoil to reload. Earlier rapid-fire guns, the Gatling, Gardner and Nordenfelt, were worked by hand." },
+
+    // ---------- Wireless ----------
+    { from: "guglielmo-marconi", to: "radio", type: "originated", share: 0.25, why: "Marconi built the first long-distance radio telegraph in 1895 and sent the first transatlantic signal in 1901. Rivals: Nikola Tesla, Oliver Lodge and John Stone Stone, whose prior patents the US Supreme Court upheld in 1943; Alexander Popov; and Jagadish Chandra Bose, whose detector received the 1901 signal." },
+    { from: "electrical-telegraph", to: "radio", type: "builds_on", share: 0.1, why: "Marconi's radio was wireless telegraphy: Morse code without the wire, with transmitter and receiver grounded as on a telegraph line." },
+    { from: "electromagnetic-induction", to: "radio", type: "builds_on", share: 0.05, why: "Marconi's spark transmitters were driven by induction coils." },
+
+    // ---------- Flight and the petrol engine ----------
+    { from: "wright-brothers", to: "wright-flyer", type: "originated", share: 0.55, why: "Wilbur and Orville Wright designed, built and flew the Flyer, solving control with wing warping. Rivals: Samuel Langley, whose Aerodrome failed in 1903; Alberto Santos-Dumont, who flew in Paris in 1906; and claims for Whitehead and Ader." },
+    { from: "internal-combustion-engine", to: "wright-flyer", type: "embodies", share: 0.15, why: "Charlie Taylor built the Flyer a 12-horsepower petrol engine." },
+    { from: "gottlieb-daimler", to: "internal-combustion-engine", type: "originated", share: 0.15, why: "Daimler and Wilhelm Maybach built the first small high-speed petrol engines, from 1883, the kind that could power vehicles. Rivals: Otto's four-stroke gas engine and Karl Benz's petrol engine." },
+    { from: "nikolaus-otto", to: "gottlieb-daimler", type: "collaboration", share: 0, why: "Daimler was technical director of Otto's engine works at Deutz from 1872 until the two fell out in 1881." },
+    { from: "karl-benz", to: "gottlieb-daimler", type: "rivalry", share: 0, why: "Benz and Daimler each built a motor car in 1886, sixty miles apart, and their companies competed until they merged in 1926." },
+
+    // ---------- Steam ----------
+    { from: "thomas-savery", to: "newcomen-engine", type: "originated", share: 0.1, why: "Savery's steam pump of 1698 came first, and his patent on raising water by fire covered Newcomen's engine, which was developed and sold under it." },
+    { from: "thomas-newcomen", to: "thomas-savery", type: "collaboration", share: 0, why: "Newcomen went into partnership with Savery, whose patent covered his engine." },
+  ],
+};

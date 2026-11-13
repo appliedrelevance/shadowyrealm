@@ -1,0 +1,896 @@
+/**
+ * Prior Art launch set, ancient and medieval: farming, metals, writing,
+ * paper and printing, magnetism, gunpowder, power from water and wind,
+ * timekeeping, and the lens with the instruments built on it.
+ */
+import type { InventionsContent } from "../types";
+
+export const launchAncient: InventionsContent = {
+  entities: [
+    // ---------- Farming ----------
+    {
+      slug: "plough",
+      name: "Plough",
+      type: "invention",
+      wiki: "Plough",
+      description: "A farm tool drawn by animals or tractors that cuts and turns the soil before sowing, fundamental to farming for most of history.",
+      metadata: { invented_date: "6th millennium BCE", place: "Near East", field: "agriculture" },
+      periods: [
+        {
+          label: "The ard",
+          start: -5500,
+          end: -1,
+          description: "Ox-drawn ards scratched seed furrows in the light soils of the Near East, the Indus valley, Egypt, China and Europe, and iron shares appeared from 2300 BC.",
+          sections: ["Ard"],
+        },
+        {
+          label: "Iron mould-board ploughs",
+          start: 1,
+          end: 1729,
+          description: "Han China ploughed with cast-iron mould-boards, and the heavy wheeled plough spread through northern Europe from the 8th century, raising food production while drawing peasants into the manorial system.",
+          sections: ["Mould-board ploughing", "Heavy ploughs", "Social effects"],
+        },
+        {
+          label: "Iron and steel ploughs",
+          start: 1730,
+          end: 2026,
+          description: "Factory-built iron ploughs from 1730 and John Deere's steel plough of 1837 opened heavy prairie soils to farming, while deep ploughing left soil bare to wind and water erosion.",
+          sections: ["Improved designs", "Riding and multiple-furrow ploughs", "Effects of mould-board ploughing"],
+        },
+      ],
+    },
+    {
+      slug: "irrigation",
+      name: "Irrigation",
+      type: "invention",
+      wiki: "Irrigation",
+      description: "The controlled supply of water to crops through canals, reservoirs, wells and pumps.",
+      metadata: { invented_date: "6000 BCE", place: "Mesopotamia", field: "agriculture" },
+      periods: [
+        {
+          label: "River-valley canals",
+          start: -6000,
+          end: 1799,
+          description: "Canal and basin irrigation let farmers in Mesopotamia, Egypt, the Indus valley, China, Sri Lanka and the Andes grow crops on dry land and fed the first cities and states.",
+          sections: ["Ancient history", "Sri Lanka", "China", "Korea", "North America"],
+        },
+        {
+          label: "Industrial irrigation",
+          start: 1800,
+          end: 2026,
+          description: "Irrigated land grew from 8 million hectares in 1800 to 235 million in 1990, when it grew 30% of the world's food, while dams and pumps drained rivers and aquifers, shrank the Aral Sea, salted soils and spread malaria and schistosomiasis.",
+          sections: ["Modern history", "American West", "Soviet Central Asia", "Africa", "Environmental impacts"],
+        },
+      ],
+    },
+    {
+      slug: "wheel",
+      name: "Wheel",
+      type: "invention",
+      wiki: "Wheel",
+      description: "A disc or rimmed frame turning on an axle, which carries vehicles and drives machines from the potter's wheel to the water wheel.",
+      metadata: { invented_date: "4000 BCE", place: "Eastern Europe and Mesopotamia", field: "transport" },
+      periods: [
+        {
+          label: "Solid wheels and wagons",
+          start: -4000,
+          end: -2001,
+          description: "Solid wooden wheels carried ox-drawn carts and wagons from the Black Sea steppe to Mesopotamia and central Europe, and potters shaped pots on the potter's wheel.",
+        },
+        {
+          label: "Spoked wheels and wheeled transport",
+          start: -2000,
+          end: 2026,
+          description: "Spoked wheels made the horse-drawn war chariot, which spread from the steppe to Greece and China, and wheeled carts, carriages and later railways and road vehicles carried goods and people worldwide.",
+        },
+      ],
+    },
+    {
+      slug: "silk",
+      name: "Silk",
+      type: "invention",
+      wiki: "Silk",
+      description: "A fibre reeled from silkworm cocoons and woven into luxury cloth, first made in Neolithic China and traded across Eurasia.",
+      metadata: { invented_date: "3630 BCE", place: "Henan, China", field: "textiles" },
+      periods: [
+        {
+          label: "Chinese sericulture",
+          start: -3630,
+          end: -201,
+          description: "Chinese farmers reared silkworms on mulberry leaves and wove silk, first reserved for the emperors, and kept sericulture a state secret; reeling silk from a cocoon kills the insect inside by boiling.",
+          sections: ["China", "Animal rights"],
+        },
+        {
+          label: "Silk Road trade",
+          start: -200,
+          end: 1844,
+          description: "Silk was the costliest luxury on the trade routes to India, Persia and Rome; silkworm eggs were smuggled to Byzantium in the 6th century, and silk industries grew in Korea, India, Spain, Italy and England.",
+          sections: ["Ancient Mediterranean", "Medieval and modern Europe", "Korea", "India", "Middle East"],
+        },
+        {
+          label: "Industrial silk and synthetics",
+          start: 1845,
+          end: 2026,
+          description: "After flacherie devastated European silkworms in 1845, raw silk was the leading export of Japan and China until 1930; when the Second World War cut supplies, nylon and other synthetics took over much of its use.",
+          sections: ["Japan", "Production"],
+        },
+      ],
+    },
+
+    // ---------- Metals ----------
+    {
+      slug: "bronze",
+      name: "Bronze",
+      type: "invention",
+      wiki: "Bronze",
+      description: "An alloy of copper, usually with tin, harder than copper, used for the tools, weapons, armour and art that named the Bronze Age.",
+      metadata: { invented_date: "4650 BCE", place: "Pločnik, Serbia", field: "metallurgy" },
+      periods: [
+        {
+          label: "Bronze Age",
+          start: -3300,
+          end: -1201,
+          description: "Bronze tools, weapons and armour replaced stone and copper from Mesopotamia and Egypt to the Indus, China and Europe, and the long-distance tin trade enriched elites who hoarded bronze as wealth.",
+          sections: ["History"],
+        },
+        {
+          label: "After the Iron Age",
+          start: -1200,
+          end: 2026,
+          description: "When the tin trade broke down in the 12th century BC iron displaced bronze for tools and weapons, but bronze remained the metal of bells, statues, cannon barrels and bearings.",
+          sections: ["Transition to iron", "Uses"],
+        },
+      ],
+    },
+    {
+      slug: "ferrous-metallurgy",
+      name: "Ferrous metallurgy",
+      type: "invention",
+      wiki: "Ferrous metallurgy",
+      description: "The smelting and working of iron and steel, whose spread defined the Iron Age and whose industrial scale built the modern world.",
+      metadata: { invented_date: "3rd millennium BCE", place: "Middle East", field: "metallurgy" },
+      periods: [
+        {
+          label: "First smelted iron",
+          start: -1500,
+          end: -1201,
+          description: "Smelted iron objects, among them daggers and axe blades, appeared in growing numbers in Mesopotamia, Anatolia and Egypt, though bronze still dominated.",
+          sections: ["Iron smelting and the Iron Age", "Ancient Near East"],
+        },
+        {
+          label: "Charcoal iron",
+          start: -1200,
+          end: 1708,
+          description: "Bloomery and later blast-furnace iron replaced bronze for swords, spears, armour, ploughshares and tools across Eurasia and Africa, and charcoal for iron deforested parts of China by the 11th century.",
+        },
+        {
+          label: "Coke iron and steel",
+          start: 1709,
+          end: 2026,
+          description: "Abraham Darby's coke-fired furnace of 1709 and the Bessemer process of the 1850s made iron and steel cheap enough for railways, ships, machines, buildings and armaments, burning coal on an industrial scale.",
+        },
+      ],
+    },
+
+    // ---------- Writing and number ----------
+    {
+      slug: "writing",
+      name: "Writing",
+      type: "invention",
+      wiki: "History of writing",
+      description: "The recording of language in visible signs, invented independently in Mesopotamia, Egypt, China and Mesoamerica.",
+      metadata: { invented_date: "3400 BCE", place: "Mesopotamia", field: "communication" },
+      periods: [
+        {
+          label: "Cuneiform and hieroglyphs",
+          start: -3400,
+          end: -1251,
+          description: "Sumerian and Egyptian scribes turned accounting tokens and pictures into full writing, used first for farm records and contracts and then for law, religion and royal power.",
+          sections: ["Emergence", "Proto-writing", "Cuneiform", "Egyptian hieroglyphs", "Commerce"],
+        },
+        {
+          label: "Writing across civilisations",
+          start: -1250,
+          end: 2026,
+          description: "Writing arose again in Shang China and in Mesoamerica and spread through alphabets to most of the world's languages, carrying literature, science and law and centralising the power of states.",
+          sections: ["Chinese characters", "Mesoamerican systems", "Iron Age", "Greek alphabets", "Medieval era and modernity", "Law, governance, and journalism"],
+        },
+      ],
+    },
+    {
+      slug: "phoenician-alphabet",
+      name: "Phoenician alphabet",
+      type: "invention",
+      wiki: "Phoenician alphabet",
+      description: "The 22-letter consonantal script of the Phoenicians, ancestor of the Greek, Latin, Aramaic, Hebrew and Arabic alphabets.",
+      metadata: { invented_date: "1050 BCE", place: "Phoenicia", field: "writing" },
+      periods: [
+        {
+          label: "Phoenician script",
+          start: -1050,
+          end: -901,
+          description: "Phoenician scribes wrote their Canaanite language with 22 letters, few enough for ordinary people to learn, unlike cuneiform and hieroglyphs.",
+          sections: ["Origin", "Notable inscriptions"],
+        },
+        {
+          label: "Spread and adaptations",
+          start: -900,
+          end: -101,
+          description: "Phoenician merchants carried the alphabet across the Mediterranean, where it was adapted into the Greek, Old Italic, Aramaic and Anatolian scripts and broke the scribal elites' hold on literacy; Carthage wrote Punic in it until the 2nd century BC.",
+          sections: ["Spread and adaptations", "Derived alphabets"],
+        },
+      ],
+    },
+    {
+      slug: "hindu-arabic-numerals",
+      name: "Hindu–Arabic numerals",
+      type: "invention",
+      wiki: "Hindu–Arabic numeral system",
+      description: "The decimal place-value numerals with a zero, devised in India and spread by Persian and Arab mathematicians, now the world's standard way to write numbers.",
+      metadata: { invented_date: "1st–4th century", place: "India", field: "mathematics" },
+      periods: [
+        {
+          label: "Indian place-value numerals",
+          start: 224,
+          end: 824,
+          description: "Indian mathematicians and astronomers wrote numbers with nine digits and a zero in place-value notation, from the Bakhshali manuscript to Aryabhata and Brahmagupta.",
+          sections: ["Development", "Predecessors"],
+        },
+        {
+          label: "Islamic mathematics",
+          start: 825,
+          end: 1201,
+          description: "Al-Khwarizmi's and al-Kindi's books spread the Indian numerals through the Islamic world, where mathematicians extended them to decimal fractions.",
+          sections: ["Medieval Islamic world"],
+        },
+        {
+          label: "Adoption in Europe and the world",
+          start: 1202,
+          end: 2026,
+          description: "Fibonacci's Liber Abaci brought the numerals to Latin Europe, where they replaced Roman numerals from the 15th century and became the notation of commerce, science and computing worldwide.",
+          sections: ["Adoption in Europe"],
+        },
+      ],
+    },
+
+    // ---------- Paper and printing ----------
+    {
+      slug: "paper",
+      name: "Paper",
+      type: "invention",
+      wiki: "Paper",
+      description: "Sheets of matted plant fibre for writing, printing, wrapping and packaging, first made from pulp in Han China.",
+      metadata: { invented_date: "2nd century BCE", place: "China", field: "materials" },
+      periods: [
+        {
+          label: "Paper in China",
+          start: -200,
+          end: 750,
+          description: "Chinese makers produced paper-like sheets from the 2nd century BC, and Cai Lun's pulp process of 105 made paper a cheap replacement for bamboo slips and silk as a writing surface.",
+          wiki: "History of paper",
+          sections: ["Paper in China", "Techniques", "Uses", "Impact of paper"],
+        },
+        {
+          label: "Paper in the Islamic world and Europe",
+          start: 751,
+          end: 1843,
+          description: "Paper was made in Samarkand by 751, Baghdad by 793 and Spain by 1150, filling the libraries of Baghdad and Cordoba and then the printing presses of Europe, mostly as rag paper.",
+          wiki: "History of paper",
+          sections: ["Paper in Asia", "Shift from parchment to paper", "Paper in Europe", "Paper mills"],
+        },
+        {
+          label: "Wood-pulp paper",
+          start: 1844,
+          end: 2026,
+          description: "Wood-pulp processes of 1844 made paper cheap enough for mass newspapers, books and packaging, while pulp logging, chlorine bleaching and its dioxins, and paper waste damaged forests, rivers and landfills.",
+          sections: ["Invention and development", "Environmental impact", "Current production and use"],
+        },
+      ],
+    },
+    {
+      slug: "cai-lun",
+      name: "Cai Lun",
+      type: "person",
+      wiki: "Cai Lun",
+      description: "Han dynasty court eunuch who in 105 presented the pulp papermaking process that made paper cheap and widespread.",
+      metadata: { death_date: "121", nationality: "Chinese", field: "papermaking" },
+      periods: [
+        {
+          label: "Eunuch of the Han court",
+          start: 75,
+          end: 104,
+          description: "Cai served the Han emperors as a eunuch official, interrogated Consort Song and her sister until both killed themselves in 82, and then ran the Palace Workshop that made the court's weapons and instruments.",
+          sections: ["Early imperial court service", "Palace intrigue and workshop"],
+        },
+        {
+          label: "Paper and the Five Classics",
+          start: 105,
+          end: 121,
+          description: "In 105 Cai presented paper made from bark, hemp, rags and fishnets, which displaced bamboo and wooden slips; he oversaw the editing of the Five Classics and killed himself with poison in 121 when summoned to answer for Consort Song's death.",
+          sections: ["Development of paper", "Final years"],
+        },
+      ],
+    },
+    {
+      slug: "movable-type",
+      name: "Movable type",
+      type: "invention",
+      wiki: "Movable type",
+      description: "Printing from individual reusable characters set into a forme, invented in clay in Song China and cast in metal in Korea and Europe.",
+      metadata: { invented_date: "1040", place: "Song China", field: "printing" },
+      periods: [
+        {
+          label: "Clay and wooden type in China",
+          start: 1040,
+          end: 1233,
+          description: "Bi Sheng's fired-clay type printed Chinese texts and spread to Western Xia, where Tangut Buddhist books were printed from clay and wooden type.",
+          sections: ["Ceramic movable type", "Wooden movable type"],
+        },
+        {
+          label: "Metal type in Korea and China",
+          start: 1234,
+          end: 1449,
+          description: "Goryeo Korea printed books from cast metal type from 1234, including the Jikji of 1377, though royal foundries kept it to state publications, and Wang Zhen printed from 30,000 wooden types in 1298.",
+          sections: ["China", "Korea"],
+        },
+        {
+          label: "Metal type in Europe",
+          start: 1450,
+          end: 1970,
+          description: "Gutenberg's cast lead-alloy type made movable type the standard way to print books and newspapers in Europe and then the world, until phototypesetting replaced metal type.",
+          sections: ["Europe", "Typesetting"],
+        },
+      ],
+    },
+    {
+      slug: "bi-sheng",
+      name: "Bi Sheng",
+      type: "person",
+      wiki: "Bi Sheng",
+      description: "Song dynasty artisan who invented movable type, cutting characters in clay and firing them hard.",
+      metadata: { death_date: "1051", nationality: "Chinese", field: "printing" },
+      periods: [
+        {
+          label: "Clay movable type",
+          start: 1039,
+          end: 1051,
+          description: "Bi Sheng, a commoner, carved Chinese characters in clay, fired them into type and printed from two alternating iron formes, a method recorded by Shen Kuo.",
+        },
+      ],
+    },
+
+    // ---------- Magnetism ----------
+    {
+      slug: "lodestone",
+      name: "Lodestone",
+      type: "discovery",
+      wiki: "Lodestone",
+      description: "Naturally magnetised magnetite, whose attraction for iron was the first known magnetism and the source of the first compasses.",
+      metadata: { discovered_date: "6th century BCE", field: "physics" },
+      periods: [
+        {
+          label: "Magnetism observed",
+          start: -600,
+          end: -201,
+          description: "Greek philosophers from Thales on and Chinese texts from the 4th century BC recorded lodestone's pull on iron, and the Indian Sushruta Samhita describes using it to draw arrows out of wounds.",
+        },
+        {
+          label: "Divination and compass needles",
+          start: -200,
+          end: 1699,
+          description: "Han geomancers shaped lodestone into south-pointing spoons for divination, sailors from the 11th century magnetised compass needles by striking them with it, and natural philosophers modelled the Earth's magnetism with lodestone spheres.",
+        },
+      ],
+    },
+    {
+      slug: "compass",
+      name: "Compass",
+      type: "invention",
+      wiki: "Compass",
+      description: "A magnetised needle or card that turns to point north, used first for divination in Han China and then for navigation.",
+      metadata: { invented_date: "2nd century BCE", place: "Han China", field: "navigation" },
+      periods: [
+        {
+          label: "Divination device",
+          start: -200,
+          end: 1087,
+          description: "Han and later Chinese geomancers used south-pointing lodestone devices for divination and to site buildings and graves.",
+          wiki: "History of the compass",
+          sections: ["Geomancy and Feng Shui"],
+        },
+        {
+          label: "Mariner's compass",
+          start: 1088,
+          end: 1905,
+          description: "Chinese pilots steered by magnetised needles from the 11th century, Europeans from 1190 and Arab sailors from 1232, and the dry mariner's compass guided the ocean voyages of trade, exploration and conquest.",
+          wiki: "History of the compass",
+          sections: ["Early navigational compass", "Medieval Europe", "Muslim world", "Dry compass", "Bearing compass"],
+        },
+        {
+          label: "Liquid and gyrocompasses",
+          start: 1906,
+          end: 2026,
+          description: "Liquid-filled compasses and the gyrocompass of 1906 replaced the dry compass on ships and aircraft, and satellite navigation later took over much of its work.",
+          wiki: "History of the compass",
+          sections: ["Liquid compass", "Gyrocompass"],
+        },
+      ],
+    },
+
+    // ---------- Gunpowder ----------
+    {
+      slug: "gunpowder",
+      name: "Gunpowder",
+      type: "invention",
+      wiki: "Gunpowder",
+      description: "A mixture of saltpetre, sulfur and charcoal, the first explosive, which made firearms, artillery and blasting possible.",
+      metadata: { invented_date: "9th century", place: "Tang China", field: "chemistry" },
+      periods: [
+        {
+          label: "Chinese invention and first weapons",
+          start: 808,
+          end: 1239,
+          description: "Taoist alchemists recorded saltpetre, sulfur and charcoal mixtures from 808, and Chinese armies used gunpowder in fire arrows from 904 and in bombs and fire lances in the wars of the Song, Jin and Mongols.",
+          wiki: "History of gunpowder",
+          sections: ["Gunpowder formula", "Fire arrows", "Explosives", "Fire lance", "Conquest of the Jin dynasty"],
+        },
+        {
+          label: "Guns and the gunpowder empires",
+          start: 1240,
+          end: 1883,
+          description: "Gunpowder spread across Eurasia with the Mongol conquests, armed the guns that dominated warfare by the 17th century and the Ottoman, Safavid and Mughal empires, and blasted mines, canals and tunnels.",
+          wiki: "History of gunpowder",
+          sections: ["Middle East", "Europe", "India", "Big guns", "Arquebus and musket", "Gunpowder Empires", "Ottoman Empire", "Canals", "Mining", "Tunnel construction"],
+        },
+        {
+          label: "Replaced by smokeless powder",
+          start: 1884,
+          end: 2026,
+          description: "Smokeless powders and high explosives replaced gunpowder in most military and civil uses by the end of the 19th century; it survives in fireworks and muzzle-loading guns.",
+        },
+      ],
+    },
+    {
+      slug: "cannon",
+      name: "Cannon",
+      type: "invention",
+      wiki: "Cannon",
+      description: "A large gun that fires heavy projectiles with gunpowder, which transformed siege warfare, naval war and the battlefield.",
+      metadata: { invented_date: "13th century", place: "China", field: "weapons" },
+      periods: [
+        {
+          label: "Hand cannons and bombards",
+          start: 1288,
+          end: 1452,
+          description: "Yuan troops fought with hand cannons in 1288, and by the end of the 14th century cannon were in use across Eurasia, killing infantry at Crécy and from 1374 breaking city walls.",
+          sections: ["East Asia", "Western Europe", "Islamic world", "Eastern Europe"],
+        },
+        {
+          label: "Siege and field artillery",
+          start: 1453,
+          end: 1854,
+          description: "Ottoman bombards breached the walls of Constantinople in 1453, and bronze and iron cannon on land and on warships ended the defensive value of castle walls and decided battles and colonial conquests for four centuries.",
+          sections: ["Islamic world", "Southeast Asia", "Offensive and defensive use", "Early modern", "18th and 19th centuries"],
+        },
+        {
+          label: "Modern artillery",
+          start: 1855,
+          end: 2026,
+          description: "Rifled, breech-loading guns firing explosive shells caused more than 75% of the casualties of the First World War, and artillery and autocannons remain in use.",
+          sections: ["18th and 19th centuries", "20th and 21st centuries"],
+        },
+      ],
+    },
+    {
+      slug: "stirrup",
+      name: "Stirrup",
+      type: "invention",
+      wiki: "Stirrup",
+      description: "A pair of foot supports hung from a saddle, which steadied riders and made heavy cavalry more effective.",
+      metadata: { invented_date: "4th century", place: "Jin China", field: "military technology" },
+      periods: [
+        {
+          label: "Jin and the Northern dynasties",
+          start: 322,
+          end: 599,
+          description: "Paired iron stirrups spread through 4th-century China with the rise of armoured heavy cavalry, which dominated Chinese warfare until the early Tang.",
+          sections: ["East Asia"],
+        },
+        {
+          label: "Cavalry across Eurasia",
+          start: 600,
+          end: 1918,
+          description: "The Avars brought stirrups to Europe in the 7th century, and stirrup-mounted cavalry charged with lance and sword from Europe to the Mali Empire until the First World War.",
+          sections: ["Europe", "West Africa", "Great Stirrup Controversy"],
+        },
+        {
+          label: "Riding and sport",
+          start: 1919,
+          end: 2026,
+          description: "Stirrups remained standard equipment for riders at work and in sport.",
+          sections: ["English-style stirrups"],
+        },
+      ],
+    },
+
+    // ---------- Water and wind power ----------
+    {
+      slug: "water-wheel",
+      name: "Water wheel",
+      type: "invention",
+      wiki: "Water wheel",
+      description: "A wheel turned by flowing or falling water, which lifted irrigation water and drove mills for grain, iron, cloth and paper.",
+      metadata: { invented_date: "3rd century BCE", place: "Eastern Mediterranean", field: "power" },
+      periods: [
+        {
+          label: "Water-lifting wheels and the first mills",
+          start: -300,
+          end: 499,
+          description: "Compartmented wheels lifted irrigation water in Ptolemaic Egypt, and Greek, Roman and Chinese watermills ground grain and worked the bellows of Chinese iron foundries.",
+          sections: ["Water-lifting in Egypt", "Watermills", "China", "Roman Empire", "Watermilling"],
+        },
+        {
+          label: "Medieval mills",
+          start: 500,
+          end: 1768,
+          description: "Watermills ground grain, pounded cloth and hammered iron across the Islamic world and Europe, where the Domesday survey of 1086 counted over six thousand in England, and mill ponds dammed streams across the landscape.",
+          sections: ["Islamic world", "Indian subcontinent", "Early medieval Europe", "Late medieval Europe"],
+        },
+        {
+          label: "Industrial power and decline",
+          start: 1769,
+          end: 1950,
+          description: "Water wheels powered the first British factories, among them Arkwright's water-frame mills, until steam engines and water turbines displaced them in the 19th and 20th centuries.",
+          sections: ["Early modern Europe", "Industrial Europe", "North America"],
+        },
+      ],
+    },
+    {
+      slug: "windmill",
+      name: "Windmill",
+      type: "invention",
+      wiki: "Windmill",
+      description: "A mill driven by sails turning in the wind, used to grind grain, pump water and drain land.",
+      metadata: { invented_date: "9th century", place: "Persia", field: "power" },
+      periods: [
+        {
+          label: "Persian windmills",
+          start: 850,
+          end: 1184,
+          description: "Vertical-axle panemone windmills in Khorasan ground grain and pumped water, and spread across the Middle East and Central Asia and by the 11th century to Spain and the Aegean.",
+          sections: ["Forerunners", "Horizontal windmills"],
+        },
+        {
+          label: "European windmills",
+          start: 1185,
+          end: 1850,
+          description: "Post and tower mills ground grain across northern Europe from 1185, drained Dutch wetlands from the 15th century and powered the sawmills of the Zaan; Europe's windmills peaked at 200,000 in 1850.",
+          sections: ["Vertical windmills", "Post mill", "Hollow-post mill", "Tower mill", "Spread and decline"],
+        },
+        {
+          label: "Replaced by engines",
+          start: 1851,
+          end: 1950,
+          description: "Steam and internal combustion engines replaced windmills, and the surviving Dutch drainage mills were kept as backup to pumping stations.",
+          sections: ["Spread and decline"],
+        },
+      ],
+    },
+    {
+      slug: "roman-concrete",
+      name: "Roman concrete",
+      type: "invention",
+      wiki: "Roman concrete",
+      description: "Opus caementicium, the lime and volcanic-ash concrete of ancient Rome, whose durability left harbours, aqueducts and the Pantheon dome standing for two thousand years.",
+      metadata: { invented_date: "2nd century BCE", place: "Roman Republic", field: "construction" },
+      periods: [
+        {
+          label: "Roman construction",
+          start: -150,
+          end: 476,
+          description: "Roman builders laid lime and pozzolana concrete in harbours, aqueducts, bridges, baths and the unreinforced dome of the Pantheon, and rebuilt Rome in brick-faced concrete after the fire of 64.",
+        },
+      ],
+    },
+    {
+      slug: "archimedes",
+      name: "Archimedes",
+      type: "person",
+      wiki: "Archimedes",
+      description: "Greek mathematician, physicist and engineer of Syracuse who founded statics and hydrostatics and built war machines against Rome.",
+      metadata: { birth_date: "287 BCE", death_date: "212 BCE", nationality: "Greek (Syracuse)", field: "mathematics and engineering" },
+      periods: [
+        {
+          label: "Mathematics and engineering in Syracuse",
+          start: -260,
+          end: -215,
+          description: "Archimedes proved the law of the lever and the principle of buoyancy, found areas and volumes by the method of exhaustion, and engineered machines for King Hiero II.",
+          sections: ["Biography", "Golden wreath", "Launching the Syracusia", "Mathematics"],
+        },
+        {
+          label: "Siege of Syracuse",
+          start: -214,
+          end: -212,
+          description: "Archimedes' war machines defended Syracuse against the Roman army and fleet of Marcellus, and he was killed when the city fell in 212 BC.",
+          sections: ["War machines", "Death"],
+        },
+      ],
+    },
+    {
+      slug: "archimedes-screw",
+      name: "Archimedes' screw",
+      type: "invention",
+      wiki: "Archimedes' screw",
+      description: "A screw turning inside a tube that lifts water, used for irrigation, mine drainage and bilge pumping since antiquity.",
+      metadata: { invented_date: "3rd century BCE", place: "Hellenistic Egypt", field: "hydraulics" },
+      periods: [
+        {
+          label: "Antiquity",
+          start: -250,
+          end: 300,
+          description: "Water screws lifted irrigation water in the Nile Delta, pumped the bilge of Hiero II's great ship and drained Spanish mines, until they fell out of use in Europe at the end of the 3rd century.",
+          sections: ["Origins", "Antiquity and decline"],
+        },
+        {
+          label: "Revival and modern use",
+          start: 1405,
+          end: 2026,
+          description: "Renaissance engineers revived the screw, Dutch polder mills drove screws by wind to drain land, and screws now lift sewage, convey grain and generate small hydropower with little harm to fish.",
+          sections: ["Revival and development", "Hydropower", "Drainage"],
+        },
+      ],
+    },
+
+    // ---------- Timekeeping ----------
+    {
+      slug: "clock",
+      name: "Clock",
+      type: "invention",
+      wiki: "Clock",
+      description: "A device that measures and shows the time, from water clocks to mechanical, pendulum, quartz and atomic clocks.",
+      metadata: { invented_date: "16th century BCE", place: "Babylon and Egypt", field: "timekeeping" },
+      periods: [
+        {
+          label: "Water clocks",
+          start: -1500,
+          end: 1282,
+          description: "Outflow water clocks timed the hours in Babylon and Egypt from the 16th century BC, and Greek, Chinese and Islamic engineers added gears and escapements, as in Su Song's astronomical clock tower at Kaifeng.",
+          sections: ["Water clocks", "Mechanical water clocks", "Astronomical"],
+        },
+        {
+          label: "Mechanical clocks",
+          start: 1283,
+          end: 1655,
+          description: "Weight-driven clocks with verge escapements struck the hours in European church and town towers from the 1280s, and spring-driven clocks of the 15th century brought timekeeping into houses.",
+          sections: ["Fully mechanical", "Astronomical", "Spring-driven"],
+        },
+        {
+          label: "Precision timekeeping",
+          start: 1656,
+          end: 2026,
+          description: "Huygens's pendulum clock of 1656, the marine chronometer and electric, quartz and atomic clocks made exact time the basis of navigation, science, telecommunications and the working day.",
+          sections: ["Pendulum", "Hairspring", "Marine chronometer", "Mass production", "Quartz", "Atomic"],
+        },
+      ],
+    },
+
+    // ---------- Optics ----------
+    {
+      slug: "lens",
+      name: "Lens",
+      type: "invention",
+      wiki: "Lens",
+      description: "A shaped piece of glass or crystal that focuses light, the element of spectacles, telescopes, microscopes and cameras.",
+      metadata: { invented_date: "5th century BCE", place: "Ancient Greece", field: "optics" },
+      periods: [
+        {
+          label: "Burning glasses and reading stones",
+          start: -424,
+          end: 1289,
+          description: "Lenses served as burning glasses for lighting fires in Greece and Rome, and plano-convex reading stones magnified text for medieval readers from the 11th century.",
+          sections: ["History"],
+        },
+        {
+          label: "Ground optical lenses",
+          start: 1290,
+          end: 2026,
+          description: "Lens grinding for spectacles began in Venice and Florence in the late 13th century and led to the microscope, the telescope, the achromatic lens, the lighthouse Fresnel lens and the lenses of modern cameras and instruments.",
+          sections: ["History", "Uses"],
+        },
+      ],
+    },
+    {
+      slug: "eyeglasses",
+      name: "Eyeglasses",
+      type: "invention",
+      wiki: "Glasses",
+      description: "Lenses in a frame worn before the eyes to correct sight, invented in northern Italy in the late 13th century.",
+      metadata: { invented_date: "1290", place: "Pisa, Italy", field: "optics" },
+      periods: [
+        {
+          label: "Italian spectacles",
+          start: 1290,
+          end: 1603,
+          description: "Convex-lens spectacles from Pisa and Venice let aging scholars, scribes and craftsmen keep reading and doing close work, and concave lenses for short sight appeared in the mid-15th century.",
+          sections: ["Invention", "Other claims"],
+        },
+        {
+          label: "Corrective lenses for all",
+          start: 1604,
+          end: 2026,
+          description: "After Kepler explained in 1604 how lenses correct vision, bifocals, lenses for astigmatism and mass-produced frames made glasses everyday equipment worldwide.",
+          sections: ["Later developments", "Widespread availability"],
+        },
+      ],
+    },
+    {
+      slug: "telescope",
+      name: "Telescope",
+      type: "invention",
+      wiki: "Telescope",
+      description: "An optical instrument that magnifies distant objects, invented in the Netherlands in 1608 and turned on the sky by Galileo.",
+      metadata: { invented_date: "1608", place: "Middelburg, Netherlands", field: "optics" },
+      periods: [
+        {
+          label: "Refracting telescopes",
+          start: 1608,
+          end: 1667,
+          description: "Word of the Dutch spyglass spread through Europe within a year; Galileo sold telescopes to merchants for use at sea and turned his on the sky, finding the moons of Jupiter, the phases of Venus and the craters of the Moon.",
+        },
+        {
+          label: "Reflectors and observatories",
+          start: 1668,
+          end: 1936,
+          description: "Newton's reflector of 1668, the achromatic lens and silvered mirrors gave observatories ever larger telescopes to map the planets, stars and galaxies.",
+        },
+        {
+          label: "Every wavelength",
+          start: 1937,
+          end: 2026,
+          description: "Radio telescopes from 1937, giant mirrors and space telescopes extended astronomy across the spectrum from radio waves to gamma rays.",
+        },
+      ],
+    },
+    {
+      slug: "galileo-galilei",
+      name: "Galileo Galilei",
+      type: "person",
+      wiki: "Galileo Galilei",
+      description: "Italian astronomer and physicist who turned the telescope on the sky, championed heliocentrism and founded the physics of motion.",
+      metadata: { birth_date: "1564", death_date: "1642", nationality: "Italian", field: "astronomy and physics" },
+      periods: [
+        {
+          label: "Pisa and Padua",
+          start: 1589,
+          end: 1608,
+          description: "Galileo taught mathematics at Pisa and Padua, studied pendulums, falling bodies and motion, and patented a horse-powered water pump in 1594.",
+          sections: ["Career and first scientific contributions", "Pendulum", "Water pump", "Falling bodies"],
+        },
+        {
+          label: "Telescopic astronomy",
+          start: 1609,
+          end: 1632,
+          description: "Galileo built telescopes of up to 30 times magnification, discovered the moons of Jupiter and the phases of Venus, published the Starry Messenger in 1610 and argued for Copernican heliocentrism.",
+          sections: ["Refracting telescope", "Moon", "Jupiter's moons", "Phases of Venus", "Controversy over heliocentrism"],
+        },
+        {
+          label: "Trial and house arrest",
+          start: 1633,
+          end: 1642,
+          description: "The Roman Inquisition found Galileo vehemently suspect of heresy and forced him to recant; under house arrest he wrote Two New Sciences, on motion and the strength of materials.",
+          sections: ["Controversy over heliocentrism", "Death"],
+        },
+      ],
+    },
+    {
+      slug: "microscope",
+      name: "Microscope",
+      type: "invention",
+      wiki: "Microscope",
+      description: "An instrument that magnifies objects too small to see, which revealed cells and microbes and made modern biology and medicine possible.",
+      metadata: { invented_date: "1620", place: "Netherlands", field: "optics" },
+      periods: [
+        {
+          label: "The first microscopes",
+          start: 1620,
+          end: 1659,
+          description: "Compound microscopes from the Dutch spectacle makers reached Italy and England, where Galileo's circle drew insects with them, but they remained a novelty.",
+          sections: ["History"],
+        },
+        {
+          label: "Microscopic biology",
+          start: 1660,
+          end: 1930,
+          description: "Malpighi, Hooke and Leeuwenhoek used microscopes to find cells, capillaries and microbes, and improved light microscopes became the basic instrument of biology and medicine.",
+          sections: ["Rise of modern light microscopes"],
+        },
+        {
+          label: "Electron and fluorescence microscopes",
+          start: 1931,
+          end: 2026,
+          description: "Electron microscopes from 1931 and later scanning probe and fluorescence microscopes imaged viruses, molecules and atoms for research and diagnosis.",
+          sections: ["Electron microscopes", "Scanning probe microscopes", "Fluorescence microscopes"],
+        },
+      ],
+    },
+    {
+      slug: "antonie-van-leeuwenhoek",
+      name: "Antonie van Leeuwenhoek",
+      type: "person",
+      wiki: "Antonie van Leeuwenhoek",
+      description: "Dutch draper and self-taught microscopist who first saw bacteria and other microbes, the father of microbiology.",
+      metadata: { birth_date: "1632", death_date: "1723", nationality: "Dutch", field: "microbiology" },
+      periods: [
+        {
+          label: "Draper and official in Delft",
+          start: 1654,
+          end: 1672,
+          description: "Leeuwenhoek ran a draper's shop in Delft, served as chamberlain to the city's sheriffs and as a land surveyor, and took up lens grinding.",
+          sections: ["Early life and career"],
+        },
+        {
+          label: "Microscopist",
+          start: 1673,
+          end: 1723,
+          description: "From 1673 Leeuwenhoek's letters to the Royal Society described the first observations of bacteria and protists, and of spermatozoa, muscle fibres and blood flowing in capillaries, seen through single-lens microscopes of his own making.",
+          sections: ["Microscopic study", "Recognition by the Royal Society", "Techniques", "Discoveries"],
+        },
+      ],
+    },
+  ],
+
+  links: [
+    // ---------- Farming ----------
+    { from: "ferrous-metallurgy", to: "plough", type: "builds_on", share: 0.1, why: "Iron shares, Han cast-iron mould-boards and John Deere's steel plough carried the plough into heavy soils." },
+    { from: "wheel", to: "plough", type: "builds_on", share: 0.05, why: "The heavy plough of northern Europe rode on wheels, which let it carry a large metal-faced mould-board." },
+
+    // ---------- Metals ----------
+    { from: "bronze", to: "ferrous-metallurgy", type: "builds_on", share: 0.15, why: "Iron smelting grew out of millennia of copper and bronze working, with the same charcoal furnaces and bellows." },
+    { from: "bronze", to: "ferrous-metallurgy", type: "supersedes", share: 0, why: "Iron replaced bronze as the metal of tools and weapons in the Iron Age." },
+    { from: "water-wheel", to: "ferrous-metallurgy", type: "builds_on", share: 0.05, why: "Water wheels worked the bellows of Chinese blast furnaces from 31 AD and the trip hammers and bellows of European ironworks." },
+    { from: "ferrous-metallurgy", to: "stirrup", type: "builds_on", share: 0.1, why: "Most early stirrups, from Jin China to the Avar graves of Hungary, were iron." },
+
+    // ---------- Writing and number ----------
+    { from: "writing", to: "phoenician-alphabet", type: "builds_on", share: 0.3, why: "The Phoenician alphabet developed from the Proto-Sinaitic script, itself derived from Egyptian hieroglyphs." },
+    { from: "writing", to: "hindu-arabic-numerals", type: "builds_on", share: 0.05, why: "The numerals descend from the Brahmi numerals of Indian inscriptions." },
+
+    // ---------- Paper and printing ----------
+    { from: "writing", to: "paper", type: "builds_on", share: 0.1, why: "Paper was made as a cheaper writing surface than the bamboo slips and silk of Han China." },
+    { from: "cai-lun", to: "paper", type: "originated", share: 0.3, why: "Cai Lun's pulp process of 105 made paper cheap enough to replace bamboo slips. Rival: the unnamed Chinese makers of the paper-like sheets found from the 2nd century BC, whose material he improved." },
+    { from: "bi-sheng", to: "movable-type", type: "originated", share: 0.35, why: "Bi Sheng made the first known movable type, in fired clay, in the 1040s. Rivals: the Korean founders who cast the first metal type in the 13th century, and Gutenberg, whose cast type spread worldwide." },
+    { from: "johannes-gutenberg", to: "movable-type", type: "originated", share: 0.2, why: "Gutenberg's hand mould and lead-tin-antimony type made movable type practical for mass printing and drove its spread. Earlier: Bi Sheng's clay type and Korean metal type." },
+    { from: "paper", to: "movable-type", type: "builds_on", share: 0.1, why: "Bi Sheng's type printed on paper, which Song China made in bulk." },
+    { from: "bronze", to: "movable-type", type: "builds_on", share: 0.05, why: "Korean founders cast metal type with the bronze-casting methods used for coins, bells and statues." },
+    { from: "movable-type", to: "printing-press", type: "builds_on", share: 0.2, why: "Gutenberg's press printed from cast movable type." },
+    { from: "paper", to: "printing-press", type: "builds_on", share: 0.1, why: "Printing needed cheap paper, which European mills had made since the 12th century." },
+
+    // ---------- Magnetism ----------
+    { from: "lodestone", to: "compass", type: "builds_on", share: 0.4, why: "The first compasses were lodestone spoons, and later compass needles were magnetised by striking them with lodestone." },
+    { from: "ferrous-metallurgy", to: "compass", type: "builds_on", share: 0.1, why: "The navigational compass is an iron needle magnetised by lodestone." },
+
+    // ---------- Gunpowder ----------
+    { from: "gunpowder", to: "cannon", type: "builds_on", share: 0.35, why: "A cannon is a tube that throws a projectile with burning gunpowder." },
+    { from: "bronze", to: "cannon", type: "builds_on", share: 0.1, why: "Most early cannon were cast in bronze, which was less prone than iron to bursting." },
+    { from: "ferrous-metallurgy", to: "cannon", type: "builds_on", share: 0.1, why: "The first bombards were wrought iron, and later cannon were cast iron and then steel." },
+
+    // ---------- Water and wind power ----------
+    { from: "wheel", to: "water-wheel", type: "builds_on", share: 0.15, why: "A water wheel is a wheel and axle turned by flowing water." },
+    { from: "irrigation", to: "water-wheel", type: "builds_on", share: 0.1, why: "The first water wheels were compartmented wheels that lifted water into Egyptian irrigation channels." },
+    { from: "water-wheel", to: "windmill", type: "builds_on", share: 0.15, why: "Windmills turned the gearing and millstones of the watermill with wind, and Europe's success with water power drove its experiments with wind." },
+    { from: "irrigation", to: "archimedes-screw", type: "builds_on", share: 0.15, why: "The water screw was made to lift water onto fields, as in the Nile Delta." },
+    { from: "archimedes", to: "archimedes-screw", type: "originated", share: 0.3, why: "Posidonius and later writers credit Archimedes with the water screw, and no evidence of it survives from before 250 BC. Rivals: Egyptian irrigators, and the Assyrian engineers of Sennacherib, whose bronze water screws Stephanie Dalley reads in his inscriptions." },
+
+    // ---------- Timekeeping ----------
+    { from: "water-wheel", to: "clock", type: "builds_on", share: 0.05, why: "Chinese astronomical clocks, among them Su Song's tower at Kaifeng, were driven by water wheels regulated by an escapement." },
+
+    // ---------- Optics ----------
+    { from: "lens", to: "eyeglasses", type: "builds_on", share: 0.35, why: "Spectacles are lenses mounted in a frame, an improvement on the reading stone." },
+    { from: "lens", to: "telescope", type: "builds_on", share: 0.25, why: "A refracting telescope is a pair of lenses in a tube." },
+    { from: "eyeglasses", to: "telescope", type: "builds_on", share: 0.15, why: "The telescope came out of the Dutch spectacle-making shops and their lens grinding." },
+    { from: "galileo-galilei", to: "telescope", type: "originated", share: 0.15, why: "Galileo built telescopes of up to 30 times magnification and in 1610 published the first telescopic discoveries in astronomy. Rival: Hans Lipperhey, who applied for the first telescope patent in 1608, a year before Galileo built his own." },
+    { from: "lens", to: "microscope", type: "builds_on", share: 0.3, why: "A microscope magnifies with lenses: one in Leeuwenhoek's, an objective and an eyepiece in a compound microscope." },
+    { from: "eyeglasses", to: "microscope", type: "builds_on", share: 0.1, why: "The compound microscope came out of the Dutch spectacle-making centres." },
+    { from: "galileo-galilei", to: "microscope", type: "originated", share: 0.05, why: "Galileo built a compound microscope by 1624, and the word microscope was coined for it. Rivals: Zacharias Janssen, Hans Lipperhey and Cornelis Drebbel, each claimed as its inventor." },
+    { from: "antonie-van-leeuwenhoek", to: "microscope", type: "originated", share: 0.1, why: "Leeuwenhoek's single-lens microscopes magnified up to 300 times and made the microscope an instrument of biology. The compound microscope itself came from the Dutch spectacle makers." },
+  ],
+};

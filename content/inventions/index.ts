@@ -8,11 +8,15 @@
  */
 import type { InventionsContent } from "../types";
 import { benchmark } from "./benchmark";
+import { crossEra } from "./cross-era";
+import { launchAncient } from "./launch-ancient";
+import { launchIndustrial } from "./launch-industrial";
+import { launchModern } from "./launch-modern";
 
 /** The site this content belongs to (src/sites). */
 export const site = "inventions";
 
-const parts: InventionsContent[] = [benchmark];
+const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, launchModern, crossEra];
 
 const content: InventionsContent = {
   entities: parts.flatMap((p) => p.entities),

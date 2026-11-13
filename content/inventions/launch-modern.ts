@@ -1,0 +1,910 @@
+/**
+ * Prior Art launch set, modern era: the atomic age, computing and networks,
+ * medicine, farming, freight, light and the platforms of the twenty-first
+ * century. Links run within this file and from the benchmark into it.
+ */
+import type { InventionsContent } from "../types";
+
+export const launchModern: InventionsContent = {
+  entities: [
+    // ---------- The atomic age ----------
+    {
+      slug: "nuclear-fission",
+      name: "Nuclear fission",
+      type: "discovery",
+      wiki: "Nuclear fission",
+      description: "The splitting of a heavy atomic nucleus into lighter ones, releasing neutrons and great energy, the basis of nuclear weapons and reactors.",
+      metadata: { discovered_date: "1938", field: "nuclear physics" },
+      periods: [
+        {
+          label: "Discovery",
+          start: 1938,
+          end: 1941,
+          description: "Hahn and Strassmann split uranium in December 1938, Meitner and Frisch explained the reaction in January 1939, and physicists found that fission released the extra neutrons a chain reaction needs.",
+        },
+        {
+          label: "Bombs and reactors",
+          start: 1942,
+          end: 2026,
+          description: "Fission powered the first reactor, Chicago Pile-1, in December 1942, the bombs that destroyed Hiroshima and Nagasaki in 1945, the arsenals of the Cold War, and the nuclear power stations that made 9 percent of the world's electricity in 2023.",
+        },
+      ],
+    },
+    {
+      slug: "manhattan-project",
+      name: "Manhattan Project",
+      type: "project",
+      wiki: "Manhattan Project",
+      description: "The American-led wartime program, with Britain and Canada, that built the first nuclear weapons and the first industrial nuclear reactors.",
+      metadata: { start_date: "1942", end_date: "1946", sponsor: "United States Army Corps of Engineers, with the United Kingdom and Canada" },
+      periods: [
+        {
+          label: "Building the bomb",
+          start: 1942,
+          end: 1945,
+          description: "The project employed 129,000 workers at its peak, building uranium plants at Oak Ridge, plutonium reactors at Hanford and the bomb laboratory at Los Alamos, and its two bombs destroyed Hiroshima and Nagasaki in August 1945. Its radioactive waste, stored in temporary tanks that later leaked, left Hanford one of the most contaminated nuclear waste sites in North America.",
+        },
+        {
+          label: "Postwar control",
+          start: 1946,
+          end: 1946,
+          description: "The project tested bombs at Bikini Atoll in Operation Crossroads, promoted the network of national laboratories and laid the foundations of the nuclear navy, until the Atomic Energy Commission took over on 1 January 1947.",
+          sections: ["After the war", "Cost", "Legacy"],
+        },
+      ],
+    },
+    {
+      slug: "j-robert-oppenheimer",
+      name: "J. Robert Oppenheimer",
+      type: "person",
+      wiki: "J. Robert Oppenheimer",
+      description: "Theoretical physicist who directed the Los Alamos Laboratory, where the first nuclear weapons were designed, and later opposed the hydrogen bomb.",
+      metadata: { birth_date: "1904", death_date: "1967", nationality: "American", field: "theoretical physics" },
+      periods: [
+        {
+          label: "Berkeley and Caltech",
+          start: 1929,
+          end: 1941,
+          description: "Oppenheimer built the leading American school of theoretical physics at Berkeley and Caltech, working on quantum field theory, neutron stars and black holes.",
+        },
+        {
+          label: "Los Alamos",
+          start: 1942,
+          end: 1945,
+          description: "Oppenheimer directed the Los Alamos Laboratory, which designed the first nuclear weapons, tested at Trinity in July 1945 and dropped on Hiroshima and Nagasaki in August.",
+        },
+        {
+          label: "Institute for Advanced Study and the AEC",
+          start: 1947,
+          end: 1966,
+          description: "Oppenheimer directed the Institute for Advanced Study and chaired the Atomic Energy Commission's General Advisory Committee, argued for international control of atomic energy, opposed the hydrogen bomb, and lost his security clearance in 1954.",
+        },
+      ],
+    },
+    {
+      slug: "nuclear-weapon",
+      name: "Nuclear weapon",
+      type: "invention",
+      wiki: "Nuclear weapon",
+      description: "An explosive that draws its force from nuclear fission or fusion, able to destroy a city with one bomb.",
+      metadata: { invented_date: "1945", place: "Los Alamos, New Mexico", field: "nuclear physics" },
+      periods: [
+        {
+          label: "Hiroshima and Nagasaki",
+          start: 1945,
+          end: 1945,
+          description: "The United States tested the first bomb at Trinity in July 1945 and in August destroyed Hiroshima and Nagasaki, killing between 150,000 and 246,000 people, most of them civilians. Survivors went on to suffer raised rates of cancer.",
+          wiki: "Atomic bombings of Hiroshima and Nagasaki",
+        },
+        {
+          label: "The Cold War arms race",
+          start: 1946,
+          end: 1991,
+          description: "The Soviet Union tested its first bomb in 1949 and the superpowers built hydrogen bombs, missiles and bombers, reaching more than 64,000 warheads worldwide in 1986. Atmospheric tests spread fallout across the globe, and the 1962 Cuban Missile Crisis brought the world to the brink of nuclear war.",
+          wiki: "Nuclear arms race",
+        },
+        {
+          label: "Deterrence and proliferation",
+          start: 1992,
+          end: 2026,
+          description: "Arsenals shrank after the Cold War to 9,600 warheads in 2025, held by nine states; Pakistan and North Korea tested their first bombs in 1998 and 2006. Nuclear war remains a global catastrophic risk, held off by policies of deterrence.",
+        },
+      ],
+    },
+    {
+      slug: "nuclear-power",
+      name: "Nuclear power",
+      type: "invention",
+      wiki: "Nuclear power",
+      description: "Electricity generated from the heat of nuclear fission in a reactor, a low-carbon source with a record of rare but severe accidents.",
+      metadata: { invented_date: "1951", place: "Arco, Idaho", field: "nuclear engineering" },
+      periods: [
+        {
+          label: "First power plants",
+          start: 1951,
+          end: 1969,
+          description: "A reactor first made electricity at EBR-I in Idaho in 1951; the Soviet Obninsk plant fed a grid in 1954, and Britain's Calder Hall opened in 1956 making electricity and plutonium for bombs. Pressurised water reactors built for submarines became the standard design for power stations.",
+        },
+        {
+          label: "Expansion, Three Mile Island and Chernobyl",
+          start: 1970,
+          end: 1989,
+          description: "Nuclear capacity reached 300 gigawatts by the end of the 1980s, and France turned to it for most of its electricity after the 1973 oil crisis. The 1979 Three Mile Island accident and the 1986 Chernobyl disaster, the worst in history, with 56 direct deaths, turned public opinion against it.",
+        },
+        {
+          label: "Fukushima and low-carbon power",
+          start: 1990,
+          end: 2026,
+          description: "Growth slowed under the costs of regulation and radioactive waste, and the 2011 Fukushima meltdowns led Japan to shut its reactors and Germany to close its own. In 2023 nuclear plants made 9 percent of the world's electricity, the second largest low-carbon source after hydroelectricity.",
+        },
+      ],
+    },
+
+    // ---------- Computing and light ----------
+    {
+      slug: "eniac",
+      name: "ENIAC",
+      type: "product",
+      wiki: "ENIAC",
+      description: "The first programmable, electronic, general-purpose digital computer, built of 18,000 vacuum tubes for the US Army.",
+      metadata: { introduced_date: "1945", discontinued_date: "1955", maker: "University of Pennsylvania" },
+      periods: [
+        {
+          label: "Moore School",
+          start: 1945,
+          end: 1946,
+          description: "ENIAC's first program, in December 1945, calculated thermonuclear reactions for hydrogen bomb research at Los Alamos, and the press hailed it as a 'Giant Brain' at its dedication in February 1946.",
+        },
+        {
+          label: "Aberdeen Proving Ground",
+          start: 1947,
+          end: 1955,
+          description: "At Aberdeen ENIAC computed artillery firing tables for the US Army and ran Monte Carlo calculations of neutron travel for nuclear weapons until it was shut down in 1955.",
+        },
+      ],
+    },
+    {
+      slug: "laser",
+      name: "Laser",
+      type: "invention",
+      wiki: "Laser",
+      description: "A device that emits a narrow beam of coherent light by stimulated emission, used in communications, manufacturing, medicine and weapons.",
+      metadata: { invented_date: "1960", place: "Hughes Research Laboratories, Malibu, California", field: "optics" },
+      periods: [
+        {
+          label: "The first lasers",
+          start: 1960,
+          end: 1973,
+          description: "Theodore Maiman fired the first laser, a ruby laser, in May 1960; the continuous helium-neon gas laser followed that year and the semiconductor laser in 1962.",
+        },
+        {
+          label: "Lasers in everyday use",
+          start: 1974,
+          end: 2026,
+          description: "From the first supermarket barcode scanner in 1974, lasers came to read compact discs, print documents, carry the internet over optical fibre, cut and weld metal and perform eye surgery. Armies use them to mark targets and guide munitions, and even low-power lasers can blind the people they are aimed at.",
+        },
+      ],
+    },
+    {
+      slug: "solar-cell",
+      name: "Solar cell",
+      type: "invention",
+      wiki: "Solar cell",
+      description: "A semiconductor device that turns sunlight directly into electricity, the building block of solar panels.",
+      metadata: { invented_date: "1954", place: "Bell Labs, New Jersey", field: "electronics" },
+      periods: [
+        {
+          label: "Silicon cells in space",
+          start: 1954,
+          end: 1972,
+          description: "Bell Labs demonstrated the first practical silicon solar cell in 1954, and costly cells powered satellites from Vanguard I in 1958.",
+        },
+        {
+          label: "Terrestrial solar power",
+          start: 1973,
+          end: 2004,
+          description: "After the 1973 oil crisis, oil companies' solar divisions made cheaper panels for navigation buoys and remote sites, and module prices fell with each doubling of production.",
+        },
+        {
+          label: "Mass solar power",
+          start: 2005,
+          end: 2026,
+          description: "Mass production, led by China, which made 77.8 percent of the world's modules in 2022, cut module prices to 20 cents a watt by 2020 and made solar the fastest-growing source of low-carbon electricity. Expired panels became a growing stream of electronic waste.",
+        },
+      ],
+    },
+    {
+      slug: "light-emitting-diode",
+      name: "Light-emitting diode",
+      type: "invention",
+      wiki: "Light-emitting diode",
+      description: "A semiconductor that emits light when current flows through it, used in indicators, screens and lighting.",
+      metadata: { invented_date: "1962", field: "electronics" },
+      periods: [
+        {
+          label: "Indicator lights and displays",
+          start: 1962,
+          end: 1992,
+          description: "Infrared LEDs went into remote controls, and red, then green and yellow, LEDs lit indicator lamps and the displays of calculators and watches once Monsanto and Hewlett-Packard cut their cost below five cents in the 1970s.",
+        },
+        {
+          label: "Blue and white LEDs",
+          start: 1993,
+          end: 2026,
+          description: "Bright blue LEDs from 1993 made white LED light and full-colour LED screens possible, and LEDs came to light homes, streets, vehicles and displays on a fraction of a bulb's electricity. Their blue-rich outdoor light added to sky glow, drew insects and disoriented turtle hatchlings.",
+        },
+      ],
+    },
+    {
+      slug: "shuji-nakamura",
+      name: "Shuji Nakamura",
+      type: "person",
+      wiki: "Shuji Nakamura",
+      description: "Engineer at Nichia who made the first bright blue LED, the key to white LED light, and the blue laser diode; Nobel laureate in physics.",
+      metadata: { birth_date: "1954", nationality: "Japanese-American", field: "electrical engineering" },
+      periods: [
+        {
+          label: "Nichia",
+          start: 1979,
+          end: 1999,
+          description: "At Nichia Nakamura developed a mass-production method for p-type gallium nitride and in 1993 made a blue LED a thousand times brighter than earlier ones, followed by the white LED and the blue laser diode used in Blu-ray discs.",
+        },
+        {
+          label: "UC Santa Barbara",
+          start: 1999,
+          end: 2026,
+          description: "Nakamura taught at UC Santa Barbara, won ¥840 million from Nichia in a 2005 settlement over his reward for the invention, co-founded the lighting company Soraa in 2008, and shared the 2014 Nobel Prize in Physics.",
+        },
+      ],
+    },
+    {
+      slug: "john-goodenough",
+      name: "John B. Goodenough",
+      type: "person",
+      wiki: "John B. Goodenough",
+      description: "Materials scientist who found the lithium cobalt oxide cathode that made the lithium-ion battery practical; Nobel laureate in chemistry at 97.",
+      metadata: { birth_date: "1922", death_date: "2023", nationality: "American", field: "materials science" },
+      periods: [
+        {
+          label: "MIT Lincoln Laboratory",
+          start: 1952,
+          end: 1975,
+          description: "Goodenough helped develop random-access magnetic memory and worked out the Goodenough-Kanamori rules of magnetic superexchange.",
+        },
+        {
+          label: "University of Oxford",
+          start: 1976,
+          end: 1985,
+          description: "As head of Oxford's Inorganic Chemistry Laboratory, Goodenough found in 1980 that lithium cobalt oxide made a lightweight, high-energy cathode, the chemistry Sony licensed for the first commercial lithium-ion cells.",
+        },
+        {
+          label: "University of Texas at Austin",
+          start: 1986,
+          end: 2023,
+          description: "Goodenough discovered the polyanion class of cathodes, including the lithium iron phosphates used in power tools and cheaper batteries, and kept working on batteries for electric vehicles until he died at 100.",
+        },
+      ],
+    },
+
+    // ---------- Medicine and farming ----------
+    {
+      slug: "combined-oral-contraceptive",
+      name: "Combined oral contraceptive pill",
+      type: "invention",
+      wiki: "Combined oral contraceptive pill",
+      description: "A daily pill of estrogen and progestin that prevents ovulation, the first reliable contraceptive under a woman's own control.",
+      metadata: { invented_date: "1960", place: "Shrewsbury, Massachusetts", field: "medicine" },
+      periods: [
+        {
+          label: "Development and trials",
+          start: 1951,
+          end: 1959,
+          description: "Pincus, Chang and Rock developed the pill with Katharine McCormick's money, and its first contraceptive trials, in Puerto Rico from 1956, enrolled poor women without informed consent; Enovid was approved for menstrual disorders in 1957.",
+          sections: ["Progesterone to prevent ovulation", "Progestins to prevent ovulation", "Combined oral contraceptive"],
+        },
+        {
+          label: "The pill",
+          start: 1960,
+          end: 1979,
+          description: "Approved for contraception in the United States in 1960, the pill gave millions of women control over pregnancy, helped them stay in education and careers, and was a catalyst for the sexual revolution. Its early high doses raised the risk of blood clots, and of strokes and heart attacks in women who smoked.",
+          sections: ["Public availability", "Society and culture"],
+        },
+        {
+          label: "Low-dose pills worldwide",
+          start: 1980,
+          end: 2026,
+          description: "Lower-dose pills became one of the world's most used contraceptives, taken by more than 100 million women and listed as an essential medicine by the WHO. Estrogens excreted by users pass through sewage works into rivers, where they disrupt the sexual development of fish.",
+          sections: ["Benefits", "Environmental impact"],
+        },
+      ],
+    },
+    {
+      slug: "polio-vaccine",
+      name: "Polio vaccine",
+      type: "invention",
+      wiki: "Polio vaccine",
+      description: "Injected inactivated and oral live vaccines against poliomyelitis, which have eliminated polio from most of the world.",
+      metadata: { invented_date: "1952", place: "University of Pittsburgh", field: "medicine" },
+      periods: [
+        {
+          label: "Salk's injected vaccine",
+          start: 1955,
+          end: 1960,
+          description: "Salk's inactivated vaccine, tested on 1.8 million children in the 1954 Francis Field Trial, was licensed in 1955 and used in mass campaigns. Improperly inactivated vaccine from Cutter Laboratories caused 260 cases of polio and killed 11 people.",
+        },
+        {
+          label: "Sabin's oral vaccine and eradication",
+          start: 1961,
+          end: 2026,
+          description: "Sabin's oral vaccine replaced Salk's in most countries, and global campaigns from 1988 cut reported cases from 350,000 a year to 33 in 2018. The oral vaccine causes rare paralysis and outbreaks of vaccine-derived poliovirus.",
+        },
+      ],
+    },
+    {
+      slug: "jonas-salk",
+      name: "Jonas Salk",
+      type: "person",
+      wiki: "Jonas Salk",
+      description: "Virologist who developed the first widely used polio vaccine and declined to patent it.",
+      metadata: { birth_date: "1914", death_date: "1995", nationality: "American", field: "virology" },
+      periods: [
+        {
+          label: "University of Pittsburgh",
+          start: 1947,
+          end: 1962,
+          description: "Salk's team developed an inactivated polio vaccine, tested in the 1954 Francis Field Trial; he declined to patent it, and by 1959 it had reached 90 countries.",
+        },
+        {
+          label: "Salk Institute",
+          start: 1963,
+          end: 1995,
+          description: "Salk founded the Salk Institute for Biological Studies in La Jolla, campaigned for the universal vaccination of children, and in his last years worked on a vaccine against HIV.",
+        },
+      ],
+    },
+    {
+      slug: "ddt",
+      name: "DDT",
+      type: "invention",
+      wiki: "DDT",
+      description: "An organochlorine insecticide that controlled malaria and typhus and built up in food chains, thinning the eggshells of birds of prey.",
+      metadata: { invented_date: "1939", place: "Basel, Switzerland", field: "chemistry" },
+      periods: [
+        {
+          label: "Wartime disease control",
+          start: 1942,
+          end: 1944,
+          description: "The Allied armies dusted troops and civilians with DDT against typhus and sprayed it from the air in the South Pacific against malaria and dengue fever.",
+        },
+        {
+          label: "Mass spraying",
+          start: 1945,
+          end: 1971,
+          description: "DDT was sold to farmers from 1945 and was the main weapon of the WHO malaria eradication program from 1955, which eliminated malaria from Europe, North America and other regions and cut Sri Lanka's cases from one million a year to 18 in 1963. It built up in food chains and thinned the eggshells of birds of prey, bringing bald eagles and peregrine falcons to the edge of extinction in the contiguous United States.",
+        },
+        {
+          label: "Bans and malaria control",
+          start: 1972,
+          end: 2026,
+          description: "The United States banned DDT's agricultural use in 1972 and the Stockholm Convention banned it worldwide from 2004, leaving indoor spraying against malaria mosquitoes, many of which had grown resistant through farm use.",
+        },
+      ],
+    },
+    {
+      slug: "norman-borlaug",
+      name: "Norman Borlaug",
+      type: "person",
+      wiki: "Norman Borlaug",
+      description: "Agronomist who bred high-yielding, disease-resistant wheat and led the Green Revolution; Nobel Peace Prize laureate.",
+      metadata: { birth_date: "1914", death_date: "2009", nationality: "American", field: "agronomy" },
+      periods: [
+        {
+          label: "Wheat breeding in Mexico",
+          start: 1944,
+          end: 1962,
+          description: "Borlaug made 6,000 wheat crosses in Mexico and, crossing in the Japanese dwarf Norin 10, released the semi-dwarf Pitic 62 and Penjamo 62; by 1963 Mexico's harvest was six times that of 1944.",
+        },
+        {
+          label: "Green Revolution in South Asia",
+          start: 1963,
+          end: 1979,
+          description: "Borlaug brought semi-dwarf wheat and fertiliser-heavy methods to India and Pakistan, where wheat harvests rose from 12.3 to 20.1 million tons and from 4.6 to 7.3 million tons between 1965 and 1970, and won the 1970 Nobel Peace Prize. Critics blamed the methods for farmers' debt, inequality and the chemical load on the land.",
+        },
+        {
+          label: "Africa and the World Food Prize",
+          start: 1980,
+          end: 2009,
+          description: "Borlaug led the Sasakawa Africa Association from 1986, whose programs trained more than 8 million small farmers in 15 African countries, founded the World Food Prize in 1986, and campaigned for fertiliser and pesticides, DDT among them.",
+        },
+      ],
+    },
+    {
+      slug: "high-yielding-variety",
+      name: "High-yielding variety",
+      type: "invention",
+      wiki: "High-yielding variety",
+      description: "Semi-dwarf crop varieties bred to give much larger harvests when fed with fertiliser and water, the seeds of the Green Revolution.",
+      metadata: { invented_date: "1962", place: "Mexico", field: "agronomy" },
+      periods: [
+        {
+          label: "Semi-dwarf wheat and miracle rice",
+          start: 1962,
+          end: 1969,
+          description: "Borlaug's semi-dwarf wheats of 1962 and the International Rice Research Institute's IR8 rice of 1966 gave several times the yield of traditional varieties and spread through Mexico, India, Pakistan and the Philippines.",
+          wiki: "Green Revolution",
+          sections: ["Development in Mexico", "IR8 rice and the Philippines", "Start in India"],
+        },
+        {
+          label: "The Green Revolution",
+          start: 1970,
+          end: 2026,
+          description: "With irrigation and fertiliser, high-yielding varieties more than doubled cereal production in developing countries between 1961 and 1985 and cut infant mortality. Their package of pesticides and fertiliser contaminated waterways, poisoned farm workers, narrowed crop diversity and favoured farmers who could afford the inputs.",
+          wiki: "Green Revolution",
+          sections: ["Production increases", "Effects on food security", "Socioeconomic impacts", "Biodiversity", "Health impact"],
+        },
+      ],
+    },
+    {
+      slug: "mrna-vaccine",
+      name: "mRNA vaccine",
+      type: "invention",
+      wiki: "MRNA vaccine",
+      description: "A vaccine that delivers messenger RNA in lipid nanoparticles so the body's own cells make the antigen.",
+      metadata: { invented_date: "2020", field: "medicine" },
+      periods: [
+        {
+          label: "Research",
+          start: 1989,
+          end: 2019,
+          description: "Researchers showed in 1989 and 1990 that lab-made mRNA could make cells produce a chosen protein, and the modified nucleosides reported in 2005 let it enter cells without setting off the body's defences; the first trials against an infection began in 2013.",
+        },
+        {
+          label: "COVID-19 vaccines",
+          start: 2020,
+          end: 2026,
+          description: "The Pfizer-BioNTech and Moderna COVID-19 vaccines, authorised in December 2020 with over 90 percent short-term efficacy, were given to hundreds of millions of people during the pandemic, with rare heart inflammation in young men among their side effects. Moderna's mRNA vaccines against RSV, influenza and COVID-19 followed from 2024.",
+        },
+      ],
+    },
+    {
+      slug: "crispr",
+      name: "CRISPR gene editing",
+      type: "invention",
+      wiki: "CRISPR gene editing",
+      description: "A method of cutting DNA at a chosen site with the Cas9 enzyme and a guide RNA, making genome editing cheap and precise.",
+      metadata: { invented_date: "2012", place: "Berkeley, California and Umeå, Sweden", field: "molecular biology" },
+      periods: [
+        {
+          label: "Laboratory gene editing",
+          start: 2012,
+          end: 2018,
+          description: "Doudna and Charpentier showed in 2012 that Cas9 could be programmed with RNA to cut DNA, and laboratories adopted it to edit plants, animals and human cells. In November 2018 He Jiankui announced the birth of twin girls from embryos he had edited, work condemned as unethical and dangerous.",
+        },
+        {
+          label: "Edited foods and therapies",
+          start: 2019,
+          end: 2026,
+          description: "CRISPR-edited tomatoes and fish went on sale in Japan in 2021, and in 2023 Casgevy became the first approved CRISPR therapy, curing sickle-cell disease and beta thalassemia.",
+        },
+      ],
+    },
+
+    // ---------- Freight ----------
+    {
+      slug: "intermodal-container",
+      name: "Intermodal container",
+      type: "invention",
+      wiki: "Intermodal container",
+      description: "A standard steel shipping box that moves between ships, trains and trucks without unloading, the basis of global trade.",
+      metadata: { invented_date: "1956", place: "Newark, New Jersey", field: "transport" },
+      periods: [
+        {
+          label: "The first container ships",
+          start: 1956,
+          end: 1967,
+          description: "McLean's Ideal-X carried 58 containers from Newark to Houston in April 1956, cutting loading costs from $5.86 to 16 cents a ton, and container lines spread along American coasts and across the Atlantic over the resistance of dockworkers' unions.",
+        },
+        {
+          label: "Global containerization",
+          start: 1968,
+          end: 2026,
+          description: "ISO-standard containers cut the cost of shipping, made global supply chains possible and carried 60 percent of seaborne trade by 2010. They displaced many thousands of dockworkers and emptied old city-centre docks for new deep-water terminals.",
+          sections: ["Modern ISO standards", "Impact of industry changes on workers", "Impact in worldwide supply shortage"],
+        },
+      ],
+    },
+    {
+      slug: "malcom-mclean",
+      name: "Malcom McLean",
+      type: "person",
+      wiki: "Malcom McLean",
+      description: "Trucking entrepreneur who founded container shipping with the Ideal-X and Sea-Land.",
+      metadata: { birth_date: "1913", death_date: "2001", nationality: "American", field: "transport" },
+      periods: [
+        {
+          label: "McLean Trucking",
+          start: 1935,
+          end: 1955,
+          description: "McLean, his brother and his sister founded McLean Trucking in North Carolina in 1935 with one used truck, hauling tobacco barrels.",
+        },
+        {
+          label: "Sea-Land",
+          start: 1956,
+          end: 1977,
+          description: "McLean converted wartime tankers into container ships, built Sea-Land into an international container line with service to Europe, Asia and South Vietnam, and gave his standard container patents royalty-free to the ISO.",
+        },
+        {
+          label: "United States Lines",
+          start: 1978,
+          end: 1986,
+          description: "McLean's United States Lines built the largest container ships afloat for a fuel-efficient round-the-world service, then went bankrupt in 1986 with the loss of many jobs.",
+        },
+      ],
+    },
+
+    // ---------- Networks ----------
+    {
+      slug: "arpanet",
+      name: "ARPANET",
+      type: "project",
+      wiki: "ARPANET",
+      description: "The US Defense Department's packet-switched computer network, the forerunner of the internet.",
+      metadata: { start_date: "1966", end_date: "1990", sponsor: "Advanced Research Projects Agency" },
+      periods: [
+        {
+          label: "Building the network",
+          start: 1966,
+          end: 1974,
+          description: "ARPA began the network in 1966 and made the first host-to-host connection, between UCLA and the Stanford Research Institute, in October 1969; by 1973 three-quarters of its traffic was email.",
+        },
+        {
+          label: "TCP/IP and decommissioning",
+          start: 1975,
+          end: 1990,
+          description: "Under the Defense Communications Agency the ARPANET carried the first mass advertising email in 1978, switched to TCP/IP on 1 January 1983, split off MILNET for military traffic, and was decommissioned in 1990.",
+        },
+      ],
+    },
+    {
+      slug: "internet-protocol-suite",
+      name: "Internet protocol suite",
+      type: "invention",
+      wiki: "Internet protocol suite",
+      description: "TCP/IP, the set of protocols that joins separate computer networks into the internet.",
+      metadata: { invented_date: "1974", place: "Stanford University and DARPA", field: "computer networking" },
+      periods: [
+        {
+          label: "Development",
+          start: 1973,
+          end: 1982,
+          description: "Cerf and Kahn worked out an internetwork protocol in 1973 and published TCP in 1974, and DARPA tested it across the ARPANET, packet radio and satellite networks before the Defense Department made it the standard for all military networking in 1980.",
+        },
+        {
+          label: "The internet",
+          start: 1983,
+          end: 2026,
+          description: "From the ARPANET's switch on 1 January 1983, TCP/IP joined the networks that became the internet, which came to carry the communication, commerce, entertainment and news of billions of people, along with mass surveillance, fraud and cybercrime.",
+        },
+      ],
+    },
+    {
+      slug: "vint-cerf",
+      name: "Vint Cerf",
+      type: "person",
+      wiki: "Vint Cerf",
+      description: "Computer scientist who co-designed TCP/IP with Bob Kahn; one of the fathers of the internet.",
+      metadata: { birth_date: "1943", nationality: "American", field: "computer science" },
+      periods: [
+        {
+          label: "Stanford and DARPA",
+          start: 1972,
+          end: 1981,
+          description: "Cerf co-designed TCP/IP with Bob Kahn while teaching at Stanford and, at DARPA, funded the groups that built TCP/IP, packet radio and packet satellite networks for the military.",
+        },
+        {
+          label: "MCI and the Internet Society",
+          start: 1982,
+          end: 2004,
+          description: "Cerf led the engineering of MCI Mail, which in 1989 became the first commercial email service connected to the internet, co-founded the Internet Society in 1992, and chaired ICANN from 2000.",
+        },
+        {
+          label: "Google",
+          start: 2005,
+          end: 2026,
+          description: "Cerf was Google's chief internet evangelist from 2005 to 2026, argued for network neutrality before the US Senate, and worked with NASA on an interplanetary internet.",
+        },
+      ],
+    },
+    {
+      slug: "world-wide-web",
+      name: "World Wide Web",
+      type: "invention",
+      wiki: "World Wide Web",
+      description: "The system of linked hypertext pages, addressed by URLs and served over HTTP, through which most people use the internet.",
+      metadata: { invented_date: "1989", place: "CERN, Geneva", field: "computing" },
+      periods: [
+        {
+          label: "CERN",
+          start: 1989,
+          end: 1993,
+          description: "Berners-Lee had the first web browser and server running at CERN by the end of 1990; the web opened to the whole internet in August 1991, and CERN made it royalty-free in April 1993.",
+        },
+        {
+          label: "The public web",
+          start: 1994,
+          end: 2026,
+          description: "After the Mosaic browser of 1993 the web grew into the primary tool billions of people use to find information, shop, bank, learn and talk to one another. It also became a vehicle for tracking by advertisers, misinformation, malware and fraud.",
+        },
+      ],
+    },
+    {
+      slug: "tim-berners-lee",
+      name: "Tim Berners-Lee",
+      type: "person",
+      wiki: "Tim Berners-Lee",
+      description: "Computer scientist who invented the World Wide Web, HTML, URLs and HTTP at CERN and gave them away without patent or royalty.",
+      metadata: { birth_date: "1955", nationality: "English", field: "computer science" },
+      periods: [
+        {
+          label: "CERN",
+          start: 1984,
+          end: 1994,
+          description: "Berners-Lee proposed the web at CERN in March 1989 and wrote the first web browser, web server, HTTP and HTML by the end of 1990, made available with no patent and no royalties.",
+        },
+        {
+          label: "World Wide Web Consortium",
+          start: 1994,
+          end: 2026,
+          description: "Berners-Lee founded and led the W3C at MIT, which set the web's standards, launched the World Wide Web Foundation in 2009, and started the Solid project to give people control of their personal data.",
+        },
+      ],
+    },
+    {
+      slug: "gps",
+      name: "Global Positioning System",
+      type: "invention",
+      wiki: "Global Positioning System",
+      description: "The US satellite navigation system that gives position and time to any receiver on Earth.",
+      metadata: { invented_date: "1973", place: "United States", field: "satellite navigation" },
+      periods: [
+        {
+          label: "Military development",
+          start: 1973,
+          end: 1989,
+          description: "The US Department of Defense began GPS in 1973 and launched the first prototype satellite in 1978; after Korean Air Lines Flight 007 was shot down, the system was opened to civilian use from 1988.",
+        },
+        {
+          label: "Full constellation",
+          start: 1990,
+          end: 1999,
+          description: "GPS guided coalition forces in the 1991 Gulf War and reached its full constellation of 24 satellites in 1993, while Selective Availability held civilian accuracy to 100 metres.",
+        },
+        {
+          label: "Precise positioning for everyone",
+          start: 2000,
+          end: 2026,
+          description: "With Selective Availability switched off in May 2000, GPS came to guide phones, cars, ships, aircraft, farm machinery and self-driving vehicles and to synchronise mobile phone networks. It also aims cruise missiles, precision-guided bombs and artillery shells.",
+        },
+      ],
+    },
+
+    // ---------- Platforms ----------
+    {
+      slug: "television",
+      name: "Television",
+      type: "invention",
+      wiki: "Television",
+      description: "The transmission of moving pictures and sound to receivers in homes, the dominant mass medium of the late twentieth century.",
+      metadata: { invented_date: "1926", place: "London", field: "telecommunication" },
+      periods: [
+        {
+          label: "Mechanical and early electronic television",
+          start: 1925,
+          end: 1945,
+          description: "Baird showed a moving face by television in January 1926 and Farnsworth transmitted the first electronic image in 1927; the BBC began a regular 405-line electronic service in November 1936.",
+        },
+        {
+          label: "Broadcast television",
+          start: 1946,
+          end: 1999,
+          description: "After the Second World War television sets became common in homes, and in the 1950s television was the main medium for shaping public opinion, carrying news, entertainment, sport and advertising, in colour from the mid-1960s. A study of cable television found that it lowered boys' cognitive ability and graduation rates by crowding out more stimulating activities.",
+        },
+        {
+          label: "Digital and streaming television",
+          start: 2000,
+          end: 2026,
+          description: "Digital broadcasts, flat screens and internet streaming replaced analog sets, whose lead-laden tubes became electronic waste; 79 percent of the world's households had a television in 2013.",
+        },
+      ],
+    },
+    {
+      slug: "oxycontin",
+      name: "OxyContin",
+      type: "product",
+      wiki: "OxyContin",
+      description: "Purdue Pharma's extended-release oxycodone painkiller, whose deceptive marketing set off the first wave of the US opioid epidemic.",
+      metadata: { introduced_date: "1996", maker: "Purdue Pharma" },
+      periods: [
+        {
+          label: "Launch and promotion",
+          start: 1996,
+          end: 2006,
+          description: "Purdue sold OxyContin as a twelve-hour opioid, trained its sales staff to tell doctors the risk of addiction was 'less than one percent', and marketed it for chronic pain of every kind; prescriptions soared, and addiction and overdose deaths rose with them in the first wave of the opioid epidemic.",
+          wiki: "Purdue Pharma",
+          sections: ["FDA approval", "Promotion to doctors", "12-hour cycle", "Purdue's awareness of abuse"],
+        },
+        {
+          label: "Guilty pleas and reformulation",
+          start: 2007,
+          end: 2019,
+          description: "Purdue and three of its executives pleaded guilty in 2007 to misbranding OxyContin's addiction risk, and a harder-to-abuse reformulation pushed many people addicted to it to heroin.",
+          wiki: "Purdue Pharma",
+          sections: ["Oxycontin-related lawsuits", "2007 guilty plea"],
+        },
+        {
+          label: "Felony pleas and Knoa Pharma",
+          start: 2020,
+          end: 2026,
+          description: "Purdue pleaded guilty in 2020 to three federal felonies over OxyContin's marketing and was dissolved in 2026, when the sale of its opioids passed to the public benefit company Knoa Pharma.",
+          wiki: "Purdue Pharma",
+          sections: ["Bankruptcy", "2019 and 2020 lawsuits", "2021", "2022–2023 bankruptcy settlement"],
+        },
+      ],
+    },
+    {
+      slug: "purdue-pharma",
+      name: "Purdue Pharma",
+      type: "organization",
+      wiki: "Purdue Pharma",
+      description: "The Sackler family's drug company, maker of OxyContin, which pleaded guilty to federal crimes over its marketing and was dissolved in 2026.",
+      metadata: { founded_date: "1892", dissolved_date: "2026", headquarters: "Stamford, Connecticut", organization_type: "company" },
+      periods: [
+        {
+          label: "Sackler ownership",
+          start: 1952,
+          end: 1995,
+          description: "The Sackler brothers bought the small Purdue Frederick Company in 1952 and from 1984 sold MS Contin, an extended-release morphine.",
+        },
+        {
+          label: "OxyContin",
+          start: 1996,
+          end: 2018,
+          description: "Purdue marketed OxyContin to doctors with claims of an addiction risk below one percent, all-expenses-paid seminars and McKinsey's targeting of the highest prescribers, fuelling the US opioid epidemic; in 2007 it pleaded guilty to misbranding and paid $600 million.",
+        },
+        {
+          label: "Bankruptcy and dissolution",
+          start: 2019,
+          end: 2026,
+          description: "Purdue filed for bankruptcy in 2019, pleaded guilty in 2020 to three federal felonies, and was dissolved in 2026 under an $8 billion settlement, its opioid business passing to Knoa Pharma.",
+        },
+      ],
+    },
+    {
+      slug: "facebook",
+      name: "Facebook",
+      type: "product",
+      wiki: "Facebook",
+      description: "Mark Zuckerberg's social network, the largest in the world, and a channel for misinformation, surveillance and incitement.",
+      metadata: { introduced_date: "2004", maker: "Meta Platforms" },
+      periods: [
+        {
+          label: "College network to social network",
+          start: 2004,
+          end: 2008,
+          description: "Zuckerberg launched TheFacebook at Harvard in February 2004; it opened to everyone aged 13 and over in 2006, added the News Feed, and passed MySpace as the most popular social network.",
+        },
+        {
+          label: "Global platform",
+          start: 2009,
+          end: 2017,
+          description: "Facebook grew to billions of users and helped organise movements such as the Arab Spring, while fake news spread through it. Myanmar's military used it for anti-Rohingya propaganda as more than 700,000 Rohingya fled ethnic cleansing in 2017.",
+        },
+        {
+          label: "Scandals and Meta",
+          start: 2018,
+          end: 2026,
+          description: "The 2018 Cambridge Analytica scandal exposed users' data harvested to influence elections; Facebook, owned by Meta Platforms from 2021, had 3.07 billion monthly users in 2023 and drew criticism over addiction, mental health and hate speech.",
+        },
+      ],
+    },
+    {
+      slug: "google-search",
+      name: "Google Search",
+      type: "product",
+      wiki: "Google Search",
+      description: "Google's web search engine, the most visited website in the world, ranked by PageRank and paid for by advertising.",
+      metadata: { introduced_date: "1998", maker: "Google" },
+      periods: [
+        {
+          label: "PageRank search",
+          start: 1998,
+          end: 2009,
+          description: "Page and Brin's search engine ranked pages by the links pointing to them and became the world's main way of finding information online, paid for by advertising sold against search terms.",
+        },
+        {
+          label: "Dominance and data",
+          start: 2010,
+          end: 2022,
+          description: "Google Search shaped which businesses and news reached people, collected users' data for targeted advertising, and paid Apple to remain the default search engine on its devices.",
+        },
+        {
+          label: "AI answers and the monopoly ruling",
+          start: 2023,
+          end: 2026,
+          description: "Google added generative AI Overviews, which gave some absurd and false answers, and AI Mode, and in 2024 a US federal court ruled that it held an illegal monopoly over search and search advertising; it held 90 percent of the world's search market in 2026.",
+        },
+      ],
+    },
+    {
+      slug: "chatgpt",
+      name: "ChatGPT",
+      type: "product",
+      wiki: "ChatGPT",
+      description: "OpenAI's generative AI chatbot, whose release set off the AI boom of the 2020s.",
+      metadata: { introduced_date: "2022", maker: "OpenAI" },
+      periods: [
+        {
+          label: "Launch and GPT-4",
+          start: 2022,
+          end: 2024,
+          description: "OpenAI released ChatGPT in November 2022 and it reached 100 million monthly users in two months; people used it to write, code, study and seek advice, while it gave plausible false answers and aided cheating and misinformation. Its safety training relied on Kenyan workers paid $1.32 to $2 an hour to label traumatic content, and authors and The New York Times sued over its use of their writing.",
+        },
+        {
+          label: "Agents and mass use",
+          start: 2025,
+          end: 2026,
+          description: "ChatGPT reached 900 million weekly users in February 2026 and added research, image and agent features. Its flattery of users and validation of delusions led to lawsuits alleging it contributed to suicides and violence, and its servers drew heavily on electricity and cooling water.",
+        },
+      ],
+    },
+  ],
+
+  links: [
+    // ---------- The atomic age ----------
+    { from: "nuclear-fission", to: "nuclear-weapon", type: "builds_on", share: 0.3, why: "A fission bomb is an uncontrolled fission chain reaction in uranium-235 or plutonium." },
+    { from: "nuclear-fission", to: "nuclear-power", type: "builds_on", share: 0.3, why: "A power reactor runs a controlled fission chain reaction and makes electricity from its heat." },
+    { from: "j-robert-oppenheimer", to: "manhattan-project", type: "led", share: 0.25, why: "Oppenheimer directed Los Alamos, the project's weapons laboratory; General Leslie Groves directed the project as a whole." },
+    { from: "j-robert-oppenheimer", to: "nuclear-weapon", type: "originated", share: 0.1, why: "Oppenheimer led the scientists who designed the first bombs at Los Alamos." },
+    { from: "manhattan-project", to: "nuclear-weapon", type: "originated", share: 0.4, why: "The project built the first nuclear weapons. Rivals: the German nuclear program, which never came close, and the Soviet program, which tested a bomb in 1949 with help from spies inside the project." },
+    { from: "manhattan-project", to: "nuclear-power", type: "originated", share: 0.2, why: "The project built the first reactors, Chicago Pile-1 and the Hanford production reactors, and laid the foundations of the nuclear navy. Rival: the Soviet program, whose Obninsk plant first fed a grid in 1954." },
+    { from: "westinghouse-electric", to: "nuclear-power", type: "originated", share: 0.1, why: "Westinghouse turned its work on the nuclear navy's pressurised water reactors into commercial power plants and licensed the design to France's EDF and others. Rival: General Electric's boiling water reactor." },
+    { from: "electromagnetic-induction", to: "nuclear-power", type: "builds_on", share: 0.05, why: "A nuclear plant makes electricity with steam turbines driving induction generators." },
+    { from: "manhattan-project", to: "eniac", type: "collaboration", share: 0, why: "Los Alamos, the project's weapons laboratory, used ENIAC's first program in December 1945 to calculate thermonuclear reactions for the hydrogen bomb." },
+
+    // ---------- Computing and light ----------
+    { from: "bell-labs", to: "solar-cell", type: "originated", share: 0.45, why: "Chapin, Fuller and Pearson demonstrated the first practical silicon solar cell at Bell Labs in 1954, after Russell Ohl's junction cell there in 1946. Earlier: Becquerel's 1839 photovoltaic cell and Fritts's 1883 selenium cell." },
+    { from: "bell-labs", to: "laser", type: "originated", share: 0.2, why: "Schawlow and Townes worked out the optical maser at Bell Labs, which won the first laser patent in 1960, and Javan, Bennett and Herriott built the first gas laser there. Rivals: Maiman, who built the first working laser at Hughes, Gould, and Basov and Prokhorov." },
+    { from: "texas-instruments", to: "light-emitting-diode", type: "originated", share: 0.2, why: "Texas Instruments engineers patented efficient infrared emission from a gallium arsenide diode in 1962, the first commercially viable LED. Earlier: Round's electroluminescence of 1907 and Losev's silicon carbide LED of 1927." },
+    { from: "general-electric", to: "light-emitting-diode", type: "originated", share: 0.15, why: "Nick Holonyak at General Electric demonstrated the first visible-light semiconductor diode in October 1962, the forerunner of commercial visible LEDs." },
+    { from: "shuji-nakamura", to: "light-emitting-diode", type: "originated", share: 0.1, why: "Nakamura's bright blue LED of 1993 completed the range of colours that made white LEDs and full-colour displays possible. Rivals: Isamu Akasaki and Hiroshi Amano, who made the first p-type gallium nitride and shared his Nobel Prize." },
+    { from: "light-emitting-diode", to: "led-lamp", type: "builds_on", share: 0.45, why: "An LED lamp is light-emitting diodes, packaged with a driver and heat sink to replace a bulb." },
+    { from: "shuji-nakamura", to: "led-lamp", type: "originated", share: 0.2, why: "Nakamura's blue LED, converted to white by a phosphor, is the key to white LED lighting. Rivals: Akasaki and Amano, co-laureates of the 2014 Nobel Prize in Physics for efficient blue LEDs." },
+    { from: "john-goodenough", to: "lithium-ion-battery", type: "originated", share: 0.25, why: "Goodenough found the lithium cobalt oxide cathode in 1980, which doubled the capacity of lithium cells. Rivals: Stanley Whittingham, whose earlier cell he built on, and Akira Yoshino, who made the first safe working cell; the three shared the 2019 Nobel Prize in Chemistry." },
+    { from: "transistor", to: "television", type: "builds_on", share: 0.05, why: "Transistors replaced vacuum tubes in television sets, beginning with the portable Philco Safari of 1959, making sets smaller and cheaper." },
+
+    // ---------- Medicine and farming ----------
+    { from: "jonas-salk", to: "polio-vaccine", type: "originated", share: 0.3, why: "Salk's team developed the first widely used polio vaccine, licensed in 1955. Rivals: Albert Sabin, whose oral vaccine replaced Salk's in most countries from 1961 and drove eradication, Hilary Koprowski's live vaccine of 1950, and Pierre Lépine in Paris." },
+    { from: "norman-borlaug", to: "high-yielding-variety", type: "originated", share: 0.35, why: "Borlaug bred the semi-dwarf wheats that began the Green Revolution, from Gonjiro Inazuka's Norin 10. Rivals: the International Rice Research Institute, which bred IR8 rice in 1966, and Yuan Longping, the father of hybrid rice." },
+    { from: "haber-process", to: "high-yielding-variety", type: "builds_on", share: 0.15, why: "Semi-dwarf varieties were bred to carry heavy doses of synthetic nitrogen fertiliser without their stalks collapsing." },
+
+    // ---------- Freight ----------
+    { from: "malcom-mclean", to: "intermodal-container", type: "originated", share: 0.4, why: "McLean built the first successful container shipping line and gave his standard container patents royalty-free to the ISO. Earlier: European railway containers of the 1920s and 1930s and the US Army's Transporter of 1948; Matson began container service two years after him." },
+
+    // ---------- Networks ----------
+    { from: "arpanet", to: "internet-protocol-suite", type: "originated", share: 0.2, why: "TCP/IP was developed under ARPA to join the ARPANET to packet radio and satellite networks, and first ran in production across it in 1983." },
+    { from: "vint-cerf", to: "internet-protocol-suite", type: "originated", share: 0.3, why: "Cerf co-designed TCP/IP with Bob Kahn, who shares the credit equally; their design drew on Louis Pouzin's CYCLADES network. Rival: the OSI protocols." },
+    { from: "vint-cerf", to: "arpanet", type: "collaboration", share: 0, why: "Cerf worked in Leonard Kleinrock's UCLA group, which connected the first ARPANET nodes, and helped write its host-to-host protocol." },
+    { from: "internet-protocol-suite", to: "world-wide-web", type: "builds_on", share: 0.2, why: "The web runs on the internet: HTTP is carried over TCP/IP." },
+    { from: "tim-berners-lee", to: "world-wide-web", type: "originated", share: 0.5, why: "Berners-Lee proposed the web and wrote its first browser, server, HTTP and HTML at CERN, with Robert Cailliau. Earlier hypertext: Ted Nelson's Xanadu and Apple's HyperCard; rival: Gopher, which faded after 1994." },
+    { from: "world-wide-web", to: "facebook", type: "builds_on", share: 0.15, why: "Facebook began as a website, built of web pages, links and browsers." },
+    { from: "world-wide-web", to: "google-search", type: "builds_on", share: 0.2, why: "Google Search indexes the web and ranks its pages by the hyperlinks between them." },
+    { from: "world-wide-web", to: "chatgpt", type: "builds_on", share: 0.1, why: "The GPT models behind ChatGPT were trained largely on text gathered from the web." },
+    { from: "google-search", to: "chatgpt", type: "rivalry", share: 0, why: "Google executives declared a 'code red' in December 2022, fearing ChatGPT's answers threatened Google Search, and answered with Bard, AI Overviews and AI Mode." },
+    { from: "internet-protocol-suite", to: "iphone", type: "embodies", share: 0.06, why: "The iPhone reaches the internet over TCP/IP, the basis of its browser, mail and App Store." },
+    { from: "world-wide-web", to: "iphone", type: "embodies", share: 0.05, why: "The iPhone's Safari browser brought the full web, not a cut-down mobile version, to a phone." },
+    { from: "gps", to: "iphone", type: "embodies", share: 0.04, why: "Every iPhone since the iPhone 3G of 2008 has a GPS receiver, the basis of its maps and location services." },
+
+    // ---------- Platforms ----------
+    { from: "purdue-pharma", to: "oxycontin", type: "made", share: 0.5, why: "Purdue developed OxyContin, a twelve-hour controlled-release oxycodone, won FDA approval in 1995 without long-term studies of its addictiveness, and marketed and sold it from 1996." },
+  ],
+};
