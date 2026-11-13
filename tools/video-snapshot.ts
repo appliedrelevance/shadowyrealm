@@ -2,7 +2,7 @@
  * Freeze a site's realm for the video project: fetch `/api/realm` once and write
  * it, with the site's time axis, as `video/assets/realm-data.js`, together with
  * the media the race shows: each board entity's Wikimedia picture and its credit,
- * the reason a leader leads, and where the most-credited entity's credit comes from.
+ * and the reason a leader leads.
  *
  * A HyperFrames render seeks frame by frame and must not fetch anything, so the
  * composition reads this file through a <script> tag and the pictures from
@@ -15,7 +15,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { linkLabels, siteFor } from "../src/sites";
+import { siteFor } from "../src/sites";
 
 interface RealmEntity {
   slug: string;
@@ -42,7 +42,6 @@ interface Realm {
 
 interface Profile {
   score: { profile: { own: { benefit: Record<string, number>; harm: Record<string, number> } } };
-  contributors: { slug: string; share: number; magnitude: number }[];
 }
 
 const key = process.argv[2] ?? "shadowyrealm";
@@ -117,34 +116,12 @@ const River = g.River as {
   board: (
     realm: unknown,
     film: unknown,
-  ) => { contenders: () => Set<string>; firstLeads: () => { e: { slug: string } }[] };
-  creditHero: (realm: unknown) => { slug: string; credited_magnitude: number };
+  ) => { slots: number; contenders: () => Set<string>; firstLeads: () => { e: { slug: string } }[] };
 };
 const raceBoard = River.board(snapshot, River.FILMS.race);
 const contenders = raceBoard.contenders();
 const leaders = raceBoard.firstLeads().map((l) => l.e.slug);
-const allTime = [...realm.entities].sort((a, b) => b.total_magnitude - a.total_magnitude).slice(0, 5);
-
-// ---- the credit beat: the hero's contributors, and the sentence on its link to the largest ----
-const hero = River.creditHero(snapshot);
-const heroProfile = await getJson<Profile>(`${site.brand.origin}/api/entities/${hero.slug}`);
-const contributors = heroProfile.contributors.map((c) => ({ slug: c.slug, magnitude: c.magnitude }));
-const summed = contributors.reduce((sum, c) => sum + c.magnitude, 0);
-if (Math.abs(summed - hero.credited_magnitude) > 1) {
-  throw new Error(`${hero.slug}'s contributors sum to ${summed}, its credited magnitude is ${hero.credited_magnitude}`);
-}
-const top = contributors[0];
-const direct = realm.links.find((l) => l.source === hero.slug && l.target === top.slug);
-if (!direct) throw new Error(`${hero.slug} has no direct link to its largest contributor, ${top.slug}`);
-snapshot.credit = {
-  slug: hero.slug,
-  contributors,
-  link: {
-    target: top.slug,
-    label: linkLabels(site, direct.relationship_type, bySlug.get(top.slug)!.entity_type).cause,
-    description: direct.description,
-  },
-};
+const allTime = [...realm.entities].sort((a, b) => b.total_magnitude - a.total_magnitude).slice(0, raceBoard.slots);
 
 // ---- why each leader leads: the two largest areas of its own profile ----
 const dimensionLabel = new Map(site.scoring.dimensions.map((d) => [d.key, d.label]));
@@ -162,7 +139,7 @@ for (const slug of leaders) {
 }
 
 // ---- pictures: Wikimedia thumbnails, with each file's author and licence ----
-const shown = new Set<string>([...contenders, ...allTime.map((e) => e.slug), hero.slug, ...contributors.slice(0, 3).map((c) => c.slug)]);
+const shown = new Set<string>([...contenders, ...allTime.map((e) => e.slug)]);
 interface FileRef {
   slug: string;
   host: string;
@@ -278,5 +255,5 @@ writeFileSync(out, `// Written by tools/video-snapshot.ts from ${url}. Do not ed
 const pictures = Object.values(media).filter((m) => (m as { image: string | null }).image).length;
 console.log(`${snapshot.entities.length} entities, ${realm.links.length} links, as of ${realm.as_of_year} → ${out.pathname}`);
 console.log(`${shown.size} entities shown in the race, ${pictures} pictures → ${imagesDir.pathname}`);
-console.log(`credit beat: ${hero.slug}, ${contributors.length} contributors; ${leaders.length} first leaders`);
+console.log(`${leaders.length} first leaders; ${raceBoard.slots} places on the board`);
 if (withheld.length > 0) console.log(`withheld as non-free: ${withheld.join("; ")}`);

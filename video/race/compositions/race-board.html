@@ -17,12 +17,8 @@
       <div data-hf-id="hf-rjzp" id="board-year" class="panel-year">3500 BCE</div>
       <div data-hf-id="hf-vrgm" id="board-era" class="panel-era"></div>
       <div data-hf-id="hf-secu" id="board-caption" class="panel-caption">Most influential that year</div>
-      <div data-hf-id="hf-xamh" id="board-rank-1" class="board-rank" style="top: 380px">1</div>
-      <div data-hf-id="hf-mmtf" id="board-rank-2" class="board-rank" style="top: 472px">2</div>
-      <div data-hf-id="hf-yb9t" id="board-rank-3" class="board-rank" style="top: 564px">3</div>
-      <div data-hf-id="hf-ly1n" id="board-rank-4" class="board-rank" style="top: 656px">4</div>
-      <div data-hf-id="hf-ebxd" id="board-rank-5" class="board-rank" style="top: 748px">5</div>
-      <div data-hf-id="hf-hybh" id="board-rows" class="board-rows" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div id="board-ranks"></div>
+      <div data-hf-id="hf-hybh" id="board-rows" class="board-rows" data-layout-allow-overlap data-layout-allow-occlusion data-layout-allow-overflow></div>
     </div>
   </div>
   <script>
@@ -62,13 +58,13 @@
       const year = document.getElementById("board-year");
       const era = document.getElementById("board-era");
       const header = [year, document.getElementById("board-caption")];
-      const ranks = Array.from({ length: SLOTS }, (_, k) => document.getElementById(`board-rank-${k + 1}`));
+      const ranks = kit.makeRanks(document.getElementById("board-ranks"), SLOTS);
       const eraTimes = ERAS.map((x) => timeAtFront(ax.yearToUnit(x.year)));
 
       const draw = (t) => {
         const f = frontAt(t);
-        // Arrives with the front; gives the panel to the tally when the credit beat begins.
-        const headerOut = ramp(t, film.credit.at - 0.2, 0.2, ease.in2);
+        // Arrives with the front; gives the panel to the all-time tally.
+        const headerOut = ramp(t, film.allTimeAt - 0.2, 0.2, ease.in2);
         board.style.opacity = ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut).toFixed(3);
         year.textContent = ax.formatYear(yearAt(ax, f));
         for (const el of [...header, ...ranks]) {
@@ -86,7 +82,7 @@
         era.style.filter = `blur(${(6 * (1 - enter) + 6 * leave).toFixed(2)}px)`;
 
         // Standings now, and everyone's rank summed over the two windows (off the board counts as 7).
-        const rowsShown = 1 - ramp(t, film.credit.at, 0.4, ease.in2);
+        const rowsShown = 1 - ramp(t, film.allTimeAt - 0.4, 0.4, ease.in2);
         const visible = new Set();
         if (rowsShown > 0) {
           const now = race.standings(t);

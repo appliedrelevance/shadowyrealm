@@ -16,12 +16,13 @@
     ),
   };
 
-  // Five rows 92 px apart; a name gets 376 px beside its picture; a bar 376 px, or 256 beside a value.
+  // Ten rows 66 px apart from y 380; a name gets 390 px beside its picture; a bar 390 px, or 270
+  // beside a value.
   const ROW_TOP = 380;
-  const PITCH = 92;
-  const NAME_WIDTH = 376;
-  const BAR_RACE = 376;
-  const BAR_TOTAL = 256;
+  const PITCH = 66;
+  const NAME_WIDTH = 390;
+  const BAR_RACE = 390;
+  const BAR_TOTAL = 270;
 
   window.RaceKit = (realm) => {
     const bySlug = new Map(realm.entities.map((e) => [e.slug, e]));
@@ -56,7 +57,7 @@
       return ctx.measureText(text).width;
     };
     const fit = (name) => {
-      const font = '700 30px "Inter"';
+      const font = '700 28px "Inter"';
       if (widthOf(name, font) <= NAME_WIDTH) return name;
       const words = name.split(" ");
       while (words.length > 1) {
@@ -87,6 +88,16 @@
         shown: false,
       };
     };
+    // The rank numbers down the left of the rows, 1 to n.
+    const makeRanks = (parent, n) =>
+      Array.from({ length: n }, (_, k) => {
+        const el = document.createElement("div");
+        el.className = "board-rank";
+        el.style.top = `${ROW_TOP + k * PITCH}px`;
+        el.textContent = String(k + 1);
+        parent.appendChild(el);
+        return el;
+      });
     const setBar = (row, benefit, harm, scale, width) => {
       row.b.style.width = `${((benefit / scale) * width).toFixed(1)}px`;
       row.h.style.width = `${((harm / scale) * width).toFixed(1)}px`;
@@ -102,6 +113,7 @@
       picture,
       widthOf,
       makeRow,
+      makeRanks,
       setBar,
       ready: () => Promise.all(decoding),
     };

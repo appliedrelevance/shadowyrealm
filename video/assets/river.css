@@ -44,16 +44,34 @@
   font-weight: 400;
   fill: var(--color-ink-muted);
 }
-.river-thread {
-  fill: none;
-  stroke: var(--color-ink);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
 .river-callout-leader {
   stroke: var(--color-ink-muted);
   stroke-width: 1.5;
 }
 .river-measure {
   font-family: "Inter", sans-serif;
+}
+/* The race shades people and events within benefit and harm; organizations keep the site's colours.
+   The shades are tokens on the race's :root. */
+.river-band-b.t-person {
+  fill: var(--color-benefit-person);
+}
+.river-band-b.t-event {
+  fill: var(--color-benefit-event);
+}
+.river-band-h.t-person {
+  fill: var(--color-harm-person);
+}
+.river-band-h.t-event {
+  fill: var(--color-harm-event);
+}
+/* Era columns, behind the river, and an era's name in the callout slot. */
+.river-era {
+  fill: var(--color-ink);
+}
+.river-era-name {
+  font-family: "Inter", sans-serif;
+  font-size: 40px;
+  font-weight: 600;
+  fill: var(--color-ink-2);
 }

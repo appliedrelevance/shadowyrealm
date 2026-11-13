@@ -106,13 +106,12 @@
       const { FILMS, ease, ramp } = River;
       const realm = window.REALM;
       const film = FILMS.race;
-      const bySlug = new Map(realm.entities.map((e) => [e.slug, e]));
       const kit = window.RaceKit(realm);
 
-      // Each card holds for its words: 0.5 s plus 0.3 s a word. Too many words for the time or the
-      // three lines: the description goes, the type size never does.
-      const words = (text) => text.split(/\s+/).filter(Boolean).length;
-      const readTime = (n) => 0.5 + 0.3 * n;
+      // Each card holds for its words: 0.5 s plus 0.3 s a word (River.readTime), at 28 px in at
+      // most three lines. A sentence that will not fit three lines stops the build: the type size
+      // never shrinks, and the river's names are paced around every card's words.
+      const { wordsIn: words, readTime } = River;
       const BODY_LINES = 3;
       const cardEl = document.getElementById("card");
       const picsEl = document.getElementById("card-pics");
@@ -132,40 +131,12 @@
       };
 
       // A card for each entity the first time it leads the board: the two largest areas of its own
-      // profile, and its description from the site.
-      const cards = [];
-      const leads = River.board(realm, film).firstLeads();
-      leads.forEach((lead, i) => {
-        const e = lead.e;
-        const m = kit.mediaOf(e.slug);
-        if (!m.reason) throw new Error(`The snapshot has no reason for leader ${e.slug}: run bun tools/video-snapshot.ts`);
-        const at = lead.at + 0.6;
-        const next = i + 1 < leads.length ? leads[i + 1].at + 0.6 : film.credit.at;
-        const room = Math.min(12, next - 0.4 - at);
-        const card = { slug: e.slug, title: e.name, reasons: m.reason, body: e.description, at };
-        const kickerWords = words(card.title) + card.reasons.reduce((n, r) => n + words(r.text), 0);
-        if (room < readTime(kickerWords + words(card.body)) || !fits(card)) card.body = null;
-        const need = readTime(kickerWords + (card.body ? words(card.body) : 0));
-        if (room < need) return;
-        card.until = at + Math.min(room, Math.max(need + 1.5, 5));
-        cards.push(card);
-      });
-
-      // And one in the credit beat: the hero's link to its largest consequence, in the site's words.
-      const credit = River.creditRows(realm, film);
-      const heroCard = {
-        slug: credit.hero.slug,
-        title: `${credit.link.label} ${bySlug.get(credit.link.target).name}`,
-        reasons: [],
-        body: credit.link.description,
-        at: credit.rows[1].at + 0.2,
-        until: film.credit.end - 0.2,
-      };
-      if (!fits(heroCard)) throw new Error(`The link sentence for ${heroCard.slug} runs past ${BODY_LINES} lines`);
-      if (heroCard.until - heroCard.at < readTime(words(heroCard.title) + words(heroCard.body))) {
-        throw new Error("The credit card is not on screen long enough to read");
+      // profile, and its description from the site, queued so one is read at a time.
+      const { cards } = River.readingPlan(realm, film);
+      for (const card of cards) {
+        if (!fits(card)) throw new Error(`The description for ${card.slug} runs past ${BODY_LINES} lines`);
       }
-      cards.push(heroCard);
+
       kickerEl.innerHTML = "";
       bodyEl.textContent = "";
 

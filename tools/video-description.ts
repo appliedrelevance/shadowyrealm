@@ -29,7 +29,7 @@ const realm = g.REALM as {
   media: Record<string, { image: string | null; credit: Credit | null; withheld?: string }>;
 };
 const River = g.River as {
-  FILMS: { race: { credit: { at: number } } & Record<string, unknown> };
+  FILMS: { race: { allTimeAt: number } & Record<string, unknown> };
   ERAS: { year: number; name: string }[];
   axis: (realm: unknown) => { yearToUnit: (year: number) => number };
   clock: (film: unknown) => { timeAtFront: (u: number) => number };
@@ -51,12 +51,12 @@ if (process.argv.includes("--credits")) {
 }
 
 // The film opens on the first era's title, so that chapter starts at 0:00. The last chapter opens
-// with the credit beat, which leads into the top three.
+// as the board turns to all time.
 const chapters = River.ERAS.map((era, i) => ({
   at: i === 0 ? 0 : timeAtFront(ax.yearToUnit(era.year)),
   name: era.name,
 }));
-chapters.push({ at: film.credit.at, name: "The top three of all time" });
+chapters.push({ at: film.allTimeAt, name: "The top ten of all time" });
 
 const stamp = (seconds: number) => {
   const s = Math.floor(seconds);

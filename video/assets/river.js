@@ -26,14 +26,21 @@
       axisIn: 0.15,
       axisDur: 2.2,
       sweep0: 4.2,
-      sweep1: 272.2,
-      calloutGap: 4.0,
-      calloutHold: 3.0,
-      lastCallout: 268.0,
-      // After the sweep, where the most-credited entity's score comes from: one row of the
-      // breakdown lands every `step` seconds, each lighting its bands and drawing its thread back.
-      credit: { at: 272.8, end: 280.4, step: 0.8 },
-      // Then the board turns from that year to all time, before the top three are lit.
+      sweep1: 280.2,
+      // Calm pacing, for casual viewing: one thing to read at a time. A name lands every 3 to 4 s,
+      // but waits while a leader's card or an era's name is being read.
+      pacing: "calm",
+      calloutGap: 3.0,
+      calloutWindow: 1.0,
+      calloutHold: 2.6,
+      lastCallout: 276.0,
+      // A faint column for every other era, a brighter one for the era at the front, and the era's
+      // name above the river as the front enters it. The bands are shaded by entity type.
+      eras: true,
+      typeShades: true,
+      // After the sweep the board turns from that year to all time, before the top three are lit.
+      // The board shows the top ten.
+      boardSlots: 10,
       allTimeAt: 281.0,
       ranksAt: [282.6, 285.4, 288.2],
       rankHold: 2.3,
@@ -134,6 +141,7 @@
   // ---- the race's leaderboard: every entity's own level in the year at the front, ranked ----
   const BOARD_SLOTS = 5;
   function board(realm, film) {
+    const slots = film.boardSlots ?? BOARD_SLOTS;
     const ax = axis(realm);
     const { frontAt } = clock(film);
     const N = ax.buckets;
@@ -160,7 +168,7 @@
         if (b + h > 0.05) rows.push({ e, b, h, total: b + h });
       }
       rows.sort((x, y) => y.total - x.total || x.e.name.localeCompare(y.e.name));
-      return rows.slice(0, BOARD_SLOTS + 1);
+      return rows.slice(0, slots + 1);
     };
     // The first time each entity leads, when it keeps the lead at least `hold` seconds.
     const firstLeads = (hold = 3, step = 0.1) => {
@@ -190,35 +198,62 @@
       }
       return slugs;
     };
-    return { slots: BOARD_SLOTS, levelAt, bucketAt, standings, firstLeads, contenders };
+    return { slots, levelAt, bucketAt, standings, firstLeads, contenders };
   }
 
-  // ---- the finale's credit: the entity whose score is most credit, and where that credit comes from ----
-  // The hero is chosen from the data; its contributors are frozen in realm.credit by the snapshot tool.
-  const creditHero = (realm) =>
-    [...realm.entities].sort((a, b) => b.credited_magnitude - a.credited_magnitude || a.slug.localeCompare(b.slug))[0];
-  function creditRows(realm, film) {
-    const bySlug = new Map(realm.entities.map((e) => [e.slug, e]));
-    const credit = realm.credit;
-    const hero = bySlug.get(credit.slug);
-    const named = credit.contributors.slice(0, 3);
-    const rest = credit.contributors.slice(3);
-    const rows = [
-      { slugs: [hero.slug], entity: hero, name: hero.name, value: hero.own_magnitude, own: true },
-      ...named.map((c) => ({ slugs: [c.slug], entity: bySlug.get(c.slug), name: bySlug.get(c.slug).name, value: c.magnitude })),
-    ];
-    if (rest.length > 0) {
-      rows.push({
-        slugs: rest.map((c) => c.slug),
-        entity: null,
-        name: `${rest.length} more`,
-        value: rest.reduce((sum, c) => sum + c.magnitude, 0),
-      });
-    }
-    rows.forEach((r, k) => {
-      r.at = film.credit.at + 0.5 + k * film.credit.step;
+
+  // ---- reading: a text holds 0.5 s plus 0.3 s a word, near the BBC's subtitle pace ----
+  const wordsIn = (text) => (text ?? "").split(/\s+/).filter((w) => w && w !== "·").length;
+  const readTime = (n) => 0.5 + 0.3 * n;
+
+  // ---- the race's reading plan: what lands to be read, one thing at a time ----
+  // Era names: each era after the first (the intro is on screen then) is named above the river 0.2 s
+  // after the front enters it, holding for its words.
+  // Leader cards: one the first time each entity leads the board. Each waits until the last has been
+  // read, plus a 1 s rest, and must land while its entity still leads. An era's name in the way: the
+  // card waits for it when that costs at most 3.5 s; otherwise that era is named in the panel only.
+  // A card holds for its words plus 1.5 s (at least 5 s, at most 12 s) and leaves 0.4 s before the next.
+  const ERA_WAIT = 3.5;
+  function readingPlan(realm, film) {
+    const ax = axis(realm);
+    const { timeAtFront } = clock(film);
+    const eraLabels = !film.eras
+      ? []
+      : ERAS.map((era, i) => {
+          const next = ERAS[i + 1];
+          const name = era.name;
+          const meta = `${ax.formatYear(era.year)} to ${next ? ax.formatYear(next.year) : "today"}`;
+          const at = timeAtFront(ax.yearToUnit(era.year)) + 0.2;
+          const read = readTime(wordsIn(name) + wordsIn(meta));
+          return { i, name, meta, at, readEnd: at + read, hold: Math.max(film.calloutHold, read), shown: i > 0 };
+        });
+    const leads = board(realm, film).firstLeads();
+    const cards = [];
+    let free = -Infinity;
+    leads.forEach((lead, i) => {
+      const e = lead.e;
+      const reasons = realm.media[e.slug]?.reason;
+      if (!reasons) throw new Error(`The snapshot has no reason for leader ${e.slug}: run bun tools/video-snapshot.ts`);
+      const read = readTime(wordsIn(e.name) + reasons.reduce((n, r) => n + wordsIn(r.text), 0) + wordsIn(e.description));
+      let at = Math.max(lead.at + 0.6, free);
+      for (const label of eraLabels) {
+        if (!label.shown || !(label.at - 0.5 < at + read && at < label.readEnd + 0.5)) continue;
+        const wait = label.readEnd + 0.5 - at;
+        if (wait <= ERA_WAIT) at += wait;
+        else label.shown = false;
+      }
+      const leadEnd = i + 1 < leads.length ? leads[i + 1].at : film.allTimeAt;
+      if (at >= leadEnd) throw new Error(`${e.slug}'s card would land after it lost the lead (${at.toFixed(1)} s)`);
+      cards.push({ slug: e.slug, title: e.name, reasons, body: e.description || null, at, readEnd: at + read });
+      free = at + read + 1.0;
     });
-    return { hero, rows, link: credit.link };
+    cards.forEach((card, i) => {
+      const next = i + 1 < cards.length ? cards[i + 1].at : film.allTimeAt;
+      const read = card.readEnd - card.at;
+      card.until = Math.min(card.at + Math.min(12, Math.max(read + 1.5, 5)), next - 0.4);
+      if (card.until < card.readEnd) throw new Error(`The card for ${card.slug} leaves before its words are read`);
+    });
+    return { cards, eraLabels };
   }
 
   /**
@@ -241,12 +276,12 @@
       return el;
     };
     const world = make("g", {}, svg);
+    const eraGroup = film.eras ? make("g", { class: "river-eras" }, world) : null;
     const gridGroup = make("g", {}, world);
     const bandsGroup = make("g", { class: "river-bands" }, world);
     const spotGroup = make("g", { class: "river-spot", opacity: 0 }, world);
     const axisLine = make("line", { class: "river-axis", x1: X0, y1: MID, x2: X0, y2: MID }, world);
     const front = make("line", { class: "river-front", x1: X0, y1: RULE_TOP, x2: X0, y2: RULE_BOTTOM, opacity: 0 }, world);
-    const threadGroup = make("g", { class: "river-threads" }, world);
     const tickGroup = make("g", {}, world);
     const calloutGroup = make("g", { opacity: 0 }, svg);
     const calloutLeader = make("line", { class: "river-callout-leader", x1: 0, y1: 236, x2: 0, y2: 250 }, calloutGroup);
@@ -283,8 +318,10 @@
         layer.h1.push(harmBase[i]);
       }
       const g = make("g", { opacity: "0.92" }, bandsGroup);
-      layer.benefitPath = make("path", { class: "river-band-b", d: "" }, g);
-      layer.harmPath = make("path", { class: "river-band-h", d: "" }, g);
+      // With type shades, people and events take their own shade of benefit and harm (river.css).
+      const type = film.typeShades ? ` t-${entity.entity_type}` : "";
+      layer.benefitPath = make("path", { class: `river-band-b${type}`, d: "" }, g);
+      layer.harmPath = make("path", { class: `river-band-h${type}`, d: "" }, g);
       return layer;
     });
     const columnTop = benefitBase.map((b, i) => Math.max(b, harmBase[i]));
@@ -313,22 +350,83 @@
       if (ticks.length > 0 && ticks[ticks.length - 1].px - px < 150) continue;
       const label = ax.formatYear(year);
       const w = widthOf(label, 28, 400);
-      const line = make("line", { class: "river-grid", x1: px, x2: px, y1: RULE_TOP, y2: RULE_BOTTOM, opacity: 0 }, gridGroup);
+      // With era columns, the eras' edges are the river's verticals and the years keep only labels.
+      const line = film.eras
+        ? null
+        : make("line", { class: "river-grid", x1: px, x2: px, y1: RULE_TOP, y2: RULE_BOTTOM, opacity: 0 }, gridGroup);
       const text = make("text", { class: "river-tick-label", x: px, y: TICK_Y, opacity: 0 }, tickGroup);
       text.textContent = label;
       ticks.push({ u, px, w, at: timeAtFront(u), line, text });
     }
 
+    // ---- eras: a faint column for every other era, a brighter one for the era at the front, and
+    // each era's name and years in the callout slot as the front enters it, when the reading plan
+    // gives it the slot ----
+    const plan = film.pacing === "calm" || film.eras ? readingPlan(realm, film) : null;
+    const eraCols = !film.eras
+      ? []
+      : ERAS.map((era, i) => {
+          const u0 = ax.yearToUnit(era.year);
+          const u1 = i + 1 < ERAS.length ? ax.yearToUnit(ERAS[i + 1].year) : 1;
+          const label = plan.eraLabels[i];
+          return {
+            i,
+            u0,
+            u1,
+            enter: timeAtFront(u0),
+            leave: u1 < 1 ? timeAtFront(u1) : film.sweep1,
+            label: label.shown ? label : null,
+            rect: make("rect", { class: "river-era", x: X0, y: RULE_TOP, width: 0, height: RULE_BOTTOM - RULE_TOP, opacity: 0 }, eraGroup),
+          };
+        });
+    const eraLabels = eraCols.filter((c) => c.label);
+    const eraLabelGroup = film.eras ? make("g", { opacity: 0 }, svg) : null;
+    const eraName = film.eras ? make("text", { class: "river-era-name", x: 0, y: 178 }, eraLabelGroup) : null;
+    const eraMeta = film.eras ? make("text", { class: "river-callout-meta", x: 0, y: 218 }, eraLabelGroup) : null;
+
     // ---- callouts: the biggest entity (own influence) starting in each gap of the sweep ----
+    const labelOf = (e) => {
+      const kind = e.entity_type.charAt(0).toUpperCase() + e.entity_type.slice(1);
+      return e.first_year === null ? kind : `${kind} · ${ax.formatSpan(e.first_year, e.last_year ?? e.first_year)}`;
+    };
     const callouts = [];
     const candidates = layers
       .map((layer) => ({ layer, u: ax.bucketUnit(layer.entity.curve.from) }))
       .filter((c) => c.u > 0.008)
       .sort((a, b) => b.layer.entity.own_magnitude - a.layer.entity.own_magnitude);
-    for (const c of candidates) {
-      const at = timeAtFront(c.u + SWELL * 0.35);
-      if (at > film.lastCallout) continue;
-      if (callouts.every((p) => Math.abs(p.at - at) >= film.calloutGap)) callouts.push({ ...c, at, hold: film.calloutHold });
+    if (film.pacing === "calm") {
+      // One thing to read at a time. A name never lands while a leader's card is being read (from
+      // 0.5 s before it lands until its words are read) or an era's name is up (1 s either side),
+      // nor within 1 s of a card. Otherwise the next name is the biggest entity starting gap to
+      // gap + window seconds after the last, among those whose label reads within the hold.
+      const { cards } = plan;
+      const blocked = [
+        ...cards.map((c) => [c.at - 0.5, c.readEnd]),
+        ...eraLabels.map((c) => [c.label.at - 1.0, c.label.at + c.label.hold + 1.0]),
+      ];
+      const pool = candidates
+        .map((c) => ({ ...c, at: timeAtFront(c.u + SWELL * 0.35) }))
+        .filter((c) => c.at <= film.lastCallout && readTime(wordsIn(c.layer.entity.name) + wordsIn(labelOf(c.layer.entity))) <= film.calloutHold)
+        .filter((c) => !blocked.some(([a, b]) => c.at + film.calloutHold > a && c.at < b))
+        .filter((c) => !cards.some((card) => Math.abs(card.at - c.at) < 1));
+      let last = -Infinity;
+      for (let t = film.sweep0 + 0.5; t < film.lastCallout; ) {
+        const lo = Math.max(t, last + film.calloutGap);
+        const pick = pool.find((c) => c.at >= lo && c.at <= lo + film.calloutWindow);
+        if (!pick) {
+          t += 0.5;
+          continue;
+        }
+        callouts.push({ ...pick, hold: film.calloutHold });
+        last = pick.at;
+        t = pick.at;
+      }
+    } else {
+      for (const c of candidates) {
+        const at = timeAtFront(c.u + SWELL * 0.35);
+        if (at > film.lastCallout) continue;
+        if (callouts.every((p) => Math.abs(p.at - at) >= film.calloutGap)) callouts.push({ ...c, at, hold: film.calloutHold });
+      }
     }
     callouts.sort((a, b) => a.at - b.at);
 
@@ -339,32 +437,10 @@
       callouts.push({ layer, u: ax.bucketUnit(layer.entity.curve.from), at, hold: film.rankHold, rank: i + 1 });
     });
 
-    // ---- the credit beat: the hero named on the river, its breakdown's bands lit row by row, and a
-    // thread from each consequence back to it (none where the two start within a few pixels) ----
-    const credit = film.credit ? creditRows(realm, film) : null;
-    const threads = [];
-    if (credit) {
-      const heroLayer = layerOf.get(credit.hero.slug);
-      const at = film.credit.at + 0.3;
-      callouts.push({ layer: heroLayer, u: ax.bucketUnit(heroLayer.entity.curve.from), at, hold: film.credit.end - 0.6 - at });
-      credit.rows.forEach((row, k) => {
-        row.layers = row.slugs.map((slug) => {
-          const layer = layerOf.get(slug);
-          if (!layer) throw new Error(`The credit breakdown names ${slug}, which has no band on the river`);
-          return layer;
-        });
-        if (k === 0) return;
-        for (const layer of row.layers) {
-          if (Math.abs(x(ax.bucketUnit(layer.entity.curve.from)) - x(ax.bucketUnit(heroLayer.entity.curve.from))) < 12) continue;
-          threads.push({ from: layer, to: heroLayer, at: row.at, path: make("path", { class: "river-thread", d: "", opacity: 0 }, threadGroup) });
-        }
-      });
-    }
     const total = realm.entities.length.toLocaleString("en-US");
     for (const c of callouts) {
       const e = c.layer.entity;
-      const kind = e.entity_type.charAt(0).toUpperCase() + e.entity_type.slice(1);
-      const span = e.first_year === null ? kind : `${kind} · ${ax.formatSpan(e.first_year, e.last_year ?? e.first_year)}`;
+      const span = labelOf(e);
       c.name = e.name;
       c.meta = c.rank ? `No. ${c.rank} of ${total} · ${span}` : span;
       if (c.rank && film.rankYears) {
@@ -432,17 +508,9 @@
         layer.harmPath.setAttribute("d", bandPath(layer, layer.h0, layer.h1, last, -1, scale, v));
         layer.drawn = true;
       }
-      // The bands lit now: the callout's, and in the credit beat every row that has landed.
+      // The band lit now: the callout's.
       const spots = new Map();
       if (callout && lit > 0) spots.set(callout.layer, lit);
-      if (credit) {
-        const leave = ramp(t, film.credit.end - 0.5, 0.4, ease.inOut2);
-        for (const row of credit.rows) {
-          const rowLit = ramp(t, row.at, 0.45, ease.inOut2) * (1 - leave);
-          if (rowLit <= 0) continue;
-          for (const layer of row.layers) spots.set(layer, Math.max(spots.get(layer) ?? 0, rowLit));
-        }
-      }
       let dim = 0;
       for (const amount of spots.values()) dim = Math.max(dim, amount);
       bandsGroup.setAttribute("opacity", (1 - 0.35 * dim).toFixed(3));
@@ -450,6 +518,10 @@
         let k = 0;
         for (const [layer, amount] of spots) {
           const pair = spotPair(k++);
+          if (film.typeShades) {
+            pair.benefit.setAttribute("class", layer.benefitPath.getAttribute("class"));
+            pair.harm.setAttribute("class", layer.harmPath.getAttribute("class"));
+          }
           pair.benefit.setAttribute("d", layer.benefitPath.getAttribute("d"));
           pair.harm.setAttribute("d", layer.harmPath.getAttribute("d"));
           pair.g.setAttribute("opacity", amount.toFixed(3));
@@ -458,32 +530,6 @@
         spotGroup.setAttribute("opacity", "1");
       } else {
         spotGroup.setAttribute("opacity", "0");
-      }
-
-      // Threads draw from each consequence's first year back to the hero's, over the river's crest.
-      if (credit) {
-        const leave = ramp(t, film.credit.end - 0.5, 0.4, ease.inOut2);
-        const crestAt = (layer) => {
-          const i = Math.min(N - 1, layer.entity.curve.from);
-          return MID - Math.sqrt((reveal[i] * columnTop[i]) / scale) * HALF - 8;
-        };
-        for (const thread of threads) {
-          const p = ramp(t, thread.at, 0.7, ease.inOut2);
-          if (p <= 0 || leave >= 1) {
-            thread.path.setAttribute("opacity", "0");
-            continue;
-          }
-          const x1 = x(ax.bucketUnit(thread.from.entity.curve.from), v);
-          const y1 = crestAt(thread.from);
-          const x2 = x(ax.bucketUnit(thread.to.entity.curve.from), v);
-          const y2 = crestAt(thread.to);
-          const cy = Math.max(RULE_TOP + 12, Math.min(y1, y2) - 0.22 * Math.abs(x1 - x2));
-          thread.path.setAttribute("d", `M${x1.toFixed(1)},${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)},${cy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`);
-          const length = thread.path.getTotalLength();
-          thread.path.setAttribute("stroke-dasharray", `${length.toFixed(1)} ${length.toFixed(1)}`);
-          thread.path.setAttribute("stroke-dashoffset", (length * (1 - p)).toFixed(1));
-          thread.path.setAttribute("opacity", (1 - leave).toFixed(3));
-        }
       }
 
       // Callout text: lands blurred to sharp, holds still, leaves.
@@ -522,12 +568,12 @@
       );
       for (const tick of ticks) {
         const op = ramp(t, tick.at, 0.4, ease.expoOut).toFixed(3);
-        tick.line.setAttribute("opacity", op);
+        tick.line?.setAttribute("opacity", op);
         tick.text.setAttribute("opacity", op);
         if (film.zoom) {
           const px = x(tick.u, v);
-          tick.line.setAttribute("x1", px.toFixed(1));
-          tick.line.setAttribute("x2", px.toFixed(1));
+          tick.line?.setAttribute("x1", px.toFixed(1));
+          tick.line?.setAttribute("x2", px.toFixed(1));
           tick.text.setAttribute("x", px.toFixed(1));
           tick.px = px;
         }
@@ -535,6 +581,45 @@
         if (tick.anchor !== anchor) {
           tick.text.setAttribute("text-anchor", anchor);
           tick.anchor = anchor;
+        }
+      }
+
+      // Era columns grow with the front; the one it is in brightens while it is there.
+      for (const col of eraCols) {
+        if (f <= col.u0) {
+          col.rect.setAttribute("opacity", "0");
+          continue;
+        }
+        const left = Math.max(X0, x(col.u0, v));
+        const right = Math.min(film.frame.x1, x(Math.min(col.u1, f), v));
+        col.rect.setAttribute("x", left.toFixed(1));
+        col.rect.setAttribute("width", Math.max(0, right - left).toFixed(1));
+        const here = ramp(t, col.enter, 0.6, ease.inOut2) * (1 - ramp(t, col.leave, 0.6, ease.inOut2));
+        const zebra = col.i % 2 === 1 ? 0.05 : 0;
+        col.rect.setAttribute("opacity", (zebra + (0.1 - zebra) * here).toFixed(3));
+      }
+      // The era's name: lands blurred to sharp at the column's left edge, holds for its words, leaves.
+      if (film.eras) {
+        const era = eraLabels.find((c) => t >= c.label.at - 0.05 && t < c.label.at + c.label.hold + 0.3);
+        if (era) {
+          if (eraLabelGroup.dataset.era !== String(era.i)) {
+            eraName.textContent = era.label.name;
+            eraMeta.textContent = era.label.meta;
+            const px = Math.max(X0, x(era.u0, view(film, frontAt(era.label.at)))) + 12;
+            const w = Math.max(widthOf(era.label.name, 40, 600), widthOf(era.label.meta, 28, 400));
+            const end = px + w > film.frame.textRight;
+            for (const el of [eraName, eraMeta]) {
+              el.setAttribute("x", (end ? film.frame.textRight : px).toFixed(1));
+              el.setAttribute("text-anchor", end ? "end" : "start");
+            }
+            eraLabelGroup.dataset.era = String(era.i);
+          }
+          const enter = ramp(t, era.label.at, 0.3, ease.expoOut);
+          const leave = ramp(t, era.label.at + era.label.hold, 0.18, ease.in2);
+          eraLabelGroup.setAttribute("opacity", (enter * (1 - leave)).toFixed(3));
+          eraLabelGroup.style.filter = `blur(${(6 * (1 - enter) + 6 * leave).toFixed(2)}px)`;
+        } else {
+          eraLabelGroup.setAttribute("opacity", "0");
         }
       }
 
@@ -548,5 +633,5 @@
     };
   }
 
-  window.River = { FILMS, ERAS, SWELL, axis, clock, view, yearAt, ease, ramp, clamp01, board, creditHero, creditRows, mount };
+  window.River = { FILMS, ERAS, SWELL, axis, clock, view, yearAt, ease, ramp, clamp01, board, wordsIn, readTime, readingPlan, mount };
 })();
