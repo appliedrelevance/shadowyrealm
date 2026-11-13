@@ -1,49 +1,61 @@
 # Review: The River of Influence, the race
 
 Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4`, 1920 x 1080, 30 fps,
-9000 frames, 300.0 s, H.264 and AAC. Beside it: a contact sheet cut from the render, and
-`river-race.chapters.txt`, the YouTube chapters printed by `bun tools/video-chapters.ts`.
+9000 frames, 300.0 s, H.264 and AAC. Beside it: a contact sheet cut from the render,
+`river-race.description.txt` (the YouTube description: chapters and picture credits, from
+`bun tools/video-description.ts`) and `river-race.credits.txt` (every picture's file, author,
+licence and page, from `--credits`).
 
 ## Creative calls
 
 - **The leaderboard ranks the year at the front**, not all time: benefit plus harm in that year,
   linear between the axis buckets, so values glide. Bars split benefit then harm and scale to the
-  leader. The all-time ranking is the finale's job.
-- **Two smoothing windows.** Place is rank averaged over 0.35 s, so an overtake is a quick glide;
-  joining or leaving the board is rank averaged over 1 s, so a brief visit stays off. Rows carry a
-  ground-coloured backing and the higher-ranked row passes over the lower one.
-- **A camera for the race only.** On the log axis the first 3,500 years take a fifth of the width,
-  so without it the frame's centre was empty for the first minute. The view widens with the front,
-  which holds 80% of the way across; the last frames show the whole axis, as the site does.
-- **Callouts every 4 s** instead of 2.55 s: the board already changes constantly, and the river
-  is 1154 px wide instead of 1728.
-- **Eras are my boundaries**: the First Cities, the Iron Age (1200 BCE), the Classical World
-  (500 BCE), the Middle Ages (500), the Early Modern World (1450), the Industrial Age (1760), the
-  World Wars (1914), the Cold War (1947), the Digital Age (1991). They live in `River.ERAS`; the
-  chapters tool reads the same list.
-- **Music**: ACE-Step tops out at 240 s, so the bed is take 11 (two slow swells, chosen of three
-  for that shape) lowered 2.7 dB and crossfaded into the 60-second cut's take 91, whose build
-  carries the finale and the end card.
-- **One engine for both films.** `../assets/river.js` now draws the 60-second cut too; its frames
-  are pixel-identical to the committed version at 10, 25, 40 and 48.7 s (PSNR infinite).
+  leader. They carry no numbers: the curve's level is influence per century (level × years summed
+  over a band is 100 × the site's own total, 99.1 to 100.1 across all 624 entities), a unit the
+  site never shows. Numbers arrive with all
+  time, in the site's own unit.
+- **Pictures** are the site's own Wikimedia thumbnails, frozen as stills: one frame (Three
+  Kingdoms' file is an animated GIF), converted to sRGB (one file carried a 400 KB wide-gamut
+  profile), cropped square. The Rockefeller Foundation's logo is a non-free file on English
+  Wikipedia, so its row shows the site's organization icon, as the site does for an entity with no
+  picture.
+- **The why of a leader** goes in a lower third under the river, not in the panel: the site's
+  descriptions of the thirteen leaders run 8 to 31 words, and at 28 px they need the river's width. Each card gives the two
+  largest areas of the leader's own profile and its description, held for its words; when a lead is
+  too short for them, the description goes and the name and reasons stay.
+- **The credit beat** is the entity whose score is most credit, chosen from the data: Jesus, 40 of
+  his own and 3,572 credited (99%). Threads draw from each consequence's first year back to 30 CE;
+  the Church starts within a few pixels of Jesus on the log axis, so it lights without a thread.
+  The tally's parts are whole numbers that add up to the site's total, 3,612, so the Catholic
+  Church shows 2,860 where the site's list rounds it to 2,861.
+- **All time** turns the panel after the credit beat: "Every year added together", the top five
+  in the site's numbers, and the top three on the river with their span in years (Ancient Egypt,
+  3100–30 BCE, 3,070 years).
+- **The sweep is 8 s shorter** (268 s) to make room for the credit beat; the finale and the end
+  card keep their times, so the music needed no new mix.
+- **One engine for both films.** `../assets/river.js` draws the 60-second cut too; its frames are
+  pixel-identical to the committed version at 10, 25, 40 and 48.7 s (PSNR infinite).
 
 ## Measured
 
-- `hyperframes check`: no errors. One warning kept: `line_unread` on "Hundred Years' War", in fifth
-  place for 0.53 s at 119 s. A longer stay window would hide it and make every pass lag; churn in
-  the last slot is the genre.
-- Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP true peak, no clipping, loudest
-  at 4:55 under the end card. The first mix peaked at 3:07 in the Industrial Age and was remixed.
-- Frames: 20 stills across the film, a zoomed strip through an overtake (115 to 121 s), and the
-  contact sheet from the render.
+- `hyperframes check` (0.9.42): no errors, lint clean. Two warnings kept, both `line_unread` on
+  real short visits to the board's last places: Kublai Khan, in fourth for 0.3 s at 105.7 s and
+  never above half opacity, and the Hundred Years' War, in fifth at 116 s. Hiding them would push
+  the rows around an empty slot; churn in the last places is the genre.
+- Render: 9000 frames in 6 min 11 s. Audio from the rendered file: −16.1 LUFS integrated,
+  −1.3 dBTP true peak, the same mix as before.
+- Frames: snapshots at 12, 24, 105.8, 106.2, 208.5, 262, 271.5, 273.1, 274.6, 276.6, 277.4, 281.3,
+  282.2, 284.2, 286.4 and 296 s, and the contact sheet cut from the render.
+- The description runs 3,055 characters, inside YouTube's 5,000; all 46 pictures whose licence
+  asks for attribution are credited in it.
 
 ## Not checked
 
+- Nobody has watched the 9000 frames end to end; the stills and the contact sheet are the sample.
 - The music was measured, not heard.
-- Nobody has watched the 9000 frames end to end; the stills and the overtake strip are the sample.
 
 ## Weakest shot
 
-4.2 to 16 s: the young river is a small lens at the left edge while the camera is still at its
-widest-allowed zoom, and the fifth slot on the board stays empty until a fifth entity exists.
-With more time: start the minimum view at a tenth of the axis, so the first cities fill the frame.
+4.2 to 16 s, as before: the young river is a small lens at the left edge and the fifth slot stays
+empty until a fifth entity exists. The first card, Ancient Egypt's, now fills the space under it.
+With more time: start the minimum view at a tenth of the axis.

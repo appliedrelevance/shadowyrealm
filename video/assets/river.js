@@ -26,10 +26,15 @@
       axisIn: 0.15,
       axisDur: 2.2,
       sweep0: 4.2,
-      sweep1: 280.2,
+      sweep1: 272.2,
       calloutGap: 4.0,
       calloutHold: 3.0,
-      lastCallout: 276.0,
+      lastCallout: 268.0,
+      // After the sweep, where the most-credited entity's score comes from: one row of the
+      // breakdown lands every `step` seconds, each lighting its bands and drawing its thread back.
+      credit: { at: 272.8, end: 280.4, step: 0.8 },
+      // Then the board turns from that year to all time, before the top three are lit.
+      allTimeAt: 281.0,
       ranksAt: [282.6, 285.4, 288.2],
       rankHold: 2.3,
       dimAt: 292.0,
@@ -37,6 +42,8 @@
       // The camera: the view widens with the front, which holds 80% of the way across, so the river
       // fills the frame from the first minute; it never shows less than a fifth of the axis.
       zoom: { lead: 0.8, minView: 0.2 },
+      // The top three say how long each lasted: all time adds up every year.
+      rankYears: true,
     },
   };
 
@@ -124,6 +131,96 @@
     return Math.min(ax.asOf, ax.unitToYear(Math.min(1, f)));
   }
 
+  // ---- the race's leaderboard: every entity's own level in the year at the front, ranked ----
+  const BOARD_SLOTS = 5;
+  function board(realm, film) {
+    const ax = axis(realm);
+    const { frontAt } = clock(film);
+    const N = ax.buckets;
+    const entities = realm.entities.filter((e) => e.curve.benefit.length > 0);
+    // Benefit and harm at fractional bucket p, linear between buckets.
+    const levelAt = (e, p) => {
+      const at = (i) => {
+        const k = i - e.curve.from;
+        return k >= 0 && k < e.curve.benefit.length ? [e.curve.benefit[k], e.curve.harm[k] ?? 0] : [0, 0];
+      };
+      const i0 = Math.floor(p);
+      const w = p - i0;
+      const a = at(i0);
+      const b = at(i0 + 1);
+      return [a[0] * (1 - w) + b[0] * w, a[1] * (1 - w) + b[1] * w];
+    };
+    const bucketAt = (t) => Math.min(N - 1, Math.max(0, Math.min(1, frontAt(t)) * N - 0.5));
+    // The top six at time t: the five on the board and the one about to join it.
+    const standings = (t) => {
+      const p = bucketAt(t);
+      const rows = [];
+      for (const e of entities) {
+        const [b, h] = levelAt(e, p);
+        if (b + h > 0.05) rows.push({ e, b, h, total: b + h });
+      }
+      rows.sort((x, y) => y.total - x.total || x.e.name.localeCompare(y.e.name));
+      return rows.slice(0, BOARD_SLOTS + 1);
+    };
+    // The first time each entity leads, when it keeps the lead at least `hold` seconds.
+    const firstLeads = (hold = 3, step = 0.1) => {
+      const runs = [];
+      for (let k = 0; film.sweep0 + k * step <= film.sweep1; k++) {
+        const t = film.sweep0 + k * step;
+        const lead = standings(t)[0]?.e;
+        if (!lead) continue;
+        const last = runs[runs.length - 1];
+        if (last && last.e === lead) last.until = t;
+        else runs.push({ e: lead, at: t, until: t });
+      }
+      const seen = new Set();
+      const leads = [];
+      for (const r of runs) {
+        if (r.until - r.at < hold || seen.has(r.e.slug)) continue;
+        seen.add(r.e.slug);
+        leads.push({ e: r.e, at: r.at });
+      }
+      return leads;
+    };
+    // Every entity that is ever in the top six, so its row can be built before the first frame.
+    const contenders = (step = 0.05) => {
+      const slugs = new Set();
+      for (let k = 0; film.sweep0 + k * step <= film.sweep1 + step; k++) {
+        for (const r of standings(film.sweep0 + k * step)) slugs.add(r.e.slug);
+      }
+      return slugs;
+    };
+    return { slots: BOARD_SLOTS, levelAt, bucketAt, standings, firstLeads, contenders };
+  }
+
+  // ---- the finale's credit: the entity whose score is most credit, and where that credit comes from ----
+  // The hero is chosen from the data; its contributors are frozen in realm.credit by the snapshot tool.
+  const creditHero = (realm) =>
+    [...realm.entities].sort((a, b) => b.credited_magnitude - a.credited_magnitude || a.slug.localeCompare(b.slug))[0];
+  function creditRows(realm, film) {
+    const bySlug = new Map(realm.entities.map((e) => [e.slug, e]));
+    const credit = realm.credit;
+    const hero = bySlug.get(credit.slug);
+    const named = credit.contributors.slice(0, 3);
+    const rest = credit.contributors.slice(3);
+    const rows = [
+      { slugs: [hero.slug], entity: hero, name: hero.name, value: hero.own_magnitude, own: true },
+      ...named.map((c) => ({ slugs: [c.slug], entity: bySlug.get(c.slug), name: bySlug.get(c.slug).name, value: c.magnitude })),
+    ];
+    if (rest.length > 0) {
+      rows.push({
+        slugs: rest.map((c) => c.slug),
+        entity: null,
+        name: `${rest.length} more`,
+        value: rest.reduce((sum, c) => sum + c.magnitude, 0),
+      });
+    }
+    rows.forEach((r, k) => {
+      r.at = film.credit.at + 0.5 + k * film.credit.step;
+    });
+    return { hero, rows, link: credit.link };
+  }
+
   /**
    * Draw the river into `svg` for `film`. Call after document.fonts.ready, so text is measured in
    * the face it renders in. Returns draw(t), a pure function of timeline time. `yearEl`, when
@@ -149,6 +246,7 @@
     const spotGroup = make("g", { class: "river-spot", opacity: 0 }, world);
     const axisLine = make("line", { class: "river-axis", x1: X0, y1: MID, x2: X0, y2: MID }, world);
     const front = make("line", { class: "river-front", x1: X0, y1: RULE_TOP, x2: X0, y2: RULE_BOTTOM, opacity: 0 }, world);
+    const threadGroup = make("g", { class: "river-threads" }, world);
     const tickGroup = make("g", {}, world);
     const calloutGroup = make("g", { opacity: 0 }, svg);
     const calloutLeader = make("line", { class: "river-callout-leader", x1: 0, y1: 236, x2: 0, y2: 250 }, calloutGroup);
@@ -191,8 +289,21 @@
     });
     const columnTop = benefitBase.map((b, i) => Math.max(b, harmBase[i]));
     const floor = Math.max(1, ...columnTop) * FLOOR_SHARE;
-    const spotBenefit = make("path", { class: "river-band-b", d: "" }, spotGroup);
-    const spotHarm = make("path", { class: "river-band-h", d: "" }, spotGroup);
+    // Lit bands: one pair of paths per band lit at once, each under its own opacity.
+    const spotPairs = [];
+    const spotPair = (k) => {
+      while (spotPairs.length <= k) {
+        const g = make("g", { opacity: 0 }, spotGroup);
+        spotPairs.push({
+          g,
+          benefit: make("path", { class: "river-band-b", d: "" }, g),
+          harm: make("path", { class: "river-band-h", d: "" }, g),
+        });
+      }
+      return spotPairs[k];
+    };
+    spotPair(0);
+    const layerOf = new Map(layers.map((layer) => [layer.entity.slug, layer]));
 
     // ---- ticks: the site's labels, most recent first so the readable end keeps them ----
     const ticks = [];
@@ -227,6 +338,28 @@
       const layer = ranked[i];
       callouts.push({ layer, u: ax.bucketUnit(layer.entity.curve.from), at, hold: film.rankHold, rank: i + 1 });
     });
+
+    // ---- the credit beat: the hero named on the river, its breakdown's bands lit row by row, and a
+    // thread from each consequence back to it (none where the two start within a few pixels) ----
+    const credit = film.credit ? creditRows(realm, film) : null;
+    const threads = [];
+    if (credit) {
+      const heroLayer = layerOf.get(credit.hero.slug);
+      const at = film.credit.at + 0.3;
+      callouts.push({ layer: heroLayer, u: ax.bucketUnit(heroLayer.entity.curve.from), at, hold: film.credit.end - 0.6 - at });
+      credit.rows.forEach((row, k) => {
+        row.layers = row.slugs.map((slug) => {
+          const layer = layerOf.get(slug);
+          if (!layer) throw new Error(`The credit breakdown names ${slug}, which has no band on the river`);
+          return layer;
+        });
+        if (k === 0) return;
+        for (const layer of row.layers) {
+          if (Math.abs(x(ax.bucketUnit(layer.entity.curve.from)) - x(ax.bucketUnit(heroLayer.entity.curve.from))) < 12) continue;
+          threads.push({ from: layer, to: heroLayer, at: row.at, path: make("path", { class: "river-thread", d: "", opacity: 0 }, threadGroup) });
+        }
+      });
+    }
     const total = realm.entities.length.toLocaleString("en-US");
     for (const c of callouts) {
       const e = c.layer.entity;
@@ -234,6 +367,13 @@
       const span = e.first_year === null ? kind : `${kind} · ${ax.formatSpan(e.first_year, e.last_year ?? e.first_year)}`;
       c.name = e.name;
       c.meta = c.rank ? `No. ${c.rank} of ${total} · ${span}` : span;
+      if (c.rank && film.rankYears) {
+        const first = e.first_year;
+        const last = e.last_year ?? first;
+        // Years run 1 BCE to 1 CE with no year zero between them.
+        const years = last - first - (first < 0 && last > 0 ? 1 : 0);
+        c.meta = `No. ${c.rank} of ${total} · ${ax.formatSpan(first, last)} · ${years.toLocaleString("en-US")} years`;
+      }
       c.px = x(c.u, view(film, frontAt(c.at)));
       const w = Math.max(widthOf(c.name, 44, 700), widthOf(c.meta, 28, 400));
       c.anchor = c.px + w > film.frame.textRight ? "end" : "start";
@@ -292,13 +432,58 @@
         layer.harmPath.setAttribute("d", bandPath(layer, layer.h0, layer.h1, last, -1, scale, v));
         layer.drawn = true;
       }
-      bandsGroup.setAttribute("opacity", (1 - 0.35 * lit).toFixed(3));
-      if (callout && lit > 0) {
-        spotBenefit.setAttribute("d", callout.layer.benefitPath.getAttribute("d"));
-        spotHarm.setAttribute("d", callout.layer.harmPath.getAttribute("d"));
-        spotGroup.setAttribute("opacity", lit.toFixed(3));
+      // The bands lit now: the callout's, and in the credit beat every row that has landed.
+      const spots = new Map();
+      if (callout && lit > 0) spots.set(callout.layer, lit);
+      if (credit) {
+        const leave = ramp(t, film.credit.end - 0.5, 0.4, ease.inOut2);
+        for (const row of credit.rows) {
+          const rowLit = ramp(t, row.at, 0.45, ease.inOut2) * (1 - leave);
+          if (rowLit <= 0) continue;
+          for (const layer of row.layers) spots.set(layer, Math.max(spots.get(layer) ?? 0, rowLit));
+        }
+      }
+      let dim = 0;
+      for (const amount of spots.values()) dim = Math.max(dim, amount);
+      bandsGroup.setAttribute("opacity", (1 - 0.35 * dim).toFixed(3));
+      if (spots.size > 0) {
+        let k = 0;
+        for (const [layer, amount] of spots) {
+          const pair = spotPair(k++);
+          pair.benefit.setAttribute("d", layer.benefitPath.getAttribute("d"));
+          pair.harm.setAttribute("d", layer.harmPath.getAttribute("d"));
+          pair.g.setAttribute("opacity", amount.toFixed(3));
+        }
+        for (; k < spotPairs.length; k++) spotPairs[k].g.setAttribute("opacity", "0");
+        spotGroup.setAttribute("opacity", "1");
       } else {
         spotGroup.setAttribute("opacity", "0");
+      }
+
+      // Threads draw from each consequence's first year back to the hero's, over the river's crest.
+      if (credit) {
+        const leave = ramp(t, film.credit.end - 0.5, 0.4, ease.inOut2);
+        const crestAt = (layer) => {
+          const i = Math.min(N - 1, layer.entity.curve.from);
+          return MID - Math.sqrt((reveal[i] * columnTop[i]) / scale) * HALF - 8;
+        };
+        for (const thread of threads) {
+          const p = ramp(t, thread.at, 0.7, ease.inOut2);
+          if (p <= 0 || leave >= 1) {
+            thread.path.setAttribute("opacity", "0");
+            continue;
+          }
+          const x1 = x(ax.bucketUnit(thread.from.entity.curve.from), v);
+          const y1 = crestAt(thread.from);
+          const x2 = x(ax.bucketUnit(thread.to.entity.curve.from), v);
+          const y2 = crestAt(thread.to);
+          const cy = Math.max(RULE_TOP + 12, Math.min(y1, y2) - 0.22 * Math.abs(x1 - x2));
+          thread.path.setAttribute("d", `M${x1.toFixed(1)},${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)},${cy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`);
+          const length = thread.path.getTotalLength();
+          thread.path.setAttribute("stroke-dasharray", `${length.toFixed(1)} ${length.toFixed(1)}`);
+          thread.path.setAttribute("stroke-dashoffset", (length * (1 - p)).toFixed(1));
+          thread.path.setAttribute("opacity", (1 - leave).toFixed(3));
+        }
       }
 
       // Callout text: lands blurred to sharp, holds still, leaves.
@@ -363,5 +548,5 @@
     };
   }
 
-  window.River = { FILMS, ERAS, SWELL, axis, clock, view, yearAt, ease, ramp, clamp01, mount };
+  window.River = { FILMS, ERAS, SWELL, axis, clock, view, yearAt, ease, ramp, clamp01, board, creditHero, creditRows, mount };
 })();

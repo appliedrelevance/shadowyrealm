@@ -44,6 +44,12 @@
   font-weight: 400;
   fill: var(--color-ink-muted);
 }
+.river-thread {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
 .river-callout-leader {
   stroke: var(--color-ink-muted);
   stroke-width: 1.5;

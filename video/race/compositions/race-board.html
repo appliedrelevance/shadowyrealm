@@ -10,253 +10,122 @@
       top: 0;
       width: 1920px;
       height: 1080px;
-      font-family: "Inter", sans-serif;
-    }
-    #board-year {
-      position: absolute;
-      left: 1320px;
-      top: 140px;
-      font-weight: 700;
-      font-size: 96px;
-      line-height: 1;
-      letter-spacing: -0.01em;
-      font-variant-numeric: tabular-nums;
-      color: var(--color-ink);
-      white-space: nowrap;
-    }
-    #board-era {
-      position: absolute;
-      left: 1320px;
-      top: 254px;
-      font-weight: 400;
-      font-size: 34px;
-      color: var(--color-ink);
-      white-space: nowrap;
-    }
-    #board-caption {
-      position: absolute;
-      left: 1320px;
-      top: 318px;
-      font-weight: 400;
-      font-size: 28px;
-      color: var(--color-ink-muted);
-      white-space: nowrap;
-    }
-    .board-rank {
-      position: absolute;
-      left: 1320px;
-      width: 40px;
-      font-weight: 700;
-      font-size: 30px;
-      line-height: 36px;
-      color: var(--color-ink-muted);
-      font-variant-numeric: tabular-nums;
-    }
-    #board-rows {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    .board-row {
-      position: absolute;
-      left: 1368px;
-      top: 0;
-      width: 456px;
-      height: 80px;
-      background: var(--color-surface);
-    }
-    .board-name {
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-weight: 700;
-      font-size: 30px;
-      line-height: 36px;
-      color: var(--color-ink);
-      white-space: nowrap;
-    }
-    .board-bar {
-      position: absolute;
-      left: 0;
-      top: 46px;
-      height: 20px;
-      display: flex;
-    }
-    .board-bar-b {
-      height: 20px;
-      background: var(--color-benefit);
-    }
-    .board-bar-h {
-      height: 20px;
-      background: var(--color-harm);
-    }
-    .board-value {
-      position: absolute;
-      right: 0;
-      top: 38px;
-      font-weight: 400;
-      font-size: 28px;
-      line-height: 34px;
-      color: var(--color-ink-muted);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
     }
   </style>
-  <div id="root" data-composition-id="race-board" data-width="1920" data-height="1080">
-    <div id="board" class="clip" data-start="0" data-duration="300" data-track-index="0">
-      <div id="board-year">3500 BCE</div>
-      <div id="board-era"></div>
-      <div id="board-caption">Most influential that year</div>
-      <div id="board-rank-1" class="board-rank" style="top: 380px">1</div>
-      <div id="board-rank-2" class="board-rank" style="top: 472px">2</div>
-      <div id="board-rank-3" class="board-rank" style="top: 564px">3</div>
-      <div id="board-rank-4" class="board-rank" style="top: 656px">4</div>
-      <div id="board-rank-5" class="board-rank" style="top: 748px">5</div>
-      <div id="board-rows" data-layout-allow-overlap data-layout-allow-occlusion></div>
+  <div data-hf-id="hf-58yv" id="root" data-composition-id="race-board" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-1lyt" id="board" class="clip" data-start="0" data-duration="300" data-track-index="0">
+      <div data-hf-id="hf-rjzp" id="board-year" class="panel-year">3500 BCE</div>
+      <div data-hf-id="hf-vrgm" id="board-era" class="panel-era"></div>
+      <div data-hf-id="hf-secu" id="board-caption" class="panel-caption">Most influential that year</div>
+      <div data-hf-id="hf-xamh" id="board-rank-1" class="board-rank" style="top: 380px">1</div>
+      <div data-hf-id="hf-mmtf" id="board-rank-2" class="board-rank" style="top: 472px">2</div>
+      <div data-hf-id="hf-yb9t" id="board-rank-3" class="board-rank" style="top: 564px">3</div>
+      <div data-hf-id="hf-ly1n" id="board-rank-4" class="board-rank" style="top: 656px">4</div>
+      <div data-hf-id="hf-ebxd" id="board-rank-5" class="board-rank" style="top: 748px">5</div>
+      <div data-hf-id="hf-hybh" id="board-rows" class="board-rows" data-layout-allow-overlap data-layout-allow-occlusion></div>
     </div>
   </div>
   <script>
-    document.fonts.ready.then(() => {
-      const { FILMS, ERAS, axis, clock, yearAt, ease, ramp, clamp01 } = window.River;
+    document.fonts.ready.then(async () => {
+      const River = window.River;
+      const { FILMS, ERAS, axis, clock, yearAt, ease, ramp, clamp01 } = River;
       const realm = window.REALM;
       const film = FILMS.race;
       const ax = axis(realm);
       const { frontAt, timeAtFront } = clock(film);
-      const N = ax.buckets;
+      const race = River.board(realm, film);
+      const kit = window.RaceKit(realm);
+      const SLOTS = race.slots;
 
-      // Rows: five slots 92 px apart. A row's place is its rank averaged over the last 0.35 s, so an
-      // overtake is a quick glide rather than a jump; whether it is on the board at all is its rank
-      // averaged over the last second, so a brief visit never flickers on. Both are functions of
-      // time alone.
-      const ROW_TOP = 380;
-      const PITCH = 92;
-      const SLOTS = 5;
+      // A row's place is its rank averaged over the last 0.35 s, so an overtake is a quick glide
+      // rather than a jump; whether it is on the board at all is its rank averaged over the last
+      // second, so a brief visit never flickers on. Both are functions of time alone. The bars
+      // carry the ranking alone: the curve's level is influence per century, a unit the site never
+      // shows. Totals, in the site's own unit, come with all time (race-tally).
       const SAMPLE_STEP = 0.05;
       const PLACE_SAMPLES = 7; // 0.35 s
       const STAY_SAMPLES = 20; // 1.0 s
-      const NAME_WIDTH = 456;
-      const BAR_WIDTH = 350;
 
-      const entities = realm.entities.filter((e) => e.curve.benefit.length > 0);
-      const levelAt = (e, p) => {
-        const at = (i) => {
-          const k = i - e.curve.from;
-          return k >= 0 && k < e.curve.benefit.length ? [e.curve.benefit[k], e.curve.harm[k] ?? 0] : [0, 0];
-        };
-        const i0 = Math.floor(p);
-        const w = p - i0;
-        const a = at(i0);
-        const b = at(i0 + 1);
-        return [a[0] * (1 - w) + b[0] * w, a[1] * (1 - w) + b[1] * w];
-      };
-      const bucketAt = (t) => Math.min(N - 1, Math.max(0, Math.min(1, frontAt(t)) * N - 0.5));
-      const standings = (t) => {
-        const p = bucketAt(t);
-        const rows = [];
-        for (const e of entities) {
-          const [b, h] = levelAt(e, p);
-          if (b + h > 0.05) rows.push({ e, b, h, total: b + h });
-        }
-        rows.sort((x, y) => y.total - x.total || x.e.name.localeCompare(y.e.name));
-        return rows.slice(0, SLOTS + 1);
-      };
-
-      // Names that do not fit lose words from the end, never type size.
-      const ctx = document.createElement("canvas").getContext("2d");
-      ctx.font = '700 30px "Inter"';
-      const fit = (name) => {
-        if (ctx.measureText(name).width <= NAME_WIDTH) return name;
-        const words = name.split(" ");
-        while (words.length > 1) {
-          words.pop();
-          const short = `${words.join(" ")}…`;
-          if (ctx.measureText(short).width <= NAME_WIDTH) return short;
-        }
-        return name;
-      };
-
+      // A row for every entity that is ever in the top six, built before the first frame.
       const rowsEl = document.getElementById("board-rows");
       const pool = new Map();
+      for (const [slug, m] of Object.entries(realm.media)) {
+        if (m.board) pool.set(slug, kit.makeRow(rowsEl, slug, kit.bySlug.get(slug).name));
+      }
       const rowFor = (e) => {
-        let row = pool.get(e.slug);
-        if (row) return row;
-        const el = document.createElement("div");
-        el.className = "board-row";
-        el.style.opacity = "0";
-        el.innerHTML =
-          '<div class="board-name"></div><div class="board-bar"><div class="board-bar-b"></div><div class="board-bar-h"></div></div><div class="board-value"></div>';
-        el.querySelector(".board-name").textContent = fit(e.name);
-        rowsEl.appendChild(el);
-        row = {
-          el,
-          b: el.querySelector(".board-bar-b"),
-          h: el.querySelector(".board-bar-h"),
-          value: el.querySelector(".board-value"),
-          shown: false,
-        };
-        pool.set(e.slug, row);
+        const row = pool.get(e.slug);
+        if (!row) throw new Error(`${e.slug} reaches the board but is not in the snapshot: run bun tools/video-snapshot.ts`);
         return row;
       };
 
       const board = document.getElementById("board");
       const year = document.getElementById("board-year");
       const era = document.getElementById("board-era");
+      const header = [year, document.getElementById("board-caption")];
+      const ranks = Array.from({ length: SLOTS }, (_, k) => document.getElementById(`board-rank-${k + 1}`));
       const eraTimes = ERAS.map((x) => timeAtFront(ax.yearToUnit(x.year)));
 
       const draw = (t) => {
         const f = frontAt(t);
-        board.style.opacity = (ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut) * (1 - ramp(t, film.dimAt, 0.4, ease.in2))).toFixed(3);
+        // Arrives with the front; gives the panel to the tally when the credit beat begins.
+        const headerOut = ramp(t, film.credit.at - 0.2, 0.2, ease.in2);
+        board.style.opacity = ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut).toFixed(3);
         year.textContent = ax.formatYear(yearAt(ax, f));
+        for (const el of [...header, ...ranks]) {
+          el.style.opacity = (1 - headerOut).toFixed(3);
+          el.style.filter = `blur(${(6 * headerOut).toFixed(2)}px)`;
+        }
 
         // The era: lands blurred to sharp when the front crosses its first year, leaves just before the next.
         let i = 0;
         while (i + 1 < ERAS.length && t >= eraTimes[i + 1]) i++;
         era.textContent = ERAS[i].name;
         const enter = ramp(t, eraTimes[i], 0.3, ease.expoOut);
-        const leave = i + 1 < ERAS.length ? ramp(t, eraTimes[i + 1] - 0.15, 0.15, ease.in2) : 0;
+        const leave = Math.max(i + 1 < ERAS.length ? ramp(t, eraTimes[i + 1] - 0.15, 0.15, ease.in2) : 0, headerOut);
         era.style.opacity = (enter * (1 - leave)).toFixed(3);
         era.style.filter = `blur(${(6 * (1 - enter) + 6 * leave).toFixed(2)}px)`;
 
         // Standings now, and everyone's rank summed over the two windows (off the board counts as 7).
-        const now = standings(t);
-        const OFF = SLOTS + 2;
-        const ranks = new Map();
-        for (let j = 0; j < STAY_SAMPLES; j++) {
-          const sample = j === 0 ? now : standings(t - j * SAMPLE_STEP);
-          const onBoard = new Set();
-          sample.forEach((r, k) => {
-            if (!ranks.has(r.e.slug)) ranks.set(r.e.slug, { e: r.e, place: 0, stay: 0, firstSeen: j });
-            const entry = ranks.get(r.e.slug);
-            if (j < PLACE_SAMPLES) entry.place += k + 1;
-            entry.stay += k + 1;
-            onBoard.add(r.e.slug);
-          });
-          for (const [slug, entry] of ranks) {
-            if (onBoard.has(slug)) continue;
-            if (j < PLACE_SAMPLES) entry.place += OFF;
-            entry.stay += OFF;
-          }
-        }
-        const leader = now.length > 0 ? now[0].total : 1;
-        const current = new Map(now.map((r) => [r.e.slug, r]));
-        const standing = new Map(now.map((r, k) => [r.e.slug, k + 1]));
+        const rowsShown = 1 - ramp(t, film.credit.at, 0.4, ease.in2);
         const visible = new Set();
-        for (const { e, place, stay, firstSeen } of ranks.values()) {
-          // Samples before an entity was first seen in this window count as off the board.
-          const rank = (place + Math.min(firstSeen, PLACE_SAMPLES) * OFF) / PLACE_SAMPLES;
-          const op = clamp01(SLOTS + 1 - (stay + firstSeen * OFF) / STAY_SAMPLES);
-          if (op <= 0) continue;
-          const row = rowFor(e);
-          const r = current.get(e.slug) ?? (([b, h]) => ({ b, h, total: b + h }))(levelAt(e, bucketAt(t)));
-          row.el.style.transform = `translateY(${(ROW_TOP + (rank - 1) * PITCH).toFixed(1)}px)`;
-          row.el.style.opacity = op.toFixed(3);
-          // In a pass, the row ranked higher now slides over the one it is passing.
-          row.el.style.zIndex = String(SLOTS + 3 - (standing.get(e.slug) ?? SLOTS + 2));
-          row.b.style.width = `${((r.b / leader) * BAR_WIDTH).toFixed(1)}px`;
-          row.h.style.width = `${((r.h / leader) * BAR_WIDTH).toFixed(1)}px`;
-          row.value.textContent = Math.round(r.total).toLocaleString("en-US");
-          row.shown = true;
-          visible.add(e.slug);
+        if (rowsShown > 0) {
+          const now = race.standings(t);
+          const OFF = SLOTS + 2;
+          const sums = new Map();
+          for (let j = 0; j < STAY_SAMPLES; j++) {
+            const sample = j === 0 ? now : race.standings(t - j * SAMPLE_STEP);
+            const onBoard = new Set();
+            sample.forEach((r, k) => {
+              if (!sums.has(r.e.slug)) sums.set(r.e.slug, { e: r.e, place: 0, stay: 0, firstSeen: j });
+              const entry = sums.get(r.e.slug);
+              if (j < PLACE_SAMPLES) entry.place += k + 1;
+              entry.stay += k + 1;
+              onBoard.add(r.e.slug);
+            });
+            for (const [slug, entry] of sums) {
+              if (onBoard.has(slug)) continue;
+              if (j < PLACE_SAMPLES) entry.place += OFF;
+              entry.stay += OFF;
+            }
+          }
+          const leader = now.length > 0 ? now[0].total : 1;
+          const current = new Map(now.map((r) => [r.e.slug, r]));
+          const standing = new Map(now.map((r, k) => [r.e.slug, k + 1]));
+          for (const { e, place, stay, firstSeen } of sums.values()) {
+            // Samples before an entity was first seen in this window count as off the board.
+            const rank = (place + Math.min(firstSeen, PLACE_SAMPLES) * OFF) / PLACE_SAMPLES;
+            const op = clamp01(SLOTS + 1 - (stay + firstSeen * OFF) / STAY_SAMPLES);
+            if (op <= 0) continue;
+            const row = rowFor(e);
+            const r = current.get(e.slug) ?? (([b, h]) => ({ b, h }))(race.levelAt(e, race.bucketAt(t)));
+            row.el.style.transform = `translateY(${(kit.ROW_TOP + (rank - 1) * kit.PITCH).toFixed(1)}px)`;
+            row.el.style.opacity = (op * rowsShown).toFixed(3);
+            // In a pass, the row ranked higher now slides over the one it is passing.
+            row.el.style.zIndex = String(SLOTS + 3 - (standing.get(e.slug) ?? SLOTS + 2));
+            kit.setBar(row, r.b, r.h, leader, kit.BAR_RACE);
+            row.shown = true;
+            visible.add(e.slug);
+          }
         }
         for (const [slug, row] of pool) {
           if (row.shown && !visible.has(slug)) {
@@ -266,6 +135,7 @@
         }
       };
 
+      await kit.ready();
       const state = { t: 0 };
       const tl = gsap.timeline({ paused: true });
       tl.fromTo(state, { t: 0 }, { t: film.duration, duration: film.duration, ease: "none", onUpdate: () => draw(state.t) }, 0);
