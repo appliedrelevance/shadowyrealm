@@ -1,5 +1,5 @@
 /**
- * Loads a content file into ShadowyRealm through its MCP tools, the same
+ * Loads a content file into a site through its MCP tools, the same
  * surface any MCP client uses: entities, their periods, their links, then one
  * score_period call per period with evidence gathered from Wikipedia.
  *
@@ -9,10 +9,18 @@
  *
  *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore] [--publish] [--concurrency 4]
  *
+ * The content index exports `site`, the key of its site (src/sites): that picks
+ * the User-Agent, the dimensions it logs, the default link type and the link
+ * each entity type requires. Evidence is cited by the permalink of the
+ * Wikipedia revision it was read from, so a score's source can be read again
+ * exactly as it stood.
+ *
  * --concurrency creates and scores that many entities at once; links are
  * always added one at a time, so the credit cap is checked in order.
  */
-import type { RealmContent, RealmEntity, RealmPeriod } from "../content/types";
+import type { SiteContent, SiteEntity, SitePeriod } from "../content/types";
+import { siteFor } from "../src/sites";
+import type { SiteConfig } from "../src/sites/types";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
 const MCP_API_KEY = process.env.MCP_API_KEY;
@@ -26,7 +34,7 @@ const rescore = args.includes("--rescore");
 const publish = args.includes("--publish");
 const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
 
-const WIKI_HEADERS = { "User-Agent": "ShadowyRealm/1.0 (https://shadowyrealm.com)" };
+let WIKI_HEADERS: Record<string, string> = {};
 const EVIDENCE_MAX = 7800;
 const SKIP_SECTIONS = /^(see also|references|further reading|external links|notes|bibliography|sources|citations|footnotes|works cited|gallery|explanatory notes)$/i;
 
@@ -56,7 +64,7 @@ async function call<T = unknown>(name: string, input: Record<string, unknown>): 
 
 // ---------- Wikipedia ----------
 
-const articles = new Map<string, { title: string; text: string }>();
+const articles = new Map<string, { title: string; text: string; revid: number }>();
 
 async function article(title: string) {
   const cached = articles.get(title);
@@ -65,7 +73,8 @@ async function article(title: string) {
     "https://en.wikipedia.org/w/api.php?" +
     new URLSearchParams({
       action: "query",
-      prop: "extracts",
+      prop: "extracts|revisions",
+      rvprop: "ids",
       explaintext: "1",
       exsectionformat: "wiki",
       titles: title,
@@ -74,10 +83,15 @@ async function article(title: string) {
     });
   const res = await fetch(url, { headers: WIKI_HEADERS });
   if (!res.ok) throw new Error(`Wikipedia ${title}: HTTP ${res.status}`);
-  const pages = (await res.json()).query.pages as Record<string, { title: string; extract?: string; missing?: string }>;
+  const pages = (await res.json()).query.pages as Record<
+    string,
+    { title: string; extract?: string; missing?: string; revisions?: { revid: number }[] }
+  >;
   const page = Object.values(pages)[0];
   if (page.missing !== undefined || !page.extract) throw new Error(`Wikipedia has no article "${title}"`);
-  const found = { title: page.title, text: page.extract };
+  const revid = page.revisions?.[0]?.revid;
+  if (!revid) throw new Error(`Wikipedia gave no revision id for "${title}"`);
+  const found = { title: page.title, text: page.extract, revid };
   articles.set(title, found);
   return found;
 }
@@ -116,7 +130,7 @@ function yearsIn(text: string): number[] {
  * about the period's years (or the sections the content names), up to the
  * evidence limit.
  */
-async function evidenceFor(entity: RealmEntity, period: RealmPeriod) {
+async function evidenceFor(entity: SiteEntity<string>, period: SitePeriod) {
   const source = await article(period.wiki ?? entity.wiki);
   const all = sections(source.text);
   const lead = all.find((s) => s.heading === "");
@@ -150,7 +164,7 @@ async function evidenceFor(entity: RealmEntity, period: RealmPeriod) {
   }
   return {
     evidence: text.slice(0, EVIDENCE_MAX),
-    source_url: `https://en.wikipedia.org/wiki/${encodeURIComponent(source.title.replace(/ /g, "_"))}`,
+    source_url: `https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(source.title.replace(/ /g, "_"))}&oldid=${source.revid}`,
   };
 }
 
@@ -193,8 +207,32 @@ async function inPool<T>(items: T[], n: number, fn: (item: T) => Promise<void>) 
   await Promise.all(Array.from({ length: Math.max(1, n) }, worker));
 }
 
+/** An entity whose type requires an outgoing link must have one in the same file. */
+function checkRequiredLinks(site: SiteConfig, content: SiteContent<string, string>) {
+  for (const e of content.entities) {
+    const required = site.entityTypes.find((t) => t.key === e.type)?.requiresOutgoing;
+    if (!required) continue;
+    if (!content.links.some((l) => l.from === e.slug && (l.type ?? "influence") === required)) {
+      throw new Error(`"${e.slug}" is a ${e.type}, which needs an outgoing ${required} link in the same file`);
+    }
+  }
+}
+
+/** The link type a link without one gets: "influence", where the site has it. */
+function linkTypeOf(site: SiteConfig, l: { from: string; to: string; type?: string }): string {
+  if (l.type) return l.type;
+  if (site.linkTypes.some((t) => t.key === "influence")) return "influence";
+  throw new Error(`The link ${l.from} -> ${l.to} has no type, and ${site.brand.name} has no default`);
+}
+
 async function main() {
-  const content = (await import(`${process.cwd()}/${file}`)).default as RealmContent;
+  const mod = (await import(`${process.cwd()}/${file}`)) as { default: SiteContent<string, string>; site?: string };
+  if (!mod.site) throw new Error(`${file} must export \`site\`, the key of the site it belongs to`);
+  const site = siteFor(mod.site);
+  WIKI_HEADERS = { "User-Agent": site.brand.userAgent };
+  const dims = site.scoring.dimensions.map((d) => d.key);
+  const content = mod.default;
+  checkRequiredLinks(site, content);
   const entities = content.entities.filter((e) => !only || only.has(e.slug));
   // A link may point at an entity already in the index rather than in this file.
   const slugs = new Set(content.entities.map((e) => e.slug));
@@ -235,7 +273,7 @@ async function main() {
   for (const l of content.links) {
     if (only && !only.has(l.from) && !only.has(l.to)) continue;
     const d = (await detail(l.from))!;
-    const type = l.type ?? "influence";
+    const type = linkTypeOf(site, l);
     if (d.relationships.some((r) => r.direction === "outgoing" && r.other.slug === l.to && r.relationship_type === type)) {
       continue;
     }
@@ -261,8 +299,8 @@ async function main() {
         { slug: e.slug, period_id: period.id, evidence, source_url },
       );
       const a = result.assessment;
-      const benefit = ["scientific", "economic", "human_rights", "health", "cultural"].map((k) => Number(a[`${k}_benefit`]));
-      const harm = ["scientific", "economic", "human_rights", "health", "cultural"].map((k) => Number(a[`${k}_harm`]));
+      const benefit = dims.map((k) => Number(a[`${k}_benefit`]));
+      const harm = dims.map((k) => Number(a[`${k}_harm`]));
       console.log(
         `  scored ${e.slug} / ${p.label}: benefit ${benefit.map((v) => v.toFixed(1)).join(" ")} | harm ${harm
           .map((v) => v.toFixed(1))

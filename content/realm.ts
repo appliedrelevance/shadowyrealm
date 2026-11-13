@@ -15,6 +15,9 @@ import { modern } from "./modern";
 import secondWave from "./next-500";
 import type { RealmContent } from "./types";
 
+/** The site this content belongs to (src/sites). */
+export const site = "shadowyrealm";
+
 const parts = [benchmark, ancient, earlyModern, modern, secondWave];
 
 const content: RealmContent = {

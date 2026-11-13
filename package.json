@@ -14,7 +14,7 @@
     "cf-typegen": "wrangler types",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "db:types": "bunx supabase gen types typescript --db-url postgresql://postgres:postgres@the-mark-of-gideon.local:35322/postgres --schema public,shadowyrealm > src/lib/database.types.ts",
+    "db:types": "bunx supabase gen types typescript --db-url postgresql://postgres:postgres@the-mark-of-gideon.local:35322/postgres --schema public,shadowyrealm,inventions > src/lib/database.types.ts",
     "test": "bun test ./test",
     "e2e": "playwright test",
     "content:load": "bun tools/realm-load.ts content/realm.ts",
