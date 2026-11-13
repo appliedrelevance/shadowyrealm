@@ -407,9 +407,17 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       created_by: env.OWNER_USER_ID,
     })
     .select(
-      "id, entity_id, period_id, scientific_benefit, scientific_harm, economic_benefit, economic_harm, " +
-        "human_rights_benefit, human_rights_harm, health_benefit, health_harm, cultural_benefit, cultural_harm, " +
-        "sources, confidence_level, ai_suggested, ai_model_used, created_at",
+      [
+        "id",
+        "entity_id",
+        "period_id",
+        ...keys.flatMap((d) => [`${d}_benefit`, `${d}_harm`]),
+        "sources",
+        "confidence_level",
+        "ai_suggested",
+        "ai_model_used",
+        "created_at",
+      ].join(", "),
     )
     .single();
   if (error) fail("store the Clef assessment", error);

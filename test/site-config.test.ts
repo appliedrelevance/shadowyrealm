@@ -56,3 +56,19 @@ describe("the registry", () => {
     expect(() => siteFor(undefined)).toThrow(/SITE must be one of/);
   });
 });
+
+describe("no module outside a site config names a site's dimensions", () => {
+  test("src/ mentions no dimension column except in site configs and generated types", async () => {
+    const { Glob } = await import("bun");
+    const columns = Object.values(SITES).flatMap((s) =>
+      s.scoring.dimensions.flatMap((d) => [`${d.key}_benefit`, `${d.key}_harm`, `${d.key}_justification`]),
+    );
+    const offenders: string[] = [];
+    for await (const path of new Glob("src/**/*.{ts,tsx}").scan(".")) {
+      if (/^src\/sites\/|database\.types\.ts$|site-tables(\.typetest)?\.ts$/.test(path)) continue;
+      const text = await Bun.file(path).text();
+      for (const c of columns) if (text.includes(c)) offenders.push(`${path}: ${c}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+});
