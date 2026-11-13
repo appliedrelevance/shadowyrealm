@@ -58,3 +58,11 @@ MCP_URL=https://priorart.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-lo
 ```
 
 The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/realm.ts` is the whole index: 624 entities, 733 periods and 298 links. `content/NEXT-500.md` is a readable list of the second wave of 500.
+
+Videos live in `video/`, a [HyperFrames](https://hyperframes.heygen.com) project: HTML compositions rendered to MP4 frame by frame. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes to `video/assets/realm-data.js`. `video/SPEC.md` is the film shot by shot.
+
+```bash
+bun tools/video-snapshot.ts                       # refresh the data the video shows
+cd video && npx hyperframes check                 # lint, layout, contrast and timing
+npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4
+```

@@ -1,0 +1,418 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    #river-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      font-family: "Inter", sans-serif;
+    }
+    #river-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .river-band-b {
+      fill: var(--color-benefit);
+    }
+    .river-band-h {
+      fill: var(--color-harm);
+    }
+    #river-bands {
+      stroke: var(--color-surface);
+      stroke-width: 0.5;
+      stroke-opacity: 0.8;
+    }
+    #river-spot {
+      stroke: var(--color-ink);
+      stroke-width: 1.5;
+    }
+    .river-grid {
+      stroke: var(--color-line);
+      stroke-width: 1;
+    }
+    #river-axis {
+      stroke: var(--color-line-strong);
+      stroke-width: 1.5;
+    }
+    #river-front {
+      stroke: var(--color-ink);
+      stroke-width: 1;
+    }
+    .river-tick-label {
+      font-size: 28px;
+      font-weight: 400;
+      fill: var(--color-ink-muted);
+    }
+    .river-callout-name {
+      font-size: 44px;
+      font-weight: 700;
+      fill: var(--color-ink);
+    }
+    .river-callout-meta {
+      font-size: 28px;
+      font-weight: 400;
+      fill: var(--color-ink-muted);
+    }
+    .river-callout-leader {
+      stroke: var(--color-ink-muted);
+      stroke-width: 1.5;
+    }
+    #river-measure {
+      font-family: "Inter", sans-serif;
+    }
+    #river-year {
+      position: absolute;
+      left: 192px;
+      top: 900px;
+      font-weight: 700;
+      font-size: 76px;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+    #river-source {
+      position: absolute;
+      right: 192px;
+      top: 932px;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--color-ink-muted);
+      white-space: nowrap;
+    }
+  </style>
+  <div id="root" data-composition-id="river" data-width="1920" data-height="1080">
+    <div id="river-stage" class="clip" data-start="0" data-duration="60" data-track-index="0">
+      <svg id="river-svg" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
+        <g id="river-world">
+          <g id="river-grid"></g>
+          <g id="river-bands"></g>
+          <g id="river-spot"></g>
+          <line id="river-axis" x1="96" y1="530" x2="96" y2="530"></line>
+          <line id="river-front" x1="96" y1="235" x2="96" y2="825"></line>
+          <g id="river-ticks"></g>
+        </g>
+        <g id="river-callout">
+          <line id="river-callout-leader" class="river-callout-leader" x1="0" y1="236" x2="0" y2="250"></line>
+          <text id="river-callout-name" class="river-callout-name" x="0" y="178"></text>
+          <text id="river-callout-meta" class="river-callout-meta" x="0" y="218"></text>
+        </g>
+        <text id="river-measure" x="-4000" y="-4000" data-layout-ignore></text>
+      </svg>
+      <div id="river-year">3500 BCE</div>
+      <div id="river-source"></div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const REALM = window.REALM;
+      const TIMELINE = REALM.timeline;
+      const AS_OF = REALM.as_of_year;
+      const N = TIMELINE.buckets;
+
+      // Frame geometry (SPEC.md).
+      const X0 = 96;
+      const X1 = 1824;
+      const IW = X1 - X0;
+      const MID = 530;
+      const HALF = 285;
+      const SAFE_RIGHT = 1728;
+      const x = (u) => X0 + u * IW;
+
+      // The film's clock (SPEC.md SHOTS).
+      const DUR = 60;
+      const AXIS_IN = 0.15;
+      const AXIS_DUR = 2.2;
+      const SWEEP0 = 4.2;
+      const SWEEP1 = 46.2;
+      const SWELL = 0.05; // each bucket rises over 5% of the axis behind the front
+      const FLOOR_SHARE = 0.025;
+      const CALLOUT_GAP = 2.55;
+      const CALLOUT_HOLD = 2.25;
+      const LAST_SWEEP_CALLOUT = 44.0;
+      const RANKS_AT = [46.5, 48.3, 50.1]; // the all-time top three, lit in turn on the finished river
+      const RANK_HOLD = 1.5;
+      const DIM_AT = 52.0;
+
+      // ---- the site's time axis (src/lib/timeline.ts) ----
+      const end = AS_OF + 1;
+      const far = Math.log(end - TIMELINE.start + TIMELINE.near);
+      const nearLog = Math.log(TIMELINE.near);
+      const yearToUnit = (year) => (far - Math.log(Math.max(end - year, 0) + TIMELINE.near)) / (far - nearLog);
+      const unitToYear = (unit) => end + TIMELINE.near - Math.exp(far - unit * (far - nearLog));
+      const formatYear = (year) => {
+        const y = Math.round(year);
+        if (y <= 0) return `${y === 0 ? 1 : -y} BCE`;
+        return y < 1000 ? `${y} CE` : `${y}`;
+      };
+      const formatSpan = (start, stop) => {
+        if (stop >= AS_OF) return `since ${formatYear(start)}`;
+        if (start === stop) return formatYear(start);
+        if (start > 0 && stop < 1000) return `${start}–${stop} CE`;
+        if (stop <= 0) return `${start === 0 ? 1 : -start}–${-stop} BCE`;
+        return `${formatYear(start)}–${formatYear(stop)}`;
+      };
+      const bucketUnit = (i) => (i + 0.5) / N;
+
+      // ---- easing, all functions of time alone ----
+      const clamp01 = (v) => Math.min(1, Math.max(0, v));
+      const expoOut = (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+      const inOut2 = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+      const in2 = (p) => p * p;
+      const smooth = (p) => p * p * (3 - 2 * p);
+      const ramp = (t, t0, dur, ease) => ease(clamp01((t - t0) / dur));
+
+      // The front's position on the axis at time t, and the time it reaches unit u.
+      const frontAt = (t) => clamp01((t - SWEEP0) / (SWEEP1 - SWEEP0)) * (1 + SWELL);
+      const timeAtFront = (u) => SWEEP0 + (u / (1 + SWELL)) * (SWEEP1 - SWEEP0);
+
+      // ---- the river's layers, stacked as the home page stacks them ----
+      const ordered = REALM.entities
+        .filter((e) => e.curve.benefit.length > 0)
+        .sort((a, b) => (a.first_year ?? 0) - (b.first_year ?? 0) || a.name.localeCompare(b.name));
+      const benefitBase = new Array(N).fill(0);
+      const harmBase = new Array(N).fill(0);
+      const layers = ordered.map((entity) => {
+        const { from, benefit, harm } = entity.curve;
+        const start = Math.max(0, from - 1);
+        const stop = Math.min(N - 1, from + benefit.length);
+        const layer = { entity, start, stop, b0: [], b1: [], h0: [], h1: [] };
+        for (let i = start; i <= stop; i++) {
+          const k = i - from;
+          const b = k >= 0 && k < benefit.length ? benefit[k] : 0;
+          const h = k >= 0 && k < harm.length ? harm[k] : 0;
+          layer.b0.push(benefitBase[i]);
+          layer.h0.push(harmBase[i]);
+          benefitBase[i] += b;
+          harmBase[i] += h;
+          layer.b1.push(benefitBase[i]);
+          layer.h1.push(harmBase[i]);
+        }
+        return layer;
+      });
+      const columnTop = benefitBase.map((b, i) => Math.max(b, harmBase[i]));
+      const FINAL_MAX = Math.max(1, ...columnTop);
+      const FLOOR = FINAL_MAX * FLOOR_SHARE;
+
+      // ---- the drawing ----
+      const bandsGroup = document.getElementById("river-bands");
+      const spotGroup = document.getElementById("river-spot");
+      const make = (tag, attrs, parent) => {
+        const el = document.createElementNS(SVG_NS, tag);
+        for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+        parent.appendChild(el);
+        return el;
+      };
+      for (const layer of layers) {
+        const g = make("g", { opacity: "0.92" }, bandsGroup);
+        layer.benefitPath = make("path", { class: "river-band-b", d: "" }, g);
+        layer.harmPath = make("path", { class: "river-band-h", d: "" }, g);
+      }
+      const spotBenefit = make("path", { class: "river-band-b", d: "" }, spotGroup);
+      const spotHarm = make("path", { class: "river-band-h", d: "" }, spotGroup);
+
+      const reveal = new Float64Array(N);
+      const bandPath = (layer, lo, hi, last, sign, scale) => {
+        let top = "";
+        let bottom = "";
+        for (let k = 0; k <= last; k++) {
+          const i = layer.start + k;
+          const px = x(bucketUnit(i)).toFixed(1);
+          const y = MID - sign * Math.sqrt((reveal[i] * hi[k]) / scale) * HALF;
+          top += `${k === 0 ? "M" : "L"}${px},${y.toFixed(1)}`;
+        }
+        for (let k = last; k >= 0; k--) {
+          const i = layer.start + k;
+          const px = x(bucketUnit(i)).toFixed(1);
+          const y = MID - sign * Math.sqrt((reveal[i] * lo[k]) / scale) * HALF;
+          bottom += `L${px},${y.toFixed(1)}`;
+        }
+        return `${top}${bottom}Z`;
+      };
+
+      // Fixed text is measured once, in the face it renders in.
+      const measure = document.getElementById("river-measure");
+      const widthOf = (text, size, weight) => {
+        measure.setAttribute("font-size", size);
+        measure.setAttribute("font-weight", weight);
+        measure.textContent = text;
+        return measure.getComputedTextLength();
+      };
+
+      const build = () => {
+        // ---- ticks: the site's labels, most recent first so the readable end keeps them ----
+        const tickGroup = document.getElementById("river-ticks");
+        const gridGroup = document.getElementById("river-grid");
+        const ticks = [];
+        for (const year of [...TIMELINE.ticks].reverse()) {
+          const u = yearToUnit(year);
+          const px = x(u);
+          if (ticks.length > 0 && ticks[ticks.length - 1].px - px < 150) continue;
+          const label = formatYear(year);
+          const w = widthOf(label, 28, 400);
+          const anchor = px - w / 2 < X0 ? "start" : px + w / 2 > X1 ? "end" : "middle";
+          const line = make("line", { class: "river-grid", x1: px, x2: px, y1: 235, y2: 825, opacity: 0 }, gridGroup);
+          const text = make("text", { class: "river-tick-label", x: px, y: 862, "text-anchor": anchor, opacity: 0 }, tickGroup);
+          text.textContent = label;
+          ticks.push({ px, at: timeAtFront(u), line, text });
+        }
+
+        // ---- callouts: the biggest entity starting in each 2.55 s of the sweep ----
+        const candidates = layers
+          .map((layer) => ({ layer, u: bucketUnit(layer.entity.curve.from) }))
+          .filter((c) => c.u > 0.008)
+          .sort((a, b) => b.layer.entity.own_magnitude - a.layer.entity.own_magnitude);
+        const callouts = [];
+        for (const c of candidates) {
+          const at = timeAtFront(c.u + SWELL * 0.35);
+          if (at > LAST_SWEEP_CALLOUT) continue;
+          if (callouts.every((p) => Math.abs(p.at - at) >= CALLOUT_GAP)) callouts.push({ ...c, at, hold: CALLOUT_HOLD });
+        }
+        callouts.sort((a, b) => a.at - b.at);
+
+        // ---- the finale: the all-time top three, lit in turn on the finished river ----
+        const ranked = [...layers].sort((a, b) => b.entity.total_magnitude - a.entity.total_magnitude);
+        RANKS_AT.forEach((at, i) => {
+          const layer = ranked[i];
+          callouts.push({ layer, u: bucketUnit(layer.entity.curve.from), at, hold: RANK_HOLD, rank: i + 1 });
+        });
+
+        const total = REALM.entities.length.toLocaleString("en-US");
+        for (const c of callouts) {
+          const e = c.layer.entity;
+          const kind = e.entity_type.charAt(0).toUpperCase() + e.entity_type.slice(1);
+          const span = e.first_year === null ? kind : `${kind} · ${formatSpan(e.first_year, e.last_year ?? e.first_year)}`;
+          c.name = e.name;
+          c.meta = c.rank ? `No. ${c.rank} of ${total} · ${span}` : span;
+          c.px = x(c.u);
+          const w = Math.max(widthOf(c.name, 44, 700), widthOf(c.meta, 28, 400));
+          c.anchor = c.px + w > SAFE_RIGHT ? "end" : "start";
+        }
+
+        document.getElementById("river-source").textContent =
+          `shadowyrealm.com · ${REALM.entities.length.toLocaleString("en-US")} entities · as of ${AS_OF}`;
+
+        return { ticks, callouts };
+      };
+
+      document.fonts.ready.then(() => {
+        const { ticks, callouts } = build();
+        const world = document.getElementById("river-world");
+        const axis = document.getElementById("river-axis");
+        const front = document.getElementById("river-front");
+        const calloutGroup = document.getElementById("river-callout");
+        const calloutName = document.getElementById("river-callout-name");
+        const calloutMeta = document.getElementById("river-callout-meta");
+        const calloutLeader = document.getElementById("river-callout-leader");
+        const year = document.getElementById("river-year");
+        const source = document.getElementById("river-source");
+        let shownCallout = null;
+
+        const draw = (t) => {
+          const f = frontAt(t);
+          let scale = FLOOR;
+          for (let i = 0; i < N; i++) {
+            reveal[i] = smooth(clamp01((f - bucketUnit(i)) / SWELL));
+            const top = reveal[i] * columnTop[i];
+            if (top > scale) scale = top;
+          }
+
+          // The callout on screen now, and how lit its band is.
+          let callout = null;
+          let lit = 0;
+          for (const c of callouts) {
+            if (t < c.at - 0.05 || t >= c.at + c.hold + 0.5) continue;
+            callout = c;
+            lit = ramp(t, c.at, 0.45, inOut2) * (1 - ramp(t, c.at + c.hold - 0.05, 0.35, inOut2));
+          }
+
+          for (const layer of layers) {
+            let last = -1;
+            for (let k = 0; k <= layer.stop - layer.start; k++) if (reveal[layer.start + k] > 0) last = k;
+            if (last < 0) {
+              if (layer.drawn) {
+                layer.benefitPath.setAttribute("d", "");
+                layer.harmPath.setAttribute("d", "");
+                layer.drawn = false;
+              }
+              continue;
+            }
+            last = Math.min(layer.stop - layer.start, last + 1);
+            layer.benefitPath.setAttribute("d", bandPath(layer, layer.b0, layer.b1, last, 1, scale));
+            layer.harmPath.setAttribute("d", bandPath(layer, layer.h0, layer.h1, last, -1, scale));
+            layer.drawn = true;
+          }
+          bandsGroup.setAttribute("opacity", (1 - 0.35 * lit).toFixed(3));
+          if (callout && lit > 0) {
+            spotBenefit.setAttribute("d", callout.layer.benefitPath.getAttribute("d"));
+            spotHarm.setAttribute("d", callout.layer.harmPath.getAttribute("d"));
+            spotGroup.setAttribute("opacity", lit.toFixed(3));
+          } else {
+            spotGroup.setAttribute("opacity", "0");
+          }
+
+          // Callout text: lands blurred to sharp, holds still, leaves.
+          if (callout) {
+            if (shownCallout !== callout) {
+              calloutName.textContent = callout.name;
+              calloutMeta.textContent = callout.meta;
+              for (const el of [calloutName, calloutMeta]) {
+                el.setAttribute("x", callout.px.toFixed(1));
+                el.setAttribute("text-anchor", callout.anchor);
+              }
+              calloutLeader.setAttribute("x1", callout.px.toFixed(1));
+              calloutLeader.setAttribute("x2", callout.px.toFixed(1));
+              shownCallout = callout;
+            }
+            const enter = ramp(t, callout.at, 0.3, expoOut);
+            const leave = ramp(t, callout.at + callout.hold, 0.18, in2);
+            const op = enter * (1 - leave);
+            calloutGroup.setAttribute("opacity", op.toFixed(3));
+            calloutGroup.style.filter = `blur(${(6 * (1 - enter) + 6 * leave).toFixed(2)}px)`;
+            const i = Math.min(N - 1, callout.layer.entity.curve.from);
+            const crest = MID - Math.sqrt((reveal[i] * columnTop[i]) / scale) * HALF;
+            calloutLeader.setAttribute("y2", Math.max(240, crest - 8).toFixed(1));
+          } else {
+            calloutGroup.setAttribute("opacity", "0");
+          }
+
+          // The axis draws in; the front leads the river and leaves when it is done.
+          axis.setAttribute("x2", (X0 + IW * ramp(t, AXIS_IN, AXIS_DUR, inOut2)).toFixed(1));
+          const frontX = Math.min(X1, x(f));
+          front.setAttribute("x1", frontX.toFixed(1));
+          front.setAttribute("x2", frontX.toFixed(1));
+          front.setAttribute("opacity", (0.45 * ramp(t, SWEEP0 - 0.3, 0.3, inOut2) * (1 - ramp(t, SWEEP1, 0.6, inOut2))).toFixed(3));
+
+          for (const tick of ticks) {
+            const op = ramp(t, tick.at, 0.4, expoOut);
+            tick.line.setAttribute("opacity", op.toFixed(3));
+            tick.text.setAttribute("opacity", op.toFixed(3));
+          }
+
+          // The counter reads the year at the front.
+          year.textContent = formatYear(Math.min(AS_OF, unitToYear(Math.min(1, f))));
+          const furniture = ramp(t, SWEEP0 - 0.4, 0.3, expoOut) * (1 - ramp(t, DIM_AT, 0.4, in2));
+          year.style.opacity = furniture.toFixed(3);
+          source.style.opacity = furniture.toFixed(3);
+
+          // The end card takes the frame: the river stays, dimmed under it.
+          world.setAttribute("opacity", (1 - 0.78 * ramp(t, DIM_AT, 0.8, inOut2)).toFixed(3));
+        };
+
+        const state = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo(state, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: () => draw(state.t) }, 0);
+        draw(0);
+        window.__timelines["river"] = tl;
+      });
+    })();
+  </script>
+</template>

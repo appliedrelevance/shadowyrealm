@@ -1,0 +1,70 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    #intro-title {
+      position: absolute;
+      left: 192px;
+      top: 352px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      font-size: 88px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+    #intro-sub {
+      position: absolute;
+      left: 192px;
+      top: 468px;
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      font-size: 36px;
+      color: var(--color-ink-muted);
+      white-space: nowrap;
+    }
+    .intro-word {
+      display: inline-block;
+    }
+  </style>
+  <div id="root" data-composition-id="intro" data-width="1920" data-height="1080">
+    <h1 id="intro-title" class="clip" data-start="0" data-duration="4.6" data-track-index="0">
+      <span id="intro-w1" class="intro-word">Five</span>
+      <span id="intro-w2" class="intro-word">thousand</span>
+      <span id="intro-w3" class="intro-word">years</span>
+      <span id="intro-w4" class="intro-word">of</span>
+      <span id="intro-w5" class="intro-word">influence</span>
+    </h1>
+    <p id="intro-sub" class="clip" data-start="0" data-duration="4.6" data-track-index="1">
+      <span id="intro-sub-line">Benefit rises above the line. Harm falls below it.</span>
+    </p>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const words = ["#intro-w1", "#intro-w2", "#intro-w3", "#intro-w4", "#intro-w5"];
+    // Words land one by one, blurred to sharp, no travel.
+    words.forEach((w, i) => {
+      tl.fromTo(
+        w,
+        { opacity: 0, filter: "blur(6px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.14, ease: "expo.out" },
+        0.35 + i * 0.08,
+      );
+    });
+    tl.fromTo(
+      "#intro-sub-line",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" },
+      1.2,
+    );
+    // Both lines leave word by word just as the river starts to arrive.
+    words.forEach((w, i) => {
+      tl.to(w, { opacity: 0, filter: "blur(6px)", duration: 0.13, ease: "power2.in" }, 3.95 + i * 0.04);
+    });
+    tl.to("#intro-sub-line", { opacity: 0, filter: "blur(6px)", duration: 0.16, ease: "power2.in" }, 4.1);
+    window.__timelines["intro"] = tl;
+  </script>
+</template>

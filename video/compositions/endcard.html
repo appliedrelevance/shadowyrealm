@@ -1,0 +1,99 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    #end-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: "Inter", sans-serif;
+      text-align: center;
+    }
+    #end-mark {
+      width: 148px;
+      height: 148px;
+      margin-bottom: 36px;
+    }
+    #end-url {
+      font-weight: 700;
+      font-size: 76px;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+    #end-question {
+      margin-top: 22px;
+      font-weight: 400;
+      font-size: 38px;
+      color: var(--color-ink);
+    }
+    #end-count {
+      margin-top: 28px;
+      font-weight: 400;
+      font-size: 30px;
+      color: var(--color-ink-muted);
+    }
+    .end-mark-arch {
+      stroke: var(--color-action-ink);
+    }
+  </style>
+  <div id="root" data-composition-id="endcard" data-width="1920" data-height="1080">
+    <div id="end-card" class="clip" data-start="0" data-duration="8" data-track-index="0">
+      <!-- The gate mark, as src/sites/shadowyrealm/Logo.tsx draws it. -->
+      <svg id="end-mark" viewBox="10 11 44 44" aria-hidden="true">
+        <defs>
+          <radialGradient id="end-mark-glow" cx="50%" cy="85%" r="70%">
+            <stop offset="0" style="stop-color: var(--color-ember)" />
+            <stop offset="0.45" style="stop-color: var(--color-crit)" />
+            <stop offset="1" style="stop-color: var(--color-crit-soft)" />
+          </radialGradient>
+        </defs>
+        <path d="M19 52V30a13 13 0 0 1 26 0v22z" fill="url(#end-mark-glow)" />
+        <path
+          class="end-mark-arch"
+          d="M19 52V30a13 13 0 0 1 26 0v22"
+          fill="none"
+          stroke-width="4"
+          stroke-linejoin="round"
+        />
+        <path class="end-mark-arch" d="M12 52h40" stroke-width="4" stroke-linecap="round" />
+      </svg>
+      <div id="end-url">shadowyrealm.com</div>
+      <div id="end-question">Who shaped the world, for better and for worse?</div>
+      <div id="end-count"></div>
+    </div>
+  </div>
+  <script>
+    const realm = window.REALM;
+    document.getElementById("end-count").textContent =
+      `${realm.entities.length.toLocaleString("en-US")} people, institutions and events, scored as of ${realm.as_of_year}`;
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(
+      "#end-mark",
+      { opacity: 0, scale: 0.92 },
+      { opacity: 1, scale: 1, duration: 0.7, ease: "expo.out" },
+      0.5,
+    );
+    tl.fromTo(
+      "#end-url",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" },
+      0.85,
+    );
+    tl.fromTo(
+      "#end-question",
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" },
+      1.25,
+    );
+    tl.fromTo("#end-count", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.9);
+    window.__timelines["endcard"] = tl;
+  </script>
+</template>
