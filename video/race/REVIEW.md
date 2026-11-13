@@ -13,24 +13,27 @@ licence and page, from `--credits`).
   rushed; what tires a viewer is two at once. Before: for 10.7% of the sweep a name landed at the
   top while a leader's sentence was being read at the bottom. Now: none. The plan
   (`River.readingPlan`) puts era names first, then leader cards, then names in the gaps, every 3 to
-  4 s. The price is fewer names, 24 where there were 38, as names wait while sentences are read;
-  7 of them are people, where there were 5.
-- **Every leader keeps its sentence.** Cards queue: each lands once the last has been read plus a
-  1 s rest, while its entity still leads. Hinduism's and Sumer's descriptions are back; the latest
-  card lands 7.8 s after its lead (the Church, waiting for the Roman Empire's card and the Middle
-  Ages' name).
+  4 s. The price is fewer names in the sweep, 19 where there were 38, as names wait while sentences
+  are read; 7 of them are people, where there were 5. The countdown names ten more.
+- **Every leader keeps its sentence.** A leader gets a card when it holds the lead 2.5 s or more:
+  14 of them, the Mongol Empire and the Atlantic slave trade included. Cards queue: each lands once
+  what came before has been read, while its entity still leads. Hinduism's and Sumer's descriptions
+  are back; the latest card lands 8.5 s after its lead (the Church, waiting for the Roman Empire's
+  card and the Middle Ages' name).
 - **The top ten**, on the board through the race and in all time. Rows are 66 px apart, with a
   52 px picture, a 28 px name and a 14 px bar; a row joins from under the tenth place behind a clean
   edge. 148 entities reach the board at some point; the Rockefeller Foundation, the Cultural
   Revolution and Facebook have non-free pictures on Wikipedia, so their rows show the site's type
   icon, as the site does for an entity with no picture.
-- **No credit beat.** The Jesus scene is gone; the sweep has its 8 s back (276 s) and all time
-  arrives straight after it, so the finale and the music keep their times.
+- **No credit beat, and a countdown of the ten.** The Jesus scene is gone. All time counts down on
+  the river from No. 10 to No. 1, each named with its type and years ("No. 9 · Person · 28–30 CE")
+  and held for its words, ending as the river dims at 292 s. The sweep gives up 21.4 s for it
+  (254.6 s); the end card and the music keep their times.
 - **Era columns.** Every other era is a faint column behind the river, and the era at the front is
   brighter. Each era's name and years land in the callout slot as the front enters it. The year
-  ticks lost their lines, so the river has one set of verticals. The First Cities open under the
-  intro and the Iron Age begins while Maya's card is being read, so those two are named in the
-  panel only.
+  ticks lost their lines, so the river has one set of verticals. A name waits up to 3 s for a card
+  to be read. The First Cities open under the intro and the Iron Age begins in the middle of Maya's
+  card, so those two are named in the panel only.
 - **Type shades.** Organizations keep the site's benefit and harm, half the river's area; people are
   lighter and lean cyan or orange, events darker and lean indigo or crimson. They are texture, not a
   code to learn, so there is no key; every callout says its type. Checked with the dataviz skill's
@@ -44,27 +47,26 @@ licence and page, from `--credits`).
 - **Pictures** are the site's own Wikimedia thumbnails, frozen as stills: one frame, converted to
   sRGB, cropped square.
 - **All time** turns the panel after the sweep: "Every year added together", the top ten in the
-  site's numbers, and the top three on the river with their span in years (Ancient Egypt,
-  3100–30 BCE, 3,070 years).
+  site's numbers.
 - **One engine for both films.** `../assets/river.js` draws the 60-second cut too; every new
   behaviour is switched on by `FILMS.race`, and the cut's frames are pixel-identical to the
   committed version at 10, 25, 40 and 48.7 s (PSNR infinite).
 
 ## Measured
 
-- `hyperframes check` (0.9.42): no errors, lint clean. Four warnings kept, all `line_unread` on real
-  short visits to the tenth place: Darius the Great (0.8 s), Julius Caesar (0.2 s), the Gupta
-  Empire (0.3 s) and the eradication of smallpox (1.0 s). Hiding them would push the rows around an
+- `hyperframes check` (0.9.42): no errors, lint clean. Two warnings kept, both `line_unread` on real
+  short visits to the tenth place: Darius the Great (0.75 s) and the eradication of smallpox
+  (0.9 s). Hiding them would push the rows around an
   empty slot; churn in the last place is the genre.
-- Reading load, from the reading plan in a script: a text is being read 61% of the sweep, two at
+- Reading load, from the reading plan in a script: a text is being read 65% of the sweep, two at
   once 0.0% of it (before: 56% and 10.7%). The board's names are left out of the count: it is a
   glance, not a read.
-- Render: 9000 frames in 5 min 42 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
+- Render: 9000 frames in 6 min 3 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
   true peak, the same mix as before.
-- Frames: snapshots at 10, 45.5, 55, 57, 71, 74, 106, 108, 160, 191.6, 204, 250, 262, 279, 283, 287
-  and 296 s, and the contact sheet cut from the render.
+- Frames: snapshots at 10, 45.5, 55, 68.5, 71.5, 106, 160, 204, 250, 260.5, 262.2, 265.2, 271.2,
+  290.4 and 296 s, and the contact sheet cut from the render.
 - The snapshot was refreshed for the ten places: the site's 624 entities and 298 links are unchanged.
-  The description runs 4,115 bytes, inside YouTube's 5,000 characters.
+  The description runs 4,115 bytes, inside YouTube's 5,000 characters; all time is chapter 4:19.
 
 ## Not checked
 
@@ -75,7 +77,12 @@ licence and page, from `--credits`).
 
 The film draws the site's scores as they stand, and some do not hold up. Michael Jackson is fifth
 on the board in 2026 and third in 2012: his own score, 186.6, is above the World Wide Web's 103.9 and
-five times COVID-19's 34.3. Three causes, all in the site's scoring, none in the film:
+five times COVID-19's 34.3. His influence per year is one flat line, 298.4 from 1966 (the Jackson 5,
+aged eight) to his death in 2009, then 282.5 in 2026: above the World Wide Web's 288.8 until 2019,
+twice the Beatles' 146.4. Four causes, all in the site's scoring, none in the film:
+
+- **One period, one number.** His content gives one period, 1964 to 2009, scored once, so the
+  Jackson 5 years count the same as Thriller's.
 
 - **Clef's ratings.** One Clef pass over his Wikipedia lead, at confidence 0.21, gave a singer a
   human-rights benefit of 6.1 of 10 (the Web: 3.0), a health harm of 5.0 and a reach of 8, the same

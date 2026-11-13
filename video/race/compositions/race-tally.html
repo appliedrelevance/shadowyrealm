@@ -67,7 +67,7 @@
         for (const el of ranks) el.style.opacity = ramp(t, film.allTimeAt, 0.3, ease.expoOut).toFixed(3);
 
         // Rows arrive from the top; the one lit on the river stays bright.
-        const lit = film.ranksAt.map((at) => ramp(t, at, 0.45, ease.inOut2) * (1 - ramp(t, at + film.rankHold - 0.05, 0.35, ease.inOut2)));
+        const lit = film.ranksAt.map((at, i) => ramp(t, at, 0.45, ease.inOut2) * (1 - ramp(t, at + film.rankHolds[i] - 0.05, 0.35, ease.inOut2)));
         const anyLit = Math.max(0, ...lit);
         allTimeRows.forEach((row, k) => {
           const rowEnter = ramp(t, film.allTimeAt + 0.1 + 0.08 * k, 0.35, ease.expoOut);

@@ -26,31 +26,33 @@
       axisIn: 0.15,
       axisDur: 2.2,
       sweep0: 4.2,
-      sweep1: 280.2,
+      sweep1: 258.8,
       // Calm pacing, for casual viewing: one thing to read at a time. A name lands every 3 to 4 s,
       // but waits while a leader's card or an era's name is being read.
       pacing: "calm",
       calloutGap: 3.0,
       calloutWindow: 1.0,
       calloutHold: 2.6,
-      lastCallout: 276.0,
+      lastCallout: 254.6,
       // A faint column for every other era, a brighter one for the era at the front, and the era's
       // name above the river as the front enters it. The bands are shaded by entity type.
       eras: true,
       typeShades: true,
-      // After the sweep the board turns from that year to all time, before the top three are lit.
-      // The board shows the top ten.
+      // The board shows the top ten. After the sweep it turns from that year to all time, and the
+      // all-time ten are lit on the river counting down, No. 10 first and No. 1 last, each for its
+      // words (rankHolds, River.readTime; mount checks them) and 0.4 s apart, ending before the dim.
+      // Times for rank 1 to 10; re-time them if the top ten's names change.
       boardSlots: 10,
-      allTimeAt: 281.0,
-      ranksAt: [282.6, 285.4, 288.2],
-      rankHold: 2.3,
+      // A leader gets a card when it holds the lead 2.5 s or more.
+      leadHold: 2.5,
+      allTimeAt: 259.6,
+      ranksAt: [289.2, 286.2, 283.2, 279.9, 276.6, 273.6, 270.0, 267.0, 264.0, 261.0],
+      rankHolds: [2.6, 2.6, 2.6, 2.9, 2.9, 2.6, 3.2, 2.6, 2.6, 2.6],
       dimAt: 292.0,
       frame: { x0: 96, x1: 1250, textRight: 1250 },
       // The camera: the view widens with the front, which holds 80% of the way across, so the river
       // fills the frame from the first minute; it never shows less than a fifth of the axis.
       zoom: { lead: 0.8, minView: 0.2 },
-      // The top three say how long each lasted: all time adds up every year.
-      rankYears: true,
     },
   };
 
@@ -171,7 +173,7 @@
       return rows.slice(0, slots + 1);
     };
     // The first time each entity leads, when it keeps the lead at least `hold` seconds.
-    const firstLeads = (hold = 3, step = 0.1) => {
+    const firstLeads = (hold = film.leadHold ?? 3, step = 0.1) => {
       const runs = [];
       for (let k = 0; film.sweep0 + k * step <= film.sweep1; k++) {
         const t = film.sweep0 + k * step;
@@ -207,13 +209,15 @@
   const readTime = (n) => 0.5 + 0.3 * n;
 
   // ---- the race's reading plan: what lands to be read, one thing at a time ----
-  // Era names: each era after the first (the intro is on screen then) is named above the river 0.2 s
-  // after the front enters it, holding for its words.
-  // Leader cards: one the first time each entity leads the board. Each waits until the last has been
-  // read, plus a 1 s rest, and must land while its entity still leads. An era's name in the way: the
-  // card waits for it when that costs at most 3.5 s; otherwise that era is named in the panel only.
-  // A card holds for its words plus 1.5 s (at least 5 s, at most 12 s) and leaves 0.4 s before the next.
-  const ERA_WAIT = 3.5;
+  // Era names: each era after the first (the intro is on screen then) is named above the river from
+  // 0.2 s after the front enters it, holding for its words; a name may wait up to 3 s for the
+  // reading before it to end, and otherwise the era is named in the panel only.
+  // Leader cards: one the first time each entity leads the board. Each waits until what came before
+  // has been read, plus a rest (1 s after a card, 0.5 s after an era's name), and must land while
+  // its entity still leads. A card waits up to 3.5 s for an era's name that it would otherwise push
+  // out. It holds for its words plus 1.5 s (at least 5 s, at most 12 s), leaving 0.4 s before the next.
+  const ERA_WAIT = 3.0;
+  const CARD_WAIT = 3.5;
   function readingPlan(realm, film) {
     const ax = axis(realm);
     const { timeAtFront } = clock(film);
@@ -223,30 +227,52 @@
           const next = ERAS[i + 1];
           const name = era.name;
           const meta = `${ax.formatYear(era.year)} to ${next ? ax.formatYear(next.year) : "today"}`;
-          const at = timeAtFront(ax.yearToUnit(era.year)) + 0.2;
+          const earliest = timeAtFront(ax.yearToUnit(era.year)) + 0.2;
           const read = readTime(wordsIn(name) + wordsIn(meta));
-          return { i, name, meta, at, readEnd: at + read, hold: Math.max(film.calloutHold, read), shown: i > 0 };
+          return { i, name, meta, earliest, read, hold: Math.max(film.calloutHold, read), shown: i > 0 };
         });
     const leads = board(realm, film).firstLeads();
-    const cards = [];
-    let free = -Infinity;
-    leads.forEach((lead, i) => {
+    const pending = leads.map((lead, i) => {
       const e = lead.e;
       const reasons = realm.media[e.slug]?.reason;
       if (!reasons) throw new Error(`The snapshot has no reason for leader ${e.slug}: run bun tools/video-snapshot.ts`);
       const read = readTime(wordsIn(e.name) + reasons.reduce((n, r) => n + wordsIn(r.text), 0) + wordsIn(e.description));
-      let at = Math.max(lead.at + 0.6, free);
-      for (const label of eraLabels) {
-        if (!label.shown || !(label.at - 0.5 < at + read && at < label.readEnd + 0.5)) continue;
-        const wait = label.readEnd + 0.5 - at;
-        if (wait <= ERA_WAIT) at += wait;
-        else label.shown = false;
-      }
       const leadEnd = i + 1 < leads.length ? leads[i + 1].at : film.allTimeAt;
-      if (at >= leadEnd) throw new Error(`${e.slug}'s card would land after it lost the lead (${at.toFixed(1)} s)`);
-      cards.push({ slug: e.slug, title: e.name, reasons, body: e.description || null, at, readEnd: at + read });
-      free = at + read + 1.0;
+      return { slug: e.slug, title: e.name, reasons, body: e.description || null, earliest: lead.at + 0.6, read, leadEnd };
     });
+    const labels = eraLabels.filter((l) => l.shown);
+    const cards = [];
+    let free = -Infinity;
+    let ci = 0;
+    let li = 0;
+    while (ci < pending.length || li < labels.length) {
+      const card = pending[ci];
+      const label = labels[li];
+      const cardAt = card ? Math.max(card.earliest, free) : Infinity;
+      const labelAt = label ? Math.max(label.earliest, free) : Infinity;
+      let labelFirst = Boolean(label) && labelAt <= cardAt;
+      if (label && card && !labelFirst) {
+        // The card goes first unless that pushes the era's name out and the card can wait for it.
+        const labelAfter = Math.max(label.earliest, cardAt + card.read + 1.0);
+        const cardAfter = labelAt + label.read + 0.5;
+        labelFirst = labelAfter > label.earliest + ERA_WAIT && cardAfter - cardAt <= CARD_WAIT && cardAfter < card.leadEnd;
+      }
+      if (labelFirst) {
+        li++;
+        if (labelAt > label.earliest + ERA_WAIT) {
+          label.shown = false;
+          continue;
+        }
+        label.at = labelAt;
+        label.readEnd = labelAt + label.read;
+        free = label.readEnd + 0.5;
+        continue;
+      }
+      ci++;
+      if (cardAt >= card.leadEnd) throw new Error(`${card.slug}'s card would land after it lost the lead (${cardAt.toFixed(1)} s)`);
+      cards.push({ slug: card.slug, title: card.title, reasons: card.reasons, body: card.body, at: cardAt, readEnd: cardAt + card.read });
+      free = cardAt + card.read + 1.0;
+    }
     cards.forEach((card, i) => {
       const next = i + 1 < cards.length ? cards[i + 1].at : film.allTimeAt;
       const read = card.readEnd - card.at;
@@ -430,11 +456,12 @@
     }
     callouts.sort((a, b) => a.at - b.at);
 
-    // ---- the finale: the all-time top three by total influence, lit in turn ----
+    // ---- the finale: the all-time top ranks by total influence, lit in turn ----
     const ranked = [...layers].sort((a, b) => b.entity.total_magnitude - a.entity.total_magnitude);
     film.ranksAt.forEach((at, i) => {
       const layer = ranked[i];
-      callouts.push({ layer, u: ax.bucketUnit(layer.entity.curve.from), at, hold: film.rankHold, rank: i + 1 });
+      const hold = film.rankHolds ? film.rankHolds[i] : film.rankHold;
+      callouts.push({ layer, u: ax.bucketUnit(layer.entity.curve.from), at, hold, rank: i + 1 });
     });
 
     const total = realm.entities.length.toLocaleString("en-US");
@@ -443,12 +470,10 @@
       const span = labelOf(e);
       c.name = e.name;
       c.meta = c.rank ? `No. ${c.rank} of ${total} · ${span}` : span;
-      if (c.rank && film.rankYears) {
-        const first = e.first_year;
-        const last = e.last_year ?? first;
-        // Years run 1 BCE to 1 CE with no year zero between them.
-        const years = last - first - (first < 0 && last > 0 ? 1 : 0);
-        c.meta = `No. ${c.rank} of ${total} · ${ax.formatSpan(first, last)} · ${years.toLocaleString("en-US")} years`;
+      if (c.rank && film.rankHolds) {
+        c.meta = `No. ${c.rank} · ${span}`;
+        const read = readTime(wordsIn(c.name) + wordsIn(c.meta));
+        if (read > c.hold + 1e-9) throw new Error(`No. ${c.rank}, ${c.name}, needs ${read.toFixed(1)} s to read and holds ${c.hold} s: re-time FILMS.race`);
       }
       c.px = x(c.u, view(film, frontAt(c.at)));
       const w = Math.max(widthOf(c.name, 44, 700), widthOf(c.meta, 28, 400));
