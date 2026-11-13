@@ -13,7 +13,7 @@ const makingAndUse = (name: string) => `the making and use of ${name}`;
 /** A subdomain of ShadowyRealm: Prior Art is one of its indexes. */
 const ORIGIN = "https://priorart.shadowyrealm.com";
 
-/** Descriptors for the tiers, which are set from the launch run (Requirement 10.5). */
+/** What each tier means on Prior Art (inventions-site Requirement 8.2). */
 export const PRIOR_ART_TIER_DESCRIPTORS: Record<TierDef["tier"], string> = {
   minimal: "Changed one industry or one era",
   moderate: "Changed work or life across a nation or a field",
@@ -93,7 +93,19 @@ export const inventions: SiteConfig = {
     ],
     rubrics: HISTORICAL_RUBRICS,
     unit: { years: 100, name: "influence-centuries" },
-    tiers: null,
+    /**
+     * In influence-centuries of total magnitude: the round values nearest the
+     * 20th, 50th, 80th and 95th percentiles of the 2026-11-13 launch run over
+     * 150 entities (58.5, 127.7, 319.5, 2,543.4). See
+     * .kiro/specs/inventions-site/research.md.
+     */
+    tiers: [
+      { tier: "minimal", min: 0, label: "Notable", descriptor: PRIOR_ART_TIER_DESCRIPTORS.minimal },
+      { tier: "moderate", min: 50, label: "Major", descriptor: PRIOR_ART_TIER_DESCRIPTORS.moderate },
+      { tier: "significant", min: 100, label: "Great", descriptor: PRIOR_ART_TIER_DESCRIPTORS.significant },
+      { tier: "transformational", min: 200, label: "Epochal", descriptor: PRIOR_ART_TIER_DESCRIPTORS.transformational },
+      { tier: "legendary", min: 2000, label: "Legendary", descriptor: PRIOR_ART_TIER_DESCRIPTORS.legendary },
+    ],
   },
   entityTypes: [
     {
