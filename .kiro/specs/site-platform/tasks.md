@@ -16,6 +16,7 @@
   - [ ] 3.1 `schemasFor(site)`; the service's schema client, select lists and `SiteTables`; the link-endpoint check; the earliest start; the tier gate (Requirements 5.5, 8.2–8.4, 10)
   - [ ] 3.2 MCP server name, instructions and tool descriptions from the config (Requirement 8.1)
   - [ ] 3.3 The Worker's `SITE` check and `X-Site` header; `pages.ts` and the Wikipedia `User-Agent` from the brand (Requirements 4.7, 4.8, 9.2)
+  - [ ] 3.4 `score_period` writes the replaced assessment and the prior reach and persistence to the audit log; the loader records revision permalinks (Requirement 12)
 
 - [ ] 4. Screens
   - [ ] 4.1 Every screen from the config, with charts for 1 to 31 dimensions (Requirement 7)

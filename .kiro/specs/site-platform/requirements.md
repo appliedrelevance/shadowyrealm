@@ -9,7 +9,9 @@ The platform rests on three rules:
 - **One Postgres schema per site.** Each site gets its own schema in the shared Supabase project, built from ShadowyRealm's table shapes with columns named after its own dimensions. The code already reads profile columns as `{dimension}_benefit` and `{dimension}_harm`, so a site with different dimensions needs no new data model.
 - **One deployment per site.** Each site has its own Worker, secrets, cache, domain and sitemap. A bad deploy of one site leaves the others up.
 
-ShadowyRealm is the first site and keeps its behaviour exactly. The inventions site (spec `inventions-site`) is the second. A current-events site and a forecasting layer are planned as specs of their own, and this spec keeps the dimension count, the rubrics and the time unit open for them.
+ShadowyRealm is the first site and keeps its behaviour exactly. The inventions site (spec `inventions-site`) is the second. A current-events site is planned as a spec of its own, and this spec keeps the dimension count, the rubrics and the time unit open for it.
+
+Forecasting is shelved. A forecaster would learn from what was known at each date, so Requirement 12 keeps that record from now on: every score a period has had, and the exact revision of the evidence each score was computed from.
 
 ## Boundary Context
 - **In scope**:
@@ -17,7 +19,8 @@ ShadowyRealm is the first site and keeps its behaviour exactly. The inventions s
   - ShadowyRealm's config, extracted from today's constants;
   - one build and one Worker deployment per site;
   - generating a site's schema DDL from its config;
-  - the tier calibration gate.
+  - the tier calibration gate;
+  - keeping every score and the revision of its evidence.
 - **Out of scope**:
   - any site other than ShadowyRealm (each new site has its own spec);
   - time units shorter than a year;
@@ -153,3 +156,13 @@ ShadowyRealm is the first site and keeps its behaviour exactly. The inventions s
 2. ShadowyRealm's unit tests shall pass unchanged.
 3. ShadowyRealm's e2e suite shall pass against production after its deploy.
 4. The minimum start year for a ShadowyRealm period shall move from 5000 BCE to the site's timeline start of 3500 BCE. Before the change ships, a query of the published data shall confirm that no period starts earlier. The earliest period in `content/` starts in 1792 BCE.
+
+### Requirement 12: The record a forecaster would need
+**Objective:** As the owner, I want every score kept with the exact evidence it came from, so that a later forecasting layer can learn from what was known at each date. That record cannot be rebuilt afterwards.
+
+#### Acceptance Criteria
+1. When `score_period` replaces a period's earlier Clef assessment, the Service shall write the replaced assessment to the audit entry's `old_value`. That covers its benefit and harm levels, confidence, sources, creation time and evidence text, and the period's reach and persistence factors before the update.
+2. The audit entry shall hold the evidence text once, not once per dimension.
+3. The content loader shall record each period's evidence source as a Wikipedia revision permalink (`index.php?title=…&oldid=…`) for the revision it read.
+4. The scoring core shall keep computing any site's scores as of a given year.
+5. These changes shall alter no score. Requirement 11.1's identity check still holds.

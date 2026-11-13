@@ -145,7 +145,8 @@ The generated types are per schema, but the service needs one shape. `SiteTables
 | `src/lib/sr-service.ts` | The client uses `db: { schema: site.schema }`. The select lists at lines 378 and 485 are built from the dimension keys. The evidence is read from the first dimension's justification. `addRelationship` checks the link type's allowed entity types. `setEntityStatus` refuses `published` while `scoring.tiers` is `null`. Rows are typed by `SiteTables`. |
 | `src/lib/timeline.ts` | `TIMELINE_START`, `TIMELINE_TICKS`, `NEAR` and `BUCKET_COUNT` leave. `yearToUnit`, `unitToYear` and `bucketEdges` take a `Timeline`. |
 | `src/lib/copy.ts` | Becomes ShadowyRealm's `copy` in its config. |
-| `src/lib/research.ts`, `tools/realm-load.ts` | `User-Agent` from `site.brand`. |
+| `src/lib/research.ts`, `tools/realm-load.ts` | `User-Agent` from `site.brand`. The loader's extracts query adds `prop=revisions&rvprop=ids`, and `source_url` becomes the `oldid` permalink of the revision read. |
+| `scorePeriod` in `sr-service.ts` | The delete of the earlier Clef assessment returns its full row. The period's reach and persistence are read before the update. The `period_scored` audit entry puts both in `old_value`, with the evidence text stored once. |
 | `src/worker/index.ts`, `env.ts` | `SITE` var. A missing or unknown value answers 500 for every path. `X-Site` goes on every `/api/*` response. |
 | `src/worker/mcp.ts` | Server name, instructions and every tool description that names dimensions, types or examples come from the config. |
 | `src/worker/pages.ts` | `ORIGIN` and the schema come from the config. |
@@ -189,5 +190,7 @@ The generated types are per schema, but the service needs one shape. `SiteTables
 | Rubrics and time constants in the config | A site on a timescale of weeks needs "faded within days" as a level; ShadowyRealm's lowest is "faded within a year" |
 | Year is the only time unit here | Day placement needs date columns and a different axis, and the current-events spec is the right place to design them against real events. Period length and axis placement each sit in one function so that spec changes two functions. |
 | Tiers are `null` until calibrated, and publishing is refused meanwhile | Borrowed thresholds would label entities on a distribution that does not exist yet |
+| Forecasting shelved, its record kept | A forecaster learns from what was known at each date. Keeping replaced scores in the audit log and pinning evidence to a Wikipedia revision costs no schema change and alters no score. A history that was never recorded cannot be recovered. |
+| Replaced scores in the audit log, not a history table | `entity_audit_log` already has `old_value jsonb`, so the history needs no handoff. A forecasting spec can move it into a table of its own if it needs to query it. |
 | "Site", not "realm" | "Realm" already names the lineage page, `/api/realm` and `content/realm.ts` |
 | Hand-written `SiteTables` with a type test | The service needs one row shape for every schema, and the type test catches a schema that drifts from it |
