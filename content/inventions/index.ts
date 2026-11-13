@@ -12,11 +12,12 @@ import { crossEra } from "./cross-era";
 import { launchAncient } from "./launch-ancient";
 import { launchIndustrial } from "./launch-industrial";
 import { launchModern } from "./launch-modern";
+import { originators } from "./originators";
 
 /** The site this content belongs to (src/sites). */
 export const site = "inventions";
 
-const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, launchModern, crossEra];
+const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, launchModern, crossEra, originators];
 
 const content: InventionsContent = {
   entities: parts.flatMap((p) => p.entities),
