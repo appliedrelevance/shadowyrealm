@@ -256,3 +256,9 @@ The 20th, 50th, 80th and 95th percentiles of total magnitude (linear interpolati
 | 149 | ChatGPT | product | 9.3 | 9.3 | 0.0 | 4.2 | 5.2 |
 | 150 | Shockley Semiconductor Laboratory | organization | 8.2 | 8.2 | 0.0 | 4.6 | 3.6 |
 
+
+## Originators, 2026-11-13
+
+Six launch entries had no credit-bearing link: silk, Roman concrete, the combined oral contraceptive pill, DDT, CRISPR and ENIAC. `content/inventions/originators.ts` adds their documented originators: Gregory Pincus and Carl Djerassi, Paul Hermann Müller, Jennifer Doudna and Emmanuelle Charpentier, John Mauchly and J. Presper Eckert, and Joseph Aspdin with Portland cement as Roman concrete's descendant; silk links into paper. Every entry now has a credit-bearing link. Prior Art publishes 159 entities, 356 periods and 198 links.
+
+The tiers stay as calibrated on the 150-entity launch run.

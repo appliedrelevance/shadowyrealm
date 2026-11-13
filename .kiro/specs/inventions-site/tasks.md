@@ -34,4 +34,4 @@ Starts when `site-platform` is complete.
 - [x] 7. Launch
   - [x] 7.1 Final brand: logo, hero, Open Graph image, tokens (Requirement 9.3)
   - [x] 7.2 Deploy the final build to priorart.shadowyrealm.com (Requirement 9.2)
-  - [x] 7.3 Publish the launch set (150 entities); the site-neutral e2e project passes against priorart.shadowyrealm.com, 11 of 11
+  - [x] 7.3 Publish the launch set (150 entities, then 159 with the originators of the six unlinked entries); the site-neutral e2e project passes against priorart.shadowyrealm.com, 11 of 11
