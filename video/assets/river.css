@@ -1,0 +1,53 @@
+/* The river's marks, shared by every film. Colours are the site's tokens, declared on :root. */
+.river-band-b {
+  fill: var(--color-benefit);
+}
+.river-band-h {
+  fill: var(--color-harm);
+}
+.river-bands {
+  stroke: var(--color-surface);
+  stroke-width: 0.5;
+  stroke-opacity: 0.8;
+}
+.river-spot {
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+}
+.river-grid {
+  stroke: var(--color-line);
+  stroke-width: 1;
+}
+.river-axis {
+  stroke: var(--color-line-strong);
+  stroke-width: 1.5;
+}
+.river-front {
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+.river-tick-label {
+  font-family: "Inter", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  fill: var(--color-ink-muted);
+}
+.river-callout-name {
+  font-family: "Inter", sans-serif;
+  font-size: 44px;
+  font-weight: 700;
+  fill: var(--color-ink);
+}
+.river-callout-meta {
+  font-family: "Inter", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  fill: var(--color-ink-muted);
+}
+.river-callout-leader {
+  stroke: var(--color-ink-muted);
+  stroke-width: 1.5;
+}
+.river-measure {
+  font-family: "Inter", sans-serif;
+}

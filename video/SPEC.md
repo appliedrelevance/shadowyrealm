@@ -5,6 +5,9 @@ looked enormous until the next one arrived.
 
 OUTPUT: HyperFrames, 1920 x 1080, 30 fps. TIME: 60 s x 30 = 1800 frames. Music bed only, no voice.
 
+ENGINE: `assets/river.js` draws the river for this film and for the race (`race/`); `FILMS.short`
+holds this film's clock and frame, and the numbers below.
+
 DATA: `assets/realm-data.js`, a frozen `/api/realm` snapshot written by `tools/video-snapshot.ts`.
 The axis, the bucket count and the ticks come from the site config inside the snapshot. Nothing on
 screen is typed by hand except the title and the end card's words.

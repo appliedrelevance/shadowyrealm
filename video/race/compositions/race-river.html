@@ -1,0 +1,55 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    #race-river-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      font-family: "Inter", sans-serif;
+    }
+    #race-river-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    #race-river-source {
+      position: absolute;
+      left: 192px;
+      top: 932px;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--color-ink-muted);
+      white-space: nowrap;
+    }
+  </style>
+  <div id="root" data-composition-id="race-river" data-width="1920" data-height="1080">
+    <div id="race-river-stage" class="clip" data-start="0" data-duration="300" data-track-index="0">
+      <svg id="race-river-svg" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
+      <div id="race-river-source"></div>
+    </div>
+  </div>
+  <script>
+    document.fonts.ready.then(() => {
+      const realm = window.REALM;
+      const source = document.getElementById("race-river-source");
+      source.textContent = `shadowyrealm.com · ${realm.entities.length.toLocaleString("en-US")} entities · as of ${realm.as_of_year}`;
+      const film = window.River.FILMS.race;
+      const draw = window.River.mount({
+        svg: document.getElementById("race-river-svg"),
+        realm,
+        film,
+        furniture: [source],
+      });
+      const state = { t: 0 };
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo(state, { t: 0 }, { t: film.duration, duration: film.duration, ease: "none", onUpdate: () => draw(state.t) }, 0);
+      draw(0);
+      window.__timelines["race-river"] = tl;
+    });
+  </script>
+</template>

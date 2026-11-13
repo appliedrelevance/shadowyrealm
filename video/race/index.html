@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <!-- The frozen realm: tools/video-snapshot.ts writes it from /api/realm. -->
+    <script src="assets/realm-data.js"></script>
+    <script src="assets/river.js"></script>
+    <link rel="stylesheet" href="assets/river.css" />
+    <style>
+      /* The site's own tokens, from src/styles/global.css. */
+      :root {
+        --color-surface: #181822;
+        --color-ink: #f8fafc;
+        --color-ink-muted: #94a3b8;
+        --color-line: #333350;
+        --color-line-strong: #4a4a70;
+        --color-benefit: #3e9ad6;
+        --color-harm: #d9534f;
+        --color-ember: #ea580c;
+        --color-crit: #f87171;
+        --color-crit-soft: #2d0b0b;
+        --color-action-ink: #a78bfa;
+        --font-sans: "Inter", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--color-surface);
+        font-family: var(--font-sans);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        background: var(--color-surface);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="race"
+      data-start="0"
+      data-duration="300"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div
+        id="race-river"
+        data-composition-id="race-river"
+        data-composition-src="compositions/race-river.html"
+        data-start="0"
+        data-duration="300"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 1"
+      ></div>
+      <div
+        id="race-board"
+        data-composition-id="race-board"
+        data-composition-src="compositions/race-board.html"
+        data-start="0"
+        data-duration="300"
+        data-track-index="2"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 2"
+      ></div>
+      <div
+        id="intro"
+        data-composition-id="intro"
+        data-composition-src="compositions/intro.html"
+        data-start="0"
+        data-duration="4.6"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 3"
+      ></div>
+      <div
+        id="endcard"
+        data-composition-id="endcard"
+        data-composition-src="compositions/endcard.html"
+        data-start="292"
+        data-duration="8"
+        data-track-index="4"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 4"
+      ></div>
+      <audio
+        id="race-bed"
+        class="clip"
+        src="assets/music/race-bed.m4a"
+        data-start="0"
+        data-duration="299.9"
+        data-volume="1"
+        data-fade-in="1.5"
+        data-fade-out="3"
+        data-track-index="9"
+      ></audio>
+    </div>
+    <script>
+      window.__timelines["race"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

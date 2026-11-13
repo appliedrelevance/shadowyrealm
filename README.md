@@ -59,10 +59,12 @@ MCP_URL=https://priorart.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-lo
 
 The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/realm.ts` is the whole index: 624 entities, 733 periods and 298 links. `content/NEXT-500.md` is a readable list of the second wave of 500.
 
-Videos live in `video/`, a [HyperFrames](https://hyperframes.heygen.com) project: HTML compositions rendered to MP4 frame by frame. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes to `video/assets/realm-data.js`. `video/SPEC.md` is the film shot by shot.
+Videos live in `video/`, [HyperFrames](https://hyperframes.heygen.com) projects: HTML compositions rendered to MP4 frame by frame. `video/` is the 60-second River of Influence and `video/race/` the five-minute race with its live leaderboard; both draw the river with `video/assets/river.js`. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes to `video/assets/realm-data.js`. Each project's `SPEC.md` is its film shot by shot.
 
 ```bash
-bun tools/video-snapshot.ts                       # refresh the data the video shows
-cd video && npx hyperframes check                 # lint, layout, contrast and timing
+bun tools/video-snapshot.ts                       # refresh the data both videos show
+bun tools/video-chapters.ts                       # the race's YouTube chapters
+cd video && npx hyperframes check                 # lint, layout, contrast and timing; likewise in video/race
 npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4
+cd race && npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4
 ```
