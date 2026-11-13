@@ -1,16 +1,17 @@
 /**
  * The profile page's two charts: one entity's influence curve over time, and
- * its ten-number profile. Both split own impact (solid) from impact credited
+ * its benefit-and-harm profile. Both split own impact (solid) from impact credited
  * from its consequences (hatched).
  */
 import { useId, useMemo, useState } from "react";
 import { area, curveMonotoneX } from "d3-shape";
-import { DIMENSIONS, type Dimension } from "@/lib/atis-calculator";
-import { BUCKET_COUNT, formatYear, unitToYear } from "@/lib/timeline";
+import { DIMENSION_KEYS, DIMENSION_LABELS, profileSizeWords, SITE } from "@/lib/site";
+import { formatYear, unitToYear } from "@/lib/timeline";
 import type { EntityProfile } from "./api";
 import {
   AXIS_TEXT,
   BENEFIT,
+  BUCKET_COUNT,
   bucketUnit,
   formatMagnitude,
   GRID,
@@ -22,13 +23,6 @@ import {
   useWidth,
 } from "./chart";
 
-export const DIMENSION_LABELS: Record<Dimension, string> = {
-  scientific: "Scientific",
-  economic: "Economic",
-  human_rights: "Human rights",
-  health: "Health",
-  cultural: "Cultural",
-};
 
 function Legend() {
   const swatch = (color: string, hatched: boolean) => (
@@ -92,7 +86,7 @@ export function InfluenceCurve({ profile }: { profile: EntityProfile }) {
   if (len === 0) return <p className="text-sm text-ink-muted">No scored periods yet.</p>;
 
   const row = hover ? rows[hover.k] : null;
-  const yearOf = (k: number) => unitToYear(bucketUnit(from + k), profile.as_of_year);
+  const yearOf = (k: number) => unitToYear(bucketUnit(from + k), profile.as_of_year, SITE.timeline);
 
   return (
     <figure className="m-0">
@@ -170,25 +164,25 @@ export function ProfileBars({ profile }: { profile: EntityProfile }) {
   const valueW = 52;
   const rowH = 36;
   const bar = 16;
-  const H = DIMENSIONS.length * rowH + 8;
+  const H = DIMENSION_KEYS.length * rowH + 8;
   const center = labelW + (W - labelW) / 2;
   const reachPx = (W - labelW) / 2 - valueW;
   const max = Math.max(
     1e-9,
-    ...DIMENSIONS.flatMap((d) => [own.benefit[d] + credited.benefit[d], own.harm[d] + credited.harm[d]]),
+    ...DIMENSION_KEYS.flatMap((d) => [own.benefit[d] + credited.benefit[d], own.harm[d] + credited.harm[d]]),
   );
   const len = (v: number) => (v / max) * reachPx;
 
   return (
     <figure className="m-0">
       <div ref={ref} className="w-full">
-        <svg width={W} height={H} role="img" aria-label={`${profile.entity.name}'s ten-number impact profile`}>
+        <svg width={W} height={H} role="img" aria-label={`${profile.entity.name}'s ${profileSizeWords()} impact profile`}>
           <defs>
             <HatchDefs id={`${hatch}-b`} color={BENEFIT} />
             <HatchDefs id={`${hatch}-h`} color={HARM} />
           </defs>
           <line x1={center} x2={center} y1={0} y2={H} stroke={GRID} />
-          {DIMENSIONS.map((d, i) => {
+          {DIMENSION_KEYS.map((d, i) => {
             const cy = 4 + i * rowH + rowH / 2;
             const ob = len(own.benefit[d]);
             const cb = len(credited.benefit[d]);

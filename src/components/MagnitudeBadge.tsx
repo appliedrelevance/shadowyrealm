@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { tierLabel, type ATISTier } from "@/lib/atis-calculator";
+import { SITE } from "@/lib/site";
 
 const tierStyles: Record<ATISTier, string> = {
   minimal: "border-tier-minimal bg-tier-minimal/20 text-ink-2",
@@ -10,7 +11,8 @@ const tierStyles: Record<ATISTier, string> = {
 };
 
 interface MagnitudeBadgeProps {
-  tier: ATISTier;
+  /** null while the site's tiers are not calibrated: no tier is shown. */
+  tier: ATISTier | null;
   magnitude: number;
   showMagnitude?: boolean;
   className?: string;
@@ -18,6 +20,15 @@ interface MagnitudeBadgeProps {
 
 /** The tier as a labelled pill; the tier colour is identity only, so the text stays in ink. */
 export function MagnitudeBadge({ tier, magnitude, showMagnitude = true, className }: MagnitudeBadgeProps) {
+  const tiers = SITE.scoring.tiers;
+  if (!tier || !tiers) {
+    if (!showMagnitude) return null;
+    return (
+      <span className={cn("inline-flex items-center rounded-full border border-line px-2.5 py-0.5 font-mono text-xs text-ink-2", className)}>
+        {Math.round(magnitude).toLocaleString("en-US")}
+      </span>
+    );
+  }
   return (
     <span
       className={cn(
@@ -26,7 +37,7 @@ export function MagnitudeBadge({ tier, magnitude, showMagnitude = true, classNam
         className,
       )}
     >
-      <span>{tierLabel(tier)}</span>
+      <span>{tierLabel(tiers, tier)}</span>
       {showMagnitude && <span className="font-mono opacity-75">{Math.round(magnitude).toLocaleString("en-US")}</span>}
     </span>
   );

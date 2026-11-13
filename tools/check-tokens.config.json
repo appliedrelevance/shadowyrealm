@@ -7,6 +7,10 @@
     {
       "pattern": "^src/components/GoogleIcon\\.tsx$",
       "why": "Google's sign-in mark. Its four values are fixed by Google's brand guidelines for third-party sign-in buttons; they are not our tokens and must not be re-tinted."
+    },
+    {
+      "pattern": "^src/sites/[a-z]+\\.ts$",
+      "why": "Each site config's brand.themeColor fills index.html's theme-color meta tag, which the browser reads before any CSS loads, so it must be a literal; the checker allows the same literal in a meta tag. The configs hold no other colour."
     }
   ]
 }

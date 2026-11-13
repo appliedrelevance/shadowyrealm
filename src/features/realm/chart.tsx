@@ -1,10 +1,14 @@
 /**
- * Pieces every ShadowyRealm chart shares: the time axis, the benefit and harm
+ * Pieces every chart of a site shares: the time axis, the benefit and harm
  * colours, the hatch that marks credited impact, number formats and a width
  * hook. Colours are token references, resolved by SVG at paint time.
  */
 import { useEffect, useRef, useState } from "react";
-import { BUCKET_COUNT, formatYear, TIMELINE_TICKS, yearToUnit } from "@/lib/timeline";
+import { SITE } from "@/lib/site";
+import { formatYear, yearToUnit } from "@/lib/timeline";
+
+/** Buckets across the site's whole axis. */
+export const BUCKET_COUNT = SITE.timeline.buckets;
 
 export const BENEFIT = "var(--color-benefit)";
 export const HARM = "var(--color-harm)";
@@ -74,8 +78,8 @@ export function TimeAxis({
   const right = x(toUnit);
   const ticks: { year: number; px: number }[] = [];
   // Most recent first, so the readable end of the axis keeps its labels.
-  for (const year of [...TIMELINE_TICKS].reverse()) {
-    const u = yearToUnit(year, asOfYear);
+  for (const year of [...SITE.timeline.ticks].reverse()) {
+    const u = yearToUnit(year, asOfYear, SITE.timeline);
     if (u < fromUnit || u > toUnit) continue;
     const px = x(u);
     if (ticks.length > 0 && ticks[ticks.length - 1].px - px < minSpacing) continue;

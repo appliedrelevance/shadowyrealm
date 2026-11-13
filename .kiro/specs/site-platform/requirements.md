@@ -136,6 +136,7 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
 1. Each site config shall supply the site name, origin, page title, description, Open Graph image and alt text, logo, hero image and alt text, and design-token values.
 2. The Worker's sitemap, entity pages and Wikipedia `User-Agent` shall use the site's name and origin.
 3. Each site's token values shall use the Applied Relevance token vocabulary and pass `bun run lint:tokens`.
+4. Every site shall link to the platform's other sites from its navigation and footer, so readers meet them as one family of indexes under ShadowyRealm.
 
 ### Requirement 10: Tier calibration gate
 **Objective:** As the owner, I want a new site's tiers set from its own results, so that no site labels entities on another site's distribution.
@@ -152,7 +153,7 @@ Forecasting is shelved. A forecaster would learn from what was known at each dat
 1. For the same data and as-of year, ShadowyRealm's `/api/scores`, `/api/realm` and `/api/entities/:slug` responses shall be identical before and after this feature, apart from the `X-Site` header.
 2. ShadowyRealm's unit tests shall pass unchanged.
 3. ShadowyRealm's e2e suite shall pass against production after its deploy.
-4. The minimum start year for a ShadowyRealm period shall move from 5000 BCE to the site's timeline start of 3500 BCE. Before the change ships, a query of the published data shall confirm that no period starts earlier. The earliest period in `content/` starts in 1792 BCE.
+4. The minimum start year for a ShadowyRealm period shall move from 5000 BCE to the site's timeline start of 3500 BCE. A query of the published data on 2026-11-13 found the earliest period starting in 3300 BCE, so no period is affected.
 
 ### Requirement 12: The record a forecaster would need
 **Objective:** As the owner, I want every score kept with the exact evidence it came from, so that a later forecasting layer can learn from what was known at each date. That record cannot be rebuilt afterwards.

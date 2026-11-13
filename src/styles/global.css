@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../sites/inventions/tokens.css";
 @plugin "@tailwindcss/typography";
 
 /* ---------------------------------------------------------------------------

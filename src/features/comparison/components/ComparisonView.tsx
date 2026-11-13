@@ -5,16 +5,23 @@ import { Search, X } from "lucide-react";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
 import { profileQuery, useRealm, type EntityProfile } from "@/features/realm/api";
-import { AXIS_TEXT, bucketUnit, formatMagnitude, GRID, LineKey, TimeAxis, useWidth } from "@/features/realm/chart";
-import { DIMENSION_LABELS } from "@/features/realm/ProfileCharts";
-import { DIMENSIONS } from "@/lib/atis-calculator";
+import {
+  AXIS_TEXT,
+  BUCKET_COUNT,
+  bucketUnit,
+  formatMagnitude,
+  GRID,
+  LineKey,
+  TimeAxis,
+  useWidth,
+} from "@/features/realm/chart";
 import { seriesColor } from "@/lib/chart-colors";
 import { COPY } from "@/lib/copy";
-import { BUCKET_COUNT } from "@/lib/timeline";
+import { DIMENSION_KEYS, DIMENSION_LABELS, profileSizeWords, SITE } from "@/lib/site";
 import { usePageTitle } from "@/lib/usePageTitle";
 
 const MAX_SELECTED = 5;
-const OPENING = ["jesus", "muhammad", "the-buddha"];
+const OPENING = COPY.compare.opening;
 
 export function ComparisonView() {
   usePageTitle(COPY.nav.compare);
@@ -45,7 +52,7 @@ export function ComparisonView() {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <h1 className="font-display text-3xl font-bold text-ink">Compare</h1>
       <p className="mt-2 text-ink-muted">
-        Set up to {MAX_SELECTED} entities side by side: their total influence over time and their ten-number profiles.
+        Set up to {MAX_SELECTED} entities side by side: their total influence over time and their {profileSizeWords()} profiles.
       </p>
 
       <div className="relative mt-6 max-w-md">
@@ -186,7 +193,7 @@ function CompareTable({ profiles }: { profiles: EntityProfile[] }) {
     { label: "Credited", values: profiles.map((p) => p.score.credited_magnitude) },
     { label: "Benefit", values: profiles.map((p) => p.score.benefit_total) },
     { label: "Harm", values: profiles.map((p) => p.score.harm_total) },
-    ...DIMENSIONS.flatMap((d) => [
+    ...DIMENSION_KEYS.flatMap((d) => [
       { label: `${DIMENSION_LABELS[d]} benefit`, values: profiles.map((p) => p.score.profile.total.benefit[d]) },
       { label: `${DIMENSION_LABELS[d]} harm`, values: profiles.map((p) => p.score.profile.total.harm[d]) },
     ]),
@@ -197,7 +204,7 @@ function CompareTable({ profiles }: { profiles: EntityProfile[] }) {
         <thead className="bg-surface-1 text-left">
           <tr>
             <th scope="col" className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-ink-muted">
-              In influence-centuries
+              In {SITE.scoring.unit.name}
             </th>
             {profiles.map((p, i) => (
               <th key={p.entity.slug} scope="col" className="px-3 py-2 text-right font-medium text-ink">

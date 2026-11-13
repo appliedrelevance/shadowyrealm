@@ -1,75 +1,35 @@
 /**
  * Scoring one period with Clef, Cloudflare's decision model.
  *
- * One request per period: the evidence text is the state, and twelve `score`
- * questions ask for the benefit and harm of each dimension plus the period's
- * reach and persistence. Each question has ten levels, Clef's maximum.
+ * One request per period: the evidence text is the state, and the questions
+ * ask for the benefit and harm of each of the site's dimensions plus the
+ * period's reach and persistence. Each question has ten levels, Clef's maximum.
+ * The wording comes from the site config: each dimension supplies its area,
+ * who it affected and its depth sentence, each entity type its subject phrase,
+ * and the rubrics their levels.
  *
  * Answers are read strictly. A question without a usable expected value is an
  * error naming that question; nothing is substituted, and there is no fallback
  * model.
  */
-import { DIMENSIONS, emptyDimensions, type Dimension, type Dimensions } from "./atis-calculator";
+import { entityTypeOf } from "../sites";
+import type { ScoringConfig, SiteConfig } from "../sites/types";
+import { dimensionKeysOf, emptyDimensions, type Dimensions } from "./atis-calculator";
 
 export const CLEF_MODEL = "@cf/cloudflare/clef";
+
+/** Clef answers at most this many questions per request. */
+export const CLEF_MAX_QUESTIONS = 64;
 
 export interface ClefEnv {
   AI: { run(model: string, input: unknown, options?: { gateway?: { id: string } }): Promise<unknown> };
   AI_GATEWAY_NAME: string;
 }
 
-const AREAS: Record<Dimension, string> = {
-  scientific: "advancing knowledge, research and technology",
-  economic: "prosperity, livelihoods, wealth and economic opportunity",
-  human_rights: "freedom, dignity, safety and equal treatment of people",
-  health: "physical and mental health and survival of people",
-  cultural: "art, education, shared culture and social cohesion",
-};
-
-/** Intensity for the people affected; breadth is the reach question's job. */
-export const INTENSITY_LEVELS = [
-  "No effect on this dimension",
-  "Trivial, barely noticeable",
-  "Slight, limited to a few people",
-  "Minor but real",
-  "Moderate",
-  "Substantial",
-  "Major",
-  "Severe",
-  "Extreme, life-altering for those affected",
-  "Catastrophic or transformative, the most intense effect on people in history",
-];
-
-/** Read as reach factor 1–10. */
-export const REACH_LEVELS = [
-  "A handful of people",
-  "A village or a small group",
-  "A town or a single community",
-  "A city or a single profession",
-  "A province or a region",
-  "A nation",
-  "Several nations",
-  "A continent or a whole civilization",
-  "Most of the world",
-  "Nearly everyone alive",
-];
-
-/** Read as persistence factor 1–10; matches PERSISTENCE_TIME_CONSTANTS in the calculator. */
-export const PERSISTENCE_LEVELS = [
-  "Faded within a year",
-  "Faded within a few years",
-  "Faded within a decade",
-  "Faded within a generation",
-  "Lasted about a lifetime",
-  "Lasted a century or two",
-  "Lasted several centuries",
-  "Lasted most of a millennium",
-  "Lasted for millennia",
-  "Permanent, with no sign of fading",
-];
-
 export interface PeriodToScore {
   entity: string;
+  /** Picks the subject phrase the questions use. */
+  entity_type: string;
   period: string;
   start_year: number;
   end_year: number;
@@ -83,7 +43,9 @@ function span(start: number, end: number): string {
   return start === end ? y(start) : `${y(start)} to ${y(end)}`;
 }
 
-export function buildClefRequest(p: PeriodToScore) {
+export function buildClefRequest(site: SiteConfig, p: PeriodToScore) {
+  const { dimensions, rubrics } = site.scoring;
+  const subject = entityTypeOf(site, p.entity_type).clefSubject(p.entity);
   const when = `"${p.period}" (${span(p.start_year, p.end_year)})`;
   const leaveOut =
     p.excluded.length > 0
@@ -91,34 +53,39 @@ export function buildClefRequest(p: PeriodToScore) {
       : "Leave out consequences that would be entities of their own.";
 
   const questions: Record<string, unknown> = {};
-  for (const d of DIMENSIONS) {
+  for (const d of dimensions) {
     for (const kind of ["benefit", "harm"] as const) {
-      questions[`${d}_${kind}`] = {
+      questions[`${d.key}_${kind}`] = {
         type: "score",
         instructions:
           `Judge only from the evidence text. Rate the intensity of the ${kind.toUpperCase()} that ` +
-          `${p.entity}'s own direct activity during ${when} caused to the people it affected, in the area of ` +
-          `${AREAS[d]}. Rate how deeply those people were affected, not how many; breadth is judged separately. ` +
+          `${subject} during ${when} caused to ${d.clef.affected}, in the area of ` +
+          `${d.clef.area}. ${d.clef.depth} ` +
           `Score only that activity in that period. ${leaveOut} ` +
           `If the evidence shows no ${kind} in this area, choose the lowest level.`,
-        criteria: INTENSITY_LEVELS,
+        criteria: rubrics.intensity,
       };
     }
   }
   questions.reach = {
     type: "score",
     instructions:
-      `Judge only from the evidence text. How many people did ${p.entity}'s own direct activity during ${when} ` +
+      `Judge only from the evidence text. How many people did ${subject} during ${when} ` +
       `affect while it lasted? ${leaveOut}`,
-    criteria: REACH_LEVELS,
+    criteria: rubrics.reach,
   };
   questions.persistence = {
     type: "score",
     instructions:
-      `Judge only from the evidence text. After ${when} ended, how long did the effects of ${p.entity}'s own ` +
-      `direct activity in it last? ${leaveOut}`,
-    criteria: PERSISTENCE_LEVELS,
+      `Judge only from the evidence text. After ${when} ended, how long did the effects of ${subject} ` +
+      `in it last? ${leaveOut}`,
+    criteria: rubrics.persistence,
   };
+
+  const count = Object.keys(questions).length;
+  if (count > CLEF_MAX_QUESTIONS) {
+    throw new Error(`${site.brand.name} asks ${count} Clef questions per period; Clef answers at most ${CLEF_MAX_QUESTIONS}`);
+  }
 
   const state = `Subject: ${p.entity}\nPeriod under assessment: ${when}\n\nEvidence:\n${p.evidence}`;
   return { model: "clef", state, questions };
@@ -129,7 +96,7 @@ export interface ClefScores {
   harm: Dimensions;
   reach_factor: number;
   persistence_factor: number;
-  /** Mean of the twelve answers' confidence. */
+  /** Mean of the answers' confidence. */
   confidence: number;
 }
 
@@ -161,15 +128,16 @@ function factor(score: number): number {
   return Math.round(score) + 1;
 }
 
-export function readClefAnswers(response: unknown): ClefScores {
+export function readClefAnswers(scoring: Pick<ScoringConfig, "dimensions">, response: unknown): ClefScores {
   const body = response as { answers?: Record<string, Answer> } | null;
   const answers = body?.answers;
   if (!answers || typeof answers !== "object") throw new Error("Clef returned no answers");
 
-  const benefit = emptyDimensions();
-  const harm = emptyDimensions();
+  const keys = dimensionKeysOf(scoring);
+  const benefit = emptyDimensions(keys);
+  const harm = emptyDimensions(keys);
   const confidences: number[] = [];
-  for (const d of DIMENSIONS) {
+  for (const d of keys) {
     const b = read(answers, `${d}_benefit`);
     const h = read(answers, `${d}_harm`);
     benefit[d] = level(b.score);
@@ -189,7 +157,7 @@ export function readClefAnswers(response: unknown): ClefScores {
   };
 }
 
-export async function runClef(env: ClefEnv, p: PeriodToScore): Promise<ClefScores> {
-  const response = await env.AI.run(CLEF_MODEL, buildClefRequest(p), { gateway: { id: env.AI_GATEWAY_NAME } });
-  return readClefAnswers(response);
+export async function runClef(env: ClefEnv, site: SiteConfig, p: PeriodToScore): Promise<ClefScores> {
+  const response = await env.AI.run(CLEF_MODEL, buildClefRequest(site, p), { gateway: { id: env.AI_GATEWAY_NAME } });
+  return readClefAnswers(site.scoring, response);
 }

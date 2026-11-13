@@ -2,9 +2,15 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { COPY } from "@/lib/copy";
+import { SITE } from "@/lib/site";
+import { useSiteMismatch } from "@/lib/site-mismatch";
+import { SITES } from "@/sites";
 import { Logo } from "@/components/Logo";
-import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X } from "lucide-react";
+import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
+
+/** The platform's other sites: one family of indexes under ShadowyRealm. */
+const SIBLINGS = Object.values(SITES).filter((s) => s.key !== SITE.key);
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
 const navLinkIdle = "text-ink-muted hover:text-ink";
@@ -13,6 +19,7 @@ const navLinkActive = "text-ink border-b border-action";
 export function AppLayout({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const mismatch = useSiteMismatch();
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -43,6 +50,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <BookOpen className="h-4 w-4" />
               {COPY.nav.howItWorks}
             </Link>
+            {SIBLINGS.map((s) => (
+              <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle}`}>
+                {s.brand.name}
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            ))}
 
             {user && (
               <button
@@ -89,6 +102,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 <BookOpen className="h-5 w-5" />
                 {COPY.nav.howItWorks}
               </Link>
+              {SIBLINGS.map((s) => (
+                <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle} text-lg`}>
+                  {s.brand.name}
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+              ))}
 
               {user && (
                 <>
@@ -115,10 +134,36 @@ export function AppLayout({ children }: { children: ReactNode }) {
         )}
       </header>
 
-      <main className="animate-fade-in">{children}</main>
+      <main className="animate-fade-in">
+        {mismatch ? (
+          <div className="mx-auto max-w-3xl px-4 py-16" role="alert">
+            <h1 className="font-display text-2xl font-bold text-ink">This page cannot load</h1>
+            <p className="mt-3 text-ink-2">{mismatch.message}.</p>
+            <p className="mt-2 text-sm text-ink-muted">
+              Built for: <span className="font-mono">{mismatch.built}</span> · Served by:{" "}
+              <span className="font-mono">{mismatch.served}</span>
+            </p>
+          </div>
+        ) : (
+          children
+        )}
+      </main>
 
       <footer className="border-t border-line bg-surface-1 py-6 text-center text-sm text-ink-muted">
         {COPY.footer.tagline}
+        {SIBLINGS.length > 0 && (
+          <>
+            {" · "}Also from ShadowyRealm:{" "}
+            {SIBLINGS.map((s, i) => (
+              <span key={s.key}>
+                {i > 0 && ", "}
+                <a href={s.brand.origin} className="text-action-ink hover:underline">
+                  {s.brand.name}
+                </a>
+              </span>
+            ))}
+          </>
+        )}
       </footer>
     </div>
   );

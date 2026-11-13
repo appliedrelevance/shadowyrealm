@@ -1,0 +1,54 @@
+/* ---------------------------------------------------------------------------
+   Prior Art — its values for the canonical AR token vocabulary.
+   See appliedrelevance/.kiro/steering/design-stack.md. The names are the
+   ones src/styles/global.css defines in @theme; only the values differ.
+
+   Applied when <html data-site="inventions">, which index.html sets from the
+   build's site. Unlayered, so these win over the @theme layer's ShadowyRealm
+   values. Dark-only like ShadowyRealm: a blueprint ground with copper as the
+   single interactive accent. Contrast checked 2026-11-13: ink 16.1:1 on
+   surface, ink-muted 5.6:1 on surface-2, action-ink 6.7:1 on surface-2,
+   on-action 6.4:1 on action, crit 5.0:1 on surface-2.
+   --------------------------------------------------------------------------- */
+:root[data-site="inventions"] {
+  /* ---- Surfaces: blueprint navy ---------------------------------------- */
+  --color-surface: #0e1a2b;
+  --color-surface-1: #13233a;
+  --color-surface-2: #1a2e4a;
+
+  /* ---- Ink ------------------------------------------------------------- */
+  --color-ink: #f2f6fc;
+  --color-ink-2: #d6e0ee;
+  --color-ink-muted: #93a7c2;
+  --color-ink-faint: #66809f;
+
+  /* ---- Lines: the drawing's own blue ----------------------------------- */
+  --color-line: #27405f;
+  --color-line-strong: #3a5a82;
+
+  /* ---- Action: copper, the single interactive accent ------------------- */
+  --color-action: #d98a4c;
+  --color-action-hi: #e69c62;
+  --color-action-ink: #eba774;
+  --color-action-soft: #2b2a33;
+  --color-on-action: #10192a;
+
+  /* ---- Status: warn is yellower than the copper accent ----------------- */
+  --color-ok: #10b981;
+  --color-ok-soft: #062a26;
+  --color-warn: #eac54f;
+  --color-warn-soft: #2c2813;
+  --color-crit: #f87171;
+  --color-crit-soft: #2d1320;
+  --color-on-crit: #0e1a2b;
+  --color-info: #60a5fa;
+  --color-info-soft: #0c2440;
+
+  /* ---- Brand ornament: brass, never a second accent -------------------- */
+  --color-gold: #d1ad5b;
+  --color-gold-light: #e6c983;
+  --color-ember: #d98a4c;
+
+  /* ---- Typography: a drafting serif for display ------------------------ */
+  --font-display: "IBM Plex Serif", "Georgia", serif;
+}

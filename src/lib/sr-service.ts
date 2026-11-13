@@ -1,5 +1,5 @@
 /**
- * ShadowyRealm service layer — the only code that writes to the shadowyrealm schema.
+ * The service layer — the only code that writes to a site's schema.
  *
  * The MCP tools (src/worker/mcp.ts) and the manual-control HTTP handlers
  * (src/worker/api.ts) are thin wrappers over these functions, so the two
@@ -8,12 +8,18 @@
  * Runs in the Worker with the Supabase service-role key, which bypasses RLS:
  * every rule that matters is enforced here. Rows are attributed to
  * OWNER_USER_ID because created_by is a foreign key to auth.users.
+ *
+ * Every function serves the site named by env.SITE: its schema, dimensions,
+ * entity and link types, timeline and tiers all come from that site's config.
  */
 import { createClient } from "@supabase/supabase-js";
-import { DIMENSIONS, sampleCurve, type Profile } from "./atis-calculator";
+import { allowsEnds, creditTypes, describeEnds, dimensionKeys, linkTypeOf, siteFor } from "../sites";
+import type { SiteConfig } from "../sites/types";
+import { sampleCurve, type Profile } from "./atis-calculator";
 import { CLEF_MODEL, runClef, type ClefEnv } from "./clef";
-import { composeScores, isCreditType, type EntityScore } from "./credit";
-import type { Database, Json } from "./database.types";
+import { composeScores, type AssessmentRow, type EntityScore } from "./credit";
+import type { Json } from "./database.types";
+import type { EntityRow, EntityUpdate, SiteDatabase, SiteTables } from "./site-tables";
 import type {
   AddAssessmentInput,
   AddPeriodInput,
@@ -31,24 +37,29 @@ import { bucketEdges } from "./timeline";
 import { slugify } from "./utils";
 
 export interface ServiceEnv {
+  /** The site this Worker serves; a key of src/sites. */
+  SITE: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   OWNER_USER_ID: string;
 }
 
-type Tables = Database["shadowyrealm"]["Tables"];
-type EntityRow = Tables["entities"]["Row"];
-type EntityUpdate = Tables["entities"]["Update"];
+type Tables = SiteTables;
 
-const REQUIRED_ENV = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OWNER_USER_ID"] as const;
+const REQUIRED_ENV = ["SITE", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OWNER_USER_ID"] as const;
+
+export function siteOf(env: Pick<ServiceEnv, "SITE">): SiteConfig {
+  return siteFor(env.SITE);
+}
 
 function connect(env: ServiceEnv) {
   for (const key of REQUIRED_ENV) {
     if (!env[key]) throw new Error(`${key} is not set on the Worker`);
   }
-  return createClient<Database, "shadowyrealm">(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  // The client is typed with the shape every site's schema shares; the runtime schema is the site's own.
+  return createClient<SiteDatabase, "site">(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
-    db: { schema: "shadowyrealm" },
+    db: { schema: siteOf(env).schema as "site" },
   });
 }
 type Db = ReturnType<typeof connect>;
@@ -161,20 +172,18 @@ export async function getEntity(env: ServiceEnv, args: GetEntityInput) {
     return found;
   };
 
-  // A Clef assessment stores its evidence in all five justifications; a short
+  // A Clef assessment stores its evidence in every justification; a short
   // excerpt of each keeps this response readable.
   const excerpt = (text: string) => (text.length > 300 ? `${text.slice(0, 300)}…` : text);
+  const keys = dimensionKeys(siteOf(env));
 
   return {
     entity,
-    assessments: assessments.data.map((a) => ({
-      ...a,
-      scientific_justification: excerpt(a.scientific_justification),
-      economic_justification: excerpt(a.economic_justification),
-      human_rights_justification: excerpt(a.human_rights_justification),
-      health_justification: excerpt(a.health_justification),
-      cultural_justification: excerpt(a.cultural_justification),
-    })),
+    assessments: assessments.data.map((a) => {
+      const out: Record<string, unknown> = { ...a };
+      for (const d of keys) out[`${d}_justification`] = excerpt(String(a[`${d}_justification`]));
+      return out;
+    }),
     periods: periods.data,
     relationships: [
       ...outgoing.data.map((r) => ({ ...r, direction: "outgoing" as const, other: other(r.target_entity_id) })),
@@ -234,6 +243,12 @@ export async function updateEntity(env: ServiceEnv, args: UpdateEntityInput) {
 }
 
 export async function setEntityStatus(env: ServiceEnv, args: SetEntityStatusInput) {
+  const site = siteOf(env);
+  if (args.status === "published" && !site.scoring.tiers) {
+    throw new Error(
+      `${site.brand.name}'s tiers are not set yet: calibrate them from the first full scoring run before publishing`,
+    );
+  }
   const db = connect(env);
   const entity = await entityBySlug(db, args.slug);
   if (entity.status === args.status) {
@@ -274,12 +289,17 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
   const entity = await entityBySlug(db, args.slug);
   await periodOf(db, entity, args.period_id);
 
+  const input = args as unknown as Record<string, number | string>;
+  const keys = dimensionKeys(siteOf(env));
   const levels = Object.fromEntries(
-    DIMENSIONS.flatMap((d) => [
-      [`${d}_benefit`, args[`${d}_benefit`]],
-      [`${d}_harm`, args[`${d}_harm`]],
+    keys.flatMap((d) => [
+      [`${d}_benefit`, input[`${d}_benefit`]],
+      [`${d}_harm`, input[`${d}_harm`]],
     ]),
-  ) as Record<`${(typeof DIMENSIONS)[number]}_${"benefit" | "harm"}`, number>;
+  ) as Record<string, number>;
+  const justifications = Object.fromEntries(
+    keys.map((d) => [`${d}_justification`, input[`${d}_justification`]]),
+  ) as Record<string, string>;
 
   const { data, error } = await db
     .from("assessments")
@@ -287,11 +307,7 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
       entity_id: entity.id,
       period_id: args.period_id,
       ...levels,
-      scientific_justification: args.scientific_justification,
-      economic_justification: args.economic_justification,
-      human_rights_justification: args.human_rights_justification,
-      health_justification: args.health_justification,
-      cultural_justification: args.cultural_justification,
+      ...justifications,
       confidence_level: args.confidence_level,
       ai_suggested: args.ai_suggested,
       ai_model_used: args.ai_model_used ?? null,
@@ -312,6 +328,9 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
  * assessment rather than averaging with it. Nothing is written if Clef fails.
  */
 export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodInput) {
+  const site = siteOf(env);
+  const credit = creditTypes(site);
+  const keys = dimensionKeys(site);
   const db = connect(env);
   const entity = await entityBySlug(db, args.slug);
   const period = await periodOf(db, entity, args.period_id);
@@ -322,11 +341,12 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     .eq("source_entity_id", entity.id);
   if (linkError) fail("load outgoing links", linkError);
   const excluded = outgoing
-    .filter((l) => isCreditType(l.relationship_type) && Number(l.strength) > 0)
+    .filter((l) => credit.has(l.relationship_type) && Number(l.strength) > 0)
     .map((l) => (l.target as unknown as { name: string }).name);
 
-  const clef = await runClef(env, {
+  const clef = await runClef(env, site, {
     entity: entity.name,
+    entity_type: entity.entity_type,
     period: period.label,
     start_year: period.start_year,
     end_year: period.end_year,
@@ -334,13 +354,25 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     evidence: args.evidence,
   });
 
+  // The replaced assessment goes into the audit entry below, so every score a
+  // period has had stays recoverable with the evidence it was computed from.
   const replaced = await db
     .from("assessments")
     .delete()
     .eq("period_id", period.id)
     .eq("ai_model_used", CLEF_MODEL)
-    .select("id");
+    .select("*");
   if (replaced.error) fail("replace the earlier Clef assessment", replaced.error);
+  const history = replaced.data.map((row) => {
+    const r = row as unknown as Record<string, unknown>;
+    return {
+      ...Object.fromEntries(keys.flatMap((d) => [[`${d}_benefit`, r[`${d}_benefit`]], [`${d}_harm`, r[`${d}_harm`]]])),
+      confidence_level: r.confidence_level,
+      sources: r.sources,
+      created_at: r.created_at,
+      evidence: r[`${keys[0]}_justification`],
+    };
+  });
 
   const updated = await db
     .from("assessment_periods")
@@ -351,11 +383,15 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
   if (updated.error) fail("set the period's reach and persistence", updated.error);
 
   const levels = Object.fromEntries(
-    DIMENSIONS.flatMap((d) => [
+    keys.flatMap((d) => [
       [`${d}_benefit`, clef.benefit[d]],
       [`${d}_harm`, clef.harm[d]],
     ]),
-  ) as Record<`${(typeof DIMENSIONS)[number]}_${"benefit" | "harm"}`, number>;
+  ) as Record<string, number>;
+  const justifications = Object.fromEntries(keys.map((d) => [`${d}_justification`, args.evidence])) as Record<
+    string,
+    string
+  >;
 
   const { data, error } = await db
     .from("assessments")
@@ -363,11 +399,7 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       entity_id: entity.id,
       period_id: period.id,
       ...levels,
-      scientific_justification: args.evidence,
-      economic_justification: args.evidence,
-      human_rights_justification: args.evidence,
-      health_justification: args.evidence,
-      cultural_justification: args.evidence,
+      ...justifications,
       sources: args.source_url ? [args.source_url] : null,
       confidence_level: Math.round(clef.confidence * 100) / 100,
       ai_suggested: true,
@@ -382,13 +414,25 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     .single();
   if (error) fail("store the Clef assessment", error);
 
-  await audit(db, env, entity.id, "period_scored", null, {
+  await audit(
+    db,
+    env,
+    entity.id,
+    "period_scored",
+    {
+      period_id: period.id,
+      reach_factor: period.reach_factor,
+      persistence_factor: period.persistence_factor,
+      replaced: history,
+    },
+    {
     period_id: period.id,
     model: CLEF_MODEL,
     reach_factor: clef.reach_factor,
     persistence_factor: clef.persistence_factor,
     ...levels,
-  });
+    },
+  );
   return {
     assessment: data,
     period: updated.data,
@@ -425,15 +469,25 @@ export async function addRelationship(env: ServiceEnv, args: AddRelationshipInpu
   const target = await entityBySlug(db, args.target_slug);
   if (source.id === target.id) throw new Error("An entity cannot have a relationship with itself");
 
+  const site = siteOf(env);
+  const def = linkTypeOf(site, args.relationship_type);
+  if (!allowsEnds(def, source.entity_type, target.entity_type)) {
+    throw new Error(
+      `A ${def.key} link runs from ${describeEnds(def.from)} to ${describeEnds(def.to)}; ` +
+        `"${source.slug}" is a ${source.entity_type} and "${target.slug}" is a ${target.entity_type}`,
+    );
+  }
+
   // An entity gives away at most all of itself: credit-bearing shares into one target total 1.00 or less.
-  if (isCreditType(args.relationship_type)) {
+  const credit = creditTypes(site);
+  if (credit.has(args.relationship_type)) {
     const incoming = await db
       .from("relationships")
       .select("relationship_type, strength")
       .eq("target_entity_id", target.id);
     if (incoming.error) fail("load the target's incoming links", incoming.error);
     const current = incoming.data
-      .filter((l) => isCreditType(l.relationship_type))
+      .filter((l) => credit.has(l.relationship_type))
       .reduce((sum, l) => sum + Number(l.strength), 0);
     if (current + args.strength > 1.000001) {
       throw new Error(
@@ -481,9 +535,9 @@ async function every<T>(
 
 const ENTITY_FIELDS = "id, slug, name, entity_type, status, description, image_url, metadata, updated_at";
 const PERIOD_FIELDS = "id, entity_id, label, start_year, end_year, reach_factor, persistence_factor, description";
-const LEVEL_FIELDS =
-  "entity_id, period_id, scientific_benefit, scientific_harm, economic_benefit, economic_harm, human_rights_benefit, " +
-  "human_rights_harm, health_benefit, health_harm, cultural_benefit, cultural_harm";
+function levelFields(site: SiteConfig): string {
+  return ["entity_id", "period_id", ...dimensionKeys(site).flatMap((d) => [`${d}_benefit`, `${d}_harm`])].join(", ");
+}
 
 type ScoredEntity = Pick<
   EntityRow,
@@ -510,6 +564,7 @@ interface Scoring {
 }
 
 async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Scoring> {
+  const site = siteOf(env);
   const db = connect(env);
   const asOfYear = new Date().getUTCFullYear();
 
@@ -522,13 +577,8 @@ async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Sco
     every<PeriodRow>("load periods", (from, to) =>
       db.from("assessment_periods").select(PERIOD_FIELDS).order("id").range(from, to),
     ),
-    every("load assessments", (from, to) =>
-      db
-        .from("assessments")
-        .select(LEVEL_FIELDS)
-        .order("id")
-        .range(from, to)
-        .returns<Parameters<typeof composeScores>[2]>(),
+    every<AssessmentRow>("load assessments", (from, to) =>
+      db.from("assessments").select(levelFields(site)).order("id").range(from, to).returns<AssessmentRow[]>(),
     ),
     every<LinkRow>("load links", (from, to) =>
       db
@@ -551,6 +601,7 @@ async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Sco
   const keptPeriods = periods.filter((p) => inSet(p.entity_id));
   const keptLinks = links.filter((l) => inSet(l.source_entity_id) && inSet(l.target_entity_id));
   const scores = composeScores(
+    { scoring: site.scoring, creditTypes: creditTypes(site) },
     entities.map((e) => e.id),
     keptPeriods,
     assessments.filter((a) => inSet(a.entity_id)),
@@ -571,7 +622,7 @@ function round(n: number, places = 2): number {
 
 function roundProfile(p: Profile): Profile {
   const out = { benefit: { ...p.benefit }, harm: { ...p.harm } };
-  for (const d of DIMENSIONS) {
+  for (const d of Object.keys(p.benefit)) {
     out.benefit[d] = round(p.benefit[d]);
     out.harm[d] = round(p.harm[d]);
   }
@@ -646,7 +697,7 @@ function yearsOf(scoring: Scoring, entityId: number) {
 /** Everything the timeline and the graph draw: every entity's own curve and every link. */
 export async function getRealm(env: ServiceEnv, includeDrafts: boolean) {
   const scoring = await loadScoring(env, includeDrafts);
-  const edges = bucketEdges(scoring.as_of_year);
+  const edges = bucketEdges(scoring.as_of_year, siteOf(env).timeline);
   return {
     as_of_year: scoring.as_of_year,
     entities: scoring.ranked.map((e) => ({
@@ -672,7 +723,9 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
   const entity = scoring.entities.find((e) => e.slug === slug);
   if (!entity) return null;
   const score = scoring.scores.get(entity.id)!;
-  const edges = bucketEdges(scoring.as_of_year);
+  const site = siteOf(env);
+  const edges = bucketEdges(scoring.as_of_year, site.timeline);
+  const evidenceColumn = `${dimensionKeys(site)[0]}_justification`;
 
   const own = sampleCurve(score.own.curve, edges);
   const credited = { benefit: own.benefit.map(() => 0), harm: own.harm.map(() => 0) };
@@ -695,9 +748,19 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
   const db = connect(env);
   const { data: evidence, error } = await db
     .from("assessments")
-    .select("id, period_id, scientific_justification, sources, confidence_level, ai_model_used, created_at")
+    .select(`id, period_id, ${evidenceColumn}, sources, confidence_level, ai_model_used, created_at`)
     .eq("entity_id", entity.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<
+      ({
+        id: number;
+        period_id: number | null;
+        sources: string[] | null;
+        confidence_level: number | null;
+        ai_model_used: string | null;
+        created_at: string;
+      } & Record<string, unknown>)[]
+    >();
   if (error) fail("load assessments", error);
 
   const breakdown = new Map(score.own.breakdown.map((b) => [b.period_id, b]));
@@ -759,7 +822,7 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
           magnitude: b ? round(profileTotal(b.area)) : 0,
           level: b ? roundProfile(b.level) : null,
           assessments: scored.map((a) => ({
-            evidence: a.scientific_justification,
+            evidence: a[evidenceColumn] as string,
             sources: a.sources,
             confidence_level: a.confidence_level,
             model: a.ai_model_used,
@@ -786,5 +849,5 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
 }
 
 function profileTotal(p: Profile): number {
-  return DIMENSIONS.reduce((sum, d) => sum + p.benefit[d] + p.harm[d], 0);
+  return Object.keys(p.benefit).reduce((sum, d) => sum + p.benefit[d] + p.harm[d], 0);
 }

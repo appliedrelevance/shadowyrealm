@@ -1,51 +1,41 @@
 /**
- * The time axis every ShadowyRealm chart shares: a logarithmic scale of years
+ * The time axis every chart of a site shares: a logarithmic scale of years
  * before the present, so the last century is as readable as the last
  * millennium. The Worker samples curves on these buckets and the browser draws
- * them on the same scale, so the two always line up.
+ * them on the same scale, so the two always line up. Where the axis starts,
+ * its ticks, its near offset and its bucket count come from the site config.
  */
-
-/** The axis starts with the first cities and the invention of writing. */
-export const TIMELINE_START = -3500;
-
-/** Years of offset that keep the present from sitting at infinity. */
-const NEAR = 40;
-
-/** Buckets across the whole axis. */
-export const BUCKET_COUNT = 200;
+import type { Timeline } from "../sites/types";
 
 /** The instant the axis ends: the end of the as-of year. */
 export function timelineEnd(asOfYear: number): number {
   return asOfYear + 1;
 }
 
-/** Position of a year on the axis, 0 at TIMELINE_START and 1 at the present. */
-export function yearToUnit(year: number, asOfYear: number): number {
+/** Position of a year on the axis, 0 at the timeline's start and 1 at the present. */
+export function yearToUnit(year: number, asOfYear: number, timeline: Timeline): number {
   const end = timelineEnd(asOfYear);
-  const far = Math.log(end - TIMELINE_START + NEAR);
-  const near = Math.log(NEAR);
-  const at = Math.log(Math.max(end - year, 0) + NEAR);
+  const far = Math.log(end - timeline.start + timeline.near);
+  const near = Math.log(timeline.near);
+  const at = Math.log(Math.max(end - year, 0) + timeline.near);
   return (far - at) / (far - near);
 }
 
-export function unitToYear(unit: number, asOfYear: number): number {
+export function unitToYear(unit: number, asOfYear: number, timeline: Timeline): number {
   const end = timelineEnd(asOfYear);
-  const far = Math.log(end - TIMELINE_START + NEAR);
-  const near = Math.log(NEAR);
-  return end + NEAR - Math.exp(far - unit * (far - near));
+  const far = Math.log(end - timeline.start + timeline.near);
+  const near = Math.log(timeline.near);
+  return end + timeline.near - Math.exp(far - unit * (far - near));
 }
 
-/** BUCKET_COUNT + 1 edges, evenly spaced on the axis, as years. */
-export function bucketEdges(asOfYear: number): number[] {
+/** timeline.buckets + 1 edges, evenly spaced on the axis, as years. */
+export function bucketEdges(asOfYear: number, timeline: Timeline): number[] {
   const edges: number[] = [];
-  for (let i = 0; i <= BUCKET_COUNT; i++) edges.push(unitToYear(i / BUCKET_COUNT, asOfYear));
-  edges[0] = TIMELINE_START;
-  edges[BUCKET_COUNT] = timelineEnd(asOfYear);
+  for (let i = 0; i <= timeline.buckets; i++) edges.push(unitToYear(i / timeline.buckets, asOfYear, timeline));
+  edges[0] = timeline.start;
+  edges[timeline.buckets] = timelineEnd(asOfYear);
   return edges;
 }
-
-/** Tick years for the axis labels. */
-export const TIMELINE_TICKS = [-3000, -2000, -1000, -500, 1, 500, 1000, 1500, 1700, 1800, 1900, 1950, 2000];
 
 /** "500 BCE", "30 CE", "1066". Years before 1000 CE carry their era so they cannot be misread. */
 export function formatYear(year: number): string {

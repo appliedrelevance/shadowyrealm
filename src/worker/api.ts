@@ -3,7 +3,7 @@
  * service functions the MCP tools call; only the owner account may write.
  */
 import { ZodError } from "zod";
-import * as schemas from "../lib/sr-schemas";
+import { schemasFor } from "../lib/sr-schemas";
 import * as service from "../lib/sr-service";
 import type { Env } from "./env";
 
@@ -60,7 +60,10 @@ export async function handleApiRequest(request: Request, env: Env): Promise<Resp
     }
     try {
       const body = (await request.json()) as Record<string, unknown>;
-      const input = schemas.setEntityStatusInput.parse({ ...body, slug: decodeURIComponent(status[1]) });
+      const input = schemasFor(service.siteOf(env)).setEntityStatusInput.parse({
+        ...body,
+        slug: decodeURIComponent(status[1]),
+      });
       return Response.json(await service.setEntityStatus(env, input));
     } catch (err) {
       if (err instanceof ZodError) {

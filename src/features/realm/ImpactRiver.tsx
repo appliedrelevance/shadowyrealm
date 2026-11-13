@@ -6,11 +6,13 @@
  */
 import { memo, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { BUCKET_COUNT, formatSpan, formatYear, TIMELINE_START, unitToYear } from "@/lib/timeline";
+import { SITE } from "@/lib/site";
+import { formatSpan, formatYear, unitToYear } from "@/lib/timeline";
 import type { Realm, RealmEntity } from "./api";
 import {
   AXIS_TEXT,
   BENEFIT,
+  BUCKET_COUNT,
   bucketUnit,
   formatMagnitude,
   GRID,
@@ -138,7 +140,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
   }, [layers, W, H, max]);
 
   const hovered = hover ? layers.find((l) => l.entity.slug === hover.slug) : undefined;
-  const hoverYear = hover ? unitToYear((hover.px - M.left) / innerW, realm.as_of_year) : 0;
+  const hoverYear = hover ? unitToYear((hover.px - M.left) / innerW, realm.as_of_year, SITE.timeline) : 0;
   const hoverBucket = hover ? Math.min(BUCKET_COUNT - 1, Math.max(0, Math.floor(((hover.px - M.left) / innerW) * BUCKET_COUNT))) : 0;
   const levelAt = (layer: Layer | undefined, side: "benefit" | "harm") => {
     if (!layer) return 0;
@@ -156,7 +158,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
             width={W}
             height={H}
             role="img"
-            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(TIMELINE_START)} to ${realm.as_of_year}, benefit above the axis and harm below`}
+            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(SITE.timeline.start)} to ${realm.as_of_year}, benefit above the axis and harm below`}
             onPointerLeave={() => setHover(null)}
           >
             <TimeAxis asOfYear={realm.as_of_year} x={x} top={M.top} bottom={H - M.bottom} />

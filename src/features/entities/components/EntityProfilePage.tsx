@@ -8,6 +8,8 @@ import { formatMagnitude } from "@/features/realm/chart";
 import { InfluenceCurve, ProfileBars } from "@/features/realm/ProfileCharts";
 import { typeIcons } from "@/features/realm/RealmHome";
 import { COPY } from "@/lib/copy";
+import { dimensionCountWords, SITE } from "@/lib/site";
+import { creditTypes, linkLabels } from "@/sites";
 import { formatSpan, formatYear } from "@/lib/timeline";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { useOperator } from "../hooks/useEntityMutations";
@@ -111,7 +113,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
           </div>
           <p className="mt-3 text-sm text-ink-muted">
             Own {formatMagnitude(score.own_magnitude)} · credited from consequences{" "}
-            {formatMagnitude(score.credited_magnitude)} · in influence-centuries
+            {formatMagnitude(score.credited_magnitude)} · in {SITE.scoring.unit.name}
           </p>
         </div>
         <Stat label="Benefit" value={score.benefit_total} swatch="bg-benefit" />
@@ -135,7 +137,8 @@ export function EntityProfilePage({ slug }: { slug: string }) {
       <section className="mt-6 rounded-lg border border-line bg-surface-1 p-4">
         <h2 className="font-display text-lg font-semibold text-ink">Impact profile</h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">
-          Benefit and harm for each of the five dimensions, in influence-centuries. They are never netted.
+          Benefit and harm for each of the {dimensionCountWords()} dimensions, in {SITE.scoring.unit.name}. They are never
+          netted.
         </p>
         <ProfileBars profile={profile} />
       </section>
@@ -165,10 +168,25 @@ function Stat({ label, value, swatch }: { label: string; value: number; swatch: 
   );
 }
 
+const CREDIT = creditTypes(SITE);
+
+type ProfileLink = EntityProfile["links"][number];
+
+/** A link's label from this profile's side: the cause's label when it points away, the consequence's when it points here. */
+function labelFor(profile: EntityProfile, l: ProfileLink): string {
+  const target = l.direction === "outgoing" ? l.other.entity_type : profile.entity.entity_type;
+  const labels = linkLabels(SITE, l.relationship_type, target);
+  return l.direction === "outgoing" ? labels.cause : labels.consequence;
+}
+
+/** The direct credit link to another entity, labelled from this side, when there is one. */
+function directLabel(profile: EntityProfile, slug: string, direction: ProfileLink["direction"]): string | undefined {
+  const l = profile.links.find((x) => x.other.slug === slug && x.direction === direction && CREDIT.has(x.relationship_type));
+  return l ? labelFor(profile, l) : undefined;
+}
+
 function Lineage({ profile }: { profile: EntityProfile }) {
-  const descriptive = profile.links.filter(
-    (l) => l.relationship_type === "collaboration" || l.relationship_type === "opposition",
-  );
+  const descriptive = profile.links.filter((l) => !CREDIT.has(l.relationship_type));
   if (profile.contributors.length === 0 && profile.credits.length === 0 && descriptive.length === 0) return null;
   return (
     <section className="mt-6 grid gap-6 md:grid-cols-2">
@@ -178,7 +196,7 @@ function Lineage({ profile }: { profile: EntityProfile }) {
         {profile.contributors.length === 0 ? (
           <p className="text-sm text-ink-muted">Nothing in the index is credited to it.</p>
         ) : (
-          <LineageList rows={profile.contributors} />
+          <LineageList rows={profile.contributors.map((r) => ({ ...r, label: directLabel(profile, r.slug, "outgoing") }))} />
         )}
       </div>
       <div className="rounded-lg border border-line bg-surface-1 p-4">
@@ -187,7 +205,7 @@ function Lineage({ profile }: { profile: EntityProfile }) {
         {profile.credits.length === 0 ? (
           <p className="text-sm text-ink-muted">No cause of it is in the index.</p>
         ) : (
-          <LineageList rows={profile.credits} />
+          <LineageList rows={profile.credits.map((r) => ({ ...r, label: directLabel(profile, r.slug, "incoming") }))} />
         )}
       </div>
       {descriptive.length > 0 && (
@@ -196,7 +214,7 @@ function Lineage({ profile }: { profile: EntityProfile }) {
           <ul className="mt-2 space-y-1 text-sm">
             {descriptive.map((l) => (
               <li key={`${l.direction}-${l.other.slug}-${l.relationship_type}`}>
-                <span className="capitalize text-ink-muted">{l.relationship_type}</span>{" "}
+                <span className="text-ink-muted">{labelFor(profile, l)}</span>{" "}
                 <Link to="/entity/$slug" params={{ slug: l.other.slug }} className="text-action-ink hover:underline">
                   {l.other.name}
                 </Link>
@@ -210,7 +228,11 @@ function Lineage({ profile }: { profile: EntityProfile }) {
   );
 }
 
-function LineageList({ rows }: { rows: { slug: string; name: string; share: number; magnitude: number }[] }) {
+function LineageList({
+  rows,
+}: {
+  rows: { slug: string; name: string; share: number; magnitude: number; label?: string }[];
+}) {
   return (
     <ul className="divide-y divide-line text-sm">
       {rows.map((r) => (
@@ -220,6 +242,7 @@ function LineageList({ rows }: { rows: { slug: string; name: string; share: numb
             params={{ slug: r.slug }}
             className="flex min-w-0 items-center gap-1 truncate text-ink-2 hover:text-action-ink"
           >
+            {r.label && <span className="shrink-0 text-ink-muted">{r.label}</span>}
             <span className="truncate">{r.name}</span> <ArrowRight className="h-3.5 w-3.5 shrink-0 text-ink-muted" />
           </Link>
           <span className="shrink-0 text-ink-muted">

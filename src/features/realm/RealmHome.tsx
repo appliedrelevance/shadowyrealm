@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Building2, ExternalLink, RefreshCw, Search, User, Zap } from "lucide-react";
-import gateOfTheRealm from "@/assets/gate-of-the-realm.jpg";
+import { ArrowRight, ExternalLink, RefreshCw, Search } from "lucide-react";
+import { SITE } from "@/lib/site";
+import { SITE_UI } from "@/sites/ui";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
 import { COPY } from "@/lib/copy";
@@ -16,12 +17,10 @@ type TypeFilter = "" | RealmEntity["entity_type"];
 
 const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
   { value: "", label: "All" },
-  { value: "person", label: "People" },
-  { value: "organization", label: "Organizations" },
-  { value: "event", label: "Events" },
+  ...SITE.entityTypes.map((t) => ({ value: t.key, label: t.plural })),
 ];
 
-export const typeIcons = { person: User, organization: Building2, event: Zap } as const;
+export const typeIcons = SITE_UI.typeIcons;
 
 export function RealmHome() {
   usePageTitle();
@@ -46,22 +45,21 @@ export function RealmHome() {
             <Link to="/methodology" className="inline-flex items-center gap-1 text-action-ink hover:underline">
               {COPY.home.toMethod} <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href={COPY.home.storyUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-action-ink hover:underline"
-            >
-              {COPY.home.toStory} <ExternalLink className="h-4 w-4" />
-            </a>
+            {COPY.home.story && (
+              <a
+                href={COPY.home.story.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-action-ink hover:underline"
+              >
+                {COPY.home.story.label} <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
           </div>
         </div>
-        <img
-          src={gateOfTheRealm}
+        <SITE_UI.Hero
           alt={COPY.home.heroAlt}
-          width={512}
-          height={512}
-          className="hidden w-56 rounded-lg border border-line shadow-lg shadow-crit/25 md:block"
+          className="hidden h-56 w-56 rounded-lg border border-line shadow-lg shadow-crit/25 md:block"
         />
       </header>
 

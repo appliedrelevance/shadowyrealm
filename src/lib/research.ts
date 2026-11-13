@@ -3,6 +3,7 @@
  * nothing and calls no model; drafting the description and choosing periods is
  * the MCP client's job, and scoring is score_period's.
  */
+import type { SiteConfig } from "../sites/types";
 import type { ResearchEntityInput } from "./sr-schemas";
 
 interface WikipediaSearchResult {
@@ -13,10 +14,9 @@ interface WikipediaSearchResult {
   page_url: string;
 }
 
-// Wikimedia rejects requests that carry no User-Agent (HTTP 403).
-const WIKIPEDIA_HEADERS = { "User-Agent": "ShadowyRealm/1.0 (https://shadowyrealm.com)" };
-
-export async function fetchWikipedia(query: string): Promise<WikipediaSearchResult | null> {
+// Wikimedia rejects requests that carry no User-Agent (HTTP 403); each site sends its own.
+export async function fetchWikipedia(site: SiteConfig, query: string): Promise<WikipediaSearchResult | null> {
+  const WIKIPEDIA_HEADERS = { "User-Agent": site.brand.userAgent };
   const searchUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
   const resp = await fetch(searchUrl, { headers: WIKIPEDIA_HEADERS });
   if (resp.status === 404) return null;
@@ -50,8 +50,8 @@ export async function fetchWikipedia(query: string): Promise<WikipediaSearchResu
   };
 }
 
-export async function research(args: ResearchEntityInput) {
-  const wikipedia = await fetchWikipedia(args.query);
+export async function research(site: SiteConfig, args: ResearchEntityInput) {
+  const wikipedia = await fetchWikipedia(site, args.query);
   if (!wikipedia) throw new Error(`Wikipedia has no article titled "${args.query}"`);
   return wikipedia;
 }

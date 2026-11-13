@@ -1,0 +1,634 @@
+[
+  {
+    "entity_type": "person",
+    "input": {
+      "entity": "Johannes Gutenberg",
+      "period": "Printing in Mainz",
+      "start_year": 1450,
+      "end_year": 1468,
+      "excluded": [
+        "Printing press"
+      ],
+      "evidence": "Gutenberg developed movable-type printing in Mainz and printed the Gutenberg Bible."
+    },
+    "request": {
+      "model": "clef",
+      "state": "Subject: Johannes Gutenberg\nPeriod under assessment: \"Printing in Mainz\" (1450 to 1468)\n\nEvidence:\nGutenberg developed movable-type printing in Mainz and printed the Gutenberg Bible.",
+      "questions": {
+        "scientific_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "scientific_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Printing press, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "reach": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. How many people did Johannes Gutenberg's own direct activity during \"Printing in Mainz\" (1450 to 1468) affect while it lasted? Leave out the effects of Printing press, which are scored as entities of their own.",
+          "criteria": [
+            "A handful of people",
+            "A village or a small group",
+            "A town or a single community",
+            "A city or a single profession",
+            "A province or a region",
+            "A nation",
+            "Several nations",
+            "A continent or a whole civilization",
+            "Most of the world",
+            "Nearly everyone alive"
+          ]
+        },
+        "persistence": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. After \"Printing in Mainz\" (1450 to 1468) ended, how long did the effects of Johannes Gutenberg's own direct activity in it last? Leave out the effects of Printing press, which are scored as entities of their own.",
+          "criteria": [
+            "Faded within a year",
+            "Faded within a few years",
+            "Faded within a decade",
+            "Faded within a generation",
+            "Lasted about a lifetime",
+            "Lasted a century or two",
+            "Lasted several centuries",
+            "Lasted most of a millennium",
+            "Lasted for millennia",
+            "Permanent, with no sign of fading"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "entity_type": "organization",
+    "input": {
+      "entity": "Catholic Church",
+      "period": "Early Church",
+      "start_year": 31,
+      "end_year": 312,
+      "excluded": [],
+      "evidence": "The Christian community spread through the Roman Empire."
+    },
+    "request": {
+      "model": "clef",
+      "state": "Subject: Catholic Church\nPeriod under assessment: \"Early Church\" (31 to 312)\n\nEvidence:\nThe Christian community spread through the Roman Empire.",
+      "questions": {
+        "scientific_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "scientific_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "reach": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. How many people did Catholic Church's own direct activity during \"Early Church\" (31 to 312) affect while it lasted? Leave out consequences that would be entities of their own.",
+          "criteria": [
+            "A handful of people",
+            "A village or a small group",
+            "A town or a single community",
+            "A city or a single profession",
+            "A province or a region",
+            "A nation",
+            "Several nations",
+            "A continent or a whole civilization",
+            "Most of the world",
+            "Nearly everyone alive"
+          ]
+        },
+        "persistence": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. After \"Early Church\" (31 to 312) ended, how long did the effects of Catholic Church's own direct activity in it last? Leave out consequences that would be entities of their own.",
+          "criteria": [
+            "Faded within a year",
+            "Faded within a few years",
+            "Faded within a decade",
+            "Faded within a generation",
+            "Lasted about a lifetime",
+            "Lasted a century or two",
+            "Lasted several centuries",
+            "Lasted most of a millennium",
+            "Lasted for millennia",
+            "Permanent, with no sign of fading"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "entity_type": "event",
+    "input": {
+      "entity": "Code of Hammurabi",
+      "period": "Promulgation",
+      "start_year": -1755,
+      "end_year": -1750,
+      "excluded": [
+        "Babylonian law",
+        "Mesopotamian courts"
+      ],
+      "evidence": "Hammurabi of Babylon issued a code of 282 laws."
+    },
+    "request": {
+      "model": "clef",
+      "state": "Subject: Code of Hammurabi\nPeriod under assessment: \"Promulgation\" (1755 BCE to 1750 BCE)\n\nEvidence:\nHammurabi of Babylon issued a code of 282 laws.",
+      "questions": {
+        "scientific_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "scientific_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "economic_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "human_rights_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "health_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_benefit": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "cultural_harm": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "criteria": [
+            "No effect on this dimension",
+            "Trivial, barely noticeable",
+            "Slight, limited to a few people",
+            "Minor but real",
+            "Moderate",
+            "Substantial",
+            "Major",
+            "Severe",
+            "Extreme, life-altering for those affected",
+            "Catastrophic or transformative, the most intense effect on people in history"
+          ]
+        },
+        "reach": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. How many people did Code of Hammurabi's own direct activity during \"Promulgation\" (1755 BCE to 1750 BCE) affect while it lasted? Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own.",
+          "criteria": [
+            "A handful of people",
+            "A village or a small group",
+            "A town or a single community",
+            "A city or a single profession",
+            "A province or a region",
+            "A nation",
+            "Several nations",
+            "A continent or a whole civilization",
+            "Most of the world",
+            "Nearly everyone alive"
+          ]
+        },
+        "persistence": {
+          "type": "score",
+          "instructions": "Judge only from the evidence text. After \"Promulgation\" (1755 BCE to 1750 BCE) ended, how long did the effects of Code of Hammurabi's own direct activity in it last? Leave out the effects of Babylonian law, Mesopotamian courts, which are scored as entities of their own.",
+          "criteria": [
+            "Faded within a year",
+            "Faded within a few years",
+            "Faded within a decade",
+            "Faded within a generation",
+            "Lasted about a lifetime",
+            "Lasted a century or two",
+            "Lasted several centuries",
+            "Lasted most of a millennium",
+            "Lasted for millennia",
+            "Permanent, with no sign of fading"
+          ]
+        }
+      }
+    }
+  }
+]

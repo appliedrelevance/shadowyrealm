@@ -4,6 +4,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
+import { assertSameSite } from "@/lib/site";
 import { supabase } from "@/lib/supabase";
 import type { getEntityProfile, getRealm } from "@/lib/sr-service";
 
@@ -24,6 +25,7 @@ async function read<T>(path: string): Promise<T | null> {
     cache: "no-cache",
     ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
   });
+  assertSameSite(response);
   if (response.status === 404) return null;
   const json = (await response.json()) as T & { error?: string };
   if (!response.ok) throw new Error(json.error ?? `GET ${path} failed: HTTP ${response.status}`);

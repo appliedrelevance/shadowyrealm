@@ -26,13 +26,16 @@
  * passes on 100% or more keeps none.
  *
  * Magnitude, the sum of the ten areas, only ranks entities and sets tiers.
+ *
+ * Dimensions, weights, the unit, the persistence time constants and the tiers
+ * all come from the site's ScoringConfig (src/sites), passed in as an argument.
  */
+import type { ScoringConfig, TierDef } from "../sites/types";
 
 // ---------- Types ----------
 
-export const DIMENSIONS = ["scientific", "economic", "human_rights", "health", "cultural"] as const;
-export type Dimension = (typeof DIMENSIONS)[number];
-export type Dimensions = Record<Dimension, number>;
+/** One value per dimension key of the site, in the config's order. */
+export type Dimensions = Record<string, number>;
 
 /** Benefit and harm for each dimension. */
 export interface Profile {
@@ -132,64 +135,44 @@ export interface ImpactOptions {
 
 export const ALGORITHM_VERSION = "4.0.0-profile";
 
-export const DIMENSION_WEIGHTS: Dimensions = {
-  scientific: 1.0,
-  economic: 1.0,
-  human_rights: 1.2,
-  health: 1.1,
-  cultural: 0.9,
-};
-
-/**
- * Years for a fading legacy to fall to 1/e of its level, indexed by
- * persistence factor − 1. Infinity never fades. The values follow the wording
- * of the persistence rubric: 1 faded within a year … 10 permanent.
- */
-export const PERSISTENCE_TIME_CONSTANTS = [1, 3, 10, 25, 70, 150, 300, 700, 2000, Infinity];
-
-/**
- * Tier thresholds, in influence-centuries of total magnitude: the round values
- * nearest the 20th, 50th, 80th and 95th percentiles of the 2026-11-07 run over
- * 114 entities (research.md). The keys name the colour tokens; the labels are
- * what readers see.
- */
-export const TIER_THRESHOLDS: { tier: ATISTier; min: number; label: string; descriptor: string }[] = [
-  { tier: "minimal", min: 0, label: "Notable", descriptor: "Influence concentrated in one era or field" },
-  { tier: "moderate", min: 100, label: "Major", descriptor: "Wide influence across a nation or a field" },
-  { tier: "significant", min: 200, label: "Great", descriptor: "Influence across nations and generations" },
-  { tier: "transformational", min: 500, label: "Epochal", descriptor: "Defined an epoch for much of humanity" },
-  { tier: "legendary", min: 2000, label: "Legendary", descriptor: "Shaped civilisations for millennia" },
-];
-
-/** Years per unit of area. */
-const YEARS_PER_UNIT = 100;
-
 // ---------- Profile arithmetic ----------
 
-export function emptyDimensions(): Dimensions {
-  return { scientific: 0, economic: 0, human_rights: 0, health: 0, cultural: 0 };
+export function dimensionKeysOf(scoring: Pick<ScoringConfig, "dimensions">): string[] {
+  return scoring.dimensions.map((d) => d.key);
 }
 
-export function emptyProfile(): Profile {
-  return { benefit: emptyDimensions(), harm: emptyDimensions() };
+export function emptyDimensions(keys: readonly string[]): Dimensions {
+  return Object.fromEntries(keys.map((k) => [k, 0]));
 }
 
-/** a + factor × b, number by number. */
+export function emptyProfile(keys: readonly string[]): Profile {
+  return { benefit: emptyDimensions(keys), harm: emptyDimensions(keys) };
+}
+
+/** A value of b for key k; a profile missing one of the site's dimensions is an error, never a zero. */
+function at(d: Dimensions, k: string): number {
+  const v = d[k];
+  if (typeof v !== "number") throw new Error(`Profile has no value for dimension "${k}"`);
+  return v;
+}
+
+/** a + factor × b, number by number, over a's dimensions. */
 export function addScaled(a: Profile, b: Profile, factor = 1): Profile {
-  const out = emptyProfile();
-  for (const d of DIMENSIONS) {
-    out.benefit[d] = a.benefit[d] + factor * b.benefit[d];
-    out.harm[d] = a.harm[d] + factor * b.harm[d];
+  const keys = Object.keys(a.benefit);
+  const out = emptyProfile(keys);
+  for (const d of keys) {
+    out.benefit[d] = a.benefit[d] + factor * at(b.benefit, d);
+    out.harm[d] = a.harm[d] + factor * at(b.harm, d);
   }
   return out;
 }
 
 export function scaleProfile(p: Profile, factor: number): Profile {
-  return addScaled(emptyProfile(), p, factor);
+  return addScaled(emptyProfile(Object.keys(p.benefit)), p, factor);
 }
 
 export function sumDimensions(d: Dimensions): number {
-  return DIMENSIONS.reduce((sum, k) => sum + d[k], 0);
+  return Object.keys(d).reduce((sum, k) => sum + d[k], 0);
 }
 
 export function profileMagnitude(p: Profile): number {
@@ -204,10 +187,9 @@ export function reachMultiplier(reachFactor: number): number {
 }
 
 /** Years for a fading legacy to fall to 1/e of its level. */
-export function persistenceTimeConstant(persistenceFactor: number): number {
-  const index =
-    Math.min(Math.max(Math.round(persistenceFactor), 1), PERSISTENCE_TIME_CONSTANTS.length) - 1;
-  return PERSISTENCE_TIME_CONSTANTS[index];
+export function persistenceTimeConstant(persistenceFactor: number, constants: readonly number[]): number {
+  const index = Math.min(Math.max(Math.round(persistenceFactor), 1), constants.length) - 1;
+  return constants[index];
 }
 
 /** Area (level × years, not yet divided into centuries) under an exponentially fading level. */
@@ -223,25 +205,29 @@ function activeYears(period: PeriodInput, asOfYear: number): number {
 }
 
 /** One period's level: weighted values × reach, averaged over its assessments. */
-function periodLevel(group: AssessmentInput[], reach: number): Profile {
-  let level = emptyProfile();
+function periodLevel(scoring: ScoringConfig, group: AssessmentInput[], reach: number): Profile {
+  const keys = dimensionKeysOf(scoring);
+  let level = emptyProfile(keys);
   for (const a of group) {
     level = addScaled(level, { benefit: a.benefit, harm: a.harm }, 1 / group.length);
   }
-  const out = emptyProfile();
-  for (const d of DIMENSIONS) {
-    out.benefit[d] = DIMENSION_WEIGHTS[d] * level.benefit[d] * reach;
-    out.harm[d] = DIMENSION_WEIGHTS[d] * level.harm[d] * reach;
+  const out = emptyProfile(keys);
+  for (const { key: d, weight } of scoring.dimensions) {
+    out.benefit[d] = weight * level.benefit[d] * reach;
+    out.harm[d] = weight * level.harm[d] * reach;
   }
   return out;
 }
 
 export function calculateImpact(
+  scoring: ScoringConfig,
   assessments: AssessmentInput[],
   periods: PeriodInput[],
   options: ImpactOptions,
 ): ImpactResult {
   const asOfYear = options.asOfYear ?? new Date().getFullYear();
+  const keys = dimensionKeysOf(scoring);
+  const yearsPerUnit = scoring.unit.years;
   const periodById = new Map(periods.map((p) => [p.id, p]));
   const assessmentsByPeriod = new Map<number, AssessmentInput[]>();
   let unplaced = 0;
@@ -263,14 +249,14 @@ export function calculateImpact(
 
   const breakdown: PeriodBreakdown[] = [];
   const segments: CurveSegment[] = [];
-  let profile = emptyProfile();
+  let profile = emptyProfile(keys);
 
   for (const period of placed) {
     const group = assessmentsByPeriod.get(period.id)!;
     const multiplier = reachMultiplier(period.reach_factor);
-    const level = periodLevel(group, multiplier);
+    const level = periodLevel(scoring, group, multiplier);
     const years = activeYears(period, asOfYear);
-    const area = scaleProfile(level, years / YEARS_PER_UNIT);
+    const area = scaleProfile(level, years / yearsPerUnit);
     profile = addScaled(profile, area);
 
     breakdown.push({
@@ -300,17 +286,20 @@ export function calculateImpact(
     const latestEnd = Math.max(...placed.map((p) => p.end_year));
     if (latestEnd < asOfYear) {
       const yearsAfter = asOfYear - latestEnd;
-      let tailArea = emptyProfile();
+      let tailArea = emptyProfile(keys);
       const parts: TailPart[] = [];
       for (const row of breakdown.filter((b) => b.end_year === latestEnd)) {
         const period = periodById.get(row.period_id)!;
-        const timeConstant = persistenceTimeConstant(period.persistence_factor);
-        const faded = emptyProfile();
-        for (const d of DIMENSIONS) {
+        const timeConstant = persistenceTimeConstant(
+          period.persistence_factor,
+          scoring.rubrics.persistenceTimeConstants,
+        );
+        const faded = emptyProfile(keys);
+        for (const d of keys) {
           faded.benefit[d] = calculateTailArea(row.level.benefit[d], timeConstant, yearsAfter);
           faded.harm[d] = calculateTailArea(row.level.harm[d], timeConstant, yearsAfter);
         }
-        tailArea = addScaled(tailArea, faded, kept / YEARS_PER_UNIT);
+        tailArea = addScaled(tailArea, faded, kept / yearsPerUnit);
         parts.push({
           benefit: kept * sumDimensions(row.level.benefit),
           harm: kept * sumDimensions(row.level.harm),
@@ -391,12 +380,19 @@ export function sampleCurve(curve: InfluenceCurve, edges: number[]): { benefit: 
 
 // ---------- Classification ----------
 
-export function classifyMagnitude(magnitude: number): { tier: ATISTier; descriptor: string } {
-  let found = TIER_THRESHOLDS[0];
-  for (const t of TIER_THRESHOLDS) if (magnitude >= t.min) found = t;
+/** The tier a magnitude falls in, or null while the site's tiers are not calibrated. */
+export function classifyMagnitude(
+  tiers: readonly TierDef[] | null,
+  magnitude: number,
+): { tier: ATISTier; descriptor: string } | null {
+  if (!tiers) return null;
+  let found = tiers[0];
+  for (const t of tiers) if (magnitude >= t.min) found = t;
   return { tier: found.tier, descriptor: found.descriptor };
 }
 
-export function tierLabel(tier: ATISTier): string {
-  return TIER_THRESHOLDS.find((t) => t.tier === tier)!.label;
+export function tierLabel(tiers: readonly TierDef[], tier: ATISTier): string {
+  const found = tiers.find((t) => t.tier === tier);
+  if (!found) throw new Error(`No tier "${tier}"`);
+  return found.label;
 }

@@ -1,9 +1,9 @@
 # Implementation Plan
 
-- [ ] 1. Baselines for the identity checks
-  - [ ] 1.1 Save production's `/api/scores`, `/api/realm` and five `/api/entities/:slug` responses, with the as-of year they were computed for (Requirement 11.1)
-  - [ ] 1.2 Save ShadowyRealm's Clef request for three periods of different entity types as test fixtures (Requirement 6.5)
-  - [ ] 1.3 Query the published data for the earliest period start (Requirement 11.4)
+- [x] 1. Baselines for the identity checks
+  - [x] 1.1 Save production's `/api/scores`, `/api/realm` and five `/api/entities/:slug` responses, with the as-of year they were computed for (Requirement 11.1). Saved 2026-11-13, as of 2026, 624 entities.
+  - [x] 1.2 Save ShadowyRealm's Clef request for three periods of different entity types as test fixtures (Requirement 6.5): `test/fixtures/clef-shadowyrealm.json`
+  - [x] 1.3 Query the published data for the earliest period start (Requirement 11.4): 3300 BCE
 
 - [ ] 2. Site config and the scoring core
   - [ ] 2.1 `src/sites/types.ts`, `rubrics.ts`, `shadowyrealm.ts` and the registry, with ShadowyRealm's config built from today's constants (Requirements 1, 2)

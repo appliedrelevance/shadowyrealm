@@ -1,9 +1,10 @@
 /**
- * ShadowyRealm CF Worker entry point.
+ * The Worker entry point, one deployment per site; SITE names the site.
  * /mcp serves the MCP control surface; /api/* serves the web UI's reads and manual controls.
  * /sitemap.xml and /entity/* are written for crawlers and link previews.
- * All other routes serve the static SPA.
+ * All other routes serve the static SPA built for the same site.
  */
+import { SITES } from "../sites";
 import { handleApiRequest } from "./api";
 import type { Env, ExecutionContext } from "./env";
 import { handleMcpRequest } from "./mcp";
@@ -42,8 +43,25 @@ async function cachedForVisitors(
   return response;
 }
 
+/** Every /api response names its site, so an SPA built for another site can refuse it. */
+function withSite(response: Response, site: string): Response {
+  const named = new Response(response.body, response);
+  named.headers.set("X-Site", site);
+  return named;
+}
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    if (!env.SITE || !SITES[env.SITE]) {
+      return Response.json(
+        {
+          error:
+            `The Worker's SITE variable is ${env.SITE ? `"${env.SITE}", which names no site` : "unset"}; ` +
+            `it must be one of ${Object.keys(SITES).join(", ")}`,
+        },
+        { status: 500 },
+      );
+    }
     const url = new URL(request.url);
 
     if (url.pathname === "/mcp") {
@@ -54,9 +72,12 @@ export default {
       return cachedForVisitors(request, ctx, async () => {
         try {
           const response = await handleApiRequest(request, env);
-          return response ?? Response.json({ error: "not found" }, { status: 404 });
+          return withSite(response ?? Response.json({ error: "not found" }, { status: 404 }), env.SITE);
         } catch (err) {
-          return Response.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+          return withSite(
+            Response.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 }),
+            env.SITE,
+          );
         }
       });
     }

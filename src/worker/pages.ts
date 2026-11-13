@@ -5,8 +5,8 @@
  * security limits it to published entities.
  */
 import { createClient } from "@supabase/supabase-js";
-import { COPY } from "../lib/copy";
-import type { Database } from "../lib/database.types";
+import { siteFor } from "../sites";
+import type { SiteDatabase } from "../lib/site-tables";
 
 /** The Workers runtime global; not in the DOM lib the SPA compiles against. */
 declare class HTMLRewriter {
@@ -20,24 +20,24 @@ interface RewriterElement {
 }
 
 export interface PagesEnv {
+  SITE: string;
   ASSETS: { fetch: (request: Request) => Promise<Response> };
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
 }
 
-const ORIGIN = "https://shadowyrealm.com";
 const STATIC_PATHS = ["/", "/compare", "/methodology"];
 
 function connect(env: PagesEnv) {
   if (!env.SUPABASE_ANON_KEY) throw new Error("SUPABASE_ANON_KEY is not set on the Worker");
-  return createClient<Database, "shadowyrealm">(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+  return createClient<SiteDatabase, "site">(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
-    db: { schema: "shadowyrealm" },
+    db: { schema: siteFor(env.SITE).schema as "site" },
   });
 }
 
-function entityUrl(slug: string): string {
-  return `${ORIGIN}/entity/${encodeURIComponent(slug)}`;
+function entityUrl(env: PagesEnv, slug: string): string {
+  return `${siteFor(env.SITE).brand.origin}/entity/${encodeURIComponent(slug)}`;
 }
 
 export async function sitemap(env: PagesEnv): Promise<Response> {
@@ -49,8 +49,8 @@ export async function sitemap(env: PagesEnv): Promise<Response> {
   if (error) throw new Error(`sitemap: ${error.message}`);
 
   const urls = [
-    ...STATIC_PATHS.map((path) => `  <url><loc>${ORIGIN}${path}</loc></url>`),
-    ...data.map((e) => `  <url><loc>${entityUrl(e.slug)}</loc><lastmod>${e.updated_at.slice(0, 10)}</lastmod></url>`),
+    ...STATIC_PATHS.map((path) => `  <url><loc>${siteFor(env.SITE).brand.origin}${path}</loc></url>`),
+    ...data.map((e) => `  <url><loc>${entityUrl(env, e.slug)}</loc><lastmod>${e.updated_at.slice(0, 10)}</lastmod></url>`),
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -68,7 +68,8 @@ export async function entityPage(request: Request, env: PagesEnv, slug: string):
   ]);
   if (error) throw new Error(`entity page "${slug}": ${error.message}`);
 
-  const title = `${entity ? entity.name : COPY.entity.notFound} — ${COPY.nav.brand}`;
+  const site = siteFor(env.SITE);
+  const title = `${entity ? entity.name : site.copy.entity.notFound} — ${site.brand.name}`;
   let rewriter = new HTMLRewriter()
     .on("title", { element: (el) => el.setInnerContent(title) })
     .on('meta[property="og:title"]', { element: (el) => el.setAttribute("content", title) });
@@ -81,7 +82,7 @@ export async function entityPage(request: Request, env: PagesEnv, slug: string):
       .on("head", {
         element: (el) =>
           el.append(
-            `<link rel="canonical" href="${entityUrl(slug)}" /><meta property="og:url" content="${entityUrl(slug)}" />`,
+            `<link rel="canonical" href="${entityUrl(env, slug)}" /><meta property="og:url" content="${entityUrl(env, slug)}" />`,
             { html: true },
           ),
       });

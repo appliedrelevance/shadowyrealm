@@ -7,11 +7,12 @@
  * calculator's own areas. A descendant contributes its OWN profile, never its
  * credited one, so no chain is counted twice.
  */
+import type { ScoringConfig } from "../sites/types";
 import {
   addScaled,
   calculateImpact,
   classifyMagnitude,
-  DIMENSIONS,
+  dimensionKeysOf,
   emptyProfile,
   profileMagnitude,
   sumDimensions,
@@ -22,31 +23,21 @@ import {
   type Profile,
 } from "./atis-calculator";
 
-/** Link types whose strength is a share of credit. collaboration and opposition only describe. */
-export const CREDIT_TYPES = ["influence", "mentorship"] as const;
-
-export function isCreditType(type: string): boolean {
-  return (CREDIT_TYPES as readonly string[]).includes(type);
+/** What composition needs from a site: its scoring config and which link types carry credit. */
+export interface CreditConfig {
+  scoring: ScoringConfig;
+  creditTypes: ReadonlySet<string>;
 }
 
 export interface PeriodRow extends PeriodInput {
   entity_id: number;
 }
 
-export interface AssessmentRow {
+/** The fixed columns plus {key}_benefit and {key}_harm for each of the site's dimensions. */
+export type AssessmentRow = {
   entity_id: number;
   period_id: number | null;
-  scientific_benefit: number | string;
-  scientific_harm: number | string;
-  economic_benefit: number | string;
-  economic_harm: number | string;
-  human_rights_benefit: number | string;
-  human_rights_harm: number | string;
-  health_benefit: number | string;
-  health_harm: number | string;
-  cultural_benefit: number | string;
-  cultural_harm: number | string;
-}
+} & Record<`${string}_${"benefit" | "harm"}`, number | string>;
 
 export interface LinkRow {
   source_entity_id: number;
@@ -78,8 +69,9 @@ export interface EntityScore {
   total_magnitude: number;
   benefit_total: number;
   harm_total: number;
-  tier: ATISTier;
-  descriptor: string;
+  /** null while the site's tiers are not calibrated. */
+  tier: ATISTier | null;
+  descriptor: string | null;
   /** Every descendant that passes credit up, largest contribution first. */
   contributors: Contribution[];
   /** Every ancestor this entity passes credit to, largest share first. */
@@ -93,9 +85,10 @@ function num(value: number | string): number {
   return n;
 }
 
-export function toAssessmentInput(row: AssessmentRow): AssessmentInput {
-  const input: AssessmentInput = { period_id: row.period_id, benefit: emptyProfile().benefit, harm: emptyProfile().harm };
-  for (const d of DIMENSIONS) {
+export function toAssessmentInput(keys: readonly string[], row: AssessmentRow): AssessmentInput {
+  const empty = emptyProfile(keys);
+  const input: AssessmentInput = { period_id: row.period_id, benefit: empty.benefit, harm: empty.harm };
+  for (const d of keys) {
     input.benefit[d] = num(row[`${d}_benefit`]);
     input.harm[d] = num(row[`${d}_harm`]);
   }
@@ -103,6 +96,7 @@ export function toAssessmentInput(row: AssessmentRow): AssessmentInput {
 }
 
 export function composeScores(
+  config: CreditConfig,
   entityIds: number[],
   periods: PeriodRow[],
   assessments: AssessmentRow[],
@@ -110,16 +104,17 @@ export function composeScores(
   shares: ShareRow[],
   asOfYear: number,
 ): Map<number, EntityScore> {
+  const keys = dimensionKeysOf(config.scoring);
   const ids = new Set(entityIds);
   const periodsBy = new Map<number, PeriodRow[]>();
   for (const p of periods) periodsBy.set(p.entity_id, [...(periodsBy.get(p.entity_id) ?? []), p]);
   const assessmentsBy = new Map<number, AssessmentInput[]>();
   for (const a of assessments) {
-    assessmentsBy.set(a.entity_id, [...(assessmentsBy.get(a.entity_id) ?? []), toAssessmentInput(a)]);
+    assessmentsBy.set(a.entity_id, [...(assessmentsBy.get(a.entity_id) ?? []), toAssessmentInput(keys, a)]);
   }
   const passedOn = new Map<number, number>();
   for (const l of links) {
-    if (!isCreditType(l.relationship_type) || !ids.has(l.target_entity_id)) continue;
+    if (!config.creditTypes.has(l.relationship_type) || !ids.has(l.target_entity_id)) continue;
     passedOn.set(l.source_entity_id, (passedOn.get(l.source_entity_id) ?? 0) + num(l.strength));
   }
 
@@ -127,14 +122,14 @@ export function composeScores(
   for (const id of entityIds) {
     own.set(
       id,
-      calculateImpact(assessmentsBy.get(id) ?? [], periodsBy.get(id) ?? [], {
+      calculateImpact(config.scoring, assessmentsBy.get(id) ?? [], periodsBy.get(id) ?? [], {
         creditPassedOn: passedOn.get(id) ?? 0,
         asOfYear,
       }),
     );
   }
 
-  const credited = new Map<number, Profile>(entityIds.map((id) => [id, emptyProfile()]));
+  const credited = new Map<number, Profile>(entityIds.map((id) => [id, emptyProfile(keys)]));
   const contributors = new Map<number, Contribution[]>(entityIds.map((id) => [id, []]));
   const credits = new Map<number, { entity_id: number; share: number }[]>(entityIds.map((id) => [id, []]));
   for (const row of shares) {
@@ -156,7 +151,7 @@ export function composeScores(
     const c = credited.get(id)!;
     const total = addScaled(o.profile, c);
     const totalMagnitude = profileMagnitude(total);
-    const { tier, descriptor } = classifyMagnitude(totalMagnitude);
+    const tier = classifyMagnitude(config.scoring.tiers, totalMagnitude);
     scores.set(id, {
       entity_id: id,
       own: o,
@@ -167,8 +162,8 @@ export function composeScores(
       total_magnitude: totalMagnitude,
       benefit_total: sumDimensions(total.benefit),
       harm_total: sumDimensions(total.harm),
-      tier,
-      descriptor,
+      tier: tier?.tier ?? null,
+      descriptor: tier?.descriptor ?? null,
       contributors: contributors.get(id)!.sort((a, b) => b.magnitude - a.magnitude),
       credits: credits.get(id)!.sort((a, b) => b.share - a.share),
     });

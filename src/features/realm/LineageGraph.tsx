@@ -8,12 +8,14 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { arc } from "d3-shape";
 import { ArrowRight } from "lucide-react";
+import { creditTypes } from "@/sites";
+import { SITE } from "@/lib/site";
 import { formatSpan, yearToUnit } from "@/lib/timeline";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useEntityProfile, type Realm, type RealmEntity } from "./api";
 import { AXIS_TEXT, BENEFIT, formatMagnitude, HARM, SURFACE, TimeAxis, useWidth } from "./chart";
 
-const CREDIT_TYPES = new Set(["influence", "mentorship"]);
+const CREDIT_TYPES = creditTypes(SITE);
 const MIN_WIDTH = 980;
 const LANE = 28;
 
@@ -63,7 +65,7 @@ export function LineageGraph({ realm }: { realm: Realm }) {
       .filter((e) => e.first_year !== null)
       .map((entity) => ({
         entity,
-        x: x(yearToUnit(entity.first_year!, realm.as_of_year)),
+        x: x(yearToUnit(entity.first_year!, realm.as_of_year, SITE.timeline)),
         y: 0,
         r: 4 + 20 * Math.sqrt(entity.total_magnitude / max),
       }))

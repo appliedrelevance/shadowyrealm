@@ -5,17 +5,21 @@
   "private": true,
   "scripts": {
     "lint:tokens": "node tools/check-tokens.mjs",
-    "dev": "vite --host 0.0.0.0 --port 35420",
-    "build": "tsc && vite build",
+    "dev": "SITE=shadowyrealm vite --host 0.0.0.0 --port 35420",
+    "dev:inventions": "SITE=inventions vite --host 0.0.0.0 --port 35422",
+    "build": "tsc && SITE=shadowyrealm vite build && SITE=inventions vite build",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
+    "deploy:inventions": "wrangler deploy --env inventions",
     "cf-typegen": "wrangler types",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
     "db:types": "bunx supabase gen types typescript --db-url postgresql://postgres:postgres@the-mark-of-gideon.local:35322/postgres --schema public,shadowyrealm > src/lib/database.types.ts",
     "test": "bun test ./test",
     "e2e": "playwright test",
-    "content:load": "bun tools/realm-load.ts content/realm.ts"
+    "content:load": "bun tools/realm-load.ts content/realm.ts",
+    "content:load:inventions": "bun tools/realm-load.ts content/inventions/index.ts",
+    "site-schema": "bun tools/site-schema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

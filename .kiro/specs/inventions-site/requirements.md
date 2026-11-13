@@ -25,7 +25,7 @@ Benefit and harm stay apart, and the field is full of entities large on both sid
 - **Adjacent expectations**:
   - This spec starts when `site-platform` is complete.
   - Every change to the shared database is executed by a session rooted in the appliedrelevance monorepo, from `handoff.md` in this spec folder.
-  - Geordie chooses the site's name and domain. Requirement 9's brand work starts from that choice.
+  - The site is named Prior Art and serves at priorart.shadowyrealm.com, a subdomain of ShadowyRealm (chosen 2026-11-13).
 
 ## Requirements
 
@@ -140,7 +140,7 @@ Benefit and harm stay apart, and the field is full of entities large on both sid
 
 #### Acceptance Criteria
 1. `wrangler.json` shall hold an `inventions` environment: Worker `inventions`, `SITE=inventions`, assets `./dist/inventions`, the `ai` binding, the Supabase variables, and `workers_dev: true`.
-2. The site shall serve on its `workers.dev` hostname until its domain is chosen. The environment shall then route the domain.
+2. The site shall serve at `priorart.shadowyrealm.com`, a custom domain on the `inventions` Worker in the shadowyrealm.com zone.
 3. `src/sites/inventions/` shall hold the site's logo, hero image, Open Graph image and token values. The token values shall pass `bun run lint:tokens`.
 
 ### Requirement 10: Benchmark and tiers

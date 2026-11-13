@@ -5,7 +5,8 @@ import type { PagesEnv } from "./pages";
 /**
  * Worker bindings and secrets.
  *
- * vars (wrangler.json):   AI_GATEWAY_NAME, SUPABASE_URL, SUPABASE_ANON_KEY (public; the SPA ships it too)
+ * vars (wrangler.json):   SITE (a key of src/sites), AI_GATEWAY_NAME, SUPABASE_URL,
+ *                         SUPABASE_ANON_KEY (public; the SPA ships it too)
  * secrets (wrangler secret put): MCP_API_KEY, SUPABASE_SERVICE_ROLE_KEY, OWNER_USER_ID
  * bindings: AI (Workers AI, for Clef), ASSETS
  */

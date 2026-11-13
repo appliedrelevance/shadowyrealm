@@ -1,3 +1,4 @@
+import { assertSameSite } from "./site";
 import { supabase } from "./supabase";
 
 /**
@@ -18,6 +19,7 @@ export async function operatorApi<T>(method: "GET" | "POST", path: string, body?
   }
 
   const response = await fetch(path, init);
+  assertSameSite(response);
 
   const json = (await response.json()) as T & { error?: string };
   if (!response.ok) throw new Error(json.error ?? `${method} ${path} failed: HTTP ${response.status}`);
