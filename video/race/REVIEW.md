@@ -61,7 +61,7 @@ licence and page, from `--credits`).
 - Reading load, from the reading plan in a script: a text is being read 65% of the sweep, two at
   once 0.0% of it (before: 56% and 10.7%). The board's names are left out of the count: it is a
   glance, not a read.
-- Render: 9000 frames in 6 min 3 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
+- Render: 9000 frames in 6 min 9 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
   true peak, the same mix as before.
 - Frames: snapshots at 10, 45.5, 55, 68.5, 71.5, 106, 160, 204, 250, 260.5, 262.2, 265.2, 271.2,
   290.4 and 296 s, and the contact sheet cut from the render.
@@ -75,25 +75,18 @@ licence and page, from `--credits`).
 
 ## Data in question
 
-The film draws the site's scores as they stand, and some do not hold up. Michael Jackson is fifth
-on the board in 2026 and third in 2012: his own score, 186.6, is above the World Wide Web's 103.9 and
-five times COVID-19's 34.3. His influence per year is one flat line, 298.4 from 1966 (the Jackson 5,
-aged eight) to his death in 2009, then 282.5 in 2026: above the World Wide Web's 288.8 until 2019,
-twice the Beatles' 146.4. Four causes, all in the site's scoring, none in the film:
+The film draws the site's scores as they stand. On 2026-11-14 the site's calculator learned that a
+legacy fades no slower than the years since it ended have shown (algorithm
+4.1.0-observed-persistence, deployed); 258 of 624 totals fell and the all-time ten did not move.
+Michael Jackson, who kept 94% of his peak level in 2026 under a 300-year fade, is off the 2026
+board; his own score is 174.1, from 186.6.
 
-- **One period, one number.** His content gives one period, 1964 to 2009, scored once, so the
-  Jackson 5 years count the same as Thriller's.
-
-- **Clef's ratings.** One Clef pass over his Wikipedia lead, at confidence 0.21, gave a singer a
-  human-rights benefit of 6.1 of 10 (the Web: 3.0), a health harm of 5.0 and a reach of 8, the same
-  reach as the Web.
-- **A 300-year legacy.** Persistence 7 fades over 300 years, so in 2026, 17 years after his death,
-  he keeps 94% of his peak level. The tail adds 49.3 to his score.
-- **Score is level × years.** A 45-year career outscores a 4-year pandemic whose ratings are near
-  the top (health harm 9.5, economic harm 8.9).
-
-The cards' reasons are the two largest of these areas by name ("Cultural benefit"), because a Clef
-assessment stores its evidence text in every justification column, not a reason per dimension.
+The scores still measure mostly how long an entity lasted. Each is ratings × reach × years: across
+the 624 entities, years cause 85% of the spread in the scores (log scale), reach 9% and the ratings
+6%. Years vary 52 times over from the 5th to the 95th percentile; Clef's reach and ratings under 3
+times each, because Clef answers near the middle (80% of periods at reach 5 to 7; a pandemic's
+ratings sum to 50.7, a singer's career to 42.7). Until the ratings are redone, ancient long-lived
+entities top all time by their years, and a long career outscores a short catastrophe.
 
 ## Weakest shot
 
