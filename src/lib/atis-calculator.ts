@@ -19,7 +19,10 @@
  * overlap add; years between periods add nothing.
  *
  * When the last period ends before the as-of year, its levels fade
- * exponentially from there, at a rate set by that period's persistence factor.
+ * exponentially from there, at a rate set by that period's persistence factor,
+ * but never slower than what the years since have shown: a legacy that ended N
+ * years ago is held to the first persistence level whose time covers N years.
+ * Lasting for centuries cannot be credited before the centuries have passed.
  * The part of a legacy that consequences carry comes back as credit instead, so
  * the tail is scaled by 1 − the credit shares the entity passes on: a founder
  * who passes 80% to a church keeps a fifth of the tail, and an entity that
@@ -133,7 +136,7 @@ export interface ImpactOptions {
 
 // ---------- Constants ----------
 
-export const ALGORITHM_VERSION = "4.0.0-profile";
+export const ALGORITHM_VERSION = "4.1.0-observed-persistence";
 
 // ---------- Profile arithmetic ----------
 
@@ -186,10 +189,21 @@ export function reachMultiplier(reachFactor: number): number {
   return Math.pow(reachFactor / 5.0, 1.8) * 3.0;
 }
 
-/** Years for a fading legacy to fall to 1/e of its level. */
-export function persistenceTimeConstant(persistenceFactor: number, constants: readonly number[]): number {
+/**
+ * Years for a fading legacy to fall to 1/e of its level: the persistence level's time, capped by
+ * the first level whose time covers the years since the period ended, when those are given. A
+ * period that ended 17 years ago fades within a generation (25 years) at the slowest.
+ */
+export function persistenceTimeConstant(
+  persistenceFactor: number,
+  constants: readonly number[],
+  yearsSinceEnd?: number,
+): number {
   const index = Math.min(Math.max(Math.round(persistenceFactor), 1), constants.length) - 1;
-  return constants[index];
+  const claimed = constants[index];
+  if (yearsSinceEnd === undefined) return claimed;
+  const observed = constants.find((years) => years >= yearsSinceEnd) ?? Infinity;
+  return Math.min(claimed, observed);
 }
 
 /** Area (level × years, not yet divided into centuries) under an exponentially fading level. */
@@ -293,6 +307,7 @@ export function calculateImpact(
         const timeConstant = persistenceTimeConstant(
           period.persistence_factor,
           scoring.rubrics.persistenceTimeConstants,
+          yearsAfter,
         );
         const faded = emptyProfile(keys);
         for (const d of keys) {

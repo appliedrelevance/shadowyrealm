@@ -62,7 +62,9 @@ export function Methodology() {
         <h2 className="font-display text-ink">Persistence and the fading tail</h2>
         <p>
           When an entity's last period ends, its influence fades exponentially at a rate set by the period's
-          persistence: the number of years for its level to fall to 37% (1/e) of where it was.
+          persistence: the number of years for its level to fall to 37% (1/e) of where it was. A legacy is held to
+          what the years since have shown: one that ended 17 years ago fades within a generation at the slowest,
+          whatever the evidence claims, because lasting for centuries cannot be seen until the centuries have passed.
         </p>
         <PersistenceTable />
         <p>

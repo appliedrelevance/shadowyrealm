@@ -4,6 +4,7 @@ import {
   classifyMagnitude,
   curveAreaBetween,
   emptyDimensions,
+  persistenceTimeConstant,
   profileMagnitude,
   reachMultiplier,
   sampleCurve,
@@ -108,13 +109,24 @@ for (const site of Object.values(SITES)) {
       expect((whole.benefit + whole.harm) / unitYears).toBeCloseTo(partly.magnitude, 6);
     });
 
-    test("a permanent legacy keeps its level to the as-of year", () => {
+    test("a permanent legacy keeps its level once no finite persistence covers the years since", () => {
+      const r = calculateImpact(scoring, [assessment(1, { [d0]: 5 })], [period(1, -100, -50, 5, 10)], {
+        creditPassedOn: 0,
+        asOfYear: AS_OF,
+      });
+      const level = weight(d0) * 5 * 3;
+      expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * (AS_OF + 50)) / unitYears, 10);
+    });
+
+    test("a claim of permanence is held to what the years since have shown", () => {
+      // Ended 101 years before the as-of year: fades over 150 years, the first level to cover 101.
       const r = calculateImpact(scoring, [assessment(1, { [d0]: 5 })], [period(1, 1900, 1925, 5, 10)], {
         creditPassedOn: 0,
         asOfYear: AS_OF,
       });
       const level = weight(d0) * 5 * 3;
-      expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * (AS_OF - 1925)) / unitYears, 10);
+      const years = AS_OF - 1925;
+      expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * 150 * (1 - Math.exp(-years / 150))) / unitYears, 10);
     });
 
     test("assessments without a known period are counted as unplaced and add nothing", () => {
@@ -192,5 +204,18 @@ describe("helpers", () => {
   test("reach 5 multiplies by 3 and reach 10 by 3 × 2^1.8", () => {
     expect(reachMultiplier(5)).toBeCloseTo(3, 10);
     expect(reachMultiplier(10)).toBeCloseTo(3 * Math.pow(2, 1.8), 10);
+  });
+
+  test("a legacy fades no slower than the years since it ended have shown", () => {
+    const constants = [1, 3, 10, 25, 70, 150, 300, 700, 2000, Infinity];
+    // Claimed "several centuries" (300 years), ended 17 years ago: held to within a generation.
+    expect(persistenceTimeConstant(7, constants, 17)).toBe(25);
+    // Claimed "within a decade", ended 500 years ago: the claim is the lower, so it stands.
+    expect(persistenceTimeConstant(3, constants, 500)).toBe(10);
+    // Ended exactly a generation ago: a generation covers it.
+    expect(persistenceTimeConstant(9, constants, 25)).toBe(25);
+    // "Permanent" is kept only once no finite level covers the years passed.
+    expect(persistenceTimeConstant(10, constants, 3000)).toBe(Infinity);
+    expect(persistenceTimeConstant(7, constants)).toBe(300);
   });
 });

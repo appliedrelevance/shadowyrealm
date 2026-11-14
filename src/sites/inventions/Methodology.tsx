@@ -70,7 +70,9 @@ export function Methodology() {
         <h2 className="font-display text-ink">Persistence and the fading tail</h2>
         <p>
           When an entry's last period ends, its influence fades at a rate set by that period's persistence: the years
-          for its level to fall to 37% (1/e). A product replaced within a decade fades fast; the plough never does.
+          for its level to fall to 37% (1/e). A product replaced within a decade fades fast; the plough never does. A
+          legacy is held to what the years since have shown: one that ended 17 years ago fades within a generation at
+          the slowest, because lasting for centuries cannot be seen until the centuries have passed.
         </p>
         <PersistenceTable />
         <p>
