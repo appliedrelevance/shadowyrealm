@@ -6,7 +6,9 @@ import { shadowyrealm } from "../src/sites/shadowyrealm";
 import fixtures from "./fixtures/clef-shadowyrealm.json";
 
 describe("ShadowyRealm's Clef requests", () => {
-  test("are byte for byte the requests built before the platform (site-platform 6.5)", () => {
+  // The fixtures are the requests built before the platform (site-platform 6.5), with one change since:
+  // an entity with no linked consequences counts the effects that followed from it (2026-11-14).
+  test("are byte for byte the recorded requests", () => {
     for (const f of fixtures) {
       const built = buildClefRequest(shadowyrealm, { ...f.input, entity_type: f.entity_type });
       expect(JSON.stringify(built)).toBe(JSON.stringify(f.request));

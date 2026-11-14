@@ -50,7 +50,8 @@ export function buildClefRequest(site: SiteConfig, p: PeriodToScore) {
   const leaveOut =
     p.excluded.length > 0
       ? `Leave out the effects of ${p.excluded.join(", ")}, which are scored as entities of their own.`
-      : "Leave out consequences that would be entities of their own.";
+      : // Nothing it led to is scored on its own, so what followed from it is counted here, not lost.
+        "No consequence of it is scored separately, so count the effects that followed from it as well.";
 
   const questions: Record<string, unknown> = {};
   for (const d of dimensions) {

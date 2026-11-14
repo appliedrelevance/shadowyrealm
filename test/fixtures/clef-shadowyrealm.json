@@ -226,7 +226,7 @@
       "questions": {
         "scientific_benefit": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no benefit in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -242,7 +242,7 @@
         },
         "scientific_harm": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of advancing knowledge, research and technology. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no harm in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -258,7 +258,7 @@
         },
         "economic_benefit": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no benefit in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -274,7 +274,7 @@
         },
         "economic_harm": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of prosperity, livelihoods, wealth and economic opportunity. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no harm in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -290,7 +290,7 @@
         },
         "human_rights_benefit": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no benefit in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -306,7 +306,7 @@
         },
         "human_rights_harm": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of freedom, dignity, safety and equal treatment of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no harm in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -322,7 +322,7 @@
         },
         "health_benefit": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no benefit in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -338,7 +338,7 @@
         },
         "health_harm": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of physical and mental health and survival of people. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no harm in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -354,7 +354,7 @@
         },
         "cultural_benefit": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no benefit in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the BENEFIT that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no benefit in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -370,7 +370,7 @@
         },
         "cultural_harm": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. Leave out consequences that would be entities of their own. If the evidence shows no harm in this area, choose the lowest level.",
+          "instructions": "Judge only from the evidence text. Rate the intensity of the HARM that Catholic Church's own direct activity during \"Early Church\" (31 to 312) caused to the people it affected, in the area of art, education, shared culture and social cohesion. Rate how deeply those people were affected, not how many; breadth is judged separately. Score only that activity in that period. No consequence of it is scored separately, so count the effects that followed from it as well. If the evidence shows no harm in this area, choose the lowest level.",
           "criteria": [
             "No effect on this dimension",
             "Trivial, barely noticeable",
@@ -386,7 +386,7 @@
         },
         "reach": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. How many people did Catholic Church's own direct activity during \"Early Church\" (31 to 312) affect while it lasted? Leave out consequences that would be entities of their own.",
+          "instructions": "Judge only from the evidence text. How many people did Catholic Church's own direct activity during \"Early Church\" (31 to 312) affect while it lasted? No consequence of it is scored separately, so count the effects that followed from it as well.",
           "criteria": [
             "A handful of people",
             "A village or a small group",
@@ -402,7 +402,7 @@
         },
         "persistence": {
           "type": "score",
-          "instructions": "Judge only from the evidence text. After \"Early Church\" (31 to 312) ended, how long did the effects of Catholic Church's own direct activity in it last? Leave out consequences that would be entities of their own.",
+          "instructions": "Judge only from the evidence text. After \"Early Church\" (31 to 312) ended, how long did the effects of Catholic Church's own direct activity in it last? No consequence of it is scored separately, so count the effects that followed from it as well.",
           "criteria": [
             "Faded within a year",
             "Faded within a few years",
