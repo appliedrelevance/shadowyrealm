@@ -17,10 +17,18 @@
  *
  * --concurrency creates and scores that many entities at once; links are
  * always added one at a time, so the credit cap is checked in order.
+ *
+ * A site that counts people (ScoringConfig.breadth) is scored from each
+ * period's whole article, and its links are the stored graph
+ * (tools/credit-graph.ts): the curated links and System One's proposals, scaled
+ * to each consequence's inherited share. A link already in the index whose
+ * strength differs is set to the stored one, lowered strengths first so the
+ * credit cap holds throughout.
  */
 import type { SiteContent, SiteEntity, SitePeriod } from "../content/types";
-import { siteFor } from "../src/sites";
+import { creditTypes, siteFor } from "../src/sites";
 import type { SiteConfig } from "../src/sites/types";
+import { storedGraph, type StoredLink } from "./credit-graph";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
 const MCP_API_KEY = process.env.MCP_API_KEY;
@@ -125,6 +133,20 @@ function yearsIn(text: string): number[] {
   return years;
 }
 
+const permalink = (source: { title: string; revid: number }) =>
+  `https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(source.title.replace(/ /g, "_"))}&oldid=${source.revid}`;
+
+/**
+ * Evidence for one period of a site that counts people: its description, then
+ * the whole article in order, without the reference sections.
+ */
+async function wholeArticleEvidence(entity: SiteEntity<string>, period: SitePeriod) {
+  const source = await article(period.wiki ?? entity.wiki);
+  let text = `${period.description}\n\n`;
+  for (const s of sections(source.text)) text += s.heading === "" ? s.text : `\n${s.heading}\n${s.text}`;
+  return { evidence: text, source_url: permalink(source) };
+}
+
 /**
  * Evidence for one period: the article's lead, then the sections that talk
  * about the period's years (or the sections the content names), up to the
@@ -162,10 +184,7 @@ async function evidenceFor(entity: SiteEntity<string>, period: SitePeriod) {
     if (text.length >= EVIDENCE_MAX) break;
     text += `\n${s.heading}\n${s.text}`;
   }
-  return {
-    evidence: text.slice(0, EVIDENCE_MAX),
-    source_url: `https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(source.title.replace(/ /g, "_"))}&oldid=${source.revid}`,
-  };
+  return { evidence: text.slice(0, EVIDENCE_MAX), source_url: permalink(source) };
 }
 
 async function thumbnail(title: string): Promise<{ image_url?: string; page_url: string }> {
@@ -186,7 +205,7 @@ interface EntityDetail {
   entity: { slug: string; status: string };
   periods: { id: number; label: string }[];
   assessments: { period_id: number | null; ai_model_used: string | null }[];
-  relationships: { direction: string; relationship_type: string; other: { slug: string } }[];
+  relationships: { direction: string; relationship_type: string; strength: number | string; other: { slug: string } }[];
 }
 
 async function detail(slug: string): Promise<EntityDetail | null> {
@@ -270,22 +289,49 @@ async function main() {
     }
   });
 
-  for (const l of content.links) {
+  const countsPeople = site.scoring.breadth === "people";
+  const curated = content.links.map((l) => ({ from: l.from, to: l.to, share: l.share, type: linkTypeOf(site, l), why: l.why }));
+  let links: StoredLink[] = curated.map((l) => ({ ...l, proposed: false }));
+  if (countsPeople) {
+    if (!content.systemOne) throw new Error(`${site.brand.name} counts people, so ${file} must include systemOne`);
+    links = storedGraph(curated, creditTypes(site), content.systemOne);
+  }
+  const sources = new Map<string, EntityDetail>();
+  const adds: StoredLink[] = [];
+  const changes: { link: StoredLink; from: number }[] = [];
+  for (const l of links) {
     if (only && !only.has(l.from) && !only.has(l.to)) continue;
-    const d = (await detail(l.from))!;
-    const type = linkTypeOf(site, l);
-    if (d.relationships.some((r) => r.direction === "outgoing" && r.other.slug === l.to && r.relationship_type === type)) {
-      continue;
-    }
+    if (!sources.has(l.from)) sources.set(l.from, (await detail(l.from))!);
+    const found = sources
+      .get(l.from)!
+      .relationships.find((r) => r.direction === "outgoing" && r.other.slug === l.to && r.relationship_type === l.type);
+    if (!found) adds.push(l);
+    else if (countsPeople && Math.abs(Number(found.strength) - l.share) > 0.0005) changes.push({ link: l, from: Number(found.strength) });
+  }
+  // Lowered strengths first, then new links, then raised strengths: a consequence's credit cap holds at every step.
+  const lowered = changes.filter((c) => c.link.share < c.from);
+  const raised = changes.filter((c) => c.link.share >= c.from);
+  const setStrength = async ({ link, from }: { link: StoredLink; from: number }) => {
+    await call("set_relationship_strength", {
+      source_slug: link.from,
+      target_slug: link.to,
+      relationship_type: link.type,
+      strength: Math.round(link.share * 10000) / 10000,
+    });
+    console.log(`strength ${link.from} -> ${link.to}: ${from} -> ${link.share.toFixed(4)}`);
+  };
+  for (const c of lowered) await setStrength(c);
+  for (const l of adds) {
     await call("add_relationship", {
       source_slug: l.from,
       target_slug: l.to,
-      relationship_type: type,
+      relationship_type: l.type,
       description: l.why,
-      strength: l.share,
+      strength: Math.round(l.share * 10000) / 10000,
     });
-    console.log(`link ${l.from} -> ${l.to} (${type} ${l.share})`);
+    console.log(`link ${l.from} -> ${l.to} (${l.type} ${l.share.toFixed(4)}${l.proposed ? ", proposed" : ""})`);
   }
+  for (const c of raised) await setStrength(c);
 
   await inPool(entities, concurrency, async (e) => {
     const d = (await detail(e.slug))!;
@@ -293,7 +339,7 @@ async function main() {
       const period = d.periods.find((x) => x.label === p.label)!;
       const scored = d.assessments.some((a) => a.period_id === period.id && a.ai_model_used === "@cf/cloudflare/clef");
       if (scored && !rescore) continue;
-      const { evidence, source_url } = await evidenceFor(e, p);
+      const { evidence, source_url } = countsPeople ? await wholeArticleEvidence(e, p) : await evidenceFor(e, p);
       const result = await call<{ assessment: Record<string, number>; period: { reach_factor: number; persistence_factor: number } }>(
         "score_period",
         { slug: e.slug, period_id: period.id, evidence, source_url },

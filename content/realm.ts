@@ -13,6 +13,7 @@ import { benchmark } from "./benchmark";
 import { earlyModern } from "./early-modern";
 import { modern } from "./modern";
 import secondWave from "./next-500";
+import systemOne from "./system-one-graph.json";
 import type { RealmContent } from "./types";
 
 /** The site this content belongs to (src/sites). */
@@ -23,6 +24,7 @@ const parts = [benchmark, ancient, earlyModern, modern, secondWave];
 const content: RealmContent = {
   entities: parts.flatMap((p) => p.entities),
   links: parts.flatMap((p) => p.links),
+  systemOne,
 };
 
 export default content;

@@ -1,3 +1,5 @@
+import type { SystemOneGraph } from "../tools/credit-graph";
+
 /**
  * Shape of a content file, which tools/realm-load.ts loads through a site's
  * MCP tools. Typed by site, so an entity type or link type the site lacks
@@ -47,6 +49,11 @@ export interface SiteLink<L extends string> {
 export interface SiteContent<E extends string, L extends string> {
   entities: SiteEntity<E>[];
   links: SiteLink<L>[];
+  /**
+   * For a site that counts people (ScoringConfig.breadth): System One's proposed links and each
+   * consequence's inherited share, which tools/credit-graph.ts combines with links into the stored graph.
+   */
+  systemOne?: SystemOneGraph;
 }
 
 // ---------- ShadowyRealm ----------
