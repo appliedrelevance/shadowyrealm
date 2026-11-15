@@ -1,5 +1,5 @@
 /**
- * Prior Art content: the benchmark chains and the launch set. Load with
+ * Prior Art content: the benchmark chains, the launch set and the coverage entries. Load with
  * tools/realm-load.ts and check first with tools/content-check.ts.
  *
  * A link's share is the part of the consequence credited to the cause, smaller
@@ -8,6 +8,7 @@
  */
 import type { InventionsContent } from "../types";
 import { benchmark } from "./benchmark";
+import { coverage } from "./coverage";
 import { crossEra } from "./cross-era";
 import { launchAncient } from "./launch-ancient";
 import { launchIndustrial } from "./launch-industrial";
@@ -17,7 +18,7 @@ import { originators } from "./originators";
 /** The site this content belongs to (src/sites). */
 export const site = "inventions";
 
-const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, launchModern, crossEra, originators];
+const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, launchModern, crossEra, originators, coverage];
 
 const content: InventionsContent = {
   entities: parts.flatMap((p) => p.entities),

@@ -1,0 +1,621 @@
+/**
+ * Coverage batch e1: medicine and everyday objects, drafted from a coverage audit against Wikipedia's
+ * Timeline of historic inventions.
+ */
+import type { InventionsContent, InventionsLink } from "../types";
+
+export const coverageE1: InventionsContent = {
+  entities: [
+    // ---------- Medicine ----------
+    {
+      slug: "radiography",
+      name: "Radiography",
+      type: "invention",
+      wiki: "Radiography",
+      description: "Imaging the inside of the body with X-rays, begun when Wilhelm Röntgen photographed his wife's hand in 1895.",
+      metadata: { invented_date: "1895", place: "Würzburg, Germany", field: "medical imaging" },
+      periods: [
+        {
+          label: "The first radiographs",
+          start: 1895,
+          end: 1912,
+          description: "Röntgen radiographed his wife's hand weeks after discovering X-rays, John Hall-Edwards made the first clinical radiograph on 11 January 1896, and Edison's fluoroscope of 1896 became the standard examination; burns and cancers followed, and Edison's glassblower Clarence Dally became the first known death from X-ray exposure in 1904.",
+          wiki: "X-ray",
+        },
+        {
+          label: "Coolidge tubes and radiological cars",
+          start: 1913,
+          end: 1949,
+          description: "William Coolidge's hot-cathode tube of 1913 replaced the unreliable cold-cathode tubes and gave continuous X-rays, Marie Curie fitted out radiological cars for wounded soldiers in 1914, and from the early 1920s shoe shops X-rayed customers' feet in fitting machines that Switzerland banned only in 1989.",
+          wiki: "X-ray",
+        },
+        {
+          label: "CT and the imaging department",
+          start: 1950,
+          end: 2026,
+          description: "From the 1950s radiographers shielded patients' gonads with lead and took on fluoroscopy, angiography, computed tomography and mammography, with an abdominal CT delivering 10 mSv against 0.1 mSv for a chest X-ray; radiographs are taken more often where dentists are paid per service.",
+        },
+      ],
+    },
+    {
+      slug: "wilhelm-rontgen",
+      name: "Wilhelm Röntgen",
+      type: "person",
+      wiki: "Wilhelm Röntgen",
+      description: "German physicist who discovered X-rays in 1895, made the first radiograph and won the first Nobel Prize in Physics.",
+      metadata: { birth_date: "1845", death_date: "1923", nationality: "German", field: "physics" },
+      periods: [
+        {
+          label: "Strasbourg, Giessen and Würzburg",
+          start: 1874,
+          end: 1894,
+          description: "Röntgen lectured at Strasbourg from 1874, taught at Hohenheim and again at Strasbourg, and held the physics chairs at Giessen from 1879 and Würzburg from 1888.",
+        },
+        {
+          label: "X-rays",
+          start: 1895,
+          end: 1899,
+          description: "At Würzburg on 8 November 1895 Röntgen saw a screen glow beside a shielded Crookes–Hittorf tube, radiographed his wife Anna Bertha's hand and published On a New Kind of Rays on 28 December; he wrote three papers on X-rays by 1897 and refused to patent them.",
+        },
+        {
+          label: "Munich and the Nobel Prize",
+          start: 1900,
+          end: 1923,
+          description: "Röntgen took the physics chair at Munich in 1900 and won the first Nobel Prize in Physics in 1901; post-war inflation bankrupted him, and he died of colorectal cancer in 1923.",
+        },
+      ],
+    },
+    {
+      slug: "morphine",
+      name: "Morphine",
+      type: "invention",
+      wiki: "Morphine",
+      description: "The principal painkilling alkaloid of opium, the first medicinal alkaloid isolated from a plant and a highly addictive drug.",
+      metadata: { invented_date: "1804", place: "Paderborn, Germany", field: "pharmacology" },
+      periods: [
+        {
+          label: "Sertürner's morphium",
+          start: 1804,
+          end: 1826,
+          description: "Friedrich Sertürner isolated morphine from opium in Paderborn in December 1804, dosed himself and three boys in 1817 until all four nearly died, and sold it that year for pain and for opium and alcohol addiction; he became addicted himself, and in 1822 it was first used to murder.",
+        },
+        {
+          label: "Merck, the syringe and heroin",
+          start: 1827,
+          end: 1913,
+          description: "Merck began commercial production in Darmstadt in 1827, the hypodermic syringe of 1853–1855 spread its use, and morphine proved more addictive than alcohol or opium; heroin was made from it in 1874 and sold by Bayer from 1898.",
+        },
+        {
+          label: "Controlled substance and essential medicine",
+          start: 1914,
+          end: 2026,
+          description: "The Harrison Narcotics Tax Act made morphine a controlled substance in the US in 1914; in 2013 the world produced 523 tons, 45 tons of it used directly for pain and 70 percent made into other opioids including heroin, while in 2005 six rich countries consumed 79 percent of the world's supply.",
+        },
+      ],
+    },
+    {
+      slug: "general-anaesthesia",
+      name: "General anaesthesia",
+      type: "invention",
+      wiki: "General anaesthesia",
+      description: "Drug-induced unconsciousness deep enough for surgery, first given with herbs in Japan in 1804 and with ether, nitrous oxide and chloroform in the 1840s.",
+      metadata: { invented_date: "1804", field: "medicine" },
+      periods: [
+        {
+          label: "Tsūsensan and the first ether operations",
+          start: 1804,
+          end: 1845,
+          description: "Hanaoka Seishū removed a breast cancer from Kan Aiya under his herbal anaesthetic tsūsensan on 13 October 1804 and went on to more than 150 breast operations; in America William Clarke and Crawford Long gave ether for a tooth extraction and a neck tumour in 1842, and the dentist Horace Wells used nitrous oxide from 1844.",
+          wiki: "History of general anesthesia",
+        },
+        {
+          label: "Ether and chloroform",
+          start: 1846,
+          end: 1901,
+          description: "William Morton gave ether while John Collins Warren removed a neck tumour at Massachusetts General Hospital on 16 October 1846, news that spread around the world, and James Young Simpson first gave chloroform in 1847; John Snow anaesthetised Queen Victoria in childbirth in 1853, but chloroform's heart and liver toxicity caused fatal dysrhythmias.",
+          wiki: "History of general anesthesia",
+        },
+        {
+          label: "Intubation and intravenous agents",
+          start: 1902,
+          end: 1952,
+          description: "Barbital in 1902, Chevalier Jackson's laryngoscopic intubation in 1913, Guedel's cuffed tube in 1928 and thiopental, the first intravenous anaesthetic, in 1934 gave anaesthetists control of the airway, and Massachusetts General Hospital opened the first hospital anaesthesia department in 1936.",
+          wiki: "History of general anesthesia",
+        },
+        {
+          label: "Patient safety",
+          start: 1953,
+          end: 2026,
+          description: "The dart gun of 1953 let anaesthesia be given at a distance, a 1984 television programme on anaesthesia mishaps led the American Society of Anesthesiologists to found a patient-safety effort, and US anaesthesia-related deaths fell to 1.1 per million people a year; offenders use anaesthetic drugs to commit sexual assault and kidnapping.",
+        },
+      ],
+    },
+    {
+      slug: "stethoscope",
+      name: "Stethoscope",
+      type: "invention",
+      wiki: "Stethoscope",
+      description: "A device for listening to the heart, lungs and other internal sounds of the body, invented by René Laennec in Paris in 1816.",
+      metadata: { invented_date: "1816", place: "Paris", field: "medicine" },
+      periods: [
+        {
+          label: "Laennec's wooden tube",
+          start: 1816,
+          end: 1850,
+          description: "René Laennec invented the stethoscope at the Necker hospital in Paris in 1816, a monaural wooden tube for mediate auscultation that spared him from putting his ear to a woman's chest; Golding Bird described a flexible-tube stethoscope in 1840.",
+        },
+        {
+          label: "The binaural stethoscope",
+          start: 1851,
+          end: 1939,
+          description: "Arthur Leared invented a binaural stethoscope in 1851 and George Cammann perfected it for commercial production in 1852, a design little changed since, and the historian Jacalyn Duffin credits the instrument with redefining disease as a fault in an anatomical system rather than a bundle of symptoms.",
+        },
+        {
+          label: "Rappaport–Sprague and Littmann",
+          start: 1940,
+          end: 2026,
+          description: "Rappaport and Sprague's two-sided stethoscope of the 1940s became the standard, David Littmann made a lighter one in the early 1960s and 3M-Littmann added the tunable diaphragm in the late 1970s; the stethoscope remains the clinician's emblem as auscultation skills decline and automated monitors take over blood pressure.",
+        },
+      ],
+    },
+    {
+      slug: "caesarean-section",
+      name: "Caesarean section",
+      type: "invention",
+      wiki: "Caesarean section",
+      description: "Delivering a baby through an incision in the mother's abdomen, performed on dead and dying mothers since antiquity and survivable since the 19th century.",
+      metadata: { invented_date: "715 BCE", place: "Ancient Rome", field: "obstetrics" },
+      periods: [
+        {
+          label: "Delivery from the dead and dying",
+          start: -715,
+          end: 1499,
+          description: "The royal law of Numa Pompilius required a child to be cut from the womb of a mother who died in childbirth, and Chanakya cut the future Mauryan emperor Bindusara from his poisoned mother; until the modern era the operation usually killed the mother.",
+        },
+        {
+          label: "First survivals",
+          start: 1500,
+          end: 1880,
+          description: "An account of the 1580s credits the Swiss veterinarian Jacob Nufer with delivering his wife by caesarean in 1500, both surviving; Jesse Bennett operated on his wife in Virginia in 1794, James Barry performed one in Cape Town between 1817 and 1828, and in 1879 Robert Felkin recorded mother and child surviving one in Africa's Great Lakes region.",
+        },
+        {
+          label: "Modern technique",
+          start: 1881,
+          end: 1959,
+          description: "Kehrer's transverse incision of 1881, Sänger's uterine suture of 1882, Pfannenstiel's incision of 1900 and Krönig's low transverse incision of 1912, with asepsis, anaesthesia, blood transfusion and antibiotics, cut the operation's mortality, and it became accepted at the beginning of the 20th century.",
+        },
+        {
+          label: "Routine delivery",
+          start: 1960,
+          end: 2026,
+          description: "US caesarean rates rose from the 1960s to 33 percent of births in 2012, the global rate doubled from 2003 to 2018 to 21 percent and reached 46 percent in China; in low-risk births in the developed world a caesarean kills 13 mothers per 100,000 against 3.5 for vaginal birth.",
+        },
+      ],
+    },
+    {
+      slug: "dentistry",
+      name: "Dentistry",
+      type: "invention",
+      wiki: "Dentistry",
+      description: "The treatment of the teeth, gums and mouth, practised since the Stone Age and the first medical specialty with its own degree.",
+      metadata: { invented_date: "Paleolithic", field: "medicine" },
+      periods: [
+        {
+          label: "Prehistoric dentistry",
+          start: -10000,
+          end: -3001,
+          description: "A tooth from Italy cleaned with flint tools 13,820 to 14,160 years ago and a bitumen filling from 13,000 years ago are among the earliest dental work; at Mehrgarh in the Indus valley teeth were drilled with bow drills from 7000 BC, and a beeswax filling from Slovenia dates from 6500 years ago.",
+        },
+        {
+          label: "Ancient and medieval dentistry",
+          start: -3000,
+          end: 1649,
+          description: "Egyptian papyri gave remedies for toothache, Hesy-Ra was the first named dentist, Etruscans made gold-banded bridges from 700 BC and a Tang text of 659 first records dental amalgam; in the Middle Ages barbers pulled teeth, with the dental pelican from the 14th century, and the first book on dentistry appeared in 1530.",
+        },
+        {
+          label: "Fauchard and the profession",
+          start: 1650,
+          end: 1899,
+          description: "Pierre Fauchard's The Surgeon Dentist of 1728 introduced fillings, prostheses and braces and separated dentistry from surgery, John Hunter attempted tooth transplants, and Britain regulated dentists with the Dentist Act of 1878.",
+        },
+        {
+          label: "Modern dental practice",
+          start: 1900,
+          end: 2026,
+          description: "Britain limited dentistry to qualified practitioners in 1921, and dentists now fill, crown, extract and X-ray teeth; amalgam, half of it mercury, releases toxic vapour, and scalers, disinfectants and methacrylate expose dental staff to hearing loss, allergies and asthma.",
+        },
+      ],
+    },
+    {
+      slug: "plastic-surgery",
+      name: "Plastic surgery",
+      type: "invention",
+      wiki: "Plastic surgery",
+      description: "Surgery that restores, reconstructs or alters the body, from ancient Indian nose reconstruction to wartime facial repair and cosmetic operations.",
+      metadata: { invented_date: "1600 BCE", place: "Egypt", field: "surgery" },
+      periods: [
+        {
+          label: "Nose and ear repair in antiquity",
+          start: -1600,
+          end: 499,
+          description: "The Edwin Smith papyrus of 1600 BC describes treating a broken nose, Indian surgeons performed reconstructions by 800 BC and the Sushruta Samhita describes rebuilding noses with skin flaps, and Roman physicians of the 1st century BC repaired damaged ears.",
+        },
+        {
+          label: "Medieval and Renaissance surgery",
+          start: 500,
+          end: 1799,
+          description: "Al-Zahrawi described silk sutures for a good appearance and the first attempt at reduction mammaplasty, Sabuncuoğlu classified hypospadias in 1465, and Gaspare Tagliacozzi of Bologna popularised rebuilding the nose with a flap from the upper arm in his book of 1597.",
+        },
+        {
+          label: "Rhinoplasty and the world wars",
+          start: 1800,
+          end: 1945,
+          description: "Joseph Carpue brought Indian rhinoplasty to England in 1814 and Dieffenbach's 1845 text founded modern reconstruction; at Sidcup from 1917 Harold Gillies and his colleagues performed more than 11,000 operations on more than 5,000 men disfigured in the First World War, and in the Second Archibald McIndoe treated burned aircrew at East Grinstead.",
+        },
+        {
+          label: "Cosmetic surgery",
+          start: 1946,
+          end: 2026,
+          description: "15,000 Americans had cosmetic surgery in 1949 and the United States performed 15.9 million cosmetic procedures in 2015; the FDA stated in 2011 that one in five breast-implant patients will need the implants removed within 10 years, and 15 percent of cosmetic surgeons' patients have body dysmorphic disorder, which surgery does not treat and can worsen.",
+        },
+      ],
+    },
+
+    // ---------- Everyday objects ----------
+    {
+      slug: "sewing-machine",
+      name: "Sewing machine",
+      type: "invention",
+      wiki: "Sewing machine",
+      description: "A machine that sews fabric and other materials with thread, which moved clothing production from homes into factories.",
+      metadata: { invented_date: "1790", place: "England", field: "textiles" },
+      periods: [
+        {
+          label: "Early designs",
+          start: 1755,
+          end: 1828,
+          description: "Charles Wiesenthal took the first British patent for a mechanical sewing aid in 1755, Thomas Saint designed a chain-stitch machine for leather and canvas in 1790, and Josef Madersperger showed a working machine in 1814.",
+        },
+        {
+          label: "Thimonnier, Howe and Singer",
+          start: 1829,
+          end: 1855,
+          description: "Barthélemy Thimonnier's machine, patented in 1830, sewed French Army uniforms in the first machine-based clothing factory, which was burned down after the patent was issued; Walter Hunt built a lockstitch machine in 1832, Elias Howe patented his in 1845 and Isaac Singer his in 1851, and Howe won royalties from Singer in 1854.",
+        },
+        {
+          label: "The Combination and the home machine",
+          start: 1856,
+          end: 1969,
+          description: "Singer, Howe, Wheeler & Wilson and Grover & Baker pooled their patents in the Sewing Machine Combination from 1856 to 1877, homes bought machines from the 1860s and Singer sold electric machines from 1889; a man's shirt took an hour and 15 minutes instead of at least 14 hours, but seamstresses worked 18 to 20 hour days in the season and many lost their jobs to factories.",
+        },
+        {
+          label: "Electronic machines",
+          start: 1970,
+          end: 2026,
+          description: "From the 1970s electronic machines with circuit boards and computer chips automated thread cutting, needle positioning and stitch patterns, though they do not last as long as mechanical machines, which can run for over 100 years.",
+        },
+      ],
+    },
+    {
+      slug: "lock",
+      name: "Lock and key",
+      type: "invention",
+      wiki: "Lock and key",
+      description: "A fastening device released by a key or other token, from the Egyptian wooden pin lock to the Yale cylinder and the smart lock.",
+      metadata: { invented_date: "4000 BCE", place: "Nineveh, Assyria", field: "security" },
+      periods: [
+        {
+          label: "Pin locks and warded locks",
+          start: -4000,
+          end: -1,
+          description: "Locks have been used for over 6000 years, an early one found in the ruins of Nineveh, and developed into the Egyptian wooden pin lock, whose key lifted pins out of the bolt; the warded lock also dates from antiquity.",
+        },
+        {
+          label: "Metal locks",
+          start: 1,
+          end: 1777,
+          description: "The Romans made metal locks and keys secured by wards and wore their keys as rings, all-metal locks of 870 to 900 are attributed to English craftsmen, and Gothic locks decorated with foliage survive in the Beguinage of Lier.",
+        },
+        {
+          label: "Lever and Bramah locks",
+          start: 1778,
+          end: 1860,
+          description: "Robert Barron's double-acting lever lock of 1778, Joseph Bramah's lock of 1784, whose challenge stood until Alfred Hobbs picked it in 51 hours at the Great Exhibition of 1851, and Jeremiah Chubb's detector lock of 1818 brought precision engineering to locks, and Linus Yale Sr. invented the modern pin tumbler lock in 1848.",
+        },
+        {
+          label: "Yale locks and electronic keys",
+          start: 1861,
+          end: 2026,
+          description: "Linus Yale Jr. patented the small flat serrated key in 1861, and most locks today remain variants of Bramah's, Chubb's and Yale's designs, alongside keycard, car transponder and smartphone-controlled smart locks.",
+        },
+      ],
+    },
+    {
+      slug: "scissors",
+      name: "Scissors",
+      type: "invention",
+      wiki: "Scissors",
+      description: "A hand-operated cutting tool of two pivoting blades, descended from the bow shears of ancient Europe.",
+      metadata: { invented_date: "1000 BCE", place: "Europe", field: "tools" },
+      periods: [
+        {
+          label: "Bow shears",
+          start: -1000,
+          end: 1199,
+          description: "Shears with a bow appeared in Europe from 1000 BCE, rare at first because a knife did most tasks better, and spread as Europeans took to shearing their sheep rather than plucking the wool.",
+        },
+        {
+          label: "Pivoted scissors",
+          start: 1200,
+          end: 1760,
+          description: "Pivoted scissors became common in north-west Europe in the 13th and 14th centuries for the period's elaborate tailoring, and by the 15th century large scissors cut iron and steel for armourers; in China Zhang Sijia's steel-edged scissors of 1580 were made by the Zhang Xiaoquan Company from 1663.",
+        },
+        {
+          label: "Cast steel and mass production",
+          start: 1761,
+          end: 2026,
+          description: "Robert Hinchliffe of Sheffield made the first cast-steel scissors for the mass market in 1761, French sword and bayonet towns turned to scissors in the late 18th and early 19th centuries, and in 2019 China supplied 64.3 percent of the world's scissors exports.",
+        },
+      ],
+    },
+    {
+      slug: "match",
+      name: "Match",
+      type: "invention",
+      wiki: "Match",
+      description: "A small stick tipped with a chemical head that ignites by friction, used to start fires.",
+      metadata: { invented_date: "577", place: "Northern Qi, China", field: "chemistry" },
+      periods: [
+        {
+          label: "Sulfur sticks",
+          start: 577,
+          end: 1804,
+          description: "A Yuan-era note records court ladies using pinewood sticks impregnated with sulfur to light fires in 577, a text of 950 describes these 'light-bringing slaves' sold as 'fire inch-sticks', and Zhou Mi's account of 1290 lists them among the goods of Hangzhou's markets.",
+        },
+        {
+          label: "Chemical and friction matches",
+          start: 1805,
+          end: 1843,
+          description: "Jean Chancel's 1805 match was lit by dipping it in sulfuric acid, and John Walker of Stockton-on-Tees sold the first commercially successful friction matches from 1827, whose burning fragments set carpets and dresses alight and led to bans in France and Germany; Richard Bell opened the first match factory in London in 1832, and Charles Sauria's white-phosphorus matches took over the market.",
+        },
+        {
+          label: "White phosphorus and the safety match",
+          start: 1844,
+          end: 1910,
+          description: "White phosphorus gave match workers phossy jaw, one pack held enough to kill a person, and eating match heads became a frequent means of death and suicide; Gustaf Pasch's red-phosphorus striking surface of 1844 led to the Lundström brothers' safety matches, 12 million boxes in 1858, and after the London matchgirls' strike of 1888 the Berne Convention of 1906 banned white phosphorus.",
+        },
+        {
+          label: "Safety matches worldwide",
+          start: 1911,
+          end: 2026,
+          description: "The UK's ban on white phosphorus took effect at the start of 1911, the US taxed white-phosphorus matches out of production in 1913 and China banned them in 1925, the year Morland Dessau invented stormproof matches; strike-anywhere matches are banned on aircraft.",
+        },
+      ],
+    },
+    {
+      slug: "zipper",
+      name: "Zipper",
+      type: "invention",
+      wiki: "Zipper",
+      description: "A slide fastener that joins two edges of fabric with interlocking teeth, perfected by Gideon Sundbäck in 1913.",
+      metadata: { invented_date: "1913", field: "fasteners" },
+      periods: [
+        {
+          label: "The clasp locker",
+          start: 1851,
+          end: 1905,
+          description: "Elias Howe patented a garment fastening in 1851 but never marketed it, and Whitcomb Judson patented his clasp locker, a hook-and-eye shoe fastener that jammed, in 1893 and showed it at the Chicago World's Fair with little success.",
+        },
+        {
+          label: "Sundbäck's hookless fastener",
+          start: 1906,
+          end: 1924,
+          description: "Gideon Sundbäck, hired by Judson's company in 1906, redesigned the fastener with two facing rows of teeth, put it on sale in 1913, patented the Separable Fastener in 1917 and built the machine that made it; in 1923 B. F. Goodrich put it on rubber galoshes and named it the zipper.",
+        },
+        {
+          label: "The Battle of the Fly",
+          start: 1925,
+          end: 1959,
+          description: "Schott NYC put zippers on leather jackets in 1925, a 1930s campaign sold them on children's clothes, and the zipper beat the button on men's trouser flies in 1937; Tadao Yoshida founded the firm that became YKK in 1934, and the Tokyo air raids burned down its plant in March 1945.",
+        },
+        {
+          label: "YKK and China",
+          start: 1960,
+          end: 2026,
+          description: "Talon and Optilon led the market in the 1960s until YKK's CM6 machine, developed after 1964, made it the industry giant with 45 percent of world share, and by 2005 China made 80 percent of the international market, most of it in Qiaotou.",
+        },
+      ],
+    },
+    {
+      slug: "ballpoint-pen",
+      name: "Ballpoint pen",
+      type: "invention",
+      wiki: "Ballpoint pen",
+      description: "A pen that writes with paste ink spread by a ball rolling in its tip, now the world's most-used writing instrument.",
+      metadata: { invented_date: "1888", place: "United States", field: "writing" },
+      periods: [
+        {
+          label: "Loud's patent",
+          start: 1888,
+          end: 1937,
+          description: "John J. Loud patented a pen with a rotating steel ball on 30 October 1888 for marking wood and wrapping paper, but it was too coarse for letters and the patent lapsed; later inventors' pens leaked, smeared or clogged.",
+        },
+        {
+          label: "Bíró's pen",
+          start: 1938,
+          end: 1944,
+          description: "László Bíró, a Hungarian newspaper editor, and his brother György paired quick-drying ink with a ball-and-socket tip, patented in Britain on 15 June 1938; after fleeing to Argentina in 1941 they sold it as the Birome, and Miles Aircraft made it for Royal Air Force aircrew as the Biro.",
+        },
+        {
+          label: "The postwar boom",
+          start: 1945,
+          end: 1973,
+          description: "The Reynolds Rocket went on sale at Gimbels in New York on 29 October 1945 for $12.50, sales peaked in 1946 and collapsed, and Parker's Jotter of 1954 and Marcel Bich's Bic, named in 1953, turned the ballpoint into a cheap consumable.",
+        },
+        {
+          label: "Made in China",
+          start: 1974,
+          end: 2026,
+          description: "China's ballpoint production began at Fenshui in 1974 and grew to 38 billion pens a year, 80 percent of the world market, in 2017, though the tips were imported until the Taiyuan Iron & Steel Group produced the first wholly Chinese pen in 2016.",
+        },
+      ],
+    },
+    {
+      slug: "vacuum-cleaner",
+      name: "Vacuum cleaner",
+      type: "invention",
+      wiki: "Vacuum cleaner",
+      description: "A machine that removes dirt from floors and other surfaces by suction, often with a rotating brush.",
+      metadata: { invented_date: "1860", place: "West Union, Iowa", field: "household appliances" },
+      periods: [
+        {
+          label: "Hand-powered sweepers",
+          start: 1860,
+          end: 1897,
+          description: "Daniel Hess of West Union, Iowa, invented a carpet sweeper with bellows for suction in 1860, Ives McGaffey's hand-cranked Whirlwind followed in Chicago in 1868, and Melville Bissell built a similar machine in 1876.",
+        },
+        {
+          label: "Engine-powered cleaners",
+          start: 1898,
+          end: 1906,
+          description: "John Thurman's 1898 blown-air carpet renovator, driven by an internal combustion engine, travelled door to door on a horse-drawn wagon, and in 1901 Hubert Cecil Booth's engine-powered Puffing Billy and David Kenney's 4,000-pound steam system first cleaned by suction; Walter Griffiths built the first portable domestic cleaner, worked by bellows, in 1905.",
+        },
+        {
+          label: "Hoover's electric sweeper",
+          start: 1907,
+          end: 1945,
+          description: "James Spangler invented the first portable electric vacuum cleaner in 1907 and sold the patent in 1908 to William Hoover, whose Model O sold for $60, with the beater bar added in 1919; Electrolux launched its Model V in 1921, but vacuum cleaners stayed a luxury.",
+        },
+        {
+          label: "Household appliance",
+          start: 1946,
+          end: 2026,
+          description: "After the Second World War vacuum cleaners became common in middle-class homes, James Dyson's bagless cyclone cleaner reached the UK as the DC01 in 1993 and Electrolux's Trilobite robot went on sale in 2001; their exhaust blows respirable dust back into the room, and the EU banned cleaners over 1600 watts from 2014 and over 900 watts from 2017.",
+        },
+      ],
+    },
+    {
+      slug: "toilet-paper",
+      name: "Toilet paper",
+      type: "invention",
+      wiki: "Toilet paper",
+      description: "Tissue paper for cleaning the body after using the toilet, first recorded in 6th-century China.",
+      metadata: { invented_date: "6th century", place: "China", field: "hygiene" },
+      periods: [
+        {
+          label: "Toilet paper in China",
+          start: 589,
+          end: 1856,
+          description: "Yan Zhitui wrote of toilet paper by 589, an Arab traveller in 851 saw the Chinese wipe themselves with paper, Zhejiang made ten million packages a year in the early 14th century, and in 1393 the Ming court at Nanjing used 720,000 sheets a year.",
+        },
+        {
+          label: "Gayetty's paper and the roll",
+          start: 1857,
+          end: 1941,
+          description: "Joseph Gayetty sold medicated flat sheets in the US from 1857, Seth Wheeler patented rolls and dispensers in 1883 and the Scott Paper Company marketed rolls from 1890, and the flush toilet spread its use, though in the 1930s Northern Tissue still advertised its paper as 'splinter free'.",
+        },
+        {
+          label: "Soft tissue and mass use",
+          start: 1942,
+          end: 2026,
+          description: "St Andrew Mills introduced soft two-ply Andrex in Britain in 1942 and Andrex brought out wet wipes in the 1990s, which form fatbergs in sewers; the world makes 83 million rolls a day from 27,000 trees, and panic buying emptied shelves in the US in 1973 and in many countries in March 2020.",
+        },
+      ],
+    },
+    {
+      slug: "button",
+      name: "Button",
+      type: "invention",
+      wiki: "Button",
+      description: "A small disc or knob that fastens two pieces of fabric through a loop or buttonhole, first used as an ornament in the Indus Valley.",
+      metadata: { invented_date: "2800 BCE", place: "Indus Valley", field: "clothing" },
+      periods: [
+        {
+          label: "Ornaments and seals",
+          start: -2800,
+          end: 399,
+          description: "Button-like ornaments and seals appear in the Indus Valley's Kot Diji phase from 2800 BC and shell buttons pierced for thread by 2000 BC, apparel buttons in the Catacomb culture, the Tomb of the Eagles and Bronze Age China, and Roman legionaries closed their satchels with buttons through some of the first buttonholes.",
+        },
+        {
+          label: "Fastening buttons",
+          start: 400,
+          end: 1499,
+          description: "Buttons closed Byzantine cuffs and Egyptian tunic necks by the 5th century, buttonholes appeared in 13th-century Germany and allowed fitted clothing, and button makers formed guilds in the 13th century.",
+        },
+        {
+          label: "Luxury buttons",
+          start: 1500,
+          end: 1899,
+          description: "Renaissance doublets carried rows of buttons and courtiers wore jewelled buttons as jewellery, and fabric-covered buttons spread in the 17th century, when French law required silk covers and England banned fabric buttons; smugglers have hidden drugs in hollow metal buttons since the 17th century.",
+        },
+        {
+          label: "Mass-produced buttons",
+          start: 1900,
+          end: 2026,
+          description: "A 1918 US survey found buttons of vegetable ivory, celluloid, galalith, porcelain, papier-mâché and many other materials, British and US military buttons hid working compasses in both world wars, and today most are plastic, shell, metal or wood, more than 60 percent of them made in Qiaotou, China.",
+        },
+      ],
+    },
+    {
+      slug: "shoe",
+      name: "Shoe",
+      type: "invention",
+      wiki: "Shoe",
+      description: "Footwear worn in pairs to protect and comfort the foot, made of bark and fibre in prehistory and of leather, rubber and plastic since.",
+      metadata: { invented_date: "Paleolithic", field: "clothing" },
+      periods: [
+        {
+          label: "Prehistoric footwear",
+          start: -10000,
+          end: -3501,
+          description: "Sagebrush bark sandals from Fort Rock Cave in Oregon, from 10,500 to 9200 years ago, are the earliest known shoes, and plant-fibre sandals from Cueva de los Murciélagos in Spain date from 7500 to 4200 BC; Egyptian murals show thong sandals from 4000 BC.",
+        },
+        {
+          label: "Leather shoes and sandals",
+          start: -3500,
+          end: 499,
+          description: "The oldest leather shoe, a single piece of cowhide from Armenia's Areni-1 cave, dates from 3500 BC and Ötzi's bearskin shoes from 3300 BC; Egyptians wore papyrus sandals, and Roman soldiers were issued left and right boots with riveted insoles.",
+        },
+        {
+          label: "Turnshoes, heels and foot binding",
+          start: 500,
+          end: 1799,
+          description: "The binding of women's feet spread through Chinese society by 960, medieval Europeans wore turnshoes and the pointed Crakow, welted shoes replaced turnshoes at the start of the 16th century, and high heels passed from royalty to men by 1580.",
+        },
+        {
+          label: "Factory shoes",
+          start: 1800,
+          end: 2026,
+          description: "Marc Brunel's machinery mass-produced army boots from 1812, and riveting, sewing and McKay stitching machines mechanised shoemaking by the 1890s; rubber and plastics now make shoes that take 1000 years to degrade, 90 percent of shoes end in landfills, and China makes 63 percent of the world's shoes.",
+        },
+      ],
+    },
+  ],
+
+  links: [
+    // ---------- Medicine ----------
+    { from: "wilhelm-rontgen", to: "radiography", type: "originated", share: 0.45, why: "Röntgen discovered X-rays in 1895 and made the first radiograph of a human body part, his wife's hand. Rivals: Goodspeed and Jennings, who made an X-ray photograph unknowingly in 1890, Tesla and Lenard, and John Hall-Edwards, who first used X-rays clinically in January 1896." },
+    { from: "thomas-edison", to: "radiography", type: "originated", share: 0.05, why: "Edison found calcium tungstate the best X-ray screen and in 1896 built the first mass-produced fluoroscope, which became the standard for medical X-ray examinations." },
+    { from: "electromagnetic-induction", to: "radiography", type: "builds_on", share: 0.05, why: "Röntgen's Crookes–Hittorf tube and the first medical X-ray sets were driven by induction coils." },
+    { from: "dentistry", to: "general-anaesthesia", type: "builds_on", share: 0.1, why: "Anaesthesia began in the dental chair: Clarke gave ether for a tooth extraction in 1842, and the dentists Horace Wells and William Morton pulled teeth under nitrous oxide in 1844 and ether in 1846 before Morton's surgical demonstration." },
+    { from: "general-anaesthesia", to: "caesarean-section", type: "builds_on", share: 0.1, why: "Anaesthesia, introduced with antiseptics in the 19th century, made it common for mother and baby to survive the operation." },
+    { from: "germ-theory", to: "caesarean-section", type: "builds_on", share: 0.1, why: "Antiseptics and asepsis, the surgical practice germ theory produced, were among the steps that cut the caesarean's mortality." },
+    { from: "penicillin", to: "caesarean-section", type: "builds_on", share: 0.05, why: "Antibiotics were one of the steps, with asepsis, anaesthesia and transfusion, that made the operation survivable." },
+    { from: "general-anaesthesia", to: "plastic-surgery", type: "builds_on", share: 0.05, why: "At Sidcup Harold Gillies operated with the anaesthetists Ivan Magill and Stanley Rowbotham, who developed nasotracheal intubation there." },
+    { from: "morphine", to: "oxycontin", type: "builds_on", share: 0.05, why: "Purdue's Contin controlled-release system went on sale first as MS Contin, an extended-release morphine, in 1984, and OxyContin applied it to oxycodone in 1996." },
+
+    // ---------- Everyday objects ----------
+    { from: "ferrous-metallurgy", to: "scissors", type: "builds_on", share: 0.1, why: "Scissors are forged from iron and steel, from Zhang Sijia's hardened steel edges set in iron frames to Hinchliffe's cast steel of 1761." },
+    { from: "printing-press", to: "ballpoint-pen", type: "builds_on", share: 0.05, why: "Bíró designed his pen around the quick-drying ink he saw used in newspaper printing." },
+    { from: "internal-combustion-engine", to: "vacuum-cleaner", type: "builds_on", share: 0.05, why: "Thurman's 1898 carpet renovator and Booth's 1901 Puffing Billy, the first suction cleaner, were driven by combustion engines." },
+    { from: "paper", to: "toilet-paper", type: "builds_on", share: 0.3, why: "Toilet paper is paper put to a new use, first recorded in China in the 6th century, centuries after paper came into use there." },
+    { from: "sewing-machine", to: "shoe", type: "builds_on", share: 0.05, why: "Clothing manufacturers used sewing machines to make the first ready-to-wear shoes, and Lyman Blake's shoe-stitching machine of 1856, the McKay, mechanised the sewing of soles." },
+    { from: "button", to: "zipper", type: "supersedes", share: 0, why: "The zipper beat the button on men's trouser flies in the 1937 Battle of the Fly." },
+  ],
+};
+
+/** Links to or from entries assigned to other batches (see MASTER LIST), merged later. */
+export const crossLinksE1: InventionsLink[] = [
+  { from: "electric-motor", to: "vacuum-cleaner", type: "builds_on", share: 0.15, why: "Spangler's 1907 cleaner, the first portable electric vacuum cleaner, drew its suction from an electric fan, the design Hoover sold to households." },
+  { from: "electric-motor", to: "sewing-machine", type: "builds_on", share: 0.05, why: "Singer introduced electric sewing machines in 1889, at first standard machines with a motor strapped to the side." },
+];
