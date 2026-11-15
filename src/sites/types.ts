@@ -80,7 +80,9 @@ export interface ScoringConfig {
    * reach multiplier.
    *
    * "people": Clairic counts the living people affected in a typical year of the period, for each
-   * dimension's benefit and harm. A level is weight × depth × that count. Depth is Clef's probability
+   * dimension's benefit and harm. Each count's reach is its share of the world's population then, on
+   * the reach rubric's scale (10 is everyone alive, each level below a tenth as many), and a level is
+   * weight × depth × that reach's multiplier. Depth is Clef's probability
    * on each intensity level above a flat 0.1, weighted by the level and scaled to 0–10. An ancestor's
    * share of a descendant is the chance that a walk upstream from the descendant, taking each cause with
    * its link's strength, reaches the ancestor: every route added up (src/lib/credit.ts, walkShares),

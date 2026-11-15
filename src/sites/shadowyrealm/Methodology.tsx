@@ -37,10 +37,20 @@ export function Methodology() {
         </p>
         <LevelFormula />
         <p>
-          Depth is how deeply each person was affected, and people is how many were, counted absolutely. Laid end to
-          end, the periods form an influence curve, and each number's score is the area under its curve up to today,
-          in <strong>influence-centuries</strong> (level × years ÷ 100). Periods that overlap add; years between
-          periods add nothing.
+          Depth is how deeply each person was affected. Reach is how many were, as a share of everyone alive at the
+          time: 10 is all of humanity, and each level below it a tenth as many, so 9 is a tenth of the world and 5 one
+          person in a hundred thousand. A dynasty that ruled a third of the world in 500 BCE reaches as far as an
+          empire that rules a third of it today, though the world it ruled was a fiftieth the size.
+        </p>
+        <p>
+          The multiplier lets breadth matter without drowning depth: everyone alive counts 63 times one person in a
+          billion, not a billion times. The world's population in each year is Our World in Data's long-run series,
+          built from HYDE, Gapminder and the UN.
+        </p>
+        <p>
+          Laid end to end, the periods form an influence curve, and each number's score is the area under its curve up
+          to today, in <strong>influence-centuries</strong> (level × years ÷ 100). Periods that overlap add; years
+          between periods add nothing.
         </p>
 
         <h2 className="font-display text-ink">Scoring each period with Clef and Clairic</h2>

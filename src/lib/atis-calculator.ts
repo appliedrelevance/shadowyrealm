@@ -12,11 +12,18 @@
  * each profile number has a level. How it is made depends on how the site
  * measures breadth (ScoringConfig.breadth):
  *
- *   reach:  level = dimension weight × assessed 0–10 value × reach multiplier
- *   people: level = dimension weight × 0–10 depth × living people affected in a typical year
+ *   reach:  level = dimension weight × assessed 0–10 value × reach multiplier(period's reach)
+ *   people: level = dimension weight × 0–10 depth × reach multiplier(reach of the head-count)
  *
- * averaged over the period's assessments. In people mode an assessment with no
- * head-counts cannot be placed on the curve, like one with no period. Laid end to end, the periods are the
+ * averaged over the period's assessments. In people mode, each benefit and harm has
+ * its own reach, read from Clairic's head-count as a share of the world's population
+ * in a typical year of the period (world-population.ts) on the reach rubric's 0–10
+ * scale: 10 is everyone alive, and each level below it a tenth as many (reachOfShare).
+ * So a dynasty that reached a third of a small world counts like a technology that
+ * reaches a third of today's, and breadth spreads entities apart as the reach rubric
+ * did, not by every order of magnitude between a village and the world. In people
+ * mode an assessment with no head-counts cannot be placed on the curve, like one with
+ * no period. Laid end to end, the periods are the
  * influence curve, and each number's score is the area under its curve up to
  * the as-of year, in influence-centuries (level × years / 100). Periods that
  * overlap add; years between periods add nothing.
@@ -37,6 +44,7 @@
  * all come from the site's ScoringConfig (src/sites), passed in as an argument.
  */
 import type { ScoringConfig, TierDef } from "../sites/types";
+import { meanWorldPopulation } from "./world-population";
 
 // ---------- Types ----------
 
@@ -55,7 +63,10 @@ export interface AssessmentInput {
   /** Each value 0–10: intensity in reach mode, depth in people mode. */
   benefit: Dimensions;
   harm: Dimensions;
-  /** People mode: the living people affected in a typical year of the period, per dimension's benefit and harm. */
+  /**
+   * People mode: the living people affected in a typical year of the period, per dimension's benefit
+   * and harm. The calculator reads each as a reach, from its share of the world's population then.
+   */
   people?: Profile | null;
 }
 
@@ -78,8 +89,12 @@ export interface PeriodBreakdown {
   /** Years of this window that fall on or before the as-of year. */
   years: number;
   assessments: number;
-  /** 1 in people mode, where breadth is in the head-counts. */
+  /** 1 in people mode, where each benefit and harm has its own reach (see reach). */
   reach_multiplier: number;
+  /** People mode: the world's population in a typical year of the period, which the head-counts are shares of. */
+  world_population: number | null;
+  /** People mode: each benefit's and harm's reach, averaged over the period's assessments. */
+  reach: Profile | null;
   /** Impact per year while the period lasts. */
   level: Profile;
   /** level × years / 100, in influence-centuries. */
@@ -145,7 +160,7 @@ export interface ImpactOptions {
 
 // ---------- Constants ----------
 
-export const ALGORITHM_VERSION = "5.0.0-system-one";
+export const ALGORITHM_VERSION = "5.1.0-reach-of-humanity";
 
 // ---------- Profile arithmetic ----------
 
@@ -228,28 +243,51 @@ function activeYears(period: PeriodInput, asOfYear: number): number {
 }
 
 /**
- * One period's level, averaged over its assessments: weighted values × reach, or in people mode
- * weighted depth × the people affected a year.
+ * A head-count's reach on the reach rubric's 0–10 scale, one level per factor of ten: 10 is everyone
+ * alive, 9 a tenth of them, 5 one in a hundred thousand, and 0 one in ten billion or fewer. No year has
+ * more people affected than alive, so a count above the population reaches 10.
  */
-function periodLevel(scoring: ScoringConfig, group: AssessmentInput[], reach: number): Profile {
+export function reachOfShare(count: number, population: number): number {
+  if (!(population > 0)) throw new Error(`A share needs a population above zero, not ${population}`);
+  if (count <= 0) return 0;
+  return Math.max(0, 10 + Math.log10(Math.min(1, count / population)));
+}
+
+/**
+ * One period's level and, in people mode, its reach, both averaged over its assessments: weighted
+ * values × the period's reach multiplier, or in people mode weighted depth × the multiplier of each
+ * benefit's and harm's own reach.
+ */
+function periodLevel(
+  scoring: ScoringConfig,
+  group: AssessmentInput[],
+  multiplier: number,
+  population: number | null,
+): { level: Profile; reach: Profile | null } {
   const keys = dimensionKeysOf(scoring);
+  const people = scoring.breadth === "people";
   let level = emptyProfile(keys);
+  let reach = emptyProfile(keys);
   for (const a of group) {
     const value = { benefit: { ...a.benefit }, harm: { ...a.harm } };
-    if (scoring.breadth === "people") {
+    if (people) {
+      const own = emptyProfile(keys);
       for (const d of keys) {
-        value.benefit[d] = at(a.benefit, d) * at(a.people!.benefit, d);
-        value.harm[d] = at(a.harm, d) * at(a.people!.harm, d);
+        own.benefit[d] = reachOfShare(at(a.people!.benefit, d), population!);
+        own.harm[d] = reachOfShare(at(a.people!.harm, d), population!);
+        value.benefit[d] = at(a.benefit, d) * reachMultiplier(own.benefit[d]);
+        value.harm[d] = at(a.harm, d) * reachMultiplier(own.harm[d]);
       }
+      reach = addScaled(reach, own, 1 / group.length);
     }
     level = addScaled(level, value, 1 / group.length);
   }
   const out = emptyProfile(keys);
   for (const { key: d, weight } of scoring.dimensions) {
-    out.benefit[d] = weight * level.benefit[d] * reach;
-    out.harm[d] = weight * level.harm[d] * reach;
+    out.benefit[d] = weight * level.benefit[d] * multiplier;
+    out.harm[d] = weight * level.harm[d] * multiplier;
   }
-  return out;
+  return { level: out, reach: people ? reach : null };
 }
 
 export function calculateImpact(
@@ -286,8 +324,10 @@ export function calculateImpact(
 
   for (const period of placed) {
     const group = assessmentsByPeriod.get(period.id)!;
-    const multiplier = scoring.breadth === "people" ? 1 : reachMultiplier(period.reach_factor);
-    const level = periodLevel(scoring, group, multiplier);
+    const people = scoring.breadth === "people";
+    const multiplier = people ? 1 : reachMultiplier(period.reach_factor);
+    const population = people ? meanWorldPopulation(period.start_year, period.end_year) : null;
+    const { level, reach } = periodLevel(scoring, group, multiplier, population);
     const years = activeYears(period, asOfYear);
     const area = scaleProfile(level, years / yearsPerUnit);
     profile = addScaled(profile, area);
@@ -300,6 +340,8 @@ export function calculateImpact(
       years,
       assessments: group.length,
       reach_multiplier: multiplier,
+      world_population: population,
+      reach,
       level,
       area,
     });

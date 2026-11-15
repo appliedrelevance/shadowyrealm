@@ -7,6 +7,7 @@ import {
   persistenceTimeConstant,
   profileMagnitude,
   reachMultiplier,
+  reachOfShare,
   sampleCurve,
   sumDimensions,
   type AssessmentInput,
@@ -14,6 +15,7 @@ import {
   type PeriodInput,
 } from "../src/lib/atis-calculator";
 import { SITES } from "../src/sites";
+import { meanWorldPopulation } from "../src/lib/world-population";
 
 const AS_OF = 2026;
 
@@ -30,16 +32,19 @@ for (const site of Object.values(SITES)) {
   const [d0, d1, d2, d3, d4] = [0, 1, 2, 3, 4].map((i) => keys[i % keys.length]);
 
   const dims = (values: Partial<Dimensions>): Dimensions => ({ ...emptyDimensions(keys), ...values });
-  // In people mode every assessment counts one person a year in each area unless a test says otherwise,
-  // so a level is weight × value there and weight × value × reach multiplier elsewhere.
+  // In people mode every assessment reaches everyone alive in each area unless a test says otherwise
+  // (ten billion is more people than have ever been alive at once), so a level is weight × value ×
+  // the multiplier of reach 10 there, and weight × value × the multiplier of the period's reach, 5
+  // unless a test says otherwise, elsewhere.
   const countsPeople = scoring.breadth === "people";
-  const onePerson = () => ({ benefit: dims(Object.fromEntries(keys.map((k) => [k, 1]))), harm: dims(Object.fromEntries(keys.map((k) => [k, 1]))) });
-  const reach5 = countsPeople ? 1 : 3;
+  const counts = (n: number) => dims(Object.fromEntries(keys.map((k) => [k, n])));
+  const everyone = () => ({ benefit: counts(10_000_000_000), harm: counts(10_000_000_000) });
+  const breadth = countsPeople ? reachMultiplier(10) : 3;
   const assessment = (period_id: number | null, benefit: Partial<Dimensions>, harm: Partial<Dimensions> = {}): AssessmentInput => ({
     period_id,
     benefit: dims(benefit),
     harm: dims(harm),
-    ...(countsPeople ? { people: onePerson() } : {}),
+    ...(countsPeople ? { people: everyone() } : {}),
   });
 
   describe(`${site.key}: calculateImpact`, () => {
@@ -48,8 +53,8 @@ for (const site of Object.values(SITES)) {
         creditPassedOn: 1,
         asOfYear: AS_OF,
       });
-      // reach 5 multiplies by 3, or one person a year by 1; the period runs 100 years.
-      const expected = (weight(d0) * 8 * reach5 * 100) / unitYears;
+      // reach 5 multiplies by 3, and everyone alive (reach 10) by 3 × 2^1.8; the period runs 100 years.
+      const expected = (weight(d0) * 8 * breadth * 100) / unitYears;
       expect(r.profile.benefit[d0]).toBeCloseTo(expected, 10);
       expect(r.magnitude).toBeCloseTo(expected, 10);
       expect(r.tail).toBeNull();
@@ -120,7 +125,7 @@ for (const site of Object.values(SITES)) {
         creditPassedOn: 0,
         asOfYear: AS_OF,
       });
-      const level = weight(d0) * 5 * reach5;
+      const level = weight(d0) * 5 * breadth;
       expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * (AS_OF + 50)) / unitYears, 10);
     });
 
@@ -130,7 +135,7 @@ for (const site of Object.values(SITES)) {
         creditPassedOn: 0,
         asOfYear: AS_OF,
       });
-      const level = weight(d0) * 5 * reach5;
+      const level = weight(d0) * 5 * breadth;
       const years = AS_OF - 1925;
       expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * 150 * (1 - Math.exp(-years / 150))) / unitYears, 10);
     });
@@ -163,7 +168,7 @@ for (const site of Object.values(SITES)) {
         period_id: 1,
         benefit: { [d0]: 5 },
         harm: { [d0]: 1 },
-        ...(countsPeople ? { people: onePerson() } : {}),
+        ...(countsPeople ? { people: everyone() } : {}),
       } as AssessmentInput;
       expect(() => calculateImpact(scoring, [partial], [period(1, 1900, 1910)], { creditPassedOn: 0, asOfYear: AS_OF })).toThrow(
         /no value for dimension/,
@@ -173,20 +178,45 @@ for (const site of Object.values(SITES)) {
 
   if (countsPeople) {
     describe(`${site.key}: people`, () => {
-      test("a level is weight × depth × the people affected a year, with no reach multiplier", () => {
-        const people = onePerson();
-        people.benefit[d0] = 2_000_000;
-        people.harm[d1] = 300;
+      test("a level is weight × depth × the multiplier of each head-count's reach, not the period's", () => {
+        const alive = meanWorldPopulation(1900, 1909);
+        const people = everyone();
+        people.benefit[d0] = alive / 1000;
+        people.harm[d1] = alive / 100_000;
         const r = calculateImpact(
           scoring,
           [{ ...assessment(1, { [d0]: 4 }, { [d1]: 7 }), people }],
-          [period(1, 1900, 1909, 10)],
+          [period(1, 1900, 1909, 2)],
           { creditPassedOn: 1, asOfYear: AS_OF },
         );
-        expect(r.breakdown[0].reach_multiplier).toBe(1);
-        expect(r.breakdown[0].level.benefit[d0]).toBeCloseTo(weight(d0) * 4 * 2_000_000, 6);
-        expect(r.breakdown[0].level.harm[d1]).toBeCloseTo(weight(d1) * 7 * 300, 6);
-        expect(r.profile.benefit[d0]).toBeCloseTo((weight(d0) * 4 * 2_000_000 * 10) / unitYears, 6);
+        const row = r.breakdown[0];
+        expect(row.reach_multiplier).toBe(1);
+        expect(row.world_population).toBe(alive);
+        // A thousandth of everyone alive is reach 7, and a hundred-thousandth reach 5.
+        expect(row.reach!.benefit[d0]).toBeCloseTo(7, 10);
+        expect(row.reach!.harm[d1]).toBeCloseTo(5, 10);
+        expect(row.level.benefit[d0]).toBeCloseTo(weight(d0) * 4 * reachMultiplier(7), 10);
+        expect(row.level.harm[d1]).toBeCloseTo(weight(d1) * 7 * 3, 10);
+        expect(r.profile.benefit[d0]).toBeCloseTo((weight(d0) * 4 * reachMultiplier(7) * 10) / unitYears, 10);
+      });
+
+      test("the same share of the world counts the same in any era", () => {
+        const share = (start: number, end: number) => {
+          const people = everyone();
+          people.benefit[d0] = meanWorldPopulation(start, end) / 50;
+          return people;
+        };
+        const r = calculateImpact(
+          scoring,
+          [
+            { ...assessment(1, { [d0]: 6 }), people: share(-2000, -1901) },
+            { ...assessment(2, { [d0]: 6 }), people: share(1900, 1999) },
+          ],
+          [period(1, -2000, -1901), period(2, 1900, 1999)],
+          { creditPassedOn: 1, asOfYear: AS_OF },
+        );
+        expect(r.breakdown[0].world_population!).toBeLessThan(r.breakdown[1].world_population! / 10);
+        expect(r.breakdown[0].level.benefit[d0]).toBeCloseTo(r.breakdown[1].level.benefit[d0], 10);
       });
 
       test("an assessment with no head-counts is unplaced and adds nothing", () => {
@@ -246,6 +276,17 @@ describe("helpers", () => {
   test("reach 5 multiplies by 3 and reach 10 by 3 × 2^1.8", () => {
     expect(reachMultiplier(5)).toBeCloseTo(3, 10);
     expect(reachMultiplier(10)).toBeCloseTo(3 * Math.pow(2, 1.8), 10);
+  });
+
+  test("a head-count's reach is one level per factor of ten below everyone alive", () => {
+    expect(reachOfShare(8_000_000, 8_000_000)).toBe(10);
+    expect(reachOfShare(800_000, 8_000_000)).toBeCloseTo(9, 10);
+    expect(reachOfShare(80, 8_000_000_000)).toBeCloseTo(2, 10);
+    // More people than are alive reach everyone; nobody, or one in ten billion or fewer, reaches nothing.
+    expect(reachOfShare(9_000_000_000, 8_000_000_000)).toBe(10);
+    expect(reachOfShare(0, 8_000_000_000)).toBe(0);
+    expect(reachOfShare(1, 20_000_000_000)).toBe(0);
+    expect(() => reachOfShare(5, 0)).toThrow(/population above zero/);
   });
 
   test("a legacy fades no slower than the years since it ended have shown", () => {

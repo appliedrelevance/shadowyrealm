@@ -139,9 +139,14 @@ export function TierTable() {
 export function LevelFormula() {
   return (
     <div className="not-prose rounded-lg border border-line bg-surface-1 p-4 font-mono text-action-ink">
-      {SITE.scoring.breadth === "people"
-        ? "level = dimension weight × depth (0–10) × people affected a year"
-        : "level = dimension weight × assessed value (0–10) × reach multiplier"}
+      {SITE.scoring.breadth === "people" ? (
+        <>
+          <div>level = dimension weight × depth (0–10) × 3 × (reach ÷ 5)^1.8</div>
+          <div>reach = 10 + log₁₀(people affected ÷ people alive)</div>
+        </>
+      ) : (
+        "level = dimension weight × assessed value (0–10) × reach multiplier"
+      )}
     </div>
   );
 }
