@@ -99,11 +99,14 @@ function IndexTable({ realm }: { realm: Realm }) {
   const [type, setType] = useState<TypeFilter>("");
   const [query, setQuery] = useState("");
 
+  // A search matches the description as well as the name: "flight" finds the Wright Flyer.
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const matches = (e: RealmEntity) =>
+      e.name.toLowerCase().includes(q) || (e.description ?? "").toLowerCase().includes(q);
     return realm.entities
       .map((e, i) => ({ entity: e, rank: i + 1 }))
-      .filter(({ entity }) => (!type || entity.entity_type === type) && (!q || entity.name.toLowerCase().includes(q)));
+      .filter(({ entity }) => (!type || entity.entity_type === type) && (!q || matches(entity)));
   }, [realm, type, query]);
   const max = Math.max(1, ...realm.entities.map((e) => e.total_magnitude));
 
@@ -133,7 +136,7 @@ function IndexTable({ realm }: { realm: Realm }) {
             </button>
           ))}
           <label className="relative">
-            <span className="sr-only">Search by name</span>
+            <span className="sr-only">Search by name or description</span>
             <Search className="absolute left-2.5 top-2 h-4 w-4 text-ink-muted" aria-hidden="true" />
             <input
               type="search"

@@ -14,7 +14,7 @@ test.describe("Public pages", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Events" }).click();
     await expect(page.locator("table tbody tr").first()).toBeVisible();
-    await page.getByRole("searchbox", { name: "Search by name" }).fill("zzzz-no-such-entity");
+    await page.getByRole("searchbox", { name: "Search by name or description" }).fill("zzzz-no-such-entity");
     await expect(page.getByText("No entities match.")).toBeVisible();
   });
 
