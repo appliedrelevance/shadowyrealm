@@ -42,6 +42,7 @@ export const inventions: SiteConfig = {
     userAgent: `PriorArt/1.0 (${ORIGIN})`,
   },
   scoring: {
+    breadth: "reach",
     dimensions: [
       {
         key: "prosperity",

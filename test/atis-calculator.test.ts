@@ -30,20 +30,26 @@ for (const site of Object.values(SITES)) {
   const [d0, d1, d2, d3, d4] = [0, 1, 2, 3, 4].map((i) => keys[i % keys.length]);
 
   const dims = (values: Partial<Dimensions>): Dimensions => ({ ...emptyDimensions(keys), ...values });
+  // In people mode every assessment counts one person a year in each area unless a test says otherwise,
+  // so a level is weight × value there and weight × value × reach multiplier elsewhere.
+  const countsPeople = scoring.breadth === "people";
+  const onePerson = () => ({ benefit: dims(Object.fromEntries(keys.map((k) => [k, 1]))), harm: dims(Object.fromEntries(keys.map((k) => [k, 1]))) });
+  const reach5 = countsPeople ? 1 : 3;
   const assessment = (period_id: number | null, benefit: Partial<Dimensions>, harm: Partial<Dimensions> = {}): AssessmentInput => ({
     period_id,
     benefit: dims(benefit),
     harm: dims(harm),
+    ...(countsPeople ? { people: onePerson() } : {}),
   });
 
   describe(`${site.key}: calculateImpact`, () => {
-    test("a period's area is weight × value × reach × years / unit", () => {
+    test("a period's area is weight × value × breadth × years / unit", () => {
       const r = calculateImpact(scoring, [assessment(1, { [d0]: 8 })], [period(1, 1900, 1999)], {
         creditPassedOn: 1,
         asOfYear: AS_OF,
       });
-      // reach 5 multiplies by 3; the period runs 100 years.
-      const expected = (weight(d0) * 8 * 3 * 100) / unitYears;
+      // reach 5 multiplies by 3, or one person a year by 1; the period runs 100 years.
+      const expected = (weight(d0) * 8 * reach5 * 100) / unitYears;
       expect(r.profile.benefit[d0]).toBeCloseTo(expected, 10);
       expect(r.magnitude).toBeCloseTo(expected, 10);
       expect(r.tail).toBeNull();
@@ -114,7 +120,7 @@ for (const site of Object.values(SITES)) {
         creditPassedOn: 0,
         asOfYear: AS_OF,
       });
-      const level = weight(d0) * 5 * 3;
+      const level = weight(d0) * 5 * reach5;
       expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * (AS_OF + 50)) / unitYears, 10);
     });
 
@@ -124,7 +130,7 @@ for (const site of Object.values(SITES)) {
         creditPassedOn: 0,
         asOfYear: AS_OF,
       });
-      const level = weight(d0) * 5 * 3;
+      const level = weight(d0) * 5 * reach5;
       const years = AS_OF - 1925;
       expect(r.tail!.area.benefit[d0]).toBeCloseTo((level * 150 * (1 - Math.exp(-years / 150))) / unitYears, 10);
     });
@@ -153,12 +159,48 @@ for (const site of Object.values(SITES)) {
     });
 
     test("a profile missing one of the site's dimensions is an error, never a zero", () => {
-      const partial = { period_id: 1, benefit: { [d0]: 5 }, harm: { [d0]: 1 } } as AssessmentInput;
+      const partial = {
+        period_id: 1,
+        benefit: { [d0]: 5 },
+        harm: { [d0]: 1 },
+        ...(countsPeople ? { people: onePerson() } : {}),
+      } as AssessmentInput;
       expect(() => calculateImpact(scoring, [partial], [period(1, 1900, 1910)], { creditPassedOn: 0, asOfYear: AS_OF })).toThrow(
         /no value for dimension/,
       );
     });
   });
+
+  if (countsPeople) {
+    describe(`${site.key}: people`, () => {
+      test("a level is weight × depth × the people affected a year, with no reach multiplier", () => {
+        const people = onePerson();
+        people.benefit[d0] = 2_000_000;
+        people.harm[d1] = 300;
+        const r = calculateImpact(
+          scoring,
+          [{ ...assessment(1, { [d0]: 4 }, { [d1]: 7 }), people }],
+          [period(1, 1900, 1909, 10)],
+          { creditPassedOn: 1, asOfYear: AS_OF },
+        );
+        expect(r.breakdown[0].reach_multiplier).toBe(1);
+        expect(r.breakdown[0].level.benefit[d0]).toBeCloseTo(weight(d0) * 4 * 2_000_000, 6);
+        expect(r.breakdown[0].level.harm[d1]).toBeCloseTo(weight(d1) * 7 * 300, 6);
+        expect(r.profile.benefit[d0]).toBeCloseTo((weight(d0) * 4 * 2_000_000 * 10) / unitYears, 6);
+      });
+
+      test("an assessment with no head-counts is unplaced and adds nothing", () => {
+        const r = calculateImpact(
+          scoring,
+          [{ ...assessment(1, { [d0]: 9 }), people: null }],
+          [period(1, 1900, 1909)],
+          { creditPassedOn: 0, asOfYear: AS_OF },
+        );
+        expect(r.unplaced_assessments).toBe(1);
+        expect(r.magnitude).toBe(0);
+      });
+    });
+  }
 
   describe(`${site.key}: the curve`, () => {
     test("the area under the whole curve equals magnitude", () => {

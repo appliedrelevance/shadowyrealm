@@ -9,11 +9,14 @@
  * of the five dimensions. Nothing here nets one against the other.
  *
  * Every assessment belongs to one period, a window of years. Within a period,
- * each profile number has a level:
+ * each profile number has a level. How it is made depends on how the site
+ * measures breadth (ScoringConfig.breadth):
  *
- *   level = dimension weight × assessed 0–10 value × reach multiplier
+ *   reach:  level = dimension weight × assessed 0–10 value × reach multiplier
+ *   people: level = dimension weight × 0–10 depth × living people affected in a typical year
  *
- * averaged over the period's assessments. Laid end to end, the periods are the
+ * averaged over the period's assessments. In people mode an assessment with no
+ * head-counts cannot be placed on the curve, like one with no period. Laid end to end, the periods are the
  * influence curve, and each number's score is the area under its curve up to
  * the as-of year, in influence-centuries (level × years / 100). Periods that
  * overlap add; years between periods add nothing.
@@ -49,9 +52,11 @@ export interface Profile {
 export interface AssessmentInput {
   /** The period this assessment describes. An assessment without one cannot be placed on the curve. */
   period_id: number | null;
-  /** Each value 0–10. */
+  /** Each value 0–10: intensity in reach mode, depth in people mode. */
   benefit: Dimensions;
   harm: Dimensions;
+  /** People mode: the living people affected in a typical year of the period, per dimension's benefit and harm. */
+  people?: Profile | null;
 }
 
 export interface PeriodInput {
@@ -73,6 +78,7 @@ export interface PeriodBreakdown {
   /** Years of this window that fall on or before the as-of year. */
   years: number;
   assessments: number;
+  /** 1 in people mode, where breadth is in the head-counts. */
   reach_multiplier: number;
   /** Impact per year while the period lasts. */
   level: Profile;
@@ -123,7 +129,10 @@ export interface ImpactResult {
   tail: LegacyTail | null;
   curve: InfluenceCurve;
   as_of_year: number;
-  /** Assessments with no period, or a period that is not in the list. They contribute nothing. */
+  /**
+   * Assessments with no period, a period that is not in the list, or (in people mode) no head-counts.
+   * They contribute nothing.
+   */
   unplaced_assessments: number;
   algorithm_version: string;
 }
@@ -136,7 +145,7 @@ export interface ImpactOptions {
 
 // ---------- Constants ----------
 
-export const ALGORITHM_VERSION = "4.1.0-observed-persistence";
+export const ALGORITHM_VERSION = "5.0.0-system-one";
 
 // ---------- Profile arithmetic ----------
 
@@ -218,12 +227,22 @@ function activeYears(period: PeriodInput, asOfYear: number): number {
   return Math.max(0, Math.min(period.end_year, asOfYear) - period.start_year + 1);
 }
 
-/** One period's level: weighted values × reach, averaged over its assessments. */
+/**
+ * One period's level, averaged over its assessments: weighted values × reach, or in people mode
+ * weighted depth × the people affected a year.
+ */
 function periodLevel(scoring: ScoringConfig, group: AssessmentInput[], reach: number): Profile {
   const keys = dimensionKeysOf(scoring);
   let level = emptyProfile(keys);
   for (const a of group) {
-    level = addScaled(level, { benefit: a.benefit, harm: a.harm }, 1 / group.length);
+    const value = { benefit: { ...a.benefit }, harm: { ...a.harm } };
+    if (scoring.breadth === "people") {
+      for (const d of keys) {
+        value.benefit[d] = at(a.benefit, d) * at(a.people!.benefit, d);
+        value.harm[d] = at(a.harm, d) * at(a.people!.harm, d);
+      }
+    }
+    level = addScaled(level, value, 1 / group.length);
   }
   const out = emptyProfile(keys);
   for (const { key: d, weight } of scoring.dimensions) {
@@ -247,7 +266,7 @@ export function calculateImpact(
   let unplaced = 0;
   for (const assessment of assessments) {
     const period = assessment.period_id == null ? undefined : periodById.get(assessment.period_id);
-    if (!period) {
+    if (!period || (scoring.breadth === "people" && !assessment.people)) {
       unplaced += 1;
       continue;
     }
@@ -267,7 +286,7 @@ export function calculateImpact(
 
   for (const period of placed) {
     const group = assessmentsByPeriod.get(period.id)!;
-    const multiplier = reachMultiplier(period.reach_factor);
+    const multiplier = scoring.breadth === "people" ? 1 : reachMultiplier(period.reach_factor);
     const level = periodLevel(scoring, group, multiplier);
     const years = activeYears(period, asOfYear);
     const area = scaleProfile(level, years / yearsPerUnit);

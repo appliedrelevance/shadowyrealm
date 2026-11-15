@@ -25,6 +25,12 @@ type Widen<T> = {
 
 type DimensionLevels = Record<`${string}_${"benefit" | "harm"}`, number>;
 type DimensionJustifications = Record<`${string}_justification`, string>;
+/**
+ * A site that measures breadth in people (ScoringConfig.breadth) has a head-count column beside each
+ * level, {key}_benefit_people and {key}_harm_people, and keeps a scored assessment's evidence once, in
+ * evidence, instead of in every justification. Other sites have neither.
+ */
+type PeopleColumns = Partial<Record<`${string}_${"benefit" | "harm"}_people`, number | null>> & { evidence?: string | null };
 
 type Table<T extends { Row: unknown; Insert: unknown; Update: unknown; Relationships: unknown }> = {
   Row: Widen<T["Row"]>;
@@ -34,13 +40,15 @@ type Table<T extends { Row: unknown; Insert: unknown; Update: unknown; Relations
 };
 
 type AssessmentTable = {
-  Row: Omit<SRTables["assessments"]["Row"], SRDimensionColumn> & DimensionLevels & DimensionJustifications;
+  Row: Omit<SRTables["assessments"]["Row"], SRDimensionColumn> & DimensionLevels & DimensionJustifications & PeopleColumns;
   Insert: Omit<SRTables["assessments"]["Insert"], SRDimensionColumn> &
     Partial<DimensionLevels> &
-    Partial<DimensionJustifications>;
+    Partial<DimensionJustifications> &
+    PeopleColumns;
   Update: Omit<SRTables["assessments"]["Update"], SRDimensionColumn> &
     Partial<DimensionLevels> &
-    Partial<DimensionJustifications>;
+    Partial<DimensionJustifications> &
+    PeopleColumns;
   Relationships: SRTables["assessments"]["Relationships"];
 };
 

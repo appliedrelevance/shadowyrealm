@@ -27,5 +27,16 @@ for (const site of Object.values(SITES)) {
       const credit = site.linkTypes.filter((t) => t.credit).map((t) => `'${t.key}'`).join(", ");
       expect(ddl).toContain(`where r.relationship_type in (${credit})`);
     });
+
+    test("counts people and keeps four-place strengths only where the site measures breadth in people", () => {
+      const ddl = siteSchemaDdl(site);
+      const people = site.scoring.breadth === "people";
+      for (const d of site.scoring.dimensions) {
+        expect(ddl.includes(`${d.key}_benefit_people numeric`)).toBe(people);
+        expect(ddl.includes(`${d.key}_harm_people numeric`)).toBe(people);
+      }
+      expect(ddl.includes("  evidence text")).toBe(people);
+      expect(ddl).toContain(people ? "strength numeric(5,4)" : "strength numeric(3,2)");
+    });
   });
 }

@@ -16,14 +16,16 @@ import { createClient } from "@supabase/supabase-js";
 import { allowsEnds, creditTypes, describeEnds, dimensionKeys, linkTypeOf, siteFor } from "../sites";
 import type { SiteConfig } from "../sites/types";
 import { sampleCurve, type Profile } from "./atis-calculator";
+import { CLAIRIC_MODEL, runClairic } from "./clairic";
 import { CLEF_MODEL, runClef, type ClefEnv } from "./clef";
-import { composeScores, type AssessmentRow, type EntityScore } from "./credit";
+import { composeScores, walkShares, type AssessmentRow, type EntityScore, type ShareRow } from "./credit";
 import type { Json } from "./database.types";
 import type { EntityRow, EntityUpdate, SiteDatabase, SiteTables } from "./site-tables";
 import type {
   AddAssessmentInput,
   AddPeriodInput,
   AddRelationshipInput,
+  SetRelationshipStrengthInput,
   CreateEntityInput,
   DeleteEntityInput,
   GetEntityInput,
@@ -172,8 +174,8 @@ export async function getEntity(env: ServiceEnv, args: GetEntityInput) {
     return found;
   };
 
-  // A Clef assessment stores its evidence in every justification; a short
-  // excerpt of each keeps this response readable.
+  // A scored assessment stores its evidence in every justification, or once in
+  // evidence where the site counts people; a short excerpt keeps this response readable.
   const excerpt = (text: string) => (text.length > 300 ? `${text.slice(0, 300)}…` : text);
   const keys = dimensionKeys(siteOf(env));
 
@@ -182,6 +184,7 @@ export async function getEntity(env: ServiceEnv, args: GetEntityInput) {
     assessments: assessments.data.map((a) => {
       const out: Record<string, unknown> = { ...a };
       for (const d of keys) out[`${d}_justification`] = excerpt(String(a[`${d}_justification`]));
+      if (typeof a.evidence === "string") out.evidence = excerpt(a.evidence);
       return out;
     }),
     periods: periods.data,
@@ -326,6 +329,11 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
  * the period's reach and persistence factors, and one assessment whose
  * justifications are the evidence. A rerun replaces the period's earlier Clef
  * assessment rather than averaging with it. Nothing is written if Clef fails.
+ *
+ * Where the site counts people (ScoringConfig.breadth), Clairic is asked beside
+ * Clef with the same evidence: its head-counts go in the {key}_{side}_people
+ * columns, Clef's answers are read as depth, and the evidence is stored once, in
+ * evidence. Nothing is written if either model fails.
  */
 export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodInput) {
   const site = siteOf(env);
@@ -344,7 +352,7 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     .filter((l) => credit.has(l.relationship_type) && Number(l.strength) > 0)
     .map((l) => (l.target as unknown as { name: string }).name);
 
-  const clef = await runClef(env, site, {
+  const toScore = {
     entity: entity.name,
     entity_type: entity.entity_type,
     period: period.label,
@@ -352,7 +360,12 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     end_year: period.end_year,
     excluded,
     evidence: args.evidence,
-  });
+  };
+  const countsPeople = site.scoring.breadth === "people";
+  const [clef, people] = await Promise.all([
+    runClef(env, site, toScore),
+    countsPeople ? runClairic(env, site, toScore) : Promise.resolve(null),
+  ]);
 
   // The replaced assessment goes into the audit entry below, so every score a
   // period has had stays recoverable with the evidence it was computed from.
@@ -367,10 +380,18 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     const r = row as unknown as Record<string, unknown>;
     return {
       ...Object.fromEntries(keys.flatMap((d) => [[`${d}_benefit`, r[`${d}_benefit`]], [`${d}_harm`, r[`${d}_harm`]]])),
+      ...(countsPeople
+        ? Object.fromEntries(
+            keys.flatMap((d) => [
+              [`${d}_benefit_people`, r[`${d}_benefit_people`]],
+              [`${d}_harm_people`, r[`${d}_harm_people`]],
+            ]),
+          )
+        : {}),
       confidence_level: r.confidence_level,
       sources: r.sources,
       created_at: r.created_at,
-      evidence: r[`${keys[0]}_justification`],
+      evidence: r.evidence ?? r[`${keys[0]}_justification`],
     };
   });
 
@@ -388,10 +409,20 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       [`${d}_harm`, clef.harm[d]],
     ]),
   ) as Record<string, number>;
-  const justifications = Object.fromEntries(keys.map((d) => [`${d}_justification`, args.evidence])) as Record<
-    string,
-    string
-  >;
+  const counts = people
+    ? (Object.fromEntries(
+        keys.flatMap((d) => [
+          [`${d}_benefit_people`, people.benefit[d]],
+          [`${d}_harm_people`, people.harm[d]],
+        ]),
+      ) as Record<string, number>)
+    : {};
+  const justifications = Object.fromEntries(
+    keys.map((d) => [
+      `${d}_justification`,
+      countsPeople ? "Depth from Clef and people from Clairic, both read from this assessment's evidence." : args.evidence,
+    ]),
+  ) as Record<string, string>;
 
   const { data, error } = await db
     .from("assessments")
@@ -399,7 +430,9 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       entity_id: entity.id,
       period_id: period.id,
       ...levels,
+      ...counts,
       ...justifications,
+      ...(countsPeople ? { evidence: args.evidence } : {}),
       sources: args.source_url ? [args.source_url] : null,
       confidence_level: Math.round(clef.confidence * 100) / 100,
       ai_suggested: true,
@@ -412,6 +445,7 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
         "entity_id",
         "period_id",
         ...keys.flatMap((d) => [`${d}_benefit`, `${d}_harm`]),
+        ...(countsPeople ? keys.flatMap((d) => [`${d}_benefit_people`, `${d}_harm_people`]) : []),
         "sources",
         "confidence_level",
         "ai_suggested",
@@ -434,11 +468,12 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       replaced: history,
     },
     {
-    period_id: period.id,
-    model: CLEF_MODEL,
-    reach_factor: clef.reach_factor,
-    persistence_factor: clef.persistence_factor,
-    ...levels,
+      period_id: period.id,
+      model: countsPeople ? `${CLEF_MODEL} + ${CLAIRIC_MODEL}` : CLEF_MODEL,
+      reach_factor: clef.reach_factor,
+      persistence_factor: clef.persistence_factor,
+      ...levels,
+      ...counts,
     },
   );
   return {
@@ -446,7 +481,9 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     period: updated.data,
     replaced_assessments: replaced.data.length,
     excluded,
-    note: "Each justification holds the evidence text, which is omitted here",
+    note: countsPeople
+      ? "The evidence is stored with the assessment and omitted here"
+      : "Each justification holds the evidence text, which is omitted here",
   };
 }
 
@@ -522,6 +559,63 @@ export async function addRelationship(env: ServiceEnv, args: AddRelationshipInpu
   return data;
 }
 
+/**
+ * Change the strength of an existing link. A credit-bearing link is held to the same cap as
+ * add_relationship: the consequence's incoming credit-bearing strengths, with this one changed, total
+ * 1.00 or less. Records an audit entry on the consequence with the old and new strength.
+ */
+export async function setRelationshipStrength(env: ServiceEnv, args: SetRelationshipStrengthInput) {
+  const db = connect(env);
+  const source = await entityBySlug(db, args.source_slug);
+  const target = await entityBySlug(db, args.target_slug);
+  const { data: found, error: findError } = await db
+    .from("relationships")
+    .select("id, strength")
+    .eq("source_entity_id", source.id)
+    .eq("target_entity_id", target.id)
+    .eq("relationship_type", args.relationship_type);
+  if (findError) fail("look up the relationship", findError);
+  if (found.length === 0) {
+    throw new Error(`No ${args.relationship_type} link from "${source.slug}" to "${target.slug}"`);
+  }
+  const link = found[0];
+
+  const credit = creditTypes(siteOf(env));
+  if (credit.has(args.relationship_type)) {
+    const incoming = await db
+      .from("relationships")
+      .select("id, relationship_type, strength")
+      .eq("target_entity_id", target.id);
+    if (incoming.error) fail("load the target's incoming links", incoming.error);
+    const others = incoming.data
+      .filter((l) => credit.has(l.relationship_type) && l.id !== link.id)
+      .reduce((sum, l) => sum + Number(l.strength), 0);
+    if (others + args.strength > 1.000001) {
+      throw new Error(
+        `"${target.slug}" credits ${others.toFixed(2)} of itself to its other causes; ` +
+          `a strength of ${args.strength.toFixed(2)} would exceed 1.00`,
+      );
+    }
+  }
+
+  const { data, error } = await db
+    .from("relationships")
+    .update({ strength: args.strength })
+    .eq("id", link.id)
+    .select()
+    .single();
+  if (error) fail("set the relationship's strength", error);
+  await audit(
+    db,
+    env,
+    target.id,
+    "relationship_strength_set",
+    { source: source.slug, relationship_type: args.relationship_type, strength: Number(link.strength) },
+    { source: source.slug, relationship_type: args.relationship_type, strength: args.strength },
+  );
+  return data;
+}
+
 // ---------- Scores ----------
 // One computation serves the MCP tools and every screen of the web UI.
 
@@ -544,7 +638,16 @@ async function every<T>(
 const ENTITY_FIELDS = "id, slug, name, entity_type, status, description, image_url, metadata, updated_at";
 const PERIOD_FIELDS = "id, entity_id, label, start_year, end_year, reach_factor, persistence_factor, description";
 function levelFields(site: SiteConfig): string {
-  return ["entity_id", "period_id", ...dimensionKeys(site).flatMap((d) => [`${d}_benefit`, `${d}_harm`])].join(", ");
+  const people = site.scoring.breadth === "people";
+  return [
+    "entity_id",
+    "period_id",
+    ...dimensionKeys(site).flatMap((d) => [
+      `${d}_benefit`,
+      `${d}_harm`,
+      ...(people ? [`${d}_benefit_people`, `${d}_harm_people`] : []),
+    ]),
+  ].join(", ");
 }
 
 type ScoredEntity = Pick<
@@ -595,26 +698,30 @@ async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Sco
         .order("id")
         .range(from, to),
     ),
-    every("compute credit shares", (from, to) =>
-      db
-        .rpc("credit_shares", { published_only: !includeDrafts })
-        .order("ancestor_id")
-        .order("descendant_id")
-        .range(from, to),
-    ),
+    // A site that counts people computes credit from the links below (walkShares); the others ask Postgres.
+    site.scoring.breadth === "people"
+      ? Promise.resolve(null)
+      : every("compute credit shares", (from, to) =>
+          db
+            .rpc("credit_shares", { published_only: !includeDrafts })
+            .order("ancestor_id")
+            .order("descendant_id")
+            .range(from, to),
+        ),
   ]);
 
   const byId = new Map(entities.map((e) => [e.id, e]));
   const inSet = (id: number) => byId.has(id);
   const keptPeriods = periods.filter((p) => inSet(p.entity_id));
   const keptLinks = links.filter((l) => inSet(l.source_entity_id) && inSet(l.target_entity_id));
+  const creditShares: ShareRow[] = shares ?? walkShares(keptLinks, creditTypes(site));
   const scores = composeScores(
     { scoring: site.scoring, creditTypes: creditTypes(site) },
     entities.map((e) => e.id),
     keptPeriods,
     assessments.filter((a) => inSet(a.entity_id)),
     keptLinks,
-    shares,
+    creditShares,
     asOfYear,
   );
   const ranked = [...entities].sort(
@@ -733,7 +840,8 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
   const score = scoring.scores.get(entity.id)!;
   const site = siteOf(env);
   const edges = bucketEdges(scoring.as_of_year, site.timeline);
-  const evidenceColumn = `${dimensionKeys(site)[0]}_justification`;
+  const justificationColumn = `${dimensionKeys(site)[0]}_justification`;
+  const evidenceColumns = site.scoring.breadth === "people" ? `evidence, ${justificationColumn}` : justificationColumn;
 
   const own = sampleCurve(score.own.curve, edges);
   const credited = { benefit: own.benefit.map(() => 0), harm: own.harm.map(() => 0) };
@@ -756,7 +864,7 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
   const db = connect(env);
   const { data: evidence, error } = await db
     .from("assessments")
-    .select(`id, period_id, ${evidenceColumn}, sources, confidence_level, ai_model_used, created_at`)
+    .select(`id, period_id, ${evidenceColumns}, sources, confidence_level, ai_model_used, created_at`)
     .eq("entity_id", entity.id)
     .order("created_at", { ascending: false })
     .returns<
@@ -830,7 +938,7 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
           magnitude: b ? round(profileTotal(b.area)) : 0,
           level: b ? roundProfile(b.level) : null,
           assessments: scored.map((a) => ({
-            evidence: a[evidenceColumn] as string,
+            evidence: (a.evidence ?? a[justificationColumn]) as string,
             sources: a.sources,
             confidence_level: a.confidence_level,
             model: a.ai_model_used,

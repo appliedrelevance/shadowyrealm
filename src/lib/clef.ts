@@ -11,6 +11,11 @@
  * Answers are read strictly. A question without a usable expected value is an
  * error naming that question; nothing is substituted, and there is no fallback
  * model.
+ *
+ * A site that measures breadth in people (ScoringConfig.breadth) reads each
+ * benefit and harm as depth instead of Clef's expected value: the probability
+ * on each level above a flat answer, weighted by the level (depthOf). Clairic
+ * counts the people (clairic.ts).
  */
 import { entityTypeOf } from "../sites";
 import type { ScoringConfig, SiteConfig } from "../sites/types";
@@ -105,6 +110,32 @@ interface Answer {
   type?: unknown;
   score?: unknown;
   confidence?: unknown;
+  probabilities?: unknown;
+}
+
+/**
+ * Depth 0–10 from one answer's probabilities over its levels 0..n−1: each level's probability above
+ * a flat answer (1/n), weighted by the level, scaled so that certainty on the top level is 10. An
+ * answer spread evenly over every level has no depth, so a confident answer counts for more than a
+ * spread-out one with the same expected value.
+ */
+export function depthOf(probabilities: readonly number[]): number {
+  const n = probabilities.length;
+  const flat = 1 / n;
+  const above = probabilities.reduce((s, p, k) => s + k * Math.max(0, p - flat), 0);
+  return ((above / (1 - flat)) * 10) / (n - 1);
+}
+
+function probabilitiesOf(answers: Record<string, Answer>, id: string, levels: number): number[] {
+  const p = answers[id]?.probabilities as Record<string, unknown> | undefined;
+  if (!p || typeof p !== "object") throw new Error(`Clef's answer to "${id}" has no probabilities`);
+  return Array.from({ length: levels }, (_, k) => {
+    const v = p[String(k)];
+    if (typeof v !== "number" || !Number.isFinite(v) || v < 0) {
+      throw new Error(`Clef's answer to "${id}" has no usable probability for level ${k}: ${JSON.stringify(v)}`);
+    }
+    return v;
+  });
 }
 
 function read(answers: Record<string, Answer>, id: string): { score: number; confidence: number } {
@@ -129,7 +160,10 @@ function factor(score: number): number {
   return Math.round(score) + 1;
 }
 
-export function readClefAnswers(scoring: Pick<ScoringConfig, "dimensions">, response: unknown): ClefScores {
+export function readClefAnswers(
+  scoring: Pick<ScoringConfig, "dimensions" | "breadth" | "rubrics">,
+  response: unknown,
+): ClefScores {
   const body = response as { answers?: Record<string, Answer> } | null;
   const answers = body?.answers;
   if (!answers || typeof answers !== "object") throw new Error("Clef returned no answers");
@@ -138,11 +172,13 @@ export function readClefAnswers(scoring: Pick<ScoringConfig, "dimensions">, resp
   const benefit = emptyDimensions(keys);
   const harm = emptyDimensions(keys);
   const confidences: number[] = [];
+  const levels = scoring.rubrics.intensity.length;
+  const depth = (id: string) => Math.round(depthOf(probabilitiesOf(answers, id, levels)) * 100) / 100;
   for (const d of keys) {
     const b = read(answers, `${d}_benefit`);
     const h = read(answers, `${d}_harm`);
-    benefit[d] = level(b.score);
-    harm[d] = level(h.score);
+    benefit[d] = scoring.breadth === "people" ? depth(`${d}_benefit`) : level(b.score);
+    harm[d] = scoring.breadth === "people" ? depth(`${d}_harm`) : level(h.score);
     confidences.push(b.confidence, h.confidence);
   }
   const reach = read(answers, "reach");

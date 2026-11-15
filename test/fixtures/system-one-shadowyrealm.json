@@ -1,0 +1,254 @@
+{
+ "recorded": "2026-11-15 pilot over whole Wikipedia articles",
+ "clef_key": "fa8b115f4a2a362af05cffb2ea7745d3686b4be0939a56e5ec90ef32d3a58c57",
+ "clairic_key": "0e122faffb3ce45e23116ecc0e088b5015c372b4768f2a9cbe743badaf697627",
+ "input": {
+  "entity": "Zhuang Zhou (Zhuangzi)",
+  "entity_type": "person",
+  "period": "Philosophical career",
+  "start_year": -340,
+  "end_year": -286,
+  "excluded": [
+   "Taoism"
+  ],
+  "evidence": "Wrote parables on spontaneity, relativity and freedom from convention.\n\nZhuang Zhou (US: , UK: ), honorifically often known as Zhuangzi (US: ), was an influential Chinese philosopher who lived around the 4th century BCE during the Warring States period, including the Hundred Schools of Thought period, which is a period of great development in Chinese philosophy. He is credited with writing—in part or in whole—a work known by his name, the Zhuangzi, which is one of two foundational texts of Taoism, alongside the Tao Te Ching.\n\nLife\nThe only account of the life of Zhuangzi is a brief sketch in chapter 63 of Sima Qian's Records of the Grand Historian, and most of the information it contains seems to have simply been drawn from anecdotes in the Zhuangzi itself. In Sima's biography, he is described as a minor official from the town of Meng (in modern Anhui) in the state of Song, living in the time of King Hui of Liang and King Xuan of Qi (late fourth century BC). Sima Qian writes that Zhuangzi was especially influenced by Laozi, and that he turned down a job offer from King Wei of Chu, because he valued his personal freedom.\nHis existence has been questioned by Russell Kirkland, who asserts that \"there is no reliable historical data at all\" for Zhuang Zhou, and that most of the available information on the Zhuangzi comes from its third-century commentator, Guo Xiang.\n\nWritings\nZhuangzi is traditionally credited as the author of at least part of the work bearing his name, the Zhuangzi. This work, in its current shape consisting of 33 chapters, is traditionally divided into three parts: the first, known as the \"Inner Chapters\", consists of the first seven chapters; the second, known as the \"Outer Chapters\", consist of the next 15 chapters; the last, known as the \"Mixed Chapters\", consist of the remaining 11 chapters. The meaning of these three names is disputed: according to Guo Xiang, the \"Inner Chapters\" were written by Zhuangzi, the \"Outer Chapters\" written by his disciples, and the \"Mixed Chapters\" by other hands; the other interpretation is that the names refer to the origin of the titles of the chapters—the \"Inner Chapters\" take their titles from phrases inside the chapter, the \"Outer Chapters\" from the opening words of the chapters, and the \"Mixed Chapters\" from a mixture of these two sources.\nFurther study of the text does not provide a clear choice between these alternatives. On the one side, as Martin Palmer points out in the introduction to his translation, two of the three chapters Sima Qian cited in his biography of Zhuangzi, come from the \"Outer Chapters\" and the third from the \"Mixed Chapters\". \"Neither of these are allowed as authentic Chuang Tzu chapters by certain purists, yet they breathe the very spirit of Chuang Tzu just as much as, for example, the famous 'butterfly passage' of chapter 2.\" This passage encapsulates Zhuangzi's radical questioning of reality and identity. As noted in La Pléiade's edition of \"Taoist Philosophies Volume I\",  its placement at the end of the chapter is noteworthy, given that the tension between dream and reality is introduced earlier (e.g., sections 49–50) and revisited elsewhere in the text (e.g., Chapter 6, 21). The passage emphasises the Zhuangzian solipsistic dilemma: existence is confined to the present moment of self-awareness, yet the self is paradoxically a flux of identities—perceived as fragmented by others but synthesized into a cohesive, multiform, and multitemporal whole.\nOn the other hand, chapter 33 has been often considered as intrusive, being a survey of the major movements during the \"Hundred Schools of Thought\" with an emphasis on the philosophy of Hui Shi. Further, A. C. Graham and other critics have subjected the text to a stylistic analysis and identified four strains of thought in the book: a) the ideas of Zhuangzi or his disciples; b) a \"primitivist\" strain of thinking similar to Laozi in chapters 8–10 and the first half of chapter 11; c) a strain very strongly represented in chapters 28–31 which is attributed to the philosophy of Yang Zhu; and d) a fourth strain which may be related to the philosophical school of Huang-Lao. In this spirit, Martin Palmer wrote that \"trying to read Chuang Tzu sequentially is a mistake. The text is a collection, not a developing argument.\"\nZhuangzi was renowned for his brilliant wordplay and his use of an original form of gōng'àn (Chinese: 公案) or parables to convey messages. His critiques of Confucian society and historical figures are humorous and at times ironic.\n"
+ },
+ "clef_answers": {
+  "scientific_benefit": {
+   "type": "score",
+   "score": 3.8263,
+   "confidence": 0.0469,
+   "probabilities": {
+    "0": 0.0441,
+    "1": 0.0658,
+    "2": 0.2171,
+    "3": 0.1714,
+    "4": 0.1567,
+    "5": 0.1489,
+    "6": 0.0798,
+    "7": 0.0081,
+    "8": 0.0677,
+    "9": 0.0404
+   }
+  },
+  "scientific_harm": {
+   "type": "score",
+   "score": 0.6292,
+   "confidence": 0.6507,
+   "probabilities": {
+    "0": 0.825,
+    "1": 0.049,
+    "2": 0.0381,
+    "3": 0.0216,
+    "4": 0.0109,
+    "5": 0.0123,
+    "6": 0.0096,
+    "7": 0.0073,
+    "8": 0.0108,
+    "9": 0.0154
+   }
+  },
+  "economic_benefit": {
+   "type": "score",
+   "score": 0.921,
+   "confidence": 0.4317,
+   "probabilities": {
+    "0": 0.6812,
+    "1": 0.1295,
+    "2": 0.0717,
+    "3": 0.0359,
+    "4": 0.0161,
+    "5": 0.0139,
+    "6": 0.0095,
+    "7": 0.0077,
+    "8": 0.0144,
+    "9": 0.0201
+   }
+  },
+  "economic_harm": {
+   "type": "score",
+   "score": 0.6393,
+   "confidence": 0.6723,
+   "probabilities": {
+    "0": 0.8372,
+    "1": 0.0358,
+    "2": 0.039,
+    "3": 0.0216,
+    "4": 0.0097,
+    "5": 0.0098,
+    "6": 0.0072,
+    "7": 0.0077,
+    "8": 0.0122,
+    "9": 0.0198
+   }
+  },
+  "human_rights_benefit": {
+   "type": "score",
+   "score": 2.4502,
+   "confidence": 0.0762,
+   "probabilities": {
+    "0": 0.2,
+    "1": 0.1526,
+    "2": 0.2538,
+    "3": 0.1726,
+    "4": 0.0795,
+    "5": 0.0466,
+    "6": 0.0305,
+    "7": 0.0084,
+    "8": 0.0244,
+    "9": 0.0316
+   }
+  },
+  "human_rights_harm": {
+   "type": "score",
+   "score": 0.6062,
+   "confidence": 0.6703,
+   "probabilities": {
+    "0": 0.836,
+    "1": 0.0386,
+    "2": 0.0405,
+    "3": 0.0244,
+    "4": 0.0107,
+    "5": 0.0083,
+    "6": 0.0068,
+    "7": 0.0065,
+    "8": 0.0109,
+    "9": 0.0173
+   }
+  },
+  "health_benefit": {
+   "type": "score",
+   "score": 1.0103,
+   "confidence": 0.4435,
+   "probabilities": {
+    "0": 0.6942,
+    "1": 0.0782,
+    "2": 0.0829,
+    "3": 0.0501,
+    "4": 0.0208,
+    "5": 0.0173,
+    "6": 0.0096,
+    "7": 0.0087,
+    "8": 0.0158,
+    "9": 0.0224
+   }
+  },
+  "health_harm": {
+   "type": "score",
+   "score": 0.6402,
+   "confidence": 0.6787,
+   "probabilities": {
+    "0": 0.8408,
+    "1": 0.0306,
+    "2": 0.0381,
+    "3": 0.0235,
+    "4": 0.0112,
+    "5": 0.0096,
+    "6": 0.0065,
+    "7": 0.0071,
+    "8": 0.0119,
+    "9": 0.0207
+   }
+  },
+  "cultural_benefit": {
+   "type": "score",
+   "score": 4.1285,
+   "confidence": 0.0356,
+   "probabilities": {
+    "0": 0.0521,
+    "1": 0.0488,
+    "2": 0.1911,
+    "3": 0.1741,
+    "4": 0.1279,
+    "5": 0.1573,
+    "6": 0.0907,
+    "7": 0.0204,
+    "8": 0.0481,
+    "9": 0.0895
+   }
+  },
+  "cultural_harm": {
+   "type": "score",
+   "score": 1.8899,
+   "confidence": 0.134,
+   "probabilities": {
+    "0": 0.3795,
+    "1": 0.1625,
+    "2": 0.176,
+    "3": 0.1168,
+    "4": 0.0437,
+    "5": 0.0396,
+    "6": 0.016,
+    "7": 0.0087,
+    "8": 0.0199,
+    "9": 0.0373
+   }
+  },
+  "reach": {
+   "type": "score",
+   "score": 2.4993,
+   "confidence": 0.065,
+   "probabilities": {
+    "0": 0.1742,
+    "1": 0.2596,
+    "2": 0.1633,
+    "3": 0.1155,
+    "4": 0.1009,
+    "5": 0.0533,
+    "6": 0.0506,
+    "7": 0.0715,
+    "8": 0.0073,
+    "9": 0.0038
+   }
+  },
+  "persistence": {
+   "type": "score",
+   "score": 7.0674,
+   "confidence": 0.119,
+   "probabilities": {
+    "0": 0.0145,
+    "1": 0.023,
+    "2": 0.0136,
+    "3": 0.0291,
+    "4": 0.0288,
+    "5": 0.0511,
+    "6": 0.1522,
+    "7": 0.1148,
+    "8": 0.3135,
+    "9": 0.2594
+   }
+  }
+ },
+ "clairic_answers": {
+  "scientific_benefit": {
+   "median": 40.203196949358905
+  },
+  "scientific_harm": {
+   "median": 1.8209998342207983
+  },
+  "economic_benefit": {
+   "median": 18.268918545146
+  },
+  "economic_harm": {
+   "median": 2.2622113033799183
+  },
+  "human_rights_benefit": {
+   "median": 71.18472234229459
+  },
+  "human_rights_harm": {
+   "median": 2.3716011349856507
+  },
+  "health_benefit": {
+   "median": 14.412079745211916
+  },
+  "health_harm": {
+   "median": 1.8575212213352987
+  },
+  "cultural_benefit": {
+   "median": 180.92946781923618
+  },
+  "cultural_harm": {
+   "median": 5.2284206262432535
+  }
+ }
+}

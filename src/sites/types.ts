@@ -73,6 +73,20 @@ export interface TierDef {
 export interface ScoringConfig {
   dimensions: readonly DimensionDef[];
   rubrics: Rubrics;
+  /**
+   * How a period's breadth is measured.
+   *
+   * "reach": Clef rates the period's reach 1–10, and a level is weight × Clef's expected intensity × a
+   * reach multiplier.
+   *
+   * "people": Clairic counts the living people affected in a typical year of the period, for each
+   * dimension's benefit and harm. A level is weight × depth × that count. Depth is Clef's probability
+   * on each intensity level above a flat 0.1, weighted by the level and scaled to 0–10. An ancestor's
+   * share of a descendant is the chance that a walk upstream from the descendant, taking each cause with
+   * its link's strength, reaches the ancestor: every route added up (src/lib/credit.ts, walkShares),
+   * where "reach" keeps the strongest chain (credit_shares).
+   */
+  breadth: "reach" | "people";
   /** Areas are level × years / unit.years, named unit.name. */
   unit: { years: number; name: string };
   /** null until the site's first full run is calibrated; publishing is refused meanwhile. */

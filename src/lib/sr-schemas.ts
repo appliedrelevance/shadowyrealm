@@ -92,11 +92,13 @@ function build(site: SiteConfig) {
     scorePeriodInput: z.object({
       slug,
       period_id: z.number().int().describe("An assessment period of the same entity (ids are in get_entity)"),
+      // 200,000 characters is about 48,000 tokens of English, inside Clef's and Clairic's 65,536-token
+      // window with the questions; the longest whole article in the realm is 176,145.
       evidence: z
         .string()
         .min(200)
-        .max(8000)
-        .describe("Evidence about this period, from a source such as Wikipedia: 200 to 8,000 characters"),
+        .max(200_000)
+        .describe("Evidence about this period, typically the whole Wikipedia article: 200 to 200,000 characters"),
       source_url: z
         .string()
         .url()
@@ -136,6 +138,13 @@ function build(site: SiteConfig) {
       strength: unit.describe(`For ${creditNames}, the share of the consequence credited to the cause`),
       temporal_overlap: unit.default(0.5),
     }),
+
+    setRelationshipStrengthInput: z.object({
+      source_slug: slug.describe("The cause"),
+      target_slug: slug.describe("The consequence"),
+      relationship_type: relationshipType,
+      strength: unit.describe(`For ${creditNames}, the share of the consequence credited to the cause`),
+    }),
   };
 }
 
@@ -164,3 +173,4 @@ export type ScorePeriodInput = z.infer<SiteSchemas["scorePeriodInput"]>;
 export type GetScoresInput = z.infer<SiteSchemas["getScoresInput"]>;
 export type AddPeriodInput = z.infer<SiteSchemas["addPeriodInput"]>;
 export type AddRelationshipInput = z.infer<SiteSchemas["addRelationshipInput"]>;
+export type SetRelationshipStrengthInput = z.infer<SiteSchemas["setRelationshipStrengthInput"]>;

@@ -199,13 +199,19 @@ export function buildMcpServer(env: Env): McpServer {
     "score_period",
     {
       description:
-        "Score one period of an entity with Clef (@cf/cloudflare/clef) from the evidence you supply, 200 to 8,000 " +
-        "characters about that period, typically from Wikipedia. " +
+        "Score one period of an entity with Clef (@cf/cloudflare/clef) from the evidence you supply, 200 to " +
+        "200,000 characters about that period, typically the whole Wikipedia article. " +
         `One Clef request asks ${dims.length * 2 + 2} questions: benefit and ` +
-        "harm for each dimension, plus the period's reach and persistence. Stores the period's reach and " +
-        "persistence factors and one assessment (ai_suggested, the evidence as each justification, the source URL " +
-        "if given), replacing any earlier Clef assessment of the same period; the replaced one is kept in the audit " +
-        "log. Pass the Wikipedia revision permalink as source_url. Writes nothing if Clef's answers are " +
+        "harm for each dimension, plus the period's reach and persistence. " +
+        (site.scoring.breadth === "people"
+          ? `Beside it, one Clairic (@cf/cloudflare/clairic) request counts the living people the period affected ` +
+            "in a typical year, for each dimension's benefit and harm; Clef's answers are read as depth. Stores " +
+            "the period's reach and persistence factors and one assessment (ai_suggested, depth and head-count " +
+            "per dimension, the evidence once, the source URL if given), "
+          : "Stores the period's reach and persistence factors and one assessment (ai_suggested, the evidence as " +
+            "each justification, the source URL if given), ") +
+        "replacing any earlier Clef assessment of the same period; the replaced one is kept in the audit " +
+        "log. Pass the Wikipedia revision permalink as source_url. Writes nothing if a model's answers are " +
         "unusable. Link the entity's consequences first: their effects are left out of this period's score.",
       inputSchema: schemas.scorePeriodInput,
       annotations: { ...WRITE, openWorldHint: true },
@@ -258,6 +264,19 @@ export function buildMcpServer(env: Env): McpServer {
       annotations: WRITE,
     },
     async (args) => guard(() => service.addRelationship(env, args)),
+  );
+
+  server.registerTool(
+    "set_relationship_strength",
+    {
+      description:
+        "Change the strength (0-1) of an existing link, found by source slug, target slug and type. For a " +
+        "credit-bearing link the consequence's incoming strengths, with this one changed, may total at most " +
+        "1.00, as for add_relationship. Records an audit-log entry on the consequence. Returns the updated row.",
+      inputSchema: schemas.setRelationshipStrengthInput,
+      annotations: WRITE,
+    },
+    async (args) => guard(() => service.setRelationshipStrength(env, args)),
   );
 
   return server;
