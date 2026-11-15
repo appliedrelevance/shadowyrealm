@@ -739,7 +739,7 @@ async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Sco
   const db = connect(env);
   const asOfYear = new Date().getUTCFullYear();
 
-  const [entities, periods, assessments, links, shares] = await Promise.all([
+  const [entities, periods, assessments, links] = await Promise.all([
     every<ScoredEntity>("load entities", (from, to) => {
       let q = db.from("entities").select(ENTITY_FIELDS);
       if (!includeDrafts) q = q.eq("status", "published");
@@ -758,23 +758,14 @@ async function loadScoring(env: ServiceEnv, includeDrafts: boolean): Promise<Sco
         .order("id")
         .range(from, to),
     ),
-    // A site that counts people computes credit from the links below (walkShares); the others ask Postgres.
-    site.scoring.breadth === "people"
-      ? Promise.resolve(null)
-      : every("compute credit shares", (from, to) =>
-          db
-            .rpc("credit_shares", { published_only: !includeDrafts })
-            .order("ancestor_id")
-            .order("descendant_id")
-            .range(from, to),
-        ),
   ]);
 
   const byId = new Map(entities.map((e) => [e.id, e]));
   const inSet = (id: number) => byId.has(id);
   const keptPeriods = periods.filter((p) => inSet(p.entity_id));
   const keptLinks = links.filter((l) => inSet(l.source_entity_id) && inSet(l.target_entity_id));
-  const creditShares: ShareRow[] = shares ?? walkShares(keptLinks, creditTypes(site));
+  // Every site adds up every route a descendant's credit takes to an ancestor (walkShares).
+  const creditShares: ShareRow[] = walkShares(keptLinks, creditTypes(site));
   const scores = composeScores(
     { scoring: site.scoring, creditTypes: creditTypes(site) },
     entities.map((e) => e.id),

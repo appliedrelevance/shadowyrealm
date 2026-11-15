@@ -2,10 +2,10 @@
  * Score composition: each entity's own profile plus the credited share of
  * everything downstream of it.
  *
- * Postgres computes the shares (shadowyrealm.credit_shares, a recursive CTE
- * over the credit-bearing links); this module only combines them with the
- * calculator's own areas. A descendant contributes its OWN profile, never its
- * credited one, so no chain is counted twice.
+ * walkShares computes the shares from the credit-bearing links, every route
+ * added up, for every site; composeScores combines them with the calculator's
+ * own areas. A descendant contributes its OWN profile, never its credited one,
+ * so no chain is counted twice.
  */
 import type { ScoringConfig } from "../sites/types";
 import {
@@ -83,9 +83,8 @@ export interface EntityScore {
 }
 
 /**
- * Credit shares for a site that counts people (ScoringConfig.breadth): an ancestor's share of a
- * descendant is the chance that a walk upstream from the descendant, taking each cause with its
- * link's strength, reaches the ancestor. Every route counts, a cycle included, and the walk stops at
+ * Credit shares, for every site: an ancestor's share of a descendant is the chance that a walk
+ * upstream from the descendant, taking each cause with its link's strength, reaches the ancestor. Every route counts, a cycle included, and the walk stops at
  * the ancestor, so a share is never above 1. Shares under 0.001 are dropped.
  *
  * Computed per ancestor by iterating h(d) = Σ over d's causes p of strength × (p is the ancestor ? 1

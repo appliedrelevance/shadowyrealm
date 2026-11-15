@@ -86,10 +86,10 @@ export interface ScoringConfig {
    * dimension's benefit and harm. Each count's reach is its share of the world's population then, on
    * the reach rubric's scale (10 is everyone alive, each level below a tenth as many), and a level is
    * weight × depth × that reach's multiplier. Depth is Clef's probability
-   * on each intensity level above a flat 0.1, weighted by the level and scaled to 0–10. An ancestor's
-   * share of a descendant is the chance that a walk upstream from the descendant, taking each cause with
-   * its link's strength, reaches the ancestor: every route added up (src/lib/credit.ts, walkShares),
-   * where "reach" keeps the strongest chain (credit_shares).
+   * on each intensity level above a flat 0.1, weighted by the level and scaled to 0–10.
+   *
+   * Credit does not depend on it: on every site an ancestor's share of a descendant adds up every route
+   * between them (src/lib/credit.ts, walkShares).
    */
   breadth: "reach" | "people";
   /** Areas are level × years / unit.years, named unit.name. */

@@ -88,8 +88,14 @@ export function Methodology() {
         <h2 className="font-display text-ink">Share is originality</h2>
         <p>
           Links run from cause to consequence, and a link's strength is the share of the consequence credited to the
-          cause. Credit travels any number of hops by the strongest chain, so Bell Labs is credited, through the
-          transistor, the integrated circuit and the microprocessor, with a share of the iPhone.
+          cause. Credit travels any number of hops, so Bell Labs is credited, through the transistor, the integrated
+          circuit and the microprocessor, with a share of the iPhone.
+        </p>
+        <p>
+          An ancestor's share of a descendant is the chance that a walk back from the descendant, taking each cause
+          with its link's strength, reaches the ancestor. Every route counts. A chain at 0.8 and then 0.5 gives 0.8 ×
+          0.5 = 40%, and a second route adds its own product: Michael Faraday is credited with the electric generator
+          directly and again through electromagnetic induction.
         </p>
         <CreditFormula />
         <p>
