@@ -9,7 +9,8 @@ import recorded from "./fixtures/system-one-shadowyrealm.json";
 
 describe("ShadowyRealm's System One requests", () => {
   // The fixture is one period of the 2026-11-15 pilot over whole Wikipedia articles, which froze the
-  // scoring; the keys are the System One cache's keys of the requests that pilot sent.
+  // scoring; the keys are the System One cache's keys of the requests that pilot sent, the Clef one as
+  // re-asked the same day with benefit questions on the benefit-worded levels.
   test("are byte for byte the ones the frozen scoring was measured with", () => {
     expect(keyOf(CLEF_MODEL, buildClefRequest(shadowyrealm, recorded.input))).toBe(recorded.clef_key);
     expect(keyOf(CLAIRIC_MODEL, buildClairicRequest(shadowyrealm, recorded.input))).toBe(recorded.clairic_key);

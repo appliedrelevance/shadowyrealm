@@ -20,7 +20,8 @@ for (const site of Object.values(SITES)) {
 
     test("has ten levels in every rubric and a time constant per persistence level", () => {
       const r = site.scoring.rubrics;
-      expect(r.intensity).toHaveLength(10);
+      expect(r.intensity.benefit).toHaveLength(10);
+      expect(r.intensity.harm).toHaveLength(10);
       expect(r.reach).toHaveLength(10);
       expect(r.persistence).toHaveLength(10);
       expect(r.persistenceTimeConstants).toHaveLength(10);

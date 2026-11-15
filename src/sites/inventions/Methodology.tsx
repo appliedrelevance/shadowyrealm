@@ -64,6 +64,11 @@ export function Methodology() {
           leaves out the consequences that have entries of their own. Environment is judged by the effect on the
           natural world as well as on people.
         </p>
+        <p>
+          Benefit and harm share the ten levels of intensity, and the top three are worded for each side. Under one
+          wording for both, Clef read the top level, "the most intense effect on people in history", as fitting the
+          benefit of a catastrophe.
+        </p>
         <IntensityTable />
         <ReachTable />
 

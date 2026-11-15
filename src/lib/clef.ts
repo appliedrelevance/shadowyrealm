@@ -69,7 +69,7 @@ export function buildClefRequest(site: SiteConfig, p: PeriodToScore) {
           `${d.clef.area}. ${d.clef.depth} ` +
           `Score only that activity in that period. ${leaveOut} ` +
           `If the evidence shows no ${kind} in this area, choose the lowest level.`,
-        criteria: rubrics.intensity,
+        criteria: rubrics.intensity[kind],
       };
     }
   }
@@ -172,13 +172,13 @@ export function readClefAnswers(
   const benefit = emptyDimensions(keys);
   const harm = emptyDimensions(keys);
   const confidences: number[] = [];
-  const levels = scoring.rubrics.intensity.length;
-  const depth = (id: string) => Math.round(depthOf(probabilitiesOf(answers, id, levels)) * 100) / 100;
+  const { intensity } = scoring.rubrics;
+  const depth = (id: string, levels: number) => Math.round(depthOf(probabilitiesOf(answers, id, levels)) * 100) / 100;
   for (const d of keys) {
     const b = read(answers, `${d}_benefit`);
     const h = read(answers, `${d}_harm`);
-    benefit[d] = scoring.breadth === "people" ? depth(`${d}_benefit`) : level(b.score);
-    harm[d] = scoring.breadth === "people" ? depth(`${d}_harm`) : level(h.score);
+    benefit[d] = scoring.breadth === "people" ? depth(`${d}_benefit`, intensity.benefit.length) : level(b.score);
+    harm[d] = scoring.breadth === "people" ? depth(`${d}_harm`, intensity.harm.length) : level(h.score);
     confidences.push(b.confidence, h.confidence);
   }
   const reach = read(answers, "reach");

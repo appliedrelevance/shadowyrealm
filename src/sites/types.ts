@@ -55,8 +55,11 @@ export interface LinkTypeDef {
 }
 
 export interface Rubrics {
-  /** Ten levels each, lowest first. */
-  intensity: readonly string[];
+  /**
+   * Ten levels each, lowest first. Benefit and harm share the levels, each worded for its own side:
+   * a top level that reads as catastrophe draws a benefit question about a catastrophe to the top.
+   */
+  intensity: { benefit: readonly string[]; harm: readonly string[] };
   reach: readonly string[];
   persistence: readonly string[];
   /** Years for a fading legacy to fall to 1/e, one per persistence level. Infinity never fades. */

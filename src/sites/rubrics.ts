@@ -5,19 +5,38 @@
 import type { Rubrics } from "./types";
 
 export const HISTORICAL_RUBRICS: Rubrics = {
-  /** Intensity for the people affected; breadth is the reach question's job. */
-  intensity: [
-    "No effect on this dimension",
-    "Trivial, barely noticeable",
-    "Slight, limited to a few people",
-    "Minor but real",
-    "Moderate",
-    "Substantial",
-    "Major",
-    "Severe",
-    "Extreme, life-altering for those affected",
-    "Catastrophic or transformative, the most intense effect on people in history",
-  ],
+  /**
+   * Intensity for the people affected; breadth is the reach question's job. The levels below the
+   * seventh read the same for both sides. Under one shared wording, whose top level was "Catastrophic
+   * or transformative, the most intense effect on people in history", Clef put 70% on the top two
+   * levels of the Holocaust's health benefit with no evidence at all (2026-11-15).
+   */
+  intensity: {
+    benefit: [
+      "No effect on this dimension",
+      "Trivial, barely noticeable",
+      "Slight, limited to a few people",
+      "Minor but real",
+      "Moderate",
+      "Substantial",
+      "Major",
+      "Profound",
+      "Life-changing for the better for those affected",
+      "Transformative, the greatest improvement in people's lives in history",
+    ],
+    harm: [
+      "No effect on this dimension",
+      "Trivial, barely noticeable",
+      "Slight, limited to a few people",
+      "Minor but real",
+      "Moderate",
+      "Substantial",
+      "Major",
+      "Severe",
+      "Extreme, life-altering for those affected",
+      "Catastrophic or transformative, the most intense effect on people in history",
+    ],
+  },
   /** Read as reach factor 1–10. */
   reach: [
     "A handful of people",

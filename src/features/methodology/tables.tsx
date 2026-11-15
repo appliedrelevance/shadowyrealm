@@ -52,7 +52,27 @@ export function RubricTable({ title, levels, from, scale }: { title: string; lev
 }
 
 export function IntensityTable() {
-  return <RubricTable title="Benefit and harm intensity" levels={SITE.scoring.rubrics.intensity} from={0} scale />;
+  const { benefit, harm } = SITE.scoring.rubrics.intensity;
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Intensity</th>
+          <th>Clef's level for a benefit</th>
+          <th>Clef's level for a harm</th>
+        </tr>
+      </thead>
+      <tbody>
+        {harm.map((label, i) => (
+          <tr key={label}>
+            <td>{((i * 10) / 9).toFixed(1)}</td>
+            <td>{benefit[i]}</td>
+            <td>{label}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 export function ReachTable() {

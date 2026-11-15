@@ -72,6 +72,12 @@ export function Methodology() {
           Both are told to judge only from the evidence, to score only the entity's own direct activity in that
           period, and to leave out consequences that are entities of their own.
         </p>
+        <p>
+          Benefit and harm share the ten levels of depth, and the top three are worded for each side. Under one
+          wording for both, Clef read the top level, "the most intense effect on people in history", as fitting the
+          benefit of a genocide: asked about the Holocaust's benefit to health, with no evidence at all, it put 70% on
+          the top two levels.
+        </p>
         <IntensityTable />
 
         <h2 className="font-display text-ink">Persistence and the fading tail</h2>
