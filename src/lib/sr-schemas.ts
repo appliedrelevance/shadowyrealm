@@ -98,12 +98,33 @@ function build(site: SiteConfig) {
         .string()
         .min(200)
         .max(200_000)
-        .describe("Evidence about this period, typically the whole Wikipedia article: 200 to 200,000 characters"),
+        .optional()
+        .describe(
+          "Evidence about this period, typically the whole Wikipedia article: 200 to 200,000 characters. Omit it to " +
+            "score again from the evidence the period's Clef assessment was scored from, and its sources",
+        ),
       source_url: z
         .string()
         .url()
         .optional()
-        .describe("Where the evidence came from: for Wikipedia, the permalink of the revision read (index.php?oldid=…)"),
+        .describe(
+          "Where the evidence came from: for Wikipedia, the permalink of the revision read (index.php?oldid=…). " +
+            "Only with evidence",
+        ),
+      answers: z
+        .record(z.string().regex(/^[0-9a-f]{64}$/), z.unknown())
+        .optional()
+        .describe(
+          "Answers already paid for, by request key (the sha256 of the model and its request as canonical JSON, " +
+            "as unanswered lists them). A request answered here is not sent to its model",
+        ),
+      pay: z
+        .boolean()
+        .default(true)
+        .describe(
+          "false asks no model: if a request has no answer in answers, nothing is written and the result " +
+            "lists every such request as unanswered, with its key and length",
+        ),
     }),
 
     getScoresInput: z.object({

@@ -5,9 +5,16 @@
  *
  * Re-runnable: entities, periods and links that already exist are left alone,
  * and a period is scored only if it has no Clef assessment yet (--rescore
- * scores every period again).
+ * scores every period again, from the evidence it was last scored from;
+ * --refresh reads its article from Wikipedia again).
  *
- *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore] [--publish] [--concurrency 4]
+ *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore [--refresh]] [--pay] [--publish] [--concurrency 4]
+ *
+ * No model is paid for twice. Every Clef and Clairic answer is kept in the
+ * System One cache (system-one-cache.ts), and score_period is given the ones
+ * already held, by request key, instead of asking again. A run that would
+ * have to ask a model first lists those requests and what they would cost at
+ * most, and scores nothing; --pay asks them, and keeps the answers.
  *
  * The content index exports `site`, the key of its site (src/sites): that picks
  * the User-Agent, the dimensions it logs, the default link type and the link
@@ -29,6 +36,7 @@ import type { SiteContent } from "../content/types";
 import { creditTypes, siteFor } from "../src/sites";
 import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
+import { keyOf, SystemOneCache } from "./system-one-cache";
 import { Wikipedia } from "./wiki-evidence";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
@@ -40,8 +48,22 @@ const file = args.find((a) => !a.startsWith("--"));
 if (!file) throw new Error("Pass the content file, e.g. content/realm.ts");
 const only = args.includes("--only") ? new Set(args[args.indexOf("--only") + 1].split(",")) : null;
 const rescore = args.includes("--rescore");
+const refresh = args.includes("--refresh");
+const pay = args.includes("--pay");
 const publish = args.includes("--publish");
 const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
+
+const cache = new SystemOneCache();
+
+/**
+ * The most a character of request can cost: the most input tokens a character has taken over the
+ * whole-article requests in the System One cache (2026-11-14 and 15: Clef 0.4429, Clairic 0.4738),
+ * at Cloudflare's list price per input token (Clef $0.24 a million, Clairic $0.10).
+ */
+const DOLLARS_PER_CHAR_AT_MOST: Record<string, number> = {
+  "@cf/cloudflare/clef": 0.4429 * 0.24e-6,
+  "@cf/cloudflare/clairic": 0.4738 * 0.1e-6,
+};
 
 let WIKI_HEADERS: Record<string, string> = {};
 let wiki: Wikipedia;
@@ -93,12 +115,63 @@ interface EntityDetail {
   relationships: { direction: string; relationship_type: string; strength: number | string; other: { slug: string } }[];
 }
 
+interface Unanswered {
+  model: string;
+  key: string;
+  input_chars: number;
+}
+
+type ScoreResult =
+  | { scored: false; unanswered: Unanswered[] }
+  | {
+      scored: true;
+      assessment: Record<string, number>;
+      period: { reach_factor: number; persistence_factor: number };
+      asked: { model: string; key: string; input: unknown; output: unknown }[];
+    };
+
+interface Job {
+  slug: string;
+  label: string;
+  input: Record<string, unknown>;
+  answers: Record<string, unknown>;
+  missing: Unanswered[];
+}
+
 async function detail(slug: string): Promise<EntityDetail | null> {
   try {
     return await call<EntityDetail>("get_entity", { slug });
   } catch (err) {
     if (String(err).includes("No entity with slug")) return null;
     throw err;
+  }
+}
+
+/**
+ * A score_period that predates answers and pay would drop them and ask the models, paying for
+ * answers already held; such a server is refused before anything is sent.
+ */
+async function checkScorePeriodTakesAnswers() {
+  const res = await fetch(MCP_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${MCP_API_KEY}`,
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    },
+    body: JSON.stringify({ jsonrpc: "2.0", id: ++rpcId, method: "tools/list", params: {} }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`tools/list: HTTP ${res.status} ${text.slice(0, 300)}`);
+  const json = text.startsWith("{")
+    ? JSON.parse(text)
+    : JSON.parse(text.split("\n").find((l) => l.startsWith("data: "))!.slice(6));
+  const tool = (json.result.tools as { name: string; inputSchema: { properties?: Record<string, unknown> } }[]).find(
+    (t) => t.name === "score_period",
+  );
+  const props = tool?.inputSchema.properties ?? {};
+  if (!("answers" in props && "pay" in props)) {
+    throw new Error(`${MCP_URL}'s score_period takes no answers or pay, so it would pay for answers already held; deploy the Worker first`);
   }
 }
 
@@ -133,6 +206,7 @@ async function main() {
   const mod = (await import(file.startsWith("/") ? file : `${process.cwd()}/${file}`)) as { default: SiteContent<string, string>; site?: string };
   if (!mod.site) throw new Error(`${file} must export \`site\`, the key of the site it belongs to`);
   const site = siteFor(mod.site);
+  await checkScorePeriodTakesAnswers();
   WIKI_HEADERS = { "User-Agent": site.brand.userAgent };
   wiki = new Wikipedia(site.brand.userAgent);
   const dims = site.scoring.dimensions.map((d) => d.key);
@@ -219,31 +293,73 @@ async function main() {
   }
   for (const c of raised) await setStrength(c);
 
+  // Every request goes through the System One cache: an answer already paid for is passed to
+  // score_period by its key and never asked again. First a pass that asks no model and writes nothing
+  // finds each period's requests; if any is not in the cache, the run says what asking them would
+  // cost at most and stops, unless --pay.
+  const jobs: Job[] = [];
   await inPool(entities, concurrency, async (e) => {
     const d = (await detail(e.slug))!;
     for (const p of e.periods) {
       const period = d.periods.find((x) => x.label === p.label)!;
       const scored = d.assessments.some((a) => a.period_id === period.id && a.ai_model_used === "@cf/cloudflare/clef");
       if (scored && !rescore) continue;
-      const { evidence, source_url } = await wiki.evidence(e, p);
-      const result = await call<{ assessment: Record<string, number>; period: { reach_factor: number; persistence_factor: number } }>(
-        "score_period",
-        { slug: e.slug, period_id: period.id, evidence, source_url },
-      );
-      const a = result.assessment;
-      const benefit = dims.map((k) => Number(a[`${k}_benefit`]));
-      const harm = dims.map((k) => Number(a[`${k}_harm`]));
-      console.log(
-        `  scored ${e.slug} / ${p.label}: benefit ${benefit.map((v) => v.toFixed(1)).join(" ")} | harm ${harm
-          .map((v) => v.toFixed(1))
-          .join(" ")} | reach ${result.period.reach_factor} persistence ${result.period.persistence_factor}`,
-      );
+      // A re-score asks again from the evidence the period was scored from; --refresh reads the article again.
+      const input = { slug: e.slug, period_id: period.id, ...(scored && !refresh ? {} : await wiki.evidence(e, p)) };
+      const plan = await call<ScoreResult>("score_period", { ...input, pay: false });
+      if (plan.scored) throw new Error(`score_period scored ${e.slug} / ${p.label} with no answers and pay false`);
+      const answers: Record<string, unknown> = {};
+      const missing: Unanswered[] = [];
+      for (const u of plan.unanswered) {
+        const held = cache.byKey(u.key);
+        if (held && !held.partial) answers[u.key] = held.output;
+        else missing.push(u);
+      }
+      jobs.push({ slug: e.slug, label: p.label, input, answers, missing });
     }
-    if (publish && d.entity.status !== "published") {
+  });
+  const missing = jobs.flatMap((j) => j.missing);
+  const ceiling = missing.reduce((s, u) => s + u.input_chars * DOLLARS_PER_CHAR_AT_MOST[u.model], 0);
+  const cached = jobs.filter((j) => j.missing.length === 0).length;
+  console.log(
+    `${jobs.length} periods to score: ${cached} answered from the System One cache, ` +
+      `${missing.length} requests to ask for ${jobs.length - cached} (at most $${ceiling.toFixed(2)})`,
+  );
+  if (missing.length > 0 && !pay) {
+    for (const j of jobs.filter((j) => j.missing.length > 0)) {
+      console.log(`  to ask: ${j.slug} / ${j.label} (${j.missing.map((u) => u.model).join(", ")})`);
+    }
+    console.log("Nothing was scored. Run again with --pay to ask them.");
+    process.exit(2);
+  }
+
+  await inPool(jobs, concurrency, async (j) => {
+    const result = await call<ScoreResult>("score_period", { ...j.input, answers: j.answers, pay: j.missing.length > 0 });
+    if (!result.scored) throw new Error(`score_period left ${j.slug} / ${j.label} unscored`);
+    for (const a of result.asked) {
+      const key = keyOf(a.model, a.input);
+      if (key !== a.key) throw new Error(`${j.slug} / ${j.label}: score_period keys its ${a.model} request ${a.key}, the cache ${key}`);
+      cache.put(a.model, a.input, a.output);
+    }
+    const a = result.assessment;
+    const benefit = dims.map((k) => Number(a[`${k}_benefit`]));
+    const harm = dims.map((k) => Number(a[`${k}_harm`]));
+    console.log(
+      `  scored ${j.slug} / ${j.label}: benefit ${benefit.map((v) => v.toFixed(1)).join(" ")} | harm ${harm
+        .map((v) => v.toFixed(1))
+        .join(" ")} | reach ${result.period.reach_factor} persistence ${result.period.persistence_factor}` +
+        (result.asked.length > 0 ? ` (asked ${result.asked.map((x) => x.model).join(", ")})` : ""),
+    );
+  });
+
+  if (publish) {
+    for (const e of entities) {
+      const d = (await detail(e.slug))!;
+      if (d.entity.status === "published") continue;
       await call("set_entity_status", { slug: e.slug, status: "published" });
       console.log(`  published ${e.slug}`);
     }
-  });
+  }
 }
 
 await main();

@@ -35,6 +35,13 @@ describe("the System One cache", () => {
     expect(calls).toBe(1);
   });
 
+  test("finds an answer by the key of a request built elsewhere", () => {
+    const cache = new SystemOneCache(freshDir());
+    cache.put("@cf/cloudflare/clef", { state: "s" }, { answers: { q0: 1 } });
+    expect(cache.byKey(keyOf("@cf/cloudflare/clef", { state: "s" }))?.output).toEqual({ answers: { q0: 1 } });
+    expect(cache.byKey(keyOf("@cf/cloudflare/clef", { state: "t" }))).toBeUndefined();
+  });
+
   test("files each answer under the day it was given", () => {
     const dir = freshDir();
     const cache = new SystemOneCache(dir);

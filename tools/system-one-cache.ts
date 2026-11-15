@@ -5,8 +5,11 @@
 //
 // Each line: { key, model, input, output, at, partial? }. `partial` marks an answer kept in part only
 // (the first link search kept each question's yes probability, not the whole answer).
-import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { canonical, keyOf } from "../src/lib/system-one";
+
+// The key is the Worker's too: score_period takes answers by it.
+export { canonical, keyOf };
 
 export const DEFAULT_CACHE_DIR = "/Volumes/Berthold/Landru/work/shadowyrealm/system-one";
 
@@ -17,22 +20,6 @@ export interface CachedAnswer {
   output: unknown;
   at: string;
   partial?: true;
-}
-
-/** JSON with every object's keys sorted, so two equal requests are one string however they were built. */
-export function canonical(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
-  if (value !== null && typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>)
-      .filter(([, v]) => v !== undefined)
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`).join(",")}}`;
-  }
-  return JSON.stringify(value);
-}
-
-export function keyOf(model: string, input: unknown): string {
-  return createHash("sha256").update(`${model}\n${canonical(input)}`).digest("hex");
 }
 
 export class SystemOneCache {
@@ -59,6 +46,11 @@ export class SystemOneCache {
 
   get(model: string, input: unknown): CachedAnswer | undefined {
     return this.answers.get(keyOf(model, input));
+  }
+
+  /** The answer filed under a request's key, for a request built elsewhere (score_period's, say). */
+  byKey(key: string): CachedAnswer | undefined {
+    return this.answers.get(key);
   }
 
   /** Keeps an answer. `at` is when the model gave it, which names the day's file. */

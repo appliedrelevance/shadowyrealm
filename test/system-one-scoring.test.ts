@@ -4,13 +4,14 @@ import { walkShares } from "../src/lib/credit";
 import { buildClefRequest, CLEF_MODEL, depthOf, readClefAnswers } from "../src/lib/clef";
 import { inventions } from "../src/sites/inventions";
 import { shadowyrealm } from "../src/sites/shadowyrealm";
-import { keyOf } from "../tools/system-one-cache";
+import { keyOf } from "../src/lib/system-one";
 import recorded from "./fixtures/system-one-shadowyrealm.json";
 
 describe("ShadowyRealm's System One requests", () => {
   // The fixture is one period of the 2026-11-15 pilot over whole Wikipedia articles, which froze the
   // scoring; the keys are the System One cache's keys of the requests that pilot sent, the Clef one as
-  // re-asked the same day with benefit questions on the benefit-worded levels.
+  // re-asked the same day with benefit questions on the benefit-worded levels. The key is the one
+  // score_period computes, so the cache's answers are the Worker's.
   test("are byte for byte the ones the frozen scoring was measured with", () => {
     expect(keyOf(CLEF_MODEL, buildClefRequest(shadowyrealm, recorded.input))).toBe(recorded.clef_key);
     expect(keyOf(CLAIRIC_MODEL, buildClairicRequest(shadowyrealm, recorded.input))).toBe(recorded.clairic_key);

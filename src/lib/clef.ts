@@ -193,8 +193,3 @@ export function readClefAnswers(
     confidence: confidences.reduce((s, c) => s + c, 0) / confidences.length,
   };
 }
-
-export async function runClef(env: ClefEnv, site: SiteConfig, p: PeriodToScore): Promise<ClefScores> {
-  const response = await env.AI.run(CLEF_MODEL, buildClefRequest(site, p), { gateway: { id: env.AI_GATEWAY_NAME } });
-  return readClefAnswers(site.scoring, response);
-}

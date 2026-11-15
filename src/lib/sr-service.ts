@@ -16,8 +16,8 @@ import { createClient } from "@supabase/supabase-js";
 import { allowsEnds, creditTypes, describeEnds, dimensionKeys, linkTypeOf, siteFor } from "../sites";
 import type { SiteConfig } from "../sites/types";
 import { sampleCurve, type Profile } from "./atis-calculator";
-import { CLAIRIC_MODEL, runClairic } from "./clairic";
-import { CLEF_MODEL, runClef, type ClefEnv } from "./clef";
+import { buildClairicRequest, CLAIRIC_MODEL, readClairicAnswers } from "./clairic";
+import { buildClefRequest, CLEF_MODEL, readClefAnswers, type ClefEnv } from "./clef";
 import { composeScores, walkShares, type AssessmentRow, type EntityScore, type ShareRow } from "./credit";
 import type { Json } from "./database.types";
 import type { EntityRow, EntityUpdate, SiteDatabase, SiteTables } from "./site-tables";
@@ -35,6 +35,7 @@ import type {
   SetEntityStatusInput,
   UpdateEntityInput,
 } from "./sr-schemas";
+import { canonical, requestOf } from "./system-one";
 import { bucketEdges } from "./timeline";
 import { slugify } from "./utils";
 
@@ -324,11 +325,38 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
   return data;
 }
 
+/** The evidence and sources a period's Clef assessment was scored from. */
+async function storedEvidence(db: ReturnType<typeof connect>, site: SiteConfig, periodId: number) {
+  const column = site.scoring.breadth === "people" ? "evidence" : `${dimensionKeys(site)[0]}_justification`;
+  const { data, error } = await db
+    .from("assessments")
+    .select(`${column}, sources`)
+    .eq("period_id", periodId)
+    .eq("ai_model_used", CLEF_MODEL)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .returns<({ sources: string[] | null } & Record<string, unknown>)[]>();
+  if (error) fail("load the period's evidence", error);
+  const evidence = data[0]?.[column];
+  if (typeof evidence !== "string" || evidence.length === 0) {
+    throw new Error(`Period ${periodId} has no Clef assessment to take evidence from; pass evidence`);
+  }
+  return { evidence, sources: data[0].sources };
+}
+
 /**
  * Score one period with Clef from the evidence supplied, then store the result:
  * the period's reach and persistence factors, and one assessment whose
  * justifications are the evidence. A rerun replaces the period's earlier Clef
  * assessment rather than averaging with it. Nothing is written if Clef fails.
+ * Without evidence, the period is scored again from the evidence its Clef
+ * assessment holds, so a re-score asks the same questions of the same text.
+ *
+ * Each request is known by its key (system-one.ts). An answer the caller has
+ * already paid for is passed in answers and not asked again; with pay false,
+ * no model is asked at all, and a request without an answer is returned as
+ * unanswered with nothing written. What was asked is returned whole, so the
+ * caller can keep it.
  *
  * Where the site counts people (ScoringConfig.breadth), Clairic is asked beside
  * Clef with the same evidence: its head-counts go in the {key}_{side}_people
@@ -343,15 +371,22 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
   const entity = await entityBySlug(db, args.slug);
   const period = await periodOf(db, entity, args.period_id);
 
+  // In link order, so the leave-out list, and with it the request, is the same on every run: rows
+  // read without an order come back as they lie on disk, which a strength update rearranges.
   const { data: outgoing, error: linkError } = await db
     .from("relationships")
     .select("relationship_type, strength, target:target_entity_id(name)")
-    .eq("source_entity_id", entity.id);
+    .eq("source_entity_id", entity.id)
+    .order("id");
   if (linkError) fail("load outgoing links", linkError);
   const excluded = outgoing
     .filter((l) => credit.has(l.relationship_type) && Number(l.strength) > 0)
     .map((l) => (l.target as unknown as { name: string }).name);
 
+  const countsPeople = site.scoring.breadth === "people";
+  const { evidence, sources } = args.evidence
+    ? { evidence: args.evidence, sources: args.source_url ? [args.source_url] : null }
+    : await storedEvidence(db, site, period.id);
   const toScore = {
     entity: entity.name,
     entity_type: entity.entity_type,
@@ -359,13 +394,31 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
     start_year: period.start_year,
     end_year: period.end_year,
     excluded,
-    evidence: args.evidence,
+    evidence,
   };
-  const countsPeople = site.scoring.breadth === "people";
-  const [clef, people] = await Promise.all([
-    runClef(env, site, toScore),
-    countsPeople ? runClairic(env, site, toScore) : Promise.resolve(null),
-  ]);
+
+  // An answer already paid for comes from the caller, by its request's key; only the rest are asked.
+  const requests = [
+    requestOf(CLEF_MODEL, buildClefRequest(site, toScore)),
+    ...(countsPeople ? [requestOf(CLAIRIC_MODEL, buildClairicRequest(site, toScore))] : []),
+  ];
+  const supplied = args.answers ?? {};
+  const unanswered = requests.filter((r) => !(r.key in supplied));
+  if (unanswered.length > 0 && !args.pay) {
+    return {
+      scored: false as const,
+      unanswered: unanswered.map((r) => ({ model: r.model, key: r.key, input_chars: canonical(r.input).length })),
+      excluded,
+    };
+  }
+  const outputs = await Promise.all(
+    requests.map((r) =>
+      r.key in supplied ? supplied[r.key] : env.AI.run(r.model, r.input, { gateway: { id: env.AI_GATEWAY_NAME } }),
+    ),
+  );
+  const clef = readClefAnswers(site.scoring, outputs[0]);
+  const people = countsPeople ? readClairicAnswers(site.scoring, outputs[1]) : null;
+  const answered = requests.map((r) => ({ model: r.model, key: r.key, from: r.key in supplied ? "supplied" : "asked" }));
 
   // The replaced assessment goes into the audit entry below, so every score a
   // period has had stays recoverable with the evidence it was computed from.
@@ -420,7 +473,7 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
   const justifications = Object.fromEntries(
     keys.map((d) => [
       `${d}_justification`,
-      countsPeople ? "Depth from Clef and people from Clairic, both read from this assessment's evidence." : args.evidence,
+      countsPeople ? "Depth from Clef and people from Clairic, both read from this assessment's evidence." : evidence,
     ]),
   ) as Record<string, string>;
 
@@ -432,8 +485,8 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       ...levels,
       ...counts,
       ...justifications,
-      ...(countsPeople ? { evidence: args.evidence } : {}),
-      sources: args.source_url ? [args.source_url] : null,
+      ...(countsPeople ? { evidence } : {}),
+      sources,
       confidence_level: Math.round(clef.confidence * 100) / 100,
       ai_suggested: true,
       ai_model_used: CLEF_MODEL,
@@ -474,13 +527,20 @@ export async function scorePeriod(env: ServiceEnv & ClefEnv, args: ScorePeriodIn
       persistence_factor: clef.persistence_factor,
       ...levels,
       ...counts,
+      requests: answered,
     },
   );
   return {
+    scored: true as const,
     assessment: data,
     period: updated.data,
     replaced_assessments: replaced.data.length,
     excluded,
+    requests: answered,
+    // What was paid for, whole, so the caller can keep it and never pay for it again.
+    asked: requests
+      .map((r, i) => ({ model: r.model, key: r.key, input: r.input, output: outputs[i] }))
+      .filter((r) => !(r.key in supplied)),
     note: countsPeople
       ? "The evidence is stored with the assessment and omitted here"
       : "Each justification holds the evidence text, which is omitted here",

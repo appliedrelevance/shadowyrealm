@@ -15,7 +15,7 @@
  */
 import type { ScoringConfig, SiteConfig } from "../sites/types";
 import { dimensionKeysOf, emptyProfile, type Profile } from "./atis-calculator";
-import type { ClefEnv, PeriodToScore } from "./clef";
+import type { PeriodToScore } from "./clef";
 
 export const CLAIRIC_MODEL = "@cf/cloudflare/clairic";
 
@@ -63,11 +63,4 @@ export function readClairicAnswers(scoring: Pick<ScoringConfig, "dimensions">, r
     }
   }
   return people;
-}
-
-export async function runClairic(env: ClefEnv, site: SiteConfig, p: PeriodToScore): Promise<Profile> {
-  const response = await env.AI.run(CLAIRIC_MODEL, buildClairicRequest(site, p), {
-    gateway: { id: env.AI_GATEWAY_NAME },
-  });
-  return readClairicAnswers(site.scoring, response);
 }

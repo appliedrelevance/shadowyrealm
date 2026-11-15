@@ -211,8 +211,12 @@ export function buildMcpServer(env: Env): McpServer {
           : "Stores the period's reach and persistence factors and one assessment (ai_suggested, the evidence as " +
             "each justification, the source URL if given), ") +
         "replacing any earlier Clef assessment of the same period; the replaced one is kept in the audit " +
-        "log. Pass the Wikipedia revision permalink as source_url. Writes nothing if a model's answers are " +
-        "unusable. Link the entity's consequences first: their effects are left out of this period's score.",
+        "log. Pass the Wikipedia revision permalink as source_url. Omit evidence to score the period again " +
+        "from the evidence it was last scored from. Each request has a key; answers already paid for can be " +
+        "passed in answers by key and are not asked again, and with pay false no model is asked: a request " +
+        "with no answer is listed as unanswered and nothing is written. The result returns whatever was " +
+        "asked, whole, so it can be kept. Writes nothing if a model's answers are unusable. Link the " +
+        "entity's consequences first: their effects are left out of this period's score.",
       inputSchema: schemas.scorePeriodInput,
       annotations: { ...WRITE, openWorldHint: true },
     },
