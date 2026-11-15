@@ -1,3 +1,4 @@
+import { formatMagnitude } from "@/features/realm/chart";
 import { cn } from "@/lib/utils";
 import { tierLabel, type ATISTier } from "@/lib/atis-calculator";
 import { SITE } from "@/lib/site";
@@ -25,7 +26,7 @@ export function MagnitudeBadge({ tier, magnitude, showMagnitude = true, classNam
     if (!showMagnitude) return null;
     return (
       <span className={cn("inline-flex items-center rounded-full border border-line px-2.5 py-0.5 font-mono text-xs text-ink-2", className)}>
-        {Math.round(magnitude).toLocaleString("en-US")}
+        {formatMagnitude(magnitude)}
       </span>
     );
   }
@@ -38,7 +39,7 @@ export function MagnitudeBadge({ tier, magnitude, showMagnitude = true, classNam
       )}
     >
       <span>{tierLabel(tiers, tier)}</span>
-      {showMagnitude && <span className="font-mono opacity-75">{Math.round(magnitude).toLocaleString("en-US")}</span>}
+      {showMagnitude && <span className="font-mono opacity-75">{formatMagnitude(magnitude)}</span>}
     </span>
   );
 }

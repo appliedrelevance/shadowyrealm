@@ -16,10 +16,12 @@ ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a
 ## How a score is made
 
 1. An entity's direct activity is divided into **periods**: a reign, a ministry, a war, a company's platform era.
-2. **Clef**, Cloudflare's decision model, scores each period in one request: benefit and harm for each dimension, plus reach and persistence. It works from evidence text taken from Wikipedia, which is stored with the score.
-3. A **TypeScript calculator** turns each period into a level per year (dimension weight × value × reach) and integrates the curve into influence-centuries. A fading tail follows the last period, shrunk by the share of the legacy that its consequences carry.
-4. **Postgres** computes the credit: `shadowyrealm.credit_shares()` is a recursive CTE that walks every chain of links, stops at cycles, and keeps each pair's strongest chain. It was cross-checked against pgRouting's `pgr_johnson` with edge cost −ln(strength) (`.kiro/specs/influence-graph/pgrouting-crosscheck.sql`).
-5. The **Worker** adds each descendant's own profile × share and serves one computation to every page and to the MCP tools.
+2. Two of Cloudflare's System One models read each period's evidence, its description and the whole Wikipedia article, which is stored with the score. **Clef** rates the depth of each dimension's benefit and harm for the people affected, and how long the effects lasted. **Clairic** counts the living people the entity's own activity benefited and harmed in a typical year of the period, in each dimension.
+3. A **TypeScript calculator** turns each period into a level per year (dimension weight × depth × people) and integrates the curve into influence-centuries. A fading tail follows the last period, shrunk by the share of the legacy that its consequences carry.
+4. The **influence graph** is the curated links plus the causes Clef proposed and Clairic sized (`content/system-one-graph.json`). Each consequence gives away at most what Clairic says it owes its causes together, and its links are scaled to fit (`tools/credit-graph.ts`).
+5. The **Worker** computes the credit (`walkShares` in `src/lib/credit.ts`): an ancestor's share of a descendant is the chance that a walk upstream from the descendant, taking each cause with its link's strength, reaches the ancestor, every route added up. It adds each descendant's own profile × share and serves one computation to every page and to the MCP tools.
+
+Prior Art keeps the earlier method: Clef alone, a level of weight × value × reach, and Postgres's strongest-chain `credit_shares()`. `ScoringConfig.breadth` (`src/sites/types.ts`) chooses between the two.
 
 The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/specs/influence-graph/).
 
@@ -30,9 +32,9 @@ The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/
 | Sites | `src/sites/<site>.ts` holds everything specific to a field: dimensions, weights, Clef wording, rubrics, entity and link types, timeline, tiers, copy and brand. `shadowyrealm` and `inventions` (Prior Art) are registered. |
 | Front end | React 19, Vite, TanStack Router and Query, Tailwind v4 on the Applied Relevance design tokens, d3-scale and d3-shape for the charts |
 | Worker | One Cloudflare Worker serves the SPA, `/api/*` (reads plus the owner's status control), `/mcp`, and crawler-friendly `/entity/*` pages and `/sitemap.xml` |
-| Control layer | An MCP server with 12 tools (`src/worker/mcp.ts`) over a single service layer (`src/lib/sr-service.ts`). Every write, including content loading, goes through it. |
+| Control layer | An MCP server with 13 tools (`src/worker/mcp.ts`) over a single service layer (`src/lib/sr-service.ts`). Every write, including content loading, goes through it. |
 | Data | Supabase Postgres, one schema per site (`shadowyrealm`, `inventions`), generated from the site config by `tools/site-schema.ts`. Row-level security lets anyone read published entities only, and only the Worker's service role can write. |
-| Scoring model | `@cf/cloudflare/clef` on Workers AI, through AI Gateway |
+| Scoring models | `@cf/cloudflare/clef` and `@cf/cloudflare/clairic` on Workers AI, through AI Gateway |
 
 ## Working on it
 
@@ -57,7 +59,7 @@ MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts con
 MCP_URL=https://priorart.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/inventions/index.ts --publish
 ```
 
-The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has Clef score it. `content/realm.ts` is the whole index: 624 entities, 733 periods and 298 links. `content/NEXT-500.md` is a readable list of the second wave of 500.
+The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has it scored. `content/realm.ts` is the whole index: 624 entities, 733 periods, 298 curated links and 3,576 System One proposals, of which 3,076 are kept as links. `content/NEXT-500.md` is a readable list of the second wave of 500.
 
 Videos live in `video/`, [HyperFrames](https://hyperframes.heygen.com) projects: HTML compositions rendered to MP4 frame by frame. `video/` is the 60-second River of Influence and `video/race/` the five-minute race with its live leaderboard; both draw the river with `video/assets/river.js`. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes to `video/assets/realm-data.js`, with the race's pictures in `video/assets/images/`: Wikimedia stills made with macOS `sips` and ffmpeg, each with its author and licence. Each project's `SPEC.md` is its film shot by shot.
 

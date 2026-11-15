@@ -4,6 +4,7 @@
  * time constants, the link types and the tiers.
  */
 import { describeEnds } from "@/sites";
+import { formatMagnitude } from "@/features/realm/chart";
 import { SITE } from "@/lib/site";
 
 export function DimensionTable() {
@@ -124,8 +125,8 @@ export function TierTable() {
           <tr key={t.tier}>
             <td>{t.label}</td>
             <td>
-              {t.min.toLocaleString("en-US")}
-              {i + 1 < tiers.length ? `–${tiers[i + 1].min.toLocaleString("en-US")}` : "+"}
+              {formatMagnitude(t.min)}
+              {i + 1 < tiers.length ? `–${formatMagnitude(tiers[i + 1].min)}` : "+"}
             </td>
             <td>{t.descriptor}</td>
           </tr>
@@ -138,7 +139,9 @@ export function TierTable() {
 export function LevelFormula() {
   return (
     <div className="not-prose rounded-lg border border-line bg-surface-1 p-4 font-mono text-action-ink">
-      level = dimension weight × assessed value (0–10) × reach multiplier
+      {SITE.scoring.breadth === "people"
+        ? "level = dimension weight × depth (0–10) × people affected a year"
+        : "level = dimension weight × assessed value (0–10) × reach multiplier"}
     </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   IntensityTable,
   LevelFormula,
   PersistenceTable,
-  ReachTable,
   TierTable,
 } from "@/features/methodology/tables";
 
@@ -38,26 +37,32 @@ export function Methodology() {
         </p>
         <LevelFormula />
         <p>
-          The reach multiplier is (reach ÷ 5)<sup>1.8</sup> × 3, so a nation-wide period weighs about ten times a
-          town-wide one. Laid end to end, the periods form an influence curve, and each number's score is the area
-          under its curve up to today, in <strong>influence-centuries</strong> (level × years ÷ 100). Periods that
-          overlap add; years between periods add nothing.
+          Depth is how deeply each person was affected, and people is how many were, counted absolutely. Laid end to
+          end, the periods form an influence curve, and each number's score is the area under its curve up to today,
+          in <strong>influence-centuries</strong> (level × years ÷ 100). Periods that overlap add; years between
+          periods add nothing.
         </p>
 
-        <h2 className="font-display text-ink">Scoring each period with Clef</h2>
+        <h2 className="font-display text-ink">Scoring each period with Clef and Clairic</h2>
         <p>
-          Each period is scored by Clef, Cloudflare's decision model, in a single request. The state is evidence text
-          about that period, taken from Wikipedia and stored with the score. Twelve questions are asked: benefit and
-          harm for each dimension, plus the period's reach and persistence. Each question has ten levels, and Clef's
-          probability-weighted answer gives a continuous value rather than a rounded one.
+          Each period is scored by two of Cloudflare's System One models, which read the same evidence: the period's
+          description and the whole Wikipedia article about it, stored with the score.
         </p>
         <p>
-          Benefit and harm rate <em>intensity</em> for the people affected, not breadth, which is the reach question's
-          job, so nothing is counted twice. Clef is told to judge only from the evidence, to score only the entity's
-          own direct activity in that period, and to leave out consequences that are entities of their own.
+          <strong>Clef</strong>, a decision model, rates the <em>depth</em> of each benefit and harm for the people
+          affected, on the ten levels below, and how long the effects lasted. Depth is Clef's probability on each
+          level above an even spread of 10%, weighted by the level and scaled to 0–10, so a confident answer counts
+          for more than a hesitant one.
+        </p>
+        <p>
+          <strong>Clairic</strong>, an estimation model, counts the living people the entity's own activity benefited
+          and harmed in a typical year of the period, in each area, from one to ten billion.
+        </p>
+        <p>
+          Both are told to judge only from the evidence, to score only the entity's own direct activity in that
+          period, and to leave out consequences that are entities of their own.
         </p>
         <IntensityTable />
-        <ReachTable />
 
         <h2 className="font-display text-ink">Persistence and the fading tail</h2>
         <p>
@@ -69,24 +74,32 @@ export function Methodology() {
         <PersistenceTable />
         <p>
           The part of a legacy that its consequences carry comes back as credit instead, so the tail{" "}
-          <strong>shrinks by the credit an entity passes on</strong>. Jesus passes 80% to the Church, so a fifth of
-          his ministry's tail remains and the rest reaches him as credit from the Church, rather than being counted
+          <strong>shrinks by the credit an entity passes on</strong>. A founder who passes 80% to a church keeps a
+          fifth of the tail, and the rest reaches the founder as credit from the church, rather than being counted
           twice. An entity that passes on all of itself keeps no tail.
         </p>
 
         <h2 className="font-display text-ink">Credit flows from consequence to cause</h2>
         <p>
           Links run from cause to consequence: Jesus → Catholic Church → First Crusade. A link's strength is the share
-          of the consequence credited to the cause. Credit travels any number of hops, by the strongest chain, so with
-          Jesus → Church at 0.8 and Church → First Crusade at 0.5, Jesus is credited with 0.8 × 0.5 = 40% of the
-          First Crusade. Intent doesn't matter: harm done in a figure's name reaches the figure, and a reaction is
-          credited to whatever provoked it.
+          of the consequence credited to the cause. Beside the links chosen by hand, Clef proposed the causes they
+          missed and Clairic sized each one.
+        </p>
+        <p>
+          Clairic also judged how much of each consequence it owes to all its causes together. That is the most a
+          consequence gives away: when its links add up to more, they are all scaled down to it, because the rest was
+          new with it.
+        </p>
+        <p>
+          An ancestor's share of a descendant is the chance that a walk back through history from the descendant,
+          taking each cause with its link's strength, reaches the ancestor. Every route counts. A chain at 0.8 and
+          then 0.5 gives 0.8 × 0.5 = 40%, and a second route adds its own product. Intent doesn't matter: harm done in
+          a figure's name reaches the figure, and a reaction is credited to whatever provoked it.
         </p>
         <CreditFormula />
         <p>
           Only descendants' <em>own</em> profiles are credited, never what they in turn received, so no chain is
-          counted twice. A consequence can give away at most 100% of itself across all its causes. Influence and
-          mentorship links carry credit; collaboration and opposition only describe.
+          counted twice. Influence and mentorship links carry credit; collaboration and opposition only describe.
         </p>
 
         <h2 className="font-display text-ink">Tiers</h2>
@@ -98,11 +111,9 @@ export function Methodology() {
 
         <h2 className="font-display text-ink">Under the hood</h2>
         <p>
-          The credit shares are computed inside Postgres by a recursive query that walks every chain of links, stops
-          at cycles, and keeps each pair's strongest chain. The same shares were cross-checked against pgRouting's
-          all-pairs shortest-path algorithm, with each link costed at −ln(strength), and the two agree. The curves and
-          areas are computed by a small TypeScript calculator in a Cloudflare Worker, which serves one set of scores to
-          every page here and to the MCP tools that maintain the index.
+          The curves, the areas and the credit shares are computed by a small TypeScript calculator in a Cloudflare
+          Worker, which serves one set of scores to every page here and to the MCP tools that maintain the index. The
+          walk is iterated for each ancestor until no share moves by a billionth.
         </p>
         <p>
           <Link to="/realm">See the lineage</Link> or <Link to="/">return to the index</Link>.
