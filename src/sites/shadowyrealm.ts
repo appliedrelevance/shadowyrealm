@@ -71,14 +71,15 @@ export const shadowyrealm: SiteConfig = {
      * In influence-centuries of total magnitude: the round values nearest the
      * 20th, 50th, 80th and 95th percentiles of the 2026-11-15 scoring of all
      * 624 entities by Clef and Clairic, with reach read from each head-count's
-     * share of the world's population. The keys name the colour tokens; the
-     * labels are what readers see.
+     * share of the world's population, re-derived after benefit questions moved
+     * to benefit-worded levels: 17.0, 57.3, 248.6 and 788.5. The keys name the
+     * colour tokens; the labels are what readers see.
      */
     tiers: [
       { tier: "minimal", min: 0, label: "Notable", descriptor: "Influence concentrated in one era or field" },
       { tier: "moderate", min: 20, label: "Major", descriptor: "Wide influence across a nation or a field" },
       { tier: "significant", min: 60, label: "Great", descriptor: "Influence across nations and generations" },
-      { tier: "transformational", min: 300, label: "Epochal", descriptor: "Defined an epoch for much of humanity" },
+      { tier: "transformational", min: 200, label: "Epochal", descriptor: "Defined an epoch for much of humanity" },
       { tier: "legendary", min: 800, label: "Legendary", descriptor: "Shaped civilisations for millennia" },
     ],
   },
