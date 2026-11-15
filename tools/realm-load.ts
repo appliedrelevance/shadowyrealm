@@ -13,22 +13,23 @@
  * the User-Agent, the dimensions it logs, the default link type and the link
  * each entity type requires. Evidence is cited by the permalink of the
  * Wikipedia revision it was read from, so a score's source can be read again
- * exactly as it stood.
+ * exactly as it stood. Every period is scored from its whole article
+ * (wiki-evidence.ts), cut only where it would not fit Clef's context.
  *
  * --concurrency creates and scores that many entities at once; links are
  * always added one at a time, so the credit cap is checked in order.
  *
- * A site that counts people (ScoringConfig.breadth) is scored from each
- * period's whole article, and its links are the stored graph
+ * A site that counts people (ScoringConfig.breadth) takes its links from the stored graph
  * (tools/credit-graph.ts): the curated links and System One's proposals, scaled
  * to each consequence's inherited share. A link already in the index whose
  * strength differs is set to the stored one, lowered strengths first so the
  * credit cap holds throughout.
  */
-import type { SiteContent, SiteEntity, SitePeriod } from "../content/types";
+import type { SiteContent } from "../content/types";
 import { creditTypes, siteFor } from "../src/sites";
 import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
+import { Wikipedia } from "./wiki-evidence";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
 const MCP_API_KEY = process.env.MCP_API_KEY;
@@ -43,8 +44,7 @@ const publish = args.includes("--publish");
 const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
 
 let WIKI_HEADERS: Record<string, string> = {};
-const EVIDENCE_MAX = 7800;
-const SKIP_SECTIONS = /^(see also|references|further reading|external links|notes|bibliography|sources|citations|footnotes|works cited|gallery|explanatory notes)$/i;
+let wiki: Wikipedia;
 
 // ---------- MCP ----------
 
@@ -71,121 +71,6 @@ async function call<T = unknown>(name: string, input: Record<string, unknown>): 
 }
 
 // ---------- Wikipedia ----------
-
-const articles = new Map<string, { title: string; text: string; revid: number }>();
-
-async function article(title: string) {
-  const cached = articles.get(title);
-  if (cached) return cached;
-  const url =
-    "https://en.wikipedia.org/w/api.php?" +
-    new URLSearchParams({
-      action: "query",
-      prop: "extracts|revisions",
-      rvprop: "ids",
-      explaintext: "1",
-      exsectionformat: "wiki",
-      titles: title,
-      redirects: "1",
-      format: "json",
-    });
-  const res = await fetch(url, { headers: WIKI_HEADERS });
-  if (!res.ok) throw new Error(`Wikipedia ${title}: HTTP ${res.status}`);
-  const pages = (await res.json()).query.pages as Record<
-    string,
-    { title: string; extract?: string; missing?: string; revisions?: { revid: number }[] }
-  >;
-  const page = Object.values(pages)[0];
-  if (page.missing !== undefined || !page.extract) throw new Error(`Wikipedia has no article "${title}"`);
-  const revid = page.revisions?.[0]?.revid;
-  if (!revid) throw new Error(`Wikipedia gave no revision id for "${title}"`);
-  const found = { title: page.title, text: page.extract, revid };
-  articles.set(title, found);
-  return found;
-}
-
-interface Section {
-  heading: string;
-  text: string;
-}
-
-function sections(text: string): Section[] {
-  const out: Section[] = [];
-  let current: Section = { heading: "", text: "" };
-  for (const line of text.split("\n")) {
-    const m = line.match(/^(=+)\s*(.+?)\s*\1\s*$/);
-    if (m) {
-      out.push(current);
-      current = { heading: m[2], text: "" };
-    } else if (line.trim()) {
-      current.text += `${line}\n`;
-    }
-  }
-  out.push(current);
-  return out.filter((s) => s.text.trim() && !SKIP_SECTIONS.test(s.heading));
-}
-
-/** Years a section mentions, BCE as negative. */
-function yearsIn(text: string): number[] {
-  const years: number[] = [];
-  for (const m of text.matchAll(/\b(\d{1,4})\s*(BCE|BC)\b/g)) years.push(-Number(m[1]));
-  for (const m of text.matchAll(/\b(\d{3,4})\b(?!\s*(BCE|BC))/g)) years.push(Number(m[1]));
-  return years;
-}
-
-const permalink = (source: { title: string; revid: number }) =>
-  `https://en.wikipedia.org/w/index.php?title=${encodeURIComponent(source.title.replace(/ /g, "_"))}&oldid=${source.revid}`;
-
-/**
- * Evidence for one period of a site that counts people: its description, then
- * the whole article in order, without the reference sections.
- */
-async function wholeArticleEvidence(entity: SiteEntity<string>, period: SitePeriod) {
-  const source = await article(period.wiki ?? entity.wiki);
-  let text = `${period.description}\n\n`;
-  for (const s of sections(source.text)) text += s.heading === "" ? s.text : `\n${s.heading}\n${s.text}`;
-  return { evidence: text, source_url: permalink(source) };
-}
-
-/**
- * Evidence for one period: the article's lead, then the sections that talk
- * about the period's years (or the sections the content names), up to the
- * evidence limit.
- */
-async function evidenceFor(entity: SiteEntity<string>, period: SitePeriod) {
-  const source = await article(period.wiki ?? entity.wiki);
-  const all = sections(source.text);
-  const lead = all.find((s) => s.heading === "");
-  const rest = all.filter((s) => s.heading !== "");
-
-  let chosen: Section[];
-  if (period.sections) {
-    const wanted = period.sections.map((h) => h.toLowerCase());
-    chosen = rest.filter((s) => wanted.some((w) => s.heading.toLowerCase().startsWith(w)));
-    if (chosen.length === 0) throw new Error(`${entity.slug} / ${period.label}: none of ${period.sections.join(", ")} found`);
-  } else {
-    const lo = period.start - 10;
-    const hi = period.end + 10;
-    const scored = rest.map((s, i) => ({
-      s,
-      i,
-      hits: yearsIn(s.text).filter((y) => y >= lo && y <= hi).length / Math.sqrt(s.text.length / 1000 + 1),
-    }));
-    chosen = scored
-      .filter((x) => x.hits > 0)
-      .sort((a, b) => b.hits - a.hits)
-      .map((x) => x.s);
-    if (chosen.length === 0) chosen = rest;
-  }
-
-  let text = `${period.description}\n\n`;
-  if (lead) text += `${lead.text.slice(0, 2000)}\n`;
-  for (const s of chosen) {
-    if (text.length >= EVIDENCE_MAX) break;
-    text += `\n${s.heading}\n${s.text}`;
-  }
-  return { evidence: text.slice(0, EVIDENCE_MAX), source_url: permalink(source) };
-}
 
 async function thumbnail(title: string): Promise<{ image_url?: string; page_url: string }> {
   const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`, {
@@ -249,6 +134,7 @@ async function main() {
   if (!mod.site) throw new Error(`${file} must export \`site\`, the key of the site it belongs to`);
   const site = siteFor(mod.site);
   WIKI_HEADERS = { "User-Agent": site.brand.userAgent };
+  wiki = new Wikipedia(site.brand.userAgent);
   const dims = site.scoring.dimensions.map((d) => d.key);
   const content = mod.default;
   checkRequiredLinks(site, content);
@@ -339,7 +225,7 @@ async function main() {
       const period = d.periods.find((x) => x.label === p.label)!;
       const scored = d.assessments.some((a) => a.period_id === period.id && a.ai_model_used === "@cf/cloudflare/clef");
       if (scored && !rescore) continue;
-      const { evidence, source_url } = countsPeople ? await wholeArticleEvidence(e, p) : await evidenceFor(e, p);
+      const { evidence, source_url } = await wiki.evidence(e, p);
       const result = await call<{ assessment: Record<string, number>; period: { reach_factor: number; persistence_factor: number } }>(
         "score_period",
         { slug: e.slug, period_id: period.id, evidence, source_url },
