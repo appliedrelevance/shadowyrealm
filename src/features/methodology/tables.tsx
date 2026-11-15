@@ -108,6 +108,9 @@ export function LinkTypeTable() {
   );
 }
 
+/** A tier boundary is a round number, so it is shown without the trailing zeros a score's precision needs. */
+const boundary = (n: number) => formatMagnitude(n).replace(/\.0+$/, "");
+
 export function TierTable() {
   const tiers = SITE.scoring.tiers;
   if (!tiers) return <p>Tiers are set from the spread of the first full scoring run, which has not been made yet.</p>;
@@ -125,8 +128,8 @@ export function TierTable() {
           <tr key={t.tier}>
             <td>{t.label}</td>
             <td>
-              {formatMagnitude(t.min)}
-              {i + 1 < tiers.length ? `–${formatMagnitude(tiers[i + 1].min)}` : "+"}
+              {boundary(t.min)}
+              {i + 1 < tiers.length ? `–${boundary(tiers[i + 1].min)}` : "+"}
             </td>
             <td>{t.descriptor}</td>
           </tr>
