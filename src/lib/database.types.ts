@@ -7,352 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-  shadowyrealm: {
-    Tables: {
-      assessment_periods: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string | null
-          end_year: number
-          entity_id: number
-          geographic_scope: string
-          id: number
-          label: string
-          persistence_factor: number
-          reach_factor: number
-          start_year: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description?: string | null
-          end_year: number
-          entity_id: number
-          geographic_scope?: string
-          id?: never
-          label: string
-          persistence_factor?: number
-          reach_factor?: number
-          start_year: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          end_year?: number
-          entity_id?: number
-          geographic_scope?: string
-          id?: never
-          label?: string
-          persistence_factor?: number
-          reach_factor?: number
-          start_year?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "assessment_periods_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      assessments: {
-        Row: {
-          ai_model_used: string | null
-          ai_suggested: boolean
-          bias_warnings: string[] | null
-          confidence_level: number | null
-          controversy_level: number | null
-          created_at: string
-          created_by: string
-          cultural_justification: string
-          cultural_benefit: number
-          cultural_harm: number
-          economic_justification: string
-          economic_benefit: number
-          economic_harm: number
-          entity_id: number
-          health_justification: string
-          health_benefit: number
-          health_harm: number
-          human_rights_justification: string
-          human_rights_benefit: number
-          human_rights_harm: number
-          id: number
-          period_id: number | null
-          scientific_justification: string
-          scientific_benefit: number
-          scientific_harm: number
-          sources: string[] | null
-          updated_at: string
-        }
-        Insert: {
-          ai_model_used?: string | null
-          ai_suggested?: boolean
-          bias_warnings?: string[] | null
-          confidence_level?: number | null
-          controversy_level?: number | null
-          created_at?: string
-          created_by: string
-          cultural_justification: string
-          cultural_benefit: number
-          cultural_harm: number
-          economic_justification: string
-          economic_benefit: number
-          economic_harm: number
-          entity_id: number
-          health_justification: string
-          health_benefit: number
-          health_harm: number
-          human_rights_justification: string
-          human_rights_benefit: number
-          human_rights_harm: number
-          id?: never
-          period_id?: number | null
-          scientific_justification: string
-          scientific_benefit: number
-          scientific_harm: number
-          sources?: string[] | null
-          updated_at?: string
-        }
-        Update: {
-          ai_model_used?: string | null
-          ai_suggested?: boolean
-          bias_warnings?: string[] | null
-          confidence_level?: number | null
-          controversy_level?: number | null
-          created_at?: string
-          created_by?: string
-          cultural_justification?: string
-          cultural_benefit?: number
-          cultural_harm?: number
-          economic_justification?: string
-          economic_benefit?: number
-          economic_harm?: number
-          entity_id?: number
-          health_justification?: string
-          health_benefit?: number
-          health_harm?: number
-          human_rights_justification?: string
-          human_rights_benefit?: number
-          human_rights_harm?: number
-          id?: never
-          period_id?: number | null
-          scientific_justification?: string
-          scientific_benefit?: number
-          scientific_harm?: number
-          sources?: string[] | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "assessments_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessments_period_id_fkey"
-            columns: ["period_id"]
-            isOneToOne: false
-            referencedRelation: "assessment_periods"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      entities: {
-        Row: {
-          ai_generated_content: boolean
-          biography: string | null
-          created_at: string
-          created_by: string
-          description: string
-          entity_type: Database["shadowyrealm"]["Enums"]["entity_type"]
-          id: number
-          image_url: string | null
-          metadata: Json | null
-          name: string
-          slug: string
-          status: Database["shadowyrealm"]["Enums"]["publication_status"]
-          updated_at: string
-        }
-        Insert: {
-          ai_generated_content?: boolean
-          biography?: string | null
-          created_at?: string
-          created_by: string
-          description: string
-          entity_type: Database["shadowyrealm"]["Enums"]["entity_type"]
-          id?: never
-          image_url?: string | null
-          metadata?: Json | null
-          name: string
-          slug: string
-          status?: Database["shadowyrealm"]["Enums"]["publication_status"]
-          updated_at?: string
-        }
-        Update: {
-          ai_generated_content?: boolean
-          biography?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string
-          entity_type?: Database["shadowyrealm"]["Enums"]["entity_type"]
-          id?: never
-          image_url?: string | null
-          metadata?: Json | null
-          name?: string
-          slug?: string
-          status?: Database["shadowyrealm"]["Enums"]["publication_status"]
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      entity_audit_log: {
-        Row: {
-          action: string
-          entity_id: number
-          id: number
-          new_value: Json | null
-          old_value: Json | null
-          performed_at: string
-          performed_by: string
-        }
-        Insert: {
-          action: string
-          entity_id: number
-          id?: never
-          new_value?: Json | null
-          old_value?: Json | null
-          performed_at?: string
-          performed_by: string
-        }
-        Update: {
-          action?: string
-          entity_id?: number
-          id?: never
-          new_value?: Json | null
-          old_value?: Json | null
-          performed_at?: string
-          performed_by?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "entity_audit_log_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      relationships: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string
-          id: number
-          relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
-          source_entity_id: number
-          strength: number
-          target_entity_id: number
-          temporal_overlap: number | null
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description: string
-          id?: never
-          relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
-          source_entity_id: number
-          strength?: number
-          target_entity_id: number
-          temporal_overlap?: number | null
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string
-          id?: never
-          relationship_type?: Database["shadowyrealm"]["Enums"]["relationship_type"]
-          source_entity_id?: number
-          strength?: number
-          target_entity_id?: number
-          temporal_overlap?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "relationships_source_entity_id_fkey"
-            columns: ["source_entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "relationships_target_entity_id_fkey"
-            columns: ["target_entity_id"]
-            isOneToOne: false
-            referencedRelation: "entities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      credit_shares: {
-        Args: { published_only?: boolean }
-        Returns: {
-          ancestor_id: number
-          descendant_id: number
-          share: number
-        }[]
-      }
-    }
-    Enums: {
-      entity_type: "person" | "organization" | "event"
-      publication_status:
-        | "draft"
-        | "submitted"
-        | "under_review"
-        | "published"
-        | "archived"
-      relationship_type:
-        | "influence"
-        | "mentorship"
-        | "collaboration"
-        | "opposition"
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   inventions: {
     Tables: {
       assessment_periods: {
@@ -693,6 +347,385 @@ export type Database = {
       [_ in never]: never
     }
   }
+  public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  shadowyrealm: {
+    Tables: {
+      assessment_periods: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          end_year: number
+          entity_id: number
+          geographic_scope: string
+          id: number
+          label: string
+          persistence_factor: number
+          reach_factor: number
+          start_year: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_year: number
+          entity_id: number
+          geographic_scope?: string
+          id?: never
+          label: string
+          persistence_factor?: number
+          reach_factor?: number
+          start_year: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_year?: number
+          entity_id?: number
+          geographic_scope?: string
+          id?: never
+          label?: string
+          persistence_factor?: number
+          reach_factor?: number
+          start_year?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_periods_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessments: {
+        Row: {
+          ai_model_used: string | null
+          ai_suggested: boolean
+          bias_warnings: string[] | null
+          confidence_level: number | null
+          controversy_level: number | null
+          created_at: string
+          created_by: string
+          cultural_benefit: number
+          cultural_benefit_people: number | null
+          cultural_harm: number
+          cultural_harm_people: number | null
+          cultural_justification: string
+          economic_benefit: number
+          economic_benefit_people: number | null
+          economic_harm: number
+          economic_harm_people: number | null
+          economic_justification: string
+          entity_id: number
+          evidence: string | null
+          health_benefit: number
+          health_benefit_people: number | null
+          health_harm: number
+          health_harm_people: number | null
+          health_justification: string
+          human_rights_benefit: number
+          human_rights_benefit_people: number | null
+          human_rights_harm: number
+          human_rights_harm_people: number | null
+          human_rights_justification: string
+          id: number
+          period_id: number | null
+          scientific_benefit: number
+          scientific_benefit_people: number | null
+          scientific_harm: number
+          scientific_harm_people: number | null
+          scientific_justification: string
+          sources: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          ai_model_used?: string | null
+          ai_suggested?: boolean
+          bias_warnings?: string[] | null
+          confidence_level?: number | null
+          controversy_level?: number | null
+          created_at?: string
+          created_by: string
+          cultural_benefit: number
+          cultural_benefit_people?: number | null
+          cultural_harm: number
+          cultural_harm_people?: number | null
+          cultural_justification: string
+          economic_benefit: number
+          economic_benefit_people?: number | null
+          economic_harm: number
+          economic_harm_people?: number | null
+          economic_justification: string
+          entity_id: number
+          evidence?: string | null
+          health_benefit: number
+          health_benefit_people?: number | null
+          health_harm: number
+          health_harm_people?: number | null
+          health_justification: string
+          human_rights_benefit: number
+          human_rights_benefit_people?: number | null
+          human_rights_harm: number
+          human_rights_harm_people?: number | null
+          human_rights_justification: string
+          id?: never
+          period_id?: number | null
+          scientific_benefit: number
+          scientific_benefit_people?: number | null
+          scientific_harm: number
+          scientific_harm_people?: number | null
+          scientific_justification: string
+          sources?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          ai_model_used?: string | null
+          ai_suggested?: boolean
+          bias_warnings?: string[] | null
+          confidence_level?: number | null
+          controversy_level?: number | null
+          created_at?: string
+          created_by?: string
+          cultural_benefit?: number
+          cultural_benefit_people?: number | null
+          cultural_harm?: number
+          cultural_harm_people?: number | null
+          cultural_justification?: string
+          economic_benefit?: number
+          economic_benefit_people?: number | null
+          economic_harm?: number
+          economic_harm_people?: number | null
+          economic_justification?: string
+          entity_id?: number
+          evidence?: string | null
+          health_benefit?: number
+          health_benefit_people?: number | null
+          health_harm?: number
+          health_harm_people?: number | null
+          health_justification?: string
+          human_rights_benefit?: number
+          human_rights_benefit_people?: number | null
+          human_rights_harm?: number
+          human_rights_harm_people?: number | null
+          human_rights_justification?: string
+          id?: never
+          period_id?: number | null
+          scientific_benefit?: number
+          scientific_benefit_people?: number | null
+          scientific_harm?: number
+          scientific_harm_people?: number | null
+          scientific_justification?: string
+          sources?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessments_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_periods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entities: {
+        Row: {
+          ai_generated_content: boolean
+          biography: string | null
+          created_at: string
+          created_by: string
+          description: string
+          entity_type: Database["shadowyrealm"]["Enums"]["entity_type"]
+          id: number
+          image_url: string | null
+          metadata: Json | null
+          name: string
+          slug: string
+          status: Database["shadowyrealm"]["Enums"]["publication_status"]
+          updated_at: string
+        }
+        Insert: {
+          ai_generated_content?: boolean
+          biography?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          entity_type: Database["shadowyrealm"]["Enums"]["entity_type"]
+          id?: never
+          image_url?: string | null
+          metadata?: Json | null
+          name: string
+          slug: string
+          status?: Database["shadowyrealm"]["Enums"]["publication_status"]
+          updated_at?: string
+        }
+        Update: {
+          ai_generated_content?: boolean
+          biography?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          entity_type?: Database["shadowyrealm"]["Enums"]["entity_type"]
+          id?: never
+          image_url?: string | null
+          metadata?: Json | null
+          name?: string
+          slug?: string
+          status?: Database["shadowyrealm"]["Enums"]["publication_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      entity_audit_log: {
+        Row: {
+          action: string
+          entity_id: number
+          id: number
+          new_value: Json | null
+          old_value: Json | null
+          performed_at: string
+          performed_by: string
+        }
+        Insert: {
+          action: string
+          entity_id: number
+          id?: never
+          new_value?: Json | null
+          old_value?: Json | null
+          performed_at?: string
+          performed_by: string
+        }
+        Update: {
+          action?: string
+          entity_id?: number
+          id?: never
+          new_value?: Json | null
+          old_value?: Json | null
+          performed_at?: string
+          performed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_audit_log_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationships: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          id: number
+          relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
+          source_entity_id: number
+          strength: number
+          target_entity_id: number
+          temporal_overlap: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          id?: never
+          relationship_type: Database["shadowyrealm"]["Enums"]["relationship_type"]
+          source_entity_id: number
+          strength?: number
+          target_entity_id: number
+          temporal_overlap?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: never
+          relationship_type?: Database["shadowyrealm"]["Enums"]["relationship_type"]
+          source_entity_id?: number
+          strength?: number
+          target_entity_id?: number
+          temporal_overlap?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      credit_shares: {
+        Args: { published_only?: boolean }
+        Returns: {
+          ancestor_id: number
+          descendant_id: number
+          share: number
+        }[]
+      }
+    }
+    Enums: {
+      entity_type: "person" | "organization" | "event"
+      publication_status:
+        | "draft"
+        | "submitted"
+        | "under_review"
+        | "published"
+        | "archived"
+      relationship_type:
+        | "influence"
+        | "mentorship"
+        | "collaboration"
+        | "opposition"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
@@ -813,27 +846,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  public: {
-    Enums: {},
-  },
-  shadowyrealm: {
-    Enums: {
-      entity_type: ["person", "organization", "event"],
-      publication_status: [
-        "draft",
-        "submitted",
-        "under_review",
-        "published",
-        "archived",
-      ],
-      relationship_type: [
-        "influence",
-        "mentorship",
-        "collaboration",
-        "opposition",
-      ],
-    },
-  },
   inventions: {
     Enums: {
       entity_type: [
@@ -861,6 +873,27 @@ export const Constants = {
         "collaboration",
         "rivalry",
         "supersedes",
+      ],
+    },
+  },
+  public: {
+    Enums: {},
+  },
+  shadowyrealm: {
+    Enums: {
+      entity_type: ["person", "organization", "event"],
+      publication_status: [
+        "draft",
+        "submitted",
+        "under_review",
+        "published",
+        "archived",
+      ],
+      relationship_type: [
+        "influence",
+        "mentorship",
+        "collaboration",
+        "opposition",
       ],
     },
   },

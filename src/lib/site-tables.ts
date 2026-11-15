@@ -13,11 +13,18 @@ import type { Database } from "./database.types";
 type SR = Database["shadowyrealm"];
 type SRTables = SR["Tables"];
 
-/** ShadowyRealm's own dimension columns, which other sites replace with theirs. */
-type SRDimensionColumn = `${"scientific" | "economic" | "human_rights" | "health" | "cultural"}_${
-  | "benefit"
-  | "harm"
-  | "justification"}`;
+/**
+ * ShadowyRealm's own dimension columns, which other sites replace with theirs, and its head-count and
+ * evidence columns, which PeopleColumns below makes optional for every site.
+ */
+type SRDimensionColumn =
+  | `${"scientific" | "economic" | "human_rights" | "health" | "cultural"}_${
+      | "benefit"
+      | "harm"
+      | "justification"
+      | "benefit_people"
+      | "harm_people"}`
+  | "evidence";
 
 type Widen<T> = {
   [K in keyof T]: K extends "entity_type" | "relationship_type" ? (undefined extends T[K] ? string | undefined : string) : T[K];
