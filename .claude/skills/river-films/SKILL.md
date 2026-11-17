@@ -85,9 +85,21 @@ Run from the repo root. The scores change often; refresh the snapshot before any
 films are a personal project, CIqSi is for AI essays, Applied Relevance is client-facing). Every
 subject's films go there; a video cannot be moved between channels later.
 
-- **Who uploads:** Geordie, in YouTube Studio. vidIQ's `vidiq_video_upload` imports into vidIQ's
-  editor, not to YouTube, and vidIQ is connected to the LinguaMama channel only; connecting
-  IAmGeordie there lets a session edit metadata (`vidiq_update_video`) and read analytics.
+- **Uploading:** YouTube Studio by hand, or Google's YouTube Data API v3 once an OAuth client for
+  the IAmGeordie channel exists. Per the docs read 2026-11-17: `videos.insert` has its own allowance
+  (100 uploads a day), uploads from unaudited projects are no longer locked to private, and
+  `videos.update`, `thumbnails.set`, `playlists.insert` and `playlistItems.insert` cost 50 of the
+  10,000 daily units each. `thumbnails.set` takes JPEG or PNG up to 50 MB and answers 403 when the
+  channel may not set custom thumbnails. vidIQ cannot post to YouTube (`vidiq_video_upload` imports
+  into vidIQ's own editor) and is connected to LinguaMama only; keep it for keyword volumes and
+  title scores, which Google's APIs do not provide.
+- **Thumbnails:** a real frame from the render, cut with `ffmpeg -ss <t> -i <mp4> -frames:v 1`, and
+  `python3 -I .claude/skills/river-films/scripts/thumbnail.py` (its docstring has the arguments).
+  One short claim that adds to the title, never repeats it. Choose a frame with no card or callout
+  that the crop would cut, and keep the text off the board. Two or three per film for Test & Compare.
+  2026-11-17: `river-race-thumbnail-board.jpg` (258.5 s, "5,000 years, ranked"),
+  `river-race-thumbnail-maya.jpg` (289.5 s, "Not Rome. The Maya.") and
+  `river-of-influence-thumbnail.jpg` (47.5 s, "5,000 years. 60 seconds.").
 - **Titles:** the `ciqsi` skill's `references/titles-and-hooks.md` rules, checked with
   `vidiq_keyword_research` and `vidiq_score_title`. "Bar chart race" is the genre's search term
   (2026-11-17: about 138,000 searches a month, competition 27). Offer two alternatives for
