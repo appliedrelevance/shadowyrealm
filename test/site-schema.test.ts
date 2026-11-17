@@ -17,15 +17,15 @@ for (const site of Object.values(SITES)) {
       expect([...enums.relationship_type]).toEqual(site.linkTypes.map((t) => t.key));
     });
 
-    test("generates DDL with its dimension columns and its credit link types", () => {
+    test("generates DDL with its dimension columns and no credit function, since the Worker walks credit", () => {
       const ddl = siteSchemaDdl(site);
       for (const d of site.scoring.dimensions) {
         expect(ddl).toContain(`${d.key}_benefit numeric(4,2) not null`);
         expect(ddl).toContain(`${d.key}_harm numeric(4,2) not null`);
         expect(ddl).toContain(`${d.key}_justification text not null`);
       }
-      const credit = site.linkTypes.filter((t) => t.credit).map((t) => `'${t.key}'`).join(", ");
-      expect(ddl).toContain(`where r.relationship_type in (${credit})`);
+      expect(ddl).not.toContain("create function");
+      expect(ddl).toContain(`create or replace function ${site.schema}.update_updated_at()`);
     });
 
     test("counts people and keeps four-place strengths only where the site measures breadth in people", () => {

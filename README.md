@@ -21,7 +21,7 @@ ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a
 4. The **influence graph** is the curated links plus the causes Clef proposed and Clairic sized (`content/system-one-graph.json`). Each consequence gives away at most what Clairic says it owes its causes together, and its links are scaled to fit (`tools/credit-graph.ts`).
 5. The **Worker** computes the credit (`walkShares` in `src/lib/credit.ts`): an ancestor's share of a descendant is the chance that a walk upstream from the descendant, taking each cause with its link's strength, reaches the ancestor, every route added up. It adds each descendant's own profile × share and serves one computation to every page and to the MCP tools.
 
-Prior Art keeps the earlier method: Clef alone, a level of weight × value × reach, and Postgres's strongest-chain `credit_shares()`. `ScoringConfig.breadth` (`src/sites/types.ts`) chooses between the two.
+Prior Art keeps the earlier scoring, Clef alone and a level of weight × value × reach, and takes its credit from the same walk. `ScoringConfig.breadth` (`src/sites/types.ts`) chooses between the two scorings.
 
 The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/specs/influence-graph/).
 
