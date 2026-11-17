@@ -1,8 +1,9 @@
 /**
  * Prior Art coverage, 2026-11-16: entries for the gaps a comparison with Wikipedia's Timeline of historic
  * inventions found (Landru work/shadowyrealm/prior-art-coverage.md), in eight batches drafted in parallel,
- * plus the hand-built aviation chain. Each batch's links stay inside it or reach existing entries; the
- * links between batches are joined here, each pair once.
+ * plus the hand-built aviation chain, and, from 2026-11-17, two batches of the creators of those entries.
+ * Each batch's links stay inside it or reach existing entries; the links between batches are joined
+ * here, each pair once.
  */
 import type { InventionsContent, InventionsLink } from "../types";
 import { coverageA1, crossLinksA1 } from "./coverage-a1";
@@ -13,8 +14,21 @@ import { coverageD, crossLinksD } from "./coverage-d";
 import { coverageE1, crossLinksE1 } from "./coverage-e1";
 import { coverageE2, crossLinksE2 } from "./coverage-e2";
 import { coverageF, crossLinksF } from "./coverage-f";
+import { coverageOriginatorsA } from "./coverage-originators-a";
+import { coverageOriginatorsB } from "./coverage-originators-b";
 
-const batches = [coverageA1, coverageA2, coverageB, coverageC, coverageD, coverageE1, coverageE2, coverageF];
+const batches = [
+  coverageA1,
+  coverageA2,
+  coverageB,
+  coverageC,
+  coverageD,
+  coverageE1,
+  coverageE2,
+  coverageF,
+  coverageOriginatorsA,
+  coverageOriginatorsB,
+];
 
 /** A link between two batches, once: two batches may both name the same pair and type. */
 function once(links: InventionsLink[]): InventionsLink[] {
