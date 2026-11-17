@@ -38,8 +38,8 @@ SHOTS:
   apart, none after 44 s
 - 46.5, 48.3, 50.1: the all-time top three, "No. N of 624"
 - 52.0 to 60.0: the river dims to 0.22 and the year and source leave; the end card is centred over
-  the river in y 500 to 1330, below the dimmed ruler: Vaal (the site's home-page picture, 240 px,
-  16 px corners), `shadowyrealm.com` 84 px 700, "Who shaped the world, / for better and for
+  the river in y 500 to 1330, below the dimmed ruler: Vaal (the graphic cut-out, 240 px, over the
+  dimmed river), `shadowyrealm.com` 84 px 700, "Who shaped the world, / for better and for
   worse?" 52 px, and the count on two lines at 40 px muted. The URL ends by x 927, clear of the rail
 
 BANNED: as the cut, plus words below y 1330 or under the rail, an empty bottom third, a black or empty first frame, and

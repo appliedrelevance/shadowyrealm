@@ -28,9 +28,9 @@ Not rendered yet: the stills go to Geordie first. Render to
   right margin; when neither fits, they end at the right margin over the band. The Atlantic slave
   trade (25 s) and the Roman Empire's No. 3 line (50.5 s) take the third case: each is wider than
   the space on either side of its band.
-- **Vaal is the mark** (Geordie: the logo, not the drawn gate). The end card shows the site's own
-  home-page picture, linked from `src/sites/shadowyrealm/hero.jpg`, 240 px with 16 px corners,
-  over the dimmed river in y 500 to 1330, below the dimmed ruler. The URL is 84 px so that it ends
+- **Vaal is the mark** (Geordie: the logo, not the drawn gate; then a graphic with an alpha
+  channel, not the photo). The end card shows `src/sites/shadowyrealm/vaal-mark.png`, 240 px, over
+  the dimmed river in y 500 to 1330, below the dimmed ruler; the river shows around it. The URL is 84 px so that it ends
   by x 927, clear of the action rail: at 88 px it reached x 945.
 
 ## Measured

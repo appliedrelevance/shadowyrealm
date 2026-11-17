@@ -6,8 +6,9 @@ Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4`, 19
 `bun tools/video-description.ts`) and `river-race.credits.txt` (every picture's file, author,
 licence and page, from `--credits`).
 
-Since the render, the end card's mark is Vaal, the site's home-page picture, in place of the drawn
-gate mark (2026-11-17); the render still shows the gate mark, so re-render before upload.
+Since the render, the end card's mark is Vaal, a graphic cut-out drawn from the site's home-page
+picture, in place of the drawn gate mark (2026-11-17); the render still shows the gate mark, so
+re-render before upload.
 
 ## Creative calls
 

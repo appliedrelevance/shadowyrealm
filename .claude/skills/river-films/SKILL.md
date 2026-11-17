@@ -187,9 +187,13 @@ Prior Art film settles how; record the layout here when it does.
   "Who shaped the world, for better and for worse?", its count line "people, institutions and
   events" (`endcard.html`). The vertical film has its own copies of all three scenes in
   `video/short-vertical/compositions/`.
-- **The mark.** The end cards show Vaal, ShadowyRealm's own home-page picture: `assets/vaal.jpg` in
-  each project links to `src/sites/shadowyrealm/hero.jpg` (Geordie, 2026-11-17: Vaal is the logo,
-  not the site's drawn gate mark). A subject's film shows its own site's picture.
+- **The mark.** The end cards show Vaal as a graphic cut-out with an alpha channel:
+  `assets/vaal-mark.png` in each project links to `src/sites/shadowyrealm/vaal-mark.png` (Geordie,
+  2026-11-17: Vaal is the logo, not the site's drawn gate mark, and a graphic, not the photo). It
+  was redrawn from the site's `hero.jpg` with fal.ai `nano-banana-2/edit` and cut out with
+  `birefnet/v2`; the other three redraws are in `media/exports/shadowyrealm/vaal-mark/`. The
+  HyperFrames `remove-background` finds no subject in the photo: it is made for people. A
+  subject's film shows its own site's mark.
 - **Look.** The films use ShadowyRealm's tokens (ground `#181822`, Inter). A subject's film takes
   its site's own tokens and faces (Prior Art: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
 - **Type shades.** `river.css` shades `t-person` and `t-event`; other types draw as organizations.
