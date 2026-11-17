@@ -95,17 +95,17 @@ export const inventions: SiteConfig = {
     rubrics: HISTORICAL_RUBRICS,
     unit: { years: 100, name: "influence-centuries" },
     /**
-     * In influence-centuries of total magnitude: the round values nearest the
-     * 20th, 50th, 80th and 95th percentiles of the 2026-11-13 launch run over
-     * 150 entities (58.5, 127.7, 319.5, 2,543.4). See
-     * .kiro/specs/inventions-site/research.md.
+     * In influence-centuries of total magnitude: the round values of the 1-2-5
+     * series nearest the 20th, 50th, 80th and 95th percentiles over the 292
+     * entities published on 2026-11-17 (66.5, 155.7, 1,069.4, 8,700.8). The
+     * rule is from .kiro/specs/inventions-site/research.md.
      */
     tiers: [
       { tier: "minimal", min: 0, label: "Notable", descriptor: PRIOR_ART_TIER_DESCRIPTORS.minimal },
       { tier: "moderate", min: 50, label: "Major", descriptor: PRIOR_ART_TIER_DESCRIPTORS.moderate },
-      { tier: "significant", min: 100, label: "Great", descriptor: PRIOR_ART_TIER_DESCRIPTORS.significant },
-      { tier: "transformational", min: 200, label: "Epochal", descriptor: PRIOR_ART_TIER_DESCRIPTORS.transformational },
-      { tier: "legendary", min: 2000, label: "Legendary", descriptor: PRIOR_ART_TIER_DESCRIPTORS.legendary },
+      { tier: "significant", min: 200, label: "Great", descriptor: PRIOR_ART_TIER_DESCRIPTORS.significant },
+      { tier: "transformational", min: 1000, label: "Epochal", descriptor: PRIOR_ART_TIER_DESCRIPTORS.transformational },
+      { tier: "legendary", min: 10000, label: "Legendary", descriptor: PRIOR_ART_TIER_DESCRIPTORS.legendary },
     ],
   },
   entityTypes: [
