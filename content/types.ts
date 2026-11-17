@@ -17,11 +17,6 @@ export interface SitePeriod {
   description: string;
   /** The Wikipedia article the evidence comes from, when not the entity's own. */
   wiki?: string;
-  /**
-   * Section headings that speak to the period. Not read since 2026-11-15: every period is scored
-   * from its whole article (tools/wiki-evidence.ts).
-   */
-  sections?: string[];
 }
 
 export interface SiteEntity<E extends string> {

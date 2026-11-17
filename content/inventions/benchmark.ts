@@ -109,7 +109,6 @@ export const benchmark: InventionsContent = {
           start: 1947,
           end: 1953,
           description: "The first transistors were built at Bell Labs and licensed to other manufacturers.",
-          sections: ["History"],
         },
         {
           label: "Transistor radios and computers",

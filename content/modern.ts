@@ -119,7 +119,6 @@ export const modern: RealmContent = {
           end: 1915,
           description:
             "Reported her first vision in December 1844 after the Great Disappointment, co-founded the Seventh-day Adventist Church in 1863, founded the Battle Creek and Loma Linda sanitariums and wrote more than 5,000 articles and 40 books.",
-          sections: ["Millerite movement", "Visions", "Health reform", "Vegetarian food"],
         },
       ],
       why: "White's visions and writings set the theology, health message and schools of a church of 23 million.",
@@ -138,7 +137,6 @@ export const modern: RealmContent = {
           end: 1915,
           description:
             "Founded in Battle Creek, Michigan, in 1863, it grew to 75,000 members by 1901 with a medical school, 27 hospitals and 13 publishing houses, and its Battle Creek Sanitarium gave the world corn flakes.",
-          sections: ["History", "Development of Sabbatarianism", "Organization and recognition", "Health and diet"],
         },
         {
           label: "Worldwide church",
@@ -146,7 +144,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Grew to 23 million members in more than 200 countries, running the world's second-largest school system, the AdventHealth hospitals and the relief agency ADRA, while its members' diet made Loma Linda a Blue Zone of longevity.",
-          sections: ["Health and diet", "Adventist mission", "Education", "Medical", "Humanitarian aid"],
         },
       ],
       why: "It built the second-largest school system in the world and a global hospital network, and its health message gave the West breakfast cereal and meat substitutes.",
@@ -165,7 +162,6 @@ export const modern: RealmContent = {
           end: 1916,
           description:
             "Formed a Bible study group in Pittsburgh in 1870, began publishing Zion's Watch Tower in 1879, co-founded the Watch Tower Society in 1881 and printed nearly 20 million copies of his Studies in the Scriptures.",
-          sections: ["Beginnings", "Watch Tower Society", "Publications", "Legacy"],
         },
       ],
       why: "Russell founded the movement that became Jehovah's Witnesses and built the publishing house that still runs it.",
@@ -184,7 +180,6 @@ export const modern: RealmContent = {
           end: 1942,
           description:
             "Took control of the Watch Tower Society in 1917, was jailed in 1918 over The Finished Mystery, abolished elected elders, required every member to preach door to door and report it, and condemned flag salutes and military service.",
-          sections: ["Administrative changes"],
         },
       ],
       why: "Rutherford gave Jehovah's Witnesses their name, their door-to-door preaching and the central control they keep today.",
@@ -203,7 +198,6 @@ export const modern: RealmContent = {
           end: 1916,
           description:
             "Gathered around Russell's Zion's Watch Tower into autonomous congregations served by colporteurs and traveling preachers, with 50,000 people associated worldwide by 1910.",
-          sections: ["Background"],
         },
         {
           label: "Rutherford's reorganization",
@@ -211,7 +205,6 @@ export const modern: RealmContent = {
           end: 1941,
           description:
             "Lost most of Russell's followers while Rutherford centralized control in Brooklyn, took the name Jehovah's witnesses in 1931 and refused flag salutes and military service, which brought mob violence, Nazi concentration camps and court cases over religious freedom.",
-          sections: ["Joseph Rutherford", "Government interactions"],
         },
         {
           label: "Worldwide expansion",
@@ -219,7 +212,6 @@ export const modern: RealmContent = {
           end: 1975,
           description:
             "Under Nathan Knorr it trained missionaries, opened branches worldwide, published the New World Translation, banned blood transfusions from 1945 and grew past two million active members as it pointed to 1975.",
-          sections: ["Nathan Knorr", "Further development", "Rejection of blood transfusions"],
         },
         {
           label: "Governing Body",
@@ -227,7 +219,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Run by its Governing Body since 1976, it grew to more than 9 million members while shunning those who leave or are expelled and facing inquiries into how it handled child sexual abuse.",
-          sections: ["Disciplinary action", "Handling of sexual abuse cases"],
         },
       ],
       why: "It grew from a Pittsburgh Bible study into a worldwide denomination whose court cases widened religious freedom and whose blood ban and shunning have cost lives and families.",
@@ -648,7 +639,6 @@ export const modern: RealmContent = {
           end: 1951,
           description:
             "Published Dianetics: The Modern Science of Mental Health in 1950 and set up foundations to sell its auditing, which went bankrupt in 1952.",
-          sections: ["In the Dianetics era"],
         },
         {
           label: "Founder of Scientology",
@@ -656,7 +646,6 @@ export const modern: RealmContent = {
           end: 1966,
           description:
             "Created Scientology in 1952 after losing the rights to Dianetics, declared it a religion in 1954 and ran its growing network of churches.",
-          sections: ["Pivot to Scientology", "In the Church of Scientology era"],
         },
         {
           label: "Commodore of the Sea Org",
@@ -664,7 +653,6 @@ export const modern: RealmContent = {
           end: 1986,
           description:
             "Ran Scientology from a fleet of ships as commodore of the Sea Org, was convicted of fraud in France in 1978 and spent his last years in hiding in the California desert.",
-          sections: ["In the Sea Org era"],
         },
       ],
       why: "Hubbard invented Dianetics and Scientology and wrote every one of their scriptures.",
@@ -683,7 +671,6 @@ export const modern: RealmContent = {
           end: 1986,
           description:
             "Incorporated in 1953 and declared a religion in 1954, it spread across Europe, lost its US tax exemption in 1967 and ran Operation Snow White, the infiltration of US federal agencies that sent its executives to prison in 1979.",
-          sections: ["History", "Illegal activities"],
         },
         {
           label: "Under Miscavige",
@@ -691,7 +678,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Led by David Miscavige since 1987, it regained its US tax exemption in 1993, built $1.7 billion in assets, faced criminal charges over Lisa McPherson's death in 1995 and was convicted of fraud in France in 2009.",
-          sections: ["Finances", "Classification", "Members' health and safety"],
         },
       ],
       why: "It turned a self-help book into a worldwide church with US tax exemption, and pursued its critics with lawsuits, espionage and harassment.",
@@ -918,7 +904,6 @@ export const modern: RealmContent = {
           label: "The campaign",
           start: 1967,
           end: 1980,
-          sections: ["Eradication", "History"],
           description: "The WHO's Intensified Eradication Programme tracked and vaccinated around outbreaks until the last case in 1977.",
         },
       ],
@@ -985,7 +970,6 @@ export const modern: RealmContent = {
           end: 2003,
           description:
             "Funded Nupedia through his web company Bomis, launched Wikipedia with Larry Sanger in January 2001 and created the Wikimedia Foundation in 2003.",
-          sections: ["Lead-up to Wikipedia", "Wikipedia", "Wikimedia Foundation"],
         },
         {
           label: "Community founder",
@@ -993,7 +977,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Held the Wikimedia board's community founder seat as Wikipedia's public face, co-founded the wiki host Fandom and launched WikiTribune and Trust Café.",
-          sections: ["Role", "Wikia and later pursuits"],
         },
       ],
       why: "Wales co-founded Wikipedia, kept it free of advertising and gave it a nonprofit home.",
@@ -1012,7 +995,6 @@ export const modern: RealmContent = {
           end: 2002,
           description:
             "Edited Nupedia from February 2000, proposed the wiki that launched as Wikipedia in January 2001, named it and drafted its first policies, including neutral point of view, until he was laid off in March 2002.",
-          sections: ["Nupedia and Wikipedia", "Status as Wikipedia co-founder"],
         },
         {
           label: "Wikipedia critic",
@@ -1020,7 +1002,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Argued that Wikipedia lacked respect for expertise and later neutrality, founded Citizendium in 2006 to compete with it and in 2019 set up the Knowledge Standards Foundation.",
-          sections: ["Criticism of Wikipedia", "Accuracy", "Neutrality", "Citizendium", "Other projects"],
         },
       ],
       why: "Sanger proposed the wiki that became Wikipedia, named it and drafted the neutrality policy it still runs on.",
@@ -1147,7 +1128,6 @@ export const modern: RealmContent = {
           end: 2018,
           description:
             "Co-founded the production company Kvartal 95 and from 2015 starred in Servant of the People as a history teacher who becomes president, then founded a party of the same name in 2018.",
-          sections: ["Kvartal 95 Studio"],
         },
         {
           label: "Peacetime president",
@@ -1155,7 +1135,6 @@ export const modern: RealmContent = {
           end: 2021,
           description:
             "Won the 2019 election with 73.23 percent of the second-round vote, ended parliamentary immunity, led Ukraine through the COVID-19 pandemic and sought to end the Donbas war through the Minsk agreements.",
-          sections: ["Early presidency"],
         },
         {
           label: "Wartime president",
@@ -1163,7 +1142,6 @@ export const modern: RealmContent = {
           end: 2026,
           description:
             "Stayed in Kyiv when Russia invaded in February 2022, declared martial law and general mobilisation, rallied Western military aid and sanctions, applied to join NATO and put forward Ukraine's Peace Formula.",
-          sections: ["First phase of the invasion"],
         },
       ],
       why: "He held Ukraine together when Russia invaded in 2022 and rallied the West behind its defence.",
