@@ -50,7 +50,7 @@ OBJECTS:
   it, "The Classical World / 500 BCE to 500 CE", holding for its words (at least 2.6 s); the panel
   names the era too. A name waits up to 3 s for a card to be read; past that, the era is named in
   the panel only
-- the lower third (`race-card`): a card the first time each entity leads the board for 2.5 s or
+- the lower third (`race-card`): a card the first time each entity leads the board for 5 s or
   more, with the two largest areas of its own profile and its description from the site. Cards
   queue: each lands once what came before has been read (plus 1 s after a card, 0.5 s after an era's
   name), while its entity still leads, and waits up to 3.5 s for an era's name it would push out. It holds its words plus 1.5 s (5 to 12 s) and leaves 0.4 s before the next. A
@@ -60,7 +60,7 @@ OBJECTS:
   until its words are read), within 1 s of a card, or within 1 s of an era's name
 - all time (`race-tally`): the top ten by total influence, values in the site's own numbers,
   captioned "Every year added together", then a countdown on the river and the board from No. 10 to
-  No. 1, each named "No. 4 · Organization · since 31 CE" and held for its words (`rankHolds`, at
+  No. 1, each named "No. 6 · Organization · since 31 CE" and held for its words (`rankHolds`, at
   least 2.6 s), 0.4 s apart
 
 SHOTS:
@@ -69,7 +69,7 @@ SHOTS:
   the front crosses their first year; a card under the river for each new leader (chapters:
   `bun tools/video-description.ts`)
 - 259.6: the panel turns to all time
-- 261.0 to 291.8: the countdown, No. 10 at 261.0 to No. 1 at 289.2
+- 261.0 to 291.5: the countdown, No. 10 at 261.0 to No. 1 at 288.9
 - 292.0 to 300.0: the river and the panel dim; the end card
 
 SOUND: `assets/music/race-bed.m4a`: ACE-Step take 11 (240 s, two slow swells) lowered 2.7 dB and

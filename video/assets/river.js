@@ -43,11 +43,11 @@
       // words (rankHolds, River.readTime; mount checks them) and 0.4 s apart, ending before the dim.
       // Times for rank 1 to 10; re-time them if the top ten's names change.
       boardSlots: 10,
-      // A leader gets a card when it holds the lead 2.5 s or more.
-      leadHold: 2.5,
+      // A leader gets a card when it holds the lead 5 s or more.
+      leadHold: 5,
       allTimeAt: 259.6,
-      ranksAt: [289.2, 286.2, 283.2, 279.9, 276.6, 273.6, 270.0, 267.0, 264.0, 261.0],
-      rankHolds: [2.6, 2.6, 2.6, 2.9, 2.9, 2.6, 3.2, 2.6, 2.6, 2.6],
+      ranksAt: [288.9, 285.9, 282.9, 279.9, 276.9, 273.6, 270.6, 267.0, 264.0, 261.0],
+      rankHolds: [2.6, 2.6, 2.6, 2.6, 2.6, 2.9, 2.6, 3.2, 2.6, 2.6],
       dimAt: 292.0,
       frame: { x0: 96, x1: 1250, textRight: 1250 },
       // The camera: the view widens with the front, which holds 80% of the way across, so the river

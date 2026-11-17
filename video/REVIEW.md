@@ -2,7 +2,7 @@
 
 Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4`, 1920 x 1080,
 30 fps, 1800 frames, 60.0 s, H.264 and AAC. Contact sheet beside it. Data: the `/api/realm` snapshot
-in `assets/realm-data.js`, 624 entities as of 2026.
+in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026.
 
 ## Creative calls
 
@@ -13,8 +13,8 @@ in `assets/realm-data.js`, 624 entities as of 2026.
   over 5% of the axis, so the newest century is always rising.
 - **Callouts name the biggest entity by own influence** starting in each 2.55 s of the sweep, one
   at a time, with its band lit and the rest at 0.65.
-- **The finale is the all-time top three by total influence**: Ancient Egypt, the Maya and
-  Hinduism. All three are thin ancient threads on the finished river, which turns the film: the
+- **The finale is the all-time top three by total influence**: the Maya, Ancient Egypt and the
+  Roman Empire. All three are thin ancient threads on the finished river, which turns the film: the
   swollen twentieth century is not where the most influence lies.
 - **No names on the bands at the end.** At 1920 px the bands are thinner than 28 px type, so the
   home page's band labels place nothing; the finale replaced them.
@@ -28,13 +28,12 @@ Not built: the Lineage Short (one chain lighting up with its shares) and the Pri
 
 ## Measured
 
-- `hyperframes check`: no errors. One warning kept: `composition_file_too_large` on
-  `compositions/river.html` (330 lines). The scene is one draw function over one data set;
-  splitting it would separate the drawing from the layout it computes.
+- `hyperframes check` (0.9.42): no errors, no warnings.
 - Audio from the rendered file: −15.6 LUFS integrated, −2.7 dBTP true peak, no clipping. Its
   loudest moment is at 50.15 s, on the No. 3 callout, just before the end card.
-- Frames: the review sheets, the phone-width sheet (every callout reads at 360 px), both seams,
-  and a contact sheet cut from the rendered file.
+- Frames: snapshots at 10, 25, 40, 47, 49, 51, 56 and 59.75 s on the 2026-11-17 data, and a
+  contact sheet cut from the rendered file. The first review added the phone-width sheet (every
+  callout reads at 360 px) and both seams.
 
 ## Not checked
 
