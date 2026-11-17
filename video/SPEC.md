@@ -17,7 +17,8 @@ LOOK: the site's own dark ground, not an invented void, and the river fills the 
 - ink `#f8fafc`, muted `#94a3b8`, hairlines `#333350` and `#4a4a70`
 - benefit `#3e9ad6` above the axis, harm `#d9534f` below it, bands at 0.92 opacity with a
   0.5 px ground-coloured seam, exactly as the home page draws them
-- accent: the gate mark's ember `#ea580c`, on the end card only
+- the mark: Vaal, the site's own home-page picture (`src/sites/shadowyrealm/hero.jpg`, linked as
+  `assets/vaal.jpg`), 200 px with 12 px corners, on the end card only
 - one face, Inter: 700 for names, numbers and the title, 400 for meta lines; tabular figures on
   the year counter
 
@@ -49,7 +50,7 @@ SHOTS:
 - 46.2 to 52.0: the front fades; the all-time top three by total influence are lit in turn at 46.5,
   48.3 and 50.1, each "No. N of 624"; all three are ancient, thin threads on the finished river,
   which is the film's turn: the swollen twentieth century is not where the most influence lies
-- 52.0 to 60.0: the river dims to 0.22; the end card: the gate mark, `shadowyrealm.com`, the
+- 52.0 to 60.0: the river dims to 0.22; the end card: Vaal, `shadowyrealm.com`, the
   entity count and the as-of year; hold to the end
 
 SOUND: one ambient bed from ACE-Step, 72 bpm, swelling across the minute; fade in 1.5 s, fade out

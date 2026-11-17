@@ -4,6 +4,9 @@ Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.
 30 fps, 1800 frames, 60.0 s, H.264 and AAC. Contact sheet beside it. Data: the `/api/realm` snapshot
 in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026.
 
+Since the render, the end card's mark is Vaal, the site's home-page picture, in place of the drawn
+gate mark (2026-11-17); the render still shows the gate mark, so re-render before upload.
+
 ## Creative calls
 
 - **The vertical scale follows the front.** It is the tallest column revealed so far, so the
