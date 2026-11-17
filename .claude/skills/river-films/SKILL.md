@@ -111,6 +111,23 @@ subject's films go there; a video cannot be moved between channels later.
 - **Gate:** an upload is public. Show Geordie the title, description and file, and wait for his yes.
   The first drafts are in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`.
 
+## Planned films
+
+From ShadowyRealm's own snapshot, no new site needed (figures from the 2026-11-17 snapshot):
+
+- **Best and Worst Things in History:** ranked by benefit minus harm. Raw totals put the same
+  long-lived giants at the top of both lists (Sumer, the Maya, Rome and the Catholic Church are on
+  both), so net is the ranking. Best: Ancient Egypt, Hinduism, the invention of cuneiform. Worst: the
+  First Jewish–Roman War, the Atlantic slave trade, the Neo-Assyrian Empire.
+- **Purest Good and Purest Evil:** the other side under 2% of the entity's total, ranked by size.
+  Nothing has zero benefit (the Holodomor's is the smallest, 0.16%), so a strict zero leaves Purest
+  Evil empty; at 2% there are 53 pure good and 11 pure evil. Pure good is people (48 of 53, from
+  750 BCE on): Homer, Kumārajīva, Pāṇini. Pure evil is events (8 of 11), and all 11 began in 1478
+  or later: the Spanish Inquisition, the Great Famine in Ireland, the Armenian genocide.
+
+Then Prior Art (inventions), and subjects that need a site first: music, fine art, computing, the
+Space Age.
+
 ## A new subject
 
 A film draws one site's realm: `bun tools/video-snapshot.ts <site>`, a key in `SITES`
