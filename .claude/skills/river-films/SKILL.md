@@ -2,8 +2,9 @@
 name: river-films
 description: >
   Make, refresh, re-render and publish ShadowyRealm's River of Influence films: HyperFrames videos
-  drawn from a site's frozen /api/realm, the 60-second cut (video/) and the five-minute race with a
-  live leaderboard (video/race/), for YouTube. Owns the pipeline (snapshot, reading plan, check,
+  drawn from a site's frozen /api/realm, the 60-second cut (video/, and vertical as a YouTube Short
+  in video/short-vertical/) and the five-minute race with a live leaderboard (video/race/), for
+  YouTube. Owns the pipeline (snapshot, reading plan, check,
   stills, render, description, credits, review), the failures already paid for, and the checklist
   for taking the format to a new subject: Prior Art (inventions) next, then music, fine art,
   computing, the Space Age and more. Use for any work in video/ or on tools/video-*.ts, and for
@@ -21,13 +22,22 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 | Film | Project | Length | Spec | Review |
 | --- | --- | --- | --- | --- |
 | The River of Influence | `video/` | 60 s, 1800 frames | `video/SPEC.md` | `video/REVIEW.md` |
+| The River of Influence, vertical (the Short) | `video/short-vertical/` | 60 s, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
 | The race | `video/race/` | 300 s, 9000 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
 
-- **One engine:** `video/assets/river.js` draws both. `FILMS.short` and `FILMS.race` hold each
-  film's clock, frame and timings; `ERAS` holds the race's eras and the YouTube chapters. Race-only
-  behaviour is switched on by `FILMS.race` and must not change the short cut.
+- **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical` and
+  `FILMS.race` hold each film's clock and timings; `ERAS` holds the race's eras and the YouTube
+  chapters. Race-only behaviour is switched on by `FILMS.race` and must not change the other films.
+- **Each film's `frame`** holds its whole geometry: the river's ends, the axis and half-height, the
+  callout, tick and leader positions, the tick spacing and every type size (`LANDSCAPE` for the 16:9
+  films). `river.css` holds no sizes; `mount` sets them from the frame, so what it measures is what
+  it draws. A change for one film must leave the others pixel-identical: snapshot them before and
+  after with `--no-browser-gpu --no-end --at …` into the scratchpad and diff the PNGs (snapshots
+  repeat exactly).
 - **Shared files** live once in `video/assets` and `video/compositions`; `video/race/` symlinks
   them (`realm-data.js`, `river.js`, `river.css`, `images/`, the intro and the end card).
+  `video/short-vertical/` symlinks `realm-data.js`, `river.js`, `river.css` and `music/`, and has its
+  own intro, river and end card scenes, recomposed for 1080 x 1920.
 - **A render never fetches.** It reads `video/assets/realm-data.js`, a frozen `/api/realm` with
   the race's pictures, leaders' reasons and credits, written by `tools/video-snapshot.ts` and
   committed. A committed snapshot is the record of what a film showed.
@@ -53,8 +63,8 @@ Run from the repo root. The scores change often; refresh the snapshot before any
      current top ten. Paste them into `FILMS.race` whenever the ten's names change; `mount` throws
      "re-time FILMS.race" when a line's hold is too short.
    - Update `video/race/SPEC.md` where it quotes a changed number.
-5. Check both: `cd video && npx --yes hyperframes@0.9.42 check --json`, and the same in
-   `video/race`. Fix every error. Known warnings: `line_unread` on brief visits to the tenth place
+5. Check all three: `cd video && npx --yes hyperframes@0.9.42 check --json`, and the same in
+   `video/race` and `video/short-vertical`. Fix every error. Known warnings: `line_unread` on brief visits to the tenth place
    (kept: churn in the last place is the genre).
 6. Look before rendering: `npx --yes hyperframes@0.9.42 snapshot --at <seconds>` at cards, era
    names, 2026, the countdown and the end card, then read the contact sheet. Rows crossing mid-swap
@@ -62,7 +72,9 @@ Run from the repo root. The scores change often; refresh the snapshot before any
    black): check the credit before "fixing" it.
 7. Render, in the background (60 s cut ≈ 2 min, race ≈ 6 min):
    `npx --yes hyperframes@0.9.42 render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4`
-   in `video/`, and `…/river-race.mp4` in `video/race/`. Verify with `ffprobe` (frames, duration).
+   in `video/`, `…/river-of-influence-vertical.mp4` in `video/short-vertical/`, and
+   `…/river-race.mp4` in `video/race/`. Verify with `ffprobe` (frames, duration, 1080 x 1920 for the
+   Short).
 8. Description and credits: write to the scratchpad first, then copy to exports. A shell redirect
    straight into the export truncates it even when the script fails.
    `bun tools/video-description.ts` (chapters, ≥ 10 s each, and picture credits, ≤ 5,000
@@ -115,7 +127,15 @@ subject's films go there; a video cannot be moved between channels later.
 
 **Each video features one segment** (Geordie, 2026-11-17): the intro, one segment, the end card.
 Longer videos are remixes, a root that mounts several segments end to end, each on its own local
-clock (as the end card is mounted at 292 s today). The segments:
+clock (as the end card is mounted at 292 s today).
+
+**Format** (Geordie, 2026-11-17): a single segment of 3 minutes or less is a vertical 1080 x 1920
+YouTube Short; YouTube files any upload of 3 minutes or less that is vertical or square as a Short,
+and a landscape one never. The race (over 3 minutes) and remixes are landscape. A segment that can
+be both renders in both from one build: its film gets a vertical `frame`, as
+`FILMS.shortVertical` does. A vertical film is recomposed, never scaled: every word between y 168
+and 1330 (the app's bars), none below y 840 past x 936 (the action rail), type 1.35 times the
+landscape sizes, and frame 0 already carries the hook (the feed shows it first). The segments:
 
 - **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board. The
   2026-11-17 render still carries the all-time turn and countdown (259.6 to 292 s); cut them before
@@ -125,7 +145,8 @@ clock (as the end card is mounted at 292 s today). The segments:
   Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot
   fetches pictures only for the race's board and the all-time ten: extend it to every segment's list
   (all ten of the Purest Good have none today).
-- **The 60-second cut** stays as the series trailer.
+- **The 60-second cut** stays as the series trailer, published as the Short from
+  `video/short-vertical/`.
 
 ## Planned films
 
@@ -163,7 +184,8 @@ Prior Art film settles how; record the layout here when it does.
 - **Words on screen.** The intro title "Five thousand years of influence" (`intro.html`); the
   source line "shadowyrealm.com · N entities" (`river.html`, `race-river.html`); the end card's URL,
   "Who shaped the world, for better and for worse?", its count line "people, institutions and
-  events" and the gate mark (`endcard.html`).
+  events" and the gate mark (`endcard.html`). The vertical film has its own copies of all three
+  scenes in `video/short-vertical/compositions/`.
 - **Look.** The films use ShadowyRealm's tokens (ground `#181822`, Inter). A subject's film takes
   its site's own tokens and faces (Prior Art: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
 - **Type shades.** `river.css` shades `t-person` and `t-event`; other types draw as organizations.
