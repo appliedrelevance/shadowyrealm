@@ -81,9 +81,23 @@ Run from the repo root. The scores change often; refresh the snapshot before any
 
 ## Publishing to YouTube
 
-Nothing has been uploaded yet and no channel is chosen. An upload is public and outward-facing:
-show Geordie the title, description and file, and wait for his yes. The description file is the
-upload's description; regenerate it after any change to `ERAS`, the clock or the pictures.
+**Channel: IAmGeordie (@Iamgeordie)**, a "River of Influence" playlist (decided 2026-11-17: the
+films are a personal project, CIqSi is for AI essays, Applied Relevance is client-facing). Every
+subject's films go there; a video cannot be moved between channels later.
+
+- **Who uploads:** Geordie, in YouTube Studio. vidIQ's `vidiq_video_upload` imports into vidIQ's
+  editor, not to YouTube, and vidIQ is connected to the LinguaMama channel only; connecting
+  IAmGeordie there lets a session edit metadata (`vidiq_update_video`) and read analytics.
+- **Titles:** the `ciqsi` skill's `references/titles-and-hooks.md` rules, checked with
+  `vidiq_keyword_research` and `vidiq_score_title`. "Bar chart race" is the genre's search term
+  (2026-11-17: about 138,000 searches a month, competition 27). Offer two alternatives for
+  YouTube's Test & Compare.
+- **Description:** a two- or three-sentence hook that states the film's turn, a link to the other
+  cut, then `tools/video-description.ts` output for the race, then three hashtags. Count the whole
+  under 5,000 characters with a script. Regenerate after any change to `ERAS`, the clock or the
+  pictures.
+- **Gate:** an upload is public. Show Geordie the title, description and file, and wait for his yes.
+  The first drafts are in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`.
 
 ## A new subject
 
