@@ -1,0 +1,85 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    /* The title is already set on frame 0, which is the Short's first impression in the feed. */
+    #intro-title {
+      position: absolute;
+      left: 72px;
+      top: 330px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      font-size: 112px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+    .intro-line {
+      display: block;
+    }
+    /* The key, either side of the axis (y 700) it describes. */
+    .intro-key {
+      position: absolute;
+      left: 72px;
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      font-size: 48px;
+      line-height: 1;
+      color: var(--color-ink-muted);
+      white-space: nowrap;
+    }
+    #intro-above {
+      top: 628px;
+    }
+    #intro-below {
+      top: 724px;
+    }
+    .intro-word {
+      display: inline-block;
+    }
+  </style>
+  <div id="root" data-composition-id="intro" data-width="1080" data-height="1920">
+    <h1 id="intro-title" class="clip" data-start="0" data-duration="4.6" data-track-index="0">
+      <span class="intro-line"
+        ><span id="intro-w1" class="intro-word">Five</span> <span id="intro-w2" class="intro-word">thousand</span></span
+      >
+      <span class="intro-line"
+        ><span id="intro-w3" class="intro-word">years</span> <span id="intro-w4" class="intro-word">of</span>
+        <span id="intro-w5" class="intro-word">influence</span></span
+      >
+    </h1>
+    <p id="intro-above" class="intro-key clip" data-start="0" data-duration="4.6" data-track-index="1">
+      <span id="intro-above-line">Benefit rises above the line.</span>
+    </p>
+    <p id="intro-below" class="intro-key clip" data-start="0" data-duration="4.6" data-track-index="2">
+      <span id="intro-below-line">Harm falls below it.</span>
+    </p>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const words = ["#intro-w1", "#intro-w2", "#intro-w3", "#intro-w4", "#intro-w5"];
+    // The key lands blurred to sharp, no travel: above the axis, then below it.
+    tl.fromTo(
+      "#intro-above-line",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" },
+      0.5,
+    );
+    tl.fromTo(
+      "#intro-below-line",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" },
+      0.9,
+    );
+    // Everything leaves word by word just as the river starts to arrive.
+    words.forEach((w, i) => {
+      tl.to(w, { opacity: 0, filter: "blur(6px)", duration: 0.13, ease: "power2.in" }, 3.95 + i * 0.04);
+    });
+    tl.to("#intro-above-line", { opacity: 0, filter: "blur(6px)", duration: 0.16, ease: "power2.in" }, 4.1);
+    tl.to("#intro-below-line", { opacity: 0, filter: "blur(6px)", duration: 0.16, ease: "power2.in" }, 4.14);
+    window.__timelines["intro"] = tl;
+  </script>
+</template>

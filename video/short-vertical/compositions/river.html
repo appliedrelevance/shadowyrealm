@@ -1,0 +1,71 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+    }
+    #river-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1080px;
+      height: 1920px;
+      font-family: "Inter", sans-serif;
+    }
+    #river-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    #river-year {
+      position: absolute;
+      left: 72px;
+      top: 1110px;
+      font-weight: 700;
+      font-size: 100px;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-ink);
+      white-space: nowrap;
+    }
+    #river-source {
+      position: absolute;
+      left: 72px;
+      top: 1240px;
+      font-weight: 400;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--color-ink-muted);
+      white-space: nowrap;
+    }
+  </style>
+  <div id="root" data-composition-id="river" data-width="1080" data-height="1920">
+    <div id="river-stage" class="clip" data-start="0" data-duration="60" data-track-index="0">
+      <svg id="river-svg" width="1080" height="1920" viewBox="0 0 1080 1920" aria-hidden="true"></svg>
+      <div id="river-year">3500 BCE</div>
+      <div id="river-source"></div>
+    </div>
+  </div>
+  <script>
+    document.fonts.ready.then(() => {
+      const realm = window.REALM;
+      const year = document.getElementById("river-year");
+      const source = document.getElementById("river-source");
+      source.textContent = `shadowyrealm.com · ${realm.entities.length.toLocaleString("en-US")} entities · as of ${realm.as_of_year}`;
+      const film = window.River.FILMS.shortVertical;
+      const draw = window.River.mount({
+        svg: document.getElementById("river-svg"),
+        realm,
+        film,
+        yearEl: year,
+        furniture: [year, source],
+      });
+      const state = { t: 0 };
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo(state, { t: 0 }, { t: film.duration, duration: film.duration, ease: "none", onUpdate: () => draw(state.t) }, 0);
+      draw(0);
+      window.__timelines["river"] = tl;
+    });
+  </script>
+</template>
