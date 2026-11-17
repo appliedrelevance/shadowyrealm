@@ -69,10 +69,11 @@ chapters.forEach((c, i) => {
   lines.push(`${stamp(c.at)} ${c.name}`);
 });
 
-// Pictures whose licence asks for attribution are credited by name; public-domain and CC0 files
-// are not. A licence outside these is a new case to decide, not one to guess.
-const attributed = pictures.filter((p) => /^CC BY/.test(p.license ?? ""));
-const unclaimed = pictures.filter((p) => !/^CC BY/.test(p.license ?? "") && !/^(Public domain|CC0)$/.test(p.license ?? ""));
+// Pictures whose licence asks for attribution (CC BY, GFDL) are credited by name; public-domain and
+// CC0 files are not. A licence outside these is a new case to decide, not one to guess.
+const attributes = (license: string | null) => /^(CC BY|GFDL)/.test(license ?? "");
+const attributed = pictures.filter((p) => attributes(p.license));
+const unclaimed = pictures.filter((p) => !attributes(p.license) && !/^(Public domain|CC0)$/.test(p.license ?? ""));
 if (unclaimed.length > 0) throw new Error(`Licences to decide: ${unclaimed.map((p) => `${p.file} (${p.license})`).join("; ")}`);
 lines.push("", `Every entry, its sources and its score: ${new URL(realm.source).origin}`, "", "Pictures from Wikimedia Commons:");
 // A file that names no author is credited to its page on Commons, which carries its source.
