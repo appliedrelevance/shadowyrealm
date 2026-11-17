@@ -134,8 +134,9 @@ YouTube Short; YouTube files any upload of 3 minutes or less that is vertical or
 and a landscape one never. The race (over 3 minutes) and remixes are landscape. A segment that can
 be both renders in both from one build: its film gets a vertical `frame`, as
 `FILMS.shortVertical` does. A vertical film is recomposed, never scaled: every word between y 168
-and 1330 (the app's bars), none below y 840 past x 936 (the action rail), type 1.35 times the
-landscape sizes, and frame 0 already carries the hook (the feed shows it first). The segments:
+and 1330 (the app's bars), none below y 840 past x 936 (the action rail); the picture runs on
+below 1330, under the app's title and buttons, so the bottom third is never empty. Type is 1.35
+times the landscape sizes, and frame 0 already carries the hook (the feed shows it first). The segments:
 
 - **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board. The
   2026-11-17 render still carries the all-time turn and countdown (259.6 to 292 s); cut them before
@@ -184,8 +185,11 @@ Prior Art film settles how; record the layout here when it does.
 - **Words on screen.** The intro title "Five thousand years of influence" (`intro.html`); the
   source line "shadowyrealm.com · N entities" (`river.html`, `race-river.html`); the end card's URL,
   "Who shaped the world, for better and for worse?", its count line "people, institutions and
-  events" and the gate mark (`endcard.html`). The vertical film has its own copies of all three
-  scenes in `video/short-vertical/compositions/`.
+  events" (`endcard.html`). The vertical film has its own copies of all three scenes in
+  `video/short-vertical/compositions/`.
+- **The mark.** The end cards show Vaal, ShadowyRealm's own home-page picture: `assets/vaal.jpg` in
+  each project links to `src/sites/shadowyrealm/hero.jpg` (Geordie, 2026-11-17: Vaal is the logo,
+  not the site's drawn gate mark). A subject's film shows its own site's picture.
 - **Look.** The films use ShadowyRealm's tokens (ground `#181822`, Inter). A subject's film takes
   its site's own tokens and faces (Prior Art: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
 - **Type shades.** `river.css` shades `t-person` and `t-event`; other types draw as organizations.

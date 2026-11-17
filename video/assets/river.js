@@ -72,25 +72,26 @@
   };
 
   // The 60-second cut recomposed at 1080 x 1920 for YouTube Shorts: short-vertical/. The same
-  // clock and callouts; the river runs the width, callouts above it, the year and source below it.
-  // Every word sits between y 168 and 1330, clear of the app's bars, and below y 840 no word
-  // passes x 936, clear of the action rail; type is 1.35 times the landscape sizes.
+  // clock and callouts. Every word sits between y 168 and 1330, clear of the app's bars, so the
+  // words stack at the top (the year and source, the year labels as a ruler, the callout) and the
+  // river runs the width below them, its harm reaching down under the app's title and buttons,
+  // where only the picture goes. Type is 1.35 times the landscape sizes.
   FILMS.shortVertical = {
     ...FILMS.short,
     frame: {
       x0: 72,
       x1: 1008,
       textRight: 1008,
-      tickRight: 936,
-      mid: 700,
-      half: 300,
-      ruleTop: 380,
-      ruleBottom: 1020,
-      tickY: 1068,
+      tickY: 462,
       tickGap: 130,
-      nameY: 290,
-      metaY: 344,
-      leaderTop: 368,
+      gridTop: 478, // the grid lines hang from the ruler, through the callout, to the river
+      nameY: 556,
+      metaY: 610,
+      leaderTop: 634,
+      ruleTop: 650,
+      mid: 1090,
+      half: 420,
+      ruleBottom: 1530,
       type: { name: 60, meta: 38, tick: 38, era: 54 },
     },
   };
@@ -326,7 +327,6 @@
     const N = ax.buckets;
     const fr = film.frame;
     const { mid: MID, half: HALF, ruleTop: RULE_TOP, ruleBottom: RULE_BOTTOM, type } = fr;
-    const tickRight = fr.tickRight ?? fr.x1;
     const X0 = fr.x0;
     const IW = fr.x1 - X0;
     const x = (u, v = 1) => X0 + (u / v) * IW;
@@ -414,14 +414,13 @@
     for (const year of [...realm.timeline.ticks].reverse()) {
       const u = ax.yearToUnit(year);
       const px = x(u);
-      if (px > tickRight) continue;
       if (ticks.length > 0 && ticks[ticks.length - 1].px - px < fr.tickGap) continue;
       const label = ax.formatYear(year);
       const w = widthOf(label, type.tick, 400);
       // With era columns, the eras' edges are the river's verticals and the years keep only labels.
       const line = film.eras
         ? null
-        : make("line", { class: "river-grid", x1: px, x2: px, y1: RULE_TOP, y2: RULE_BOTTOM, opacity: 0 }, gridGroup);
+        : make("line", { class: "river-grid", x1: px, x2: px, y1: fr.gridTop ?? RULE_TOP, y2: RULE_BOTTOM, opacity: 0 }, gridGroup);
       const text = sized(make("text", { class: "river-tick-label", x: px, y: fr.tickY, opacity: 0 }, tickGroup), type.tick);
       text.textContent = label;
       ticks.push({ u, px, w, at: timeAtFront(u), line, text });
@@ -648,7 +647,7 @@
           tick.text.setAttribute("x", px.toFixed(1));
           tick.px = px;
         }
-        const anchor = tick.px - tick.w / 2 < X0 ? "start" : tick.px + tick.w / 2 > tickRight ? "end" : "middle";
+        const anchor = tick.px - tick.w / 2 < X0 ? "start" : tick.px + tick.w / 2 > fr.x1 ? "end" : "middle";
         if (tick.anchor !== anchor) {
           tick.text.setAttribute("text-anchor", anchor);
           tick.anchor = anchor;

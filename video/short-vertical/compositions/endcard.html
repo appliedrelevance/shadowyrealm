@@ -4,14 +4,15 @@
       position: absolute;
       inset: 0;
     }
-    /* Centred over the dimmed river, y 168 to 1020, above its year labels and inside the band
-       the app leaves clear. */
+    /* Centred over the dimmed river, y 500 to 1330: below the dimmed year labels, inside the band
+       the app leaves clear. The URL sits below y 840, so it stays narrower than 2 x 396 px, clear of
+       the action rail past x 936. */
     #end-card {
       position: absolute;
       left: 0;
-      top: 168px;
+      top: 500px;
       width: 1080px;
-      height: 852px;
+      height: 830px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -19,14 +20,16 @@
       font-family: "Inter", sans-serif;
       text-align: center;
     }
+    /* Vaal, ShadowyRealm's mark: the site's own picture (src/sites/shadowyrealm/hero.jpg). */
     #end-mark {
-      width: 180px;
-      height: 180px;
-      margin-bottom: 40px;
+      width: 240px;
+      height: 240px;
+      margin-bottom: 36px;
+      border-radius: 16px;
     }
     #end-url {
       font-weight: 700;
-      font-size: 96px;
+      font-size: 84px;
       line-height: 1.1;
       letter-spacing: -0.02em;
       color: var(--color-ink);
@@ -48,31 +51,10 @@
     .end-line {
       display: block;
     }
-    .end-mark-arch {
-      stroke: var(--color-action-ink);
-    }
   </style>
   <div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
     <div id="end-card" class="clip" data-start="0" data-duration="8" data-track-index="0">
-      <!-- The gate mark, as src/sites/shadowyrealm/Logo.tsx draws it. -->
-      <svg id="end-mark" viewBox="10 11 44 44" aria-hidden="true">
-        <defs>
-          <radialGradient id="end-mark-glow" cx="50%" cy="85%" r="70%">
-            <stop offset="0" style="stop-color: var(--color-ember)" />
-            <stop offset="0.45" style="stop-color: var(--color-crit)" />
-            <stop offset="1" style="stop-color: var(--color-crit-soft)" />
-          </radialGradient>
-        </defs>
-        <path d="M19 52V30a13 13 0 0 1 26 0v22z" fill="url(#end-mark-glow)" />
-        <path
-          class="end-mark-arch"
-          d="M19 52V30a13 13 0 0 1 26 0v22"
-          fill="none"
-          stroke-width="4"
-          stroke-linejoin="round"
-        />
-        <path class="end-mark-arch" d="M12 52h40" stroke-width="4" stroke-linecap="round" />
-      </svg>
+      <img id="end-mark" src="assets/vaal.jpg" width="240" height="240" alt="" />
       <div id="end-url">shadowyrealm.com</div>
       <div id="end-question">
         <span class="end-line">Who shaped the world,</span>
