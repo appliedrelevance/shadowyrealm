@@ -111,6 +111,22 @@ subject's films go there; a video cannot be moved between channels later.
 - **Gate:** an upload is public. Show Geordie the title, description and file, and wait for his yes.
   The first drafts are in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`.
 
+## Segments: one per video
+
+**Each video features one segment** (Geordie, 2026-11-17): the intro, one segment, the end card.
+Longer videos are remixes, a root that mounts several segments end to end, each on its own local
+clock (as the end card is mounted at 292 s today). The segments:
+
+- **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board. The
+  2026-11-17 render still carries the all-time turn and countdown (259.6 to 292 s); cut them before
+  it is uploaded.
+- **Countdowns** on the finished river, No. 10 to No. 1, each entry's band lit with a card. One
+  segment type, five rankings: Top 10 of all time (total), Best (net), Worst (net), Purest Good,
+  Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot
+  fetches pictures only for the race's board and the all-time ten: extend it to every segment's list
+  (all ten of the Purest Good have none today).
+- **The 60-second cut** stays as the series trailer.
+
 ## Planned films
 
 From ShadowyRealm's own snapshot, no new site needed (figures from the 2026-11-17 snapshot):
