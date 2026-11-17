@@ -4,6 +4,21 @@
 (() => {
   const SVG_NS = "http://www.w3.org/2000/svg";
 
+  // A frame's verticals and type sizes, in px. The 16:9 films share these; each film adds its x0
+  // and x1 (the river's ends) and textRight (the furthest right a callout may reach).
+  const LANDSCAPE = {
+    mid: 530, // the axis
+    half: 285, // the river's half-height
+    ruleTop: 235, // the front's ends, and the grid lines'
+    ruleBottom: 825,
+    tickY: 862, // tick labels' baseline
+    tickGap: 150, // the least distance between two ticks
+    nameY: 178, // a callout's name baseline, its meta line's, and the top of its leader
+    metaY: 218,
+    leaderTop: 236,
+    type: { name: 44, meta: 28, tick: 28, era: 40 },
+  };
+
   const FILMS = {
     // The 60-second cut: index.html.
     short: {
@@ -18,7 +33,7 @@
       ranksAt: [46.5, 48.3, 50.1],
       rankHold: 1.5,
       dimAt: 52.0,
-      frame: { x0: 96, x1: 1824, textRight: 1728 },
+      frame: { ...LANDSCAPE, x0: 96, x1: 1824, textRight: 1728 },
     },
     // The five-minute race: race.html, with the leaderboard to the right of the river.
     race: {
@@ -49,10 +64,34 @@
       ranksAt: [288.9, 285.9, 282.9, 279.9, 276.9, 273.6, 270.6, 267.0, 264.0, 261.0],
       rankHolds: [2.6, 2.6, 2.6, 2.6, 2.6, 2.9, 2.6, 3.2, 2.6, 2.6],
       dimAt: 292.0,
-      frame: { x0: 96, x1: 1250, textRight: 1250 },
+      frame: { ...LANDSCAPE, x0: 96, x1: 1250, textRight: 1250 },
       // The camera: the view widens with the front, which holds 80% of the way across, so the river
       // fills the frame from the first minute; it never shows less than a fifth of the axis.
       zoom: { lead: 0.8, minView: 0.2 },
+    },
+  };
+
+  // The 60-second cut recomposed at 1080 x 1920 for YouTube Shorts: short-vertical/. The same
+  // clock and callouts; the river runs the width, callouts above it, the year and source below it.
+  // Every word sits between y 168 and 1330, clear of the app's bars, and below y 840 no word
+  // passes x 936, clear of the action rail; type is 1.35 times the landscape sizes.
+  FILMS.shortVertical = {
+    ...FILMS.short,
+    frame: {
+      x0: 72,
+      x1: 1008,
+      textRight: 1008,
+      tickRight: 936,
+      mid: 700,
+      half: 300,
+      ruleTop: 380,
+      ruleBottom: 1020,
+      tickY: 1068,
+      tickGap: 130,
+      nameY: 290,
+      metaY: 344,
+      leaderTop: 368,
+      type: { name: 60, meta: 38, tick: 38, era: 54 },
     },
   };
 
@@ -69,12 +108,6 @@
     { year: 1991, name: "The Digital Age" },
   ];
 
-  // Vertical frame, shared by both films.
-  const MID = 530;
-  const HALF = 285;
-  const RULE_TOP = 235;
-  const RULE_BOTTOM = 825;
-  const TICK_Y = 862;
   const SWELL = 0.05; // each bucket rises over 5% of the axis behind the front
   const FLOOR_SHARE = 0.025; // the vertical scale never drops below 2.5% of the final maximum
 
@@ -291,8 +324,11 @@
     const ax = axis(realm);
     const { frontAt, timeAtFront } = clock(film);
     const N = ax.buckets;
-    const X0 = film.frame.x0;
-    const IW = film.frame.x1 - X0;
+    const fr = film.frame;
+    const { mid: MID, half: HALF, ruleTop: RULE_TOP, ruleBottom: RULE_BOTTOM, type } = fr;
+    const tickRight = fr.tickRight ?? fr.x1;
+    const X0 = fr.x0;
+    const IW = fr.x1 - X0;
     const x = (u, v = 1) => X0 + (u / v) * IW;
 
     const make = (tag, attrs, parent) => {
@@ -310,9 +346,14 @@
     const front = make("line", { class: "river-front", x1: X0, y1: RULE_TOP, x2: X0, y2: RULE_BOTTOM, opacity: 0 }, world);
     const tickGroup = make("g", {}, world);
     const calloutGroup = make("g", { opacity: 0 }, svg);
-    const calloutLeader = make("line", { class: "river-callout-leader", x1: 0, y1: 236, x2: 0, y2: 250 }, calloutGroup);
-    const calloutName = make("text", { class: "river-callout-name", x: 0, y: 178 }, calloutGroup);
-    const calloutMeta = make("text", { class: "river-callout-meta", x: 0, y: 218 }, calloutGroup);
+    // Type sizes come from the frame, so what is measured is what is drawn.
+    const sized = (el, size) => {
+      el.style.fontSize = `${size}px`;
+      return el;
+    };
+    const calloutLeader = make("line", { class: "river-callout-leader", x1: 0, y1: fr.leaderTop, x2: 0, y2: fr.leaderTop + 14 }, calloutGroup);
+    const calloutName = sized(make("text", { class: "river-callout-name", x: 0, y: fr.nameY }, calloutGroup), type.name);
+    const calloutMeta = sized(make("text", { class: "river-callout-meta", x: 0, y: fr.metaY }, calloutGroup), type.meta);
     const measure = make("text", { class: "river-measure", x: -4000, y: -4000, "data-layout-ignore": "" }, svg);
     const widthOf = (text, size, weight) => {
       measure.setAttribute("font-size", size);
@@ -373,14 +414,15 @@
     for (const year of [...realm.timeline.ticks].reverse()) {
       const u = ax.yearToUnit(year);
       const px = x(u);
-      if (ticks.length > 0 && ticks[ticks.length - 1].px - px < 150) continue;
+      if (px > tickRight) continue;
+      if (ticks.length > 0 && ticks[ticks.length - 1].px - px < fr.tickGap) continue;
       const label = ax.formatYear(year);
-      const w = widthOf(label, 28, 400);
+      const w = widthOf(label, type.tick, 400);
       // With era columns, the eras' edges are the river's verticals and the years keep only labels.
       const line = film.eras
         ? null
         : make("line", { class: "river-grid", x1: px, x2: px, y1: RULE_TOP, y2: RULE_BOTTOM, opacity: 0 }, gridGroup);
-      const text = make("text", { class: "river-tick-label", x: px, y: TICK_Y, opacity: 0 }, tickGroup);
+      const text = sized(make("text", { class: "river-tick-label", x: px, y: fr.tickY, opacity: 0 }, tickGroup), type.tick);
       text.textContent = label;
       ticks.push({ u, px, w, at: timeAtFront(u), line, text });
     }
@@ -407,8 +449,8 @@
         });
     const eraLabels = eraCols.filter((c) => c.label);
     const eraLabelGroup = film.eras ? make("g", { opacity: 0 }, svg) : null;
-    const eraName = film.eras ? make("text", { class: "river-era-name", x: 0, y: 178 }, eraLabelGroup) : null;
-    const eraMeta = film.eras ? make("text", { class: "river-callout-meta", x: 0, y: 218 }, eraLabelGroup) : null;
+    const eraName = film.eras ? sized(make("text", { class: "river-era-name", x: 0, y: fr.nameY }, eraLabelGroup), type.era) : null;
+    const eraMeta = film.eras ? sized(make("text", { class: "river-callout-meta", x: 0, y: fr.metaY }, eraLabelGroup), type.meta) : null;
 
     // ---- callouts: the biggest entity (own influence) starting in each gap of the sweep ----
     const labelOf = (e) => {
@@ -476,8 +518,12 @@
         if (read > c.hold + 1e-9) throw new Error(`No. ${c.rank}, ${c.name}, needs ${read.toFixed(1)} s to read and holds ${c.hold} s: re-time FILMS.race`);
       }
       c.px = x(c.u, view(film, frontAt(c.at)));
-      const w = Math.max(widthOf(c.name, 44, 700), widthOf(c.meta, 28, 400));
-      c.anchor = c.px + w > film.frame.textRight ? "end" : "start";
+      const w = Math.max(widthOf(c.name, type.name, 700), widthOf(c.meta, type.meta, 400));
+      if (w > fr.textRight - X0) throw new Error(`${c.name}'s callout is ${Math.ceil(w)} px wide; the frame has ${fr.textRight - X0}`);
+      // The words start at the band, or end there when they would pass textRight. When neither
+      // fits, as in a narrow frame, they end at textRight, still over the band.
+      c.textX = c.px + w <= fr.textRight || c.px - w >= X0 ? c.px : fr.textRight;
+      c.anchor = c.px + w <= fr.textRight ? "start" : "end";
     }
 
     const reveal = new Float64Array(N);
@@ -563,7 +609,7 @@
           calloutName.textContent = callout.name;
           calloutMeta.textContent = callout.meta;
           for (const el of [calloutName, calloutMeta]) {
-            el.setAttribute("x", callout.px.toFixed(1));
+            el.setAttribute("x", callout.textX.toFixed(1));
             el.setAttribute("text-anchor", callout.anchor);
           }
           calloutLeader.setAttribute("x1", callout.px.toFixed(1));
@@ -577,7 +623,7 @@
         const crest = MID - Math.sqrt((reveal[i] * columnTop[i]) / scale) * HALF;
         // The words stay where they landed; the leader's foot follows the band under the camera.
         calloutLeader.setAttribute("x2", x(callout.u, v).toFixed(1));
-        calloutLeader.setAttribute("y2", Math.max(240, crest - 8).toFixed(1));
+        calloutLeader.setAttribute("y2", Math.max(fr.leaderTop + 4, crest - 8).toFixed(1));
       } else {
         calloutGroup.setAttribute("opacity", "0");
       }
@@ -602,7 +648,7 @@
           tick.text.setAttribute("x", px.toFixed(1));
           tick.px = px;
         }
-        const anchor = tick.px - tick.w / 2 < X0 ? "start" : tick.px + tick.w / 2 > film.frame.x1 ? "end" : "middle";
+        const anchor = tick.px - tick.w / 2 < X0 ? "start" : tick.px + tick.w / 2 > tickRight ? "end" : "middle";
         if (tick.anchor !== anchor) {
           tick.text.setAttribute("text-anchor", anchor);
           tick.anchor = anchor;
@@ -631,10 +677,10 @@
             eraName.textContent = era.label.name;
             eraMeta.textContent = era.label.meta;
             const px = Math.max(X0, x(era.u0, view(film, frontAt(era.label.at)))) + 12;
-            const w = Math.max(widthOf(era.label.name, 40, 600), widthOf(era.label.meta, 28, 400));
-            const end = px + w > film.frame.textRight;
+            const w = Math.max(widthOf(era.label.name, type.era, 600), widthOf(era.label.meta, type.meta, 400));
+            const end = px + w > fr.textRight;
             for (const el of [eraName, eraMeta]) {
-              el.setAttribute("x", (end ? film.frame.textRight : px).toFixed(1));
+              el.setAttribute("x", (end ? fr.textRight : px).toFixed(1));
               el.setAttribute("text-anchor", end ? "end" : "start");
             }
             eraLabelGroup.dataset.era = String(era.i);

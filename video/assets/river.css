@@ -1,4 +1,5 @@
-/* The river's marks, shared by every film. Colours are the site's tokens, declared on :root. */
+/* The river's marks, shared by every film. Colours are the site's tokens, declared on :root.
+   Type sizes are the film's frame's (FILMS in river.js), set by mount. */
 .river-band-b {
   fill: var(--color-benefit);
 }
@@ -28,19 +29,16 @@
 }
 .river-tick-label {
   font-family: "Inter", sans-serif;
-  font-size: 28px;
   font-weight: 400;
   fill: var(--color-ink-muted);
 }
 .river-callout-name {
   font-family: "Inter", sans-serif;
-  font-size: 44px;
   font-weight: 700;
   fill: var(--color-ink);
 }
 .river-callout-meta {
   font-family: "Inter", sans-serif;
-  font-size: 28px;
   font-weight: 400;
   fill: var(--color-ink-muted);
 }
@@ -71,7 +69,6 @@
 }
 .river-era-name {
   font-family: "Inter", sans-serif;
-  font-size: 40px;
   font-weight: 600;
   fill: var(--color-ink-2);
 }
