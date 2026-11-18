@@ -1,9 +1,9 @@
 # Review: The River of Influence, vertical
 
 Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`,
-1080 x 1920, 30 fps, 1800 frames, 60.0 s, H.264 and AAC, rendered 2026-11-18 in 1 min 16 s.
-Contact sheet beside it. Since the render, the end card's count runs to three lines and names the
-3,374 links of influence, both numbers in bold; re-render before upload. Data: the `/api/realm` snapshot in `assets/realm-data.js`, taken
+1080 x 1920, 30 fps, 1800 frames, 60.0 s, H.264 and AAC, rendered 2026-11-18 in 1 min 13 s.
+Contact sheet beside it. The end card's count runs to three lines and names the 624 entities and
+the 3,374 links of influence between them, both numbers in bold. Data: the `/api/realm` snapshot in `assets/realm-data.js`, taken
 2026-11-17: 624 entities as of 2026.
 
 ## Creative calls
