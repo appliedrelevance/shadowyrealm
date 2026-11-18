@@ -246,16 +246,18 @@ def build() -> mido.MidiFile:
         (END_BEAT, 78), (END_BEAT + 4, 70), (end, 28),
     ]
 
-    pad = Track("Pad · Cinematic Synths", 0)
-    cellos = Track("Cellos · Studio Cellos", 1)
-    basses = Track("Basses · Studio Double Basses", 2)
-    violas = Track("Violas · Studio Violas", 3)
-    violins2 = Track("Violins 2 · Studio Violins 2", 4)
-    violins1 = Track("Violins 1 · Studio Violins 1", 5)
-    trombone1 = Track("Trombone 1 · Studio Trombone 1", 6)
-    trombone2 = Track("Trombone 2 · Studio Trombone 2", 8)
-    bass_trombone = Track("Bass Trombone · Studio Bass Trombone", 10)  # channel 10 (index 9) is GM drums
-    piano = Track("Piano · Keyboard Collection", 7)
+    # MIDI channels 5 to 15, never 1 to 4 (Logic imports those as external GM devices, which make
+    # no sound) and never 10 (GM drums).
+    pad = Track("Pad · Cinematic Synths", 4)
+    cellos = Track("Cellos · Studio Cellos", 5)
+    basses = Track("Basses · Studio Double Basses", 6)
+    violas = Track("Violas · Studio Violas", 7)
+    violins2 = Track("Violins 2 · Studio Violins 2", 8)
+    violins1 = Track("Violins 1 · Studio Violins 1", 10)
+    trombone1 = Track("Trombone 1 · Studio Trombone 1", 11)
+    trombone2 = Track("Trombone 2 · Studio Trombone 2", 12)
+    bass_trombone = Track("Bass Trombone · Studio Bass Trombone", 13)
+    piano = Track("Piano · Studio Grand", 14)
 
     # The pad: under everything, its own swell (CC11), so it glues the sections without leading.
     pad.sustain_chords(changes, 0, end, [n("D4"), n("F4"), n("A4"), n("E5")], n("A3"), n("G5"), 60)
