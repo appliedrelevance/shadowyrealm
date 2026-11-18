@@ -8,12 +8,12 @@ from its loudness and attacks: the source flutes to 1:00, the main theme enterin
 St John's Rapids from 9:05, the broad major-key theme starting at 10:28.58 after a short pause, the
 music receding from 12:05, and the two closing chords at 12:45.34 and 12:47.21.
 
-The edit lands those on the film's moments (score.py's cue times):
-  title (0 s)            the source flutes' last bars
-  sweep (4.2 s)          the main theme's entry
-  the World Wars (33 s)  the major-key theme, entering on its own first attack
-  the all-time names     the coda receding (crossfaded in at the sweep's end, 46.2 s)
-  end card (51.9 s)      the first closing chord; the second follows 1.87 s later
+The film takes one unbroken stretch, 0:56.47 to 1:52.47: the source flutes' last bars under the
+title, the main theme entering with the sweep (4.2 s) and building through its second statement to
+its crest (about −13 dBFS from 48 to 56 s, under the all-time names and the end card), which the
+film's last 3 s fade out (Geordie, 2026-11-18: keep the slow build; the major-key theme was too stark a jump, and too bright
+for the weight of the genocides on the river). The theme is in E minor throughout; the film ends
+before the major-key theme and the closing chords. The first cut, with those, is commit 0b3083f.
 """
 
 import subprocess
@@ -25,22 +25,14 @@ SOURCE = Path(
 OUT = Path("/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/river-60-vltava.wav")
 
 THEME_ENTRY = 60.67  # 1:00.67
-MAJOR_THEME = 628.58  # 10:28.58
-CODA = 725.0  # 12:05.0, the music receding
-FIRST_CHORD = 765.34  # 12:45.34
 
 SWEEP = 4.2
-WORLD_WARS = 33.0
-SWEEP_END = 46.2
-END_CARD = 51.9
 LENGTH = 60.0
 
-# (film start, source start, length, fade in, fade out), all in seconds
+# (film start, source start, length, fade in, fade out), all in seconds: one piece, the theme from
+# the sweep on; the film fades the music in and out itself.
 SEGMENTS = [
-    (0.0, THEME_ENTRY - SWEEP, WORLD_WARS + 0.05, 0.0, 0.6),  # the flutes, then the theme from the sweep
-    (WORLD_WARS, MAJOR_THEME - 0.02, SWEEP_END - WORLD_WARS + 1.2, 0.02, 1.2),  # the major theme
-    (SWEEP_END, CODA, END_CARD - SWEEP_END - 0.3, 1.2, 0.5),  # the coda, under the all-time names
-    (END_CARD - 0.5, FIRST_CHORD - 0.5, LENGTH - END_CARD + 0.5, 0.0, 0.0),  # the closing chords
+    (0.0, THEME_ENTRY - SWEEP, LENGTH, 0.0, 0.0),
 ]
 
 
