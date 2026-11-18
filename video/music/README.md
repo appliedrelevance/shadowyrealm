@@ -97,3 +97,18 @@ video/music/.venv/bin/python video/music/check.py /Volumes/Berthold/Landru/media
   and a volume envelope; its sustains are 3 to 26 s recordings with no loop, so a note held past a
   bar is played again on each bar line; and the libraries arrive up to 21 dB apart, so each track
   is set to a measured level.
+
+## A public-domain recording: Vltava
+
+[`vltava.py`](vltava.py) cuts Smetana's *Vltava* (The Moldau), a river from its source to the sea,
+to the 60-second film, from the Musopen Symphony's 2012 recording, public domain worldwide
+(Wikimedia Commons, 143.7 MB FLAC, kept in
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/source/`). Four pieces of the recording
+land on the film's moments: the flutes under the title, the main theme entering with the sweep at
+4.2 s, the major-key theme on its own first attack at the World Wars (33.0 s), the coda under the
+all-time names, and the first closing chord on the end card (51.9 s, measured 51.90 s in the cut).
+
+Musopen asks for a courtesy credit: "Music: Smetana, Vltava, performed by the Musopen Symphony
+(public domain)". The piece is famous and labels register their recordings with YouTube's Content
+ID, which can mistake one orchestra for another; a claim is disputed by citing the recording's
+public-domain source.
