@@ -1,5 +1,4 @@
-/* The race's panel to the right of the river, shared by the board (race-board) and the tally
-   after it (race-tally). Colours are the site's tokens, declared on :root in index.html. */
+/* The race's panel to the right of the river: the board (race-board). Colours are the site's tokens, declared on :root in index.html. */
 .panel-year {
   position: absolute;
   left: 1320px;

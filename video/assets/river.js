@@ -35,9 +35,9 @@
       dimAt: 52.0,
       frame: { ...LANDSCAPE, x0: 96, x1: 1824, textRight: 1728 },
     },
-    // The five-minute race: race.html, with the leaderboard to the right of the river.
+    // The race, 4:29: race/index.html, with the leaderboard to the right of the river.
     race: {
-      duration: 300,
+      duration: 269,
       axisIn: 0.15,
       axisDur: 2.2,
       sweep0: 4.2,
@@ -53,17 +53,14 @@
       // name above the river as the front enters it. The bands are shaded by entity type.
       eras: true,
       typeShades: true,
-      // The board shows the top ten. After the sweep it turns from that year to all time, and the
-      // all-time ten are lit on the river counting down, No. 10 first and No. 1 last, each for its
-      // words (rankHolds, River.readTime; mount checks them) and 0.4 s apart, ending before the dim.
-      // Times for rank 1 to 10; re-time them if the top ten's names change.
+      // The board shows the top ten. The film ends on the 2026 board: the front reaches 2026 at
+      // sweep1, the board holds there 2.2 s (its last change is at 258.4 s; a longer hold is a dead
+      // stretch), and at boardEnd it leaves as the river dims for the end card. The all-time countdown is a segment of its own (Geordie, 2026-11-18).
       boardSlots: 10,
       // A leader gets a card when it holds the lead 5 s or more.
       leadHold: 5,
-      allTimeAt: 259.6,
-      ranksAt: [288.9, 285.9, 282.9, 279.9, 276.9, 273.6, 270.6, 267.0, 264.0, 261.0],
-      rankHolds: [2.6, 2.6, 2.6, 2.6, 2.6, 2.9, 2.6, 3.2, 2.6, 2.6],
-      dimAt: 292.0,
+      boardEnd: 261.0,
+      dimAt: 261.0,
       frame: { ...LANDSCAPE, x0: 96, x1: 1250, textRight: 1250 },
       // The camera: the view widens with the front, which holds 80% of the way across, so the river
       // fills the frame from the first minute; it never shows less than a fifth of the axis.
@@ -271,7 +268,7 @@
       const reasons = realm.media[e.slug]?.reason;
       if (!reasons) throw new Error(`The snapshot has no reason for leader ${e.slug}: run bun tools/video-snapshot.ts`);
       const read = readTime(wordsIn(e.name) + reasons.reduce((n, r) => n + wordsIn(r.text), 0) + wordsIn(e.description));
-      const leadEnd = i + 1 < leads.length ? leads[i + 1].at : film.allTimeAt;
+      const leadEnd = i + 1 < leads.length ? leads[i + 1].at : film.boardEnd;
       return { slug: e.slug, title: e.name, reasons, body: e.description || null, earliest: lead.at + 0.6, read, leadEnd };
     });
     const labels = eraLabels.filter((l) => l.shown);
@@ -308,7 +305,7 @@
       free = cardAt + card.read + 1.0;
     }
     cards.forEach((card, i) => {
-      const next = i + 1 < cards.length ? cards[i + 1].at : film.allTimeAt;
+      const next = i + 1 < cards.length ? cards[i + 1].at : film.boardEnd;
       const read = card.readEnd - card.at;
       card.until = Math.min(card.at + Math.min(12, Math.max(read + 1.5, 5)), next - 0.4);
       if (card.until < card.readEnd) throw new Error(`The card for ${card.slug} leaves before its words are read`);
@@ -499,7 +496,7 @@
 
     // ---- the finale: the all-time top ranks by total influence, lit in turn ----
     const ranked = [...layers].sort((a, b) => b.entity.total_magnitude - a.entity.total_magnitude);
-    film.ranksAt.forEach((at, i) => {
+    (film.ranksAt ?? []).forEach((at, i) => {
       const layer = ranked[i];
       const hold = film.rankHolds ? film.rankHolds[i] : film.rankHold;
       callouts.push({ layer, u: ax.bucketUnit(layer.entity.curve.from), at, hold, rank: i + 1 });

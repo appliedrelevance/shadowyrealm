@@ -23,7 +23,7 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 | --- | --- | --- | --- | --- |
 | The River of Influence | `video/` | 60 s, 1800 frames | `video/SPEC.md` | `video/REVIEW.md` |
 | The River of Influence, vertical (the Short) | `video/short-vertical/` | 60 s, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
-| The race | `video/race/` | 300 s, 9000 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
+| The race | `video/race/` | 269 s, 8070 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
 
 - **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical` and
   `FILMS.race` hold each film's clock and timings; `ERAS` holds the race's eras and the YouTube
@@ -59,15 +59,16 @@ Run from the repo root. The scores change often; refresh the snapshot before any
      cards and era names, or the plan's error. "X's card would land after it lost the lead" means
      the lead changes hands faster than cards can be read: raise `FILMS.race.leadHold` to the
      smallest value that fits (2026-11-17: 2.5 → 5 s, 22 leaders → 14 cards).
-   - `bun .claude/skills/river-films/scripts/countdown.ts` prints `ranksAt` and `rankHolds` for the
-     current top ten. Paste them into `FILMS.race` whenever the ten's names change; `mount` throws
-     "re-time FILMS.race" when a line's hold is too short.
+   - The race ends on the 2026 board: `FILMS.race.boardEnd` and `dimAt` sit 2.6 s after the
+     board's last change (258.4 s on 2026-11-18). A later end is a `dead_stretch`. If a refresh
+     moves the last change, move both, the race's root durations and the end card's start with
+     them, and re-cut the bed to the new length (`video/race/SPEC.md`, SOUND).
    - Update `video/race/SPEC.md` where it quotes a changed number.
 5. Check all three: `cd video && npx --yes hyperframes@0.9.42 check --json`, and the same in
    `video/race` and `video/short-vertical`. Fix every error. Known warnings: `line_unread` on brief visits to the tenth place
    (kept: churn in the last place is the genre).
 6. Look before rendering: `npx --yes hyperframes@0.9.42 snapshot --at <seconds>` at cards, era
-   names, 2026, the countdown and the end card, then read the contact sheet. Rows crossing mid-swap
+   names, 2026, the 2026 board's hold and the end card, then read the contact sheet. Rows crossing mid-swap
    are the board moving. A solid-colour picture can be the real thing (the Abbasid banner is
    black): check the credit before "fixing" it.
 7. Render, in the background (60 s cut ≈ 2 min, race ≈ 6 min):
@@ -110,7 +111,8 @@ subject's films go there; a video cannot be moved between channels later.
   One short claim that adds to the title, never repeats it. Choose a frame with no card or callout
   that the crop would cut, and keep the text off the board. Two or three per film for Test & Compare.
   2026-11-17: `river-race-thumbnail-board.jpg` (258.5 s, "5,000 years, ranked"),
-  `river-race-thumbnail-maya.jpg` (289.5 s, "Not Rome. The Maya.") and
+  `river-race-thumbnail-maya.jpg` (289.5 s of the old 300 s cut, "Not Rome. The Maya.": the
+  countdown's, not the 269 s race's) and
   `river-of-influence-thumbnail.jpg` (47.5 s, "5,000 years. 60 seconds.").
 - **Titles:** the `ciqsi` skill's `references/titles-and-hooks.md` rules, checked with
   `vidiq_keyword_research` and `vidiq_score_title`. "Bar chart race" is the genre's search term
@@ -127,7 +129,7 @@ subject's films go there; a video cannot be moved between channels later.
 
 **Each video features one segment** (Geordie, 2026-11-17): the intro, one segment, the end card.
 Longer videos are remixes, a root that mounts several segments end to end, each on its own local
-clock (as the end card is mounted at 292 s today).
+clock (as the end card is mounted at 261 s in the race today).
 
 **Format** (Geordie, 2026-11-17): a single segment of 3 minutes or less is a vertical 1080 x 1920
 YouTube Short; YouTube files any upload of 3 minutes or less that is vertical or square as a Short,
@@ -138,9 +140,9 @@ and 1330 (the app's bars), none below y 840 past x 936 (the action rail); the pi
 below 1330, under the app's title and buttons, so the bottom third is never empty. Type is 1.35
 times the landscape sizes, and frame 0 already carries the hook (the feed shows it first). The segments:
 
-- **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board. The
-  2026-11-17 render still carries the all-time turn and countdown (259.6 to 292 s); cut them before
-  it is uploaded.
+- **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board, 4:29
+  (cut 2026-11-18). Its old all-time tally and countdown (`race-tally.html`, `scripts/countdown.ts`)
+  are in commit 03cc185, to start the countdown segment from.
 - **Countdowns** on the finished river, No. 10 to No. 1, each entry's band lit with a card. One
   segment type, five rankings: Top 10 of all time (total), Best (net), Worst (net), Purest Good,
   Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot

@@ -1,4 +1,4 @@
-// Pieces shared by the race's panel (race-board, race-tally) and its lower third (race-card):
+// Pieces shared by the race's panel (race-board) and its lower third (race-card):
 // pictures, rows and their bars. Pictures are the snapshot's Wikimedia stills
 // (tools/video-snapshot.ts), or the site's type icon for an entity with no free picture. Every
 // image is decoded before a composition registers its timeline, so no frame waits on one.

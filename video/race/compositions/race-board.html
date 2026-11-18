@@ -37,7 +37,7 @@
       // rather than a jump; whether it is on the board at all is its rank averaged over the last
       // second, so a brief visit never flickers on. Both are functions of time alone. The bars
       // carry the ranking alone: the curve's level is influence per century, a unit the site never
-      // shows. Totals, in the site's own unit, come with all time (race-tally).
+      // shows.
       const SAMPLE_STEP = 0.05;
       const PLACE_SAMPLES = 7; // 0.35 s
       const STAY_SAMPLES = 20; // 1.0 s
@@ -63,8 +63,8 @@
 
       const draw = (t) => {
         const f = frontAt(t);
-        // Arrives with the front; gives the panel to the all-time tally.
-        const headerOut = ramp(t, film.allTimeAt - 0.2, 0.2, ease.in2);
+        // Arrives with the front; holds on the 2026 board after the sweep and leaves as the river dims.
+        const headerOut = ramp(t, film.boardEnd - 0.2, 0.2, ease.in2);
         board.style.opacity = ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut).toFixed(3);
         year.textContent = ax.formatYear(yearAt(ax, f));
         for (const el of [...header, ...ranks]) {
@@ -82,7 +82,7 @@
         era.style.filter = `blur(${(6 * (1 - enter) + 6 * leave).toFixed(2)}px)`;
 
         // Standings now, and everyone's rank summed over the two windows (off the board counts as 7).
-        const rowsShown = 1 - ramp(t, film.allTimeAt - 0.4, 0.4, ease.in2);
+        const rowsShown = 1 - ramp(t, film.boardEnd - 0.4, 0.4, ease.in2);
         const visible = new Set();
         if (rowsShown > 0) {
           const now = race.standings(t);

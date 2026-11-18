@@ -1,5 +1,5 @@
 /**
- * Print the five-minute river race's YouTube description: its chapters, from the same eras and
+ * Print the river race's YouTube description: its chapters, from the same eras and
  * clock the film draws with (video/assets/river.js), and the credits for the Wikimedia pictures it
  * shows, from the snapshot (tools/video-snapshot.ts), so the description never disagrees with the
  * video.
@@ -30,7 +30,7 @@ const realm = g.REALM as {
   media: Record<string, { image: string | null; credit: Credit | null; withheld?: string }>;
 };
 const River = g.River as {
-  FILMS: { race: { allTimeAt: number } & Record<string, unknown> };
+  FILMS: { race: Record<string, unknown> };
   ERAS: { year: number; name: string }[];
   axis: (realm: unknown) => { yearToUnit: (year: number) => number };
   clock: (film: unknown) => { timeAtFront: (u: number) => number };
@@ -51,13 +51,12 @@ if (process.argv.includes("--credits")) {
   process.exit(0);
 }
 
-// The film opens on the first era's title, so that chapter starts at 0:00. The last chapter opens
-// as the board turns to all time.
+// The film opens on the first era's title, so that chapter starts at 0:00; the last era runs to the
+// end card.
 const chapters = River.ERAS.map((era, i) => ({
   at: i === 0 ? 0 : timeAtFront(ax.yearToUnit(era.year)),
   name: era.name,
 }));
-chapters.push({ at: film.allTimeAt, name: "The top ten of all time" });
 
 const stamp = (seconds: number) => {
   const s = Math.floor(seconds);

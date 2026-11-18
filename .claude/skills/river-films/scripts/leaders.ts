@@ -35,7 +35,7 @@ for (const hold of [film.leadHold, ...process.argv.slice(2).map(Number)]) {
 const leads = River.board(realm, film).firstLeads();
 console.log("\nfirst leaders (lead held until the next first lead):");
 leads.forEach((l: { at: number; e: { name: string } }, i: number) => {
-  const end = i + 1 < leads.length ? leads[i + 1].at : film.allTimeAt;
+  const end = i + 1 < leads.length ? leads[i + 1].at : film.boardEnd;
   console.log(`  ${l.at.toFixed(1).padStart(6)} to ${end.toFixed(1).padStart(6)} s  ${l.e.name}`);
 });
 

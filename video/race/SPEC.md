@@ -1,11 +1,12 @@
 # The River of Influence: the race
 
-GOAL: five minutes of history arriving left to right, with a leaderboard that keeps changing hands,
-ending on the turn that the most influential of all are ancient threads, not the loud recent century,
-and saying why at each turn: who a leader is and what it did, and why all time differs from any one
-year. For casual viewing: one thing to read at a time, never two.
+GOAL: four and a half minutes of history arriving left to right, with a leaderboard that keeps
+changing hands, ending on the 2026 board, and saying why at each turn: who a leader is and what it
+did. For casual viewing: one thing to read at a time, never two. The all-time countdown is a segment
+of its own (Geordie, 2026-11-18: one segment per video); the race's last version with it is commit
+03cc185.
 
-OUTPUT: HyperFrames, 1920 x 1080, 30 fps. TIME: 300 s x 30 = 9000 frames. Music bed only, no voice.
+OUTPUT: HyperFrames, 1920 x 1080, 30 fps. TIME: 269 s x 30 = 8070 frames. Music bed only, no voice.
 
 SHARED WITH THE 60-SECOND CUT (`../`): the data snapshot and its pictures, the river engine
 (`assets/river.js`, `FILMS.race` holds this film's clock and frame), its stylesheet, the intro and the
@@ -23,8 +24,7 @@ GEOMETRY:
   28 px (top 318), ten rows 66 px apart from y 380, clipped at y 1034 so a row joins from under the
   tenth place and leaves down past it
 - a row: a 52 px picture, the name 28 px 700 beside it (words dropped from the end past 390 px,
-  never smaller type), a 14 px bar under it split into benefit then harm: 390 px for the leader in
-  the race, 270 px beside a 28 px value in the tally
+  never smaller type), a 14 px bar under it split into benefit then harm: 390 px for the leader
 - the lower third x 96 to 1250, top 888: a 112 px picture, a 28 px line (the name in 700, the
   reasons in 400 behind benefit or harm swatches), and up to three 28 px lines of the site's text
 
@@ -58,22 +58,20 @@ OBJECTS:
 - callouts: a name every 3 to 4 s, the biggest entity by own influence starting in that slot whose
   name and line read within 2.6 s (the hold). None while a card is being read (0.5 s before it lands
   until its words are read), within 1 s of a card, or within 1 s of an era's name
-- all time (`race-tally`): the top ten by total influence, values in the site's own numbers,
-  captioned "Every year added together", then a countdown on the river and the board from No. 10 to
-  No. 1, each named "No. 6 · Organization · since 31 CE" and held for its words (`rankHolds`, at
-  least 2.6 s), 0.4 s apart
 
 SHOTS:
 - 0.0 to 4.6: the intro from the 60-second cut over the empty river
 - 4.2 to 258.8: the sweep, 3500 BCE to 2026 in 254.6 s; eras land in the panel and above the river as
   the front crosses their first year; a card under the river for each new leader (chapters:
   `bun tools/video-description.ts`)
-- 259.6: the panel turns to all time
-- 261.0 to 291.5: the countdown, No. 10 at 261.0 to No. 1 at 288.9
-- 292.0 to 300.0: the river and the panel dim; the end card
+- 258.8 to 261.0: the front reaches 2026 and the board holds on that year (its last change is at
+  258.4 s; a longer hold is a dead stretch)
+- 261.0 to 269.0: the river dims and the panel leaves (`boardEnd`, `dimAt`); the end card
 
 SOUND: `assets/music/race-bed.m4a`: ACE-Step take 11 (240 s, two slow swells) lowered 2.7 dB and
-crossfaded over 4 s into the 60-second cut's take 91, whose closing build ends the film; levelled to −16 LUFS, −1.6 dBTP. Fade
+crossfaded over 4 s into the 60-second cut's take 91, whose closing build ends the film; levelled to −16 LUFS, −1.6 dBTP.
+For the 269 s cut (2026-11-18), 31 s came out of take 11's quiet middle (108 to 135 s, at about
+−23 dBFS, joined by a 4 s crossfade), so take 91 still closes the film: 268.9 s, −16.1 LUFS, −1.8 dBTP. Fade
 in 1.5 s, out over the last 3 s.
 
 BANNED: as `../SPEC.md`, plus rows jittering between places, names flashing onto the board for less
@@ -84,5 +82,5 @@ a picture its licence does not let us show.
 QA: 10 s (Sumer's card, with its description), 43 s (the Classical World named on the river), 52 s
 (Hinduism's card), 68.5 s (the Middle Ages named; the Church's card waits), 71.5 s (the Church's
 card), 100 s (the Mongol Empire's card), 160 s (ten rows, one joining from under the tenth), 194 s
-(the Cold War named; the Holocaust's card waits), 250 s (2026, ten rows), 262.2 s (No. 10), 265.2 s
-(No. 9), 290.4 s (No. 1), 296 s (end card).
+(the Cold War named; the Holocaust's card waits), 250 s (ten rows), 260.6 s (the 2026 board, held),
+265 s (end card).
