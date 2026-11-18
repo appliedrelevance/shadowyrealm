@@ -22,7 +22,9 @@ each era as the front enters it.
 
 Logic's sound library lives on Berthold, `/Volumes/Berthold/AppData/Logic Pro Sound Library/`
 (Ajustes > General > Biblioteca de sonidos), with the packs Studio Strings, Studio Horns, Cinematic
-Synths and Keyboard Collection.
+Synths and Keyboard Collection, and Studio Piano's samples (2.04 GB), which Logic offers to
+download when the instrument is first loaded. Studio Piano is not in the browser's patch list: load
+it in the track's instrument slot.
 
 | Track | Patch | Enters |
 |---|---|---|
@@ -34,7 +36,7 @@ Synths and Keyboard Collection.
 | Violins 1 | Studio Strings > Studio Violins 1 | the Early Modern World: the melody |
 | Trombone 1, Trombone 2 | Studio Horns > Studio Trombone 1, 2 | the Industrial Age to the end of the sweep |
 | Bass Trombone | Studio Horns > Studio Bass Trombone | the Industrial Age to the end of the sweep |
-| Piano | Keyboard Collection > Pop Producer Keys | the title, each era, the three names, the end card |
+| Piano | Steinway Grand Piano (Geordie's choice, 2026-11-18), on the Studio Piano instrument | the title, each era, the three names, the end card |
 
 The tracks are on MIDI channels 5 to 15: Logic imports channels 1 to 4 as external GM devices,
 which make no sound, and channel 10 is GM drums. On import Logic gives each track an arbitrary
@@ -47,14 +49,24 @@ piano.
 
 ## Bounce and master
 
-Archivo > Bounce > Proyecto o sección: uncompressed, 24-bit, 48 kHz, to
+Turn off the metronome first (the triangle beside "1234" in the control bar, grey when off): Logic
+prints its click into the bounce when it is on. Then Archivo > Bounce > Proyecto o sección: uncompressed, 24-bit, 48 kHz, to
 `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/river-60.aif` (bar 1 to bar 19,
 61.8 s). Then trim to the film's 60 s, fade, and bring it to the films' loudness (−15.6 LUFS, true
-peak under −1.5 dBTP) with gain and a limiter:
+peak under −1.5 dBTP): measure the faded bounce's integrated loudness, apply the gain that brings it
+to −15.6 LUFS, and a limiter for the peaks:
 
 ```bash
-ffmpeg -i river-60.aif -af "atrim=0:60,asetpts=PTS-STARTPTS,afade=t=in:st=0:d=1.5,afade=t=out:st=57:d=3,volume=1.6dB,alimiter=limit=0.79:attack=5:release=80:level=false" …
+FADE="atrim=0:60,asetpts=PTS-STARTPTS,afade=t=in:st=0:d=1.5,afade=t=out:st=57:d=3"
+ffmpeg -nostats -i river-60.aif -af "$FADE,ebur128=peak=true" -f null -   # read I: from the summary
+ffmpeg -i river-60.aif -af "$FADE,volume=<-15.6 minus I>dB,alimiter=limit=0.79:attack=5:release=80:level=false" …
 ```
 
-The first bounce (2026-11-18) measured −17.2 LUFS before mastering and −15.7 LUFS, −1.9 dBTP
+Check a bounce before it goes into a film: `video/music/.venv/bin/python video/music/check.py
+<bounce>` prints the loudness and the noise floor, and fails when a click falls on the beats after
+the last note.
+
+The second bounce (2026-11-18), with the metronome off and the Steinway, measured −15.1 LUFS
+before mastering and −15.7 LUFS, −1.9 dBTP after, with no click after the music. The first, with
+the metronome on and Pop Producer Keys on the piano, measured −17.2 LUFS before mastering and −15.7 LUFS, −1.9 dBTP
 after; its quietest moments sit at −75 dBFS, with none of the hiss the generated bed had.
