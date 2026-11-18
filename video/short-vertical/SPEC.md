@@ -40,7 +40,8 @@ SHOTS:
 - 52.0 to 60.0: the river dims to 0.22 and the year and source leave; the end card is centred over
   the river in y 500 to 1330, below the dimmed ruler: Vaal (the graphic cut-out, 240 px, over the
   dimmed river), `shadowyrealm.com` 84 px 700, "Who shaped the world, / for better and for
-  worse?" 52 px, and the count on two lines at 40 px muted. The URL ends by x 927, clear of the rail
+  worse?" 52 px, and the count on three lines at 40 px muted, its
+  two numbers (entities, links of influence) in 700 ink. The URL ends by x 927, clear of the rail
 
 BANNED: as the cut, plus words below y 1330 or under the rail, an empty bottom third, a black or empty first frame, and
 the landscape film letterboxed or scaled into the frame.

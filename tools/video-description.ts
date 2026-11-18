@@ -26,6 +26,7 @@ interface Credit {
 const realm = g.REALM as {
   source: string;
   entities: { slug: string; name: string }[];
+  links: unknown[];
   media: Record<string, { image: string | null; credit: Credit | null; withheld?: string }>;
 };
 const River = g.River as {
@@ -75,7 +76,13 @@ const attributes = (license: string | null) => /^(CC BY|GFDL)/.test(license ?? "
 const attributed = pictures.filter((p) => attributes(p.license));
 const unclaimed = pictures.filter((p) => !attributes(p.license) && !/^(Public domain|CC0)$/.test(p.license ?? ""));
 if (unclaimed.length > 0) throw new Error(`Licences to decide: ${unclaimed.map((p) => `${p.file} (${p.license})`).join("; ")}`);
-lines.push("", `Every entry, its sources and its score: ${new URL(realm.source).origin}`, "", "Pictures from Wikimedia Commons:");
+const count = (n: number) => n.toLocaleString("en-US");
+lines.push(
+  "",
+  `All ${count(realm.entities.length)} entries and the ${count(realm.links.length)} links of influence between them, with every source and score: ${new URL(realm.source).origin}`,
+  "",
+  "Pictures from Wikimedia Commons:",
+);
 // A file that names no author is credited to its page on Commons, which carries its source.
 for (const p of attributed) lines.push(`${p.name}: ${p.artist ?? p.page}, ${p.license}`);
 

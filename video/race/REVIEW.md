@@ -7,6 +7,8 @@ Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4`, 19
 licence and page, from `--credits`). Rendered 2026-11-18 with the end card's mark as Vaal, a
 graphic cut-out drawn from the site's home-page picture, in place of the drawn gate mark. It still
 carries the all-time turn and countdown (259.6 to 292 s), which come out before upload.
+Since the render, the end card's count line also names the 3,374 links of influence, with both
+numbers in bold, and the description says the same; re-render before upload.
 
 ## Creative calls
 

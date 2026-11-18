@@ -52,7 +52,7 @@ SHOTS:
   48.3 and 50.1, each "No. N of 624"; all three are ancient, thin threads on the finished river,
   which is the film's turn: the swollen twentieth century is not where the most influence lies
 - 52.0 to 60.0: the river dims to 0.22; the end card: Vaal, `shadowyrealm.com`, the
-  entity count and the as-of year; hold to the end
+  entity count and the link count in bold ink inside a muted line, and the as-of year; hold to the end
 
 SOUND: one ambient bed from ACE-Step, 72 bpm, swelling across the minute; fade in 1.5 s, fade out
 over the last 3 s.

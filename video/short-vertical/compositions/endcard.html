@@ -50,6 +50,11 @@
     .end-line {
       display: block;
     }
+    /* The two counts stand out from their lines: the realm's size, then the links between it. */
+    .end-num {
+      font-weight: 700;
+      color: var(--color-ink);
+    }
   </style>
   <div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
     <div id="end-card" class="clip" data-start="0" data-duration="8" data-track-index="0">
@@ -60,16 +65,17 @@
         <span class="end-line">for better and for worse?</span>
       </div>
       <div id="end-count">
-        <span id="end-count-1" class="end-line"></span>
-        <span id="end-count-2" class="end-line"></span>
+        <span class="end-line"><span id="end-entities" class="end-num"></span> people, institutions and events,</span>
+        <span class="end-line">joined by <span id="end-links" class="end-num"></span> links of influence,</span>
+        <span class="end-line">scored as of <span id="end-year"></span></span>
       </div>
     </div>
   </div>
   <script>
     const realm = window.REALM;
-    document.getElementById("end-count-1").textContent =
-      `${realm.entities.length.toLocaleString("en-US")} people, institutions and events,`;
-    document.getElementById("end-count-2").textContent = `scored as of ${realm.as_of_year}`;
+    document.getElementById("end-entities").textContent = realm.entities.length.toLocaleString("en-US");
+    document.getElementById("end-links").textContent = realm.links.length.toLocaleString("en-US");
+    document.getElementById("end-year").textContent = String(realm.as_of_year);
     const tl = gsap.timeline({ paused: true });
     tl.fromTo(
       "#end-mark",

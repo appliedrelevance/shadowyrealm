@@ -185,7 +185,9 @@ Prior Art film settles how; record the layout here when it does.
 - **Words on screen.** The intro title "Five thousand years of influence" (`intro.html`); the
   source line "shadowyrealm.com · N entities" (`river.html`, `race-river.html`); the end card's URL,
   "Who shaped the world, for better and for worse?", its count line "people, institutions and
-  events" (`endcard.html`). The vertical film has its own copies of all three scenes in
+  events, joined by N links of influence" with both numbers in bold, from `realm.links` (Geordie,
+  2026-11-18: the link count is worth highlighting) (`endcard.html`). The YouTube description says
+  the same (`tools/video-description.ts`). The vertical film has its own copies of all three scenes in
   `video/short-vertical/compositions/`.
 - **The mark.** The end cards show Vaal as a graphic cut-out with an alpha channel:
   `assets/vaal-mark.png` in each project links to `src/sites/shadowyrealm/vaal-mark.png` (Geordie,

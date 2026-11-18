@@ -39,7 +39,16 @@
       margin-top: 28px;
       font-weight: 400;
       font-size: 30px;
+      line-height: 1.3;
       color: var(--color-ink-muted);
+    }
+    .end-line {
+      display: block;
+    }
+    /* The two counts stand out from their line: the realm's size, then the links between it. */
+    .end-num {
+      font-weight: 700;
+      color: var(--color-ink);
     }
   </style>
   <div id="root" data-composition-id="endcard" data-width="1920" data-height="1080">
@@ -47,13 +56,20 @@
       <img id="end-mark" src="assets/vaal-mark.png" width="200" height="200" alt="" />
       <div id="end-url">shadowyrealm.com</div>
       <div id="end-question">Who shaped the world, for better and for worse?</div>
-      <div id="end-count"></div>
+      <div id="end-count">
+        <span class="end-line"
+          ><span id="end-entities" class="end-num"></span> people, institutions and events, joined by
+          <span id="end-links" class="end-num"></span> links of influence,</span
+        >
+        <span class="end-line">scored as of <span id="end-year"></span></span>
+      </div>
     </div>
   </div>
   <script>
     const realm = window.REALM;
-    document.getElementById("end-count").textContent =
-      `${realm.entities.length.toLocaleString("en-US")} people, institutions and events, scored as of ${realm.as_of_year}`;
+    document.getElementById("end-entities").textContent = realm.entities.length.toLocaleString("en-US");
+    document.getElementById("end-links").textContent = realm.links.length.toLocaleString("en-US");
+    document.getElementById("end-year").textContent = String(realm.as_of_year);
     const tl = gsap.timeline({ paused: true });
     tl.fromTo(
       "#end-mark",

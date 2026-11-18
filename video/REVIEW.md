@@ -5,6 +5,8 @@ Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.
 in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026. Rendered 2026-11-18 with
 the end card's mark as Vaal, a graphic cut-out drawn from the site's home-page picture, in place
 of the drawn gate mark.
+Since the render, the end card's count line also names the 3,374 links of influence, with both
+numbers in bold; re-render before upload.
 
 ## Creative calls
 
