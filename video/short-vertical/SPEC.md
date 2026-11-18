@@ -1,50 +1,49 @@
-# The River of Influence, vertical
+# The River of Influence, vertical: the loop
 
-GOAL: the 60-second cut as a YouTube Short, the series trailer in the Shorts feed. The same film as
-`video/` (its SPEC holds the story, the look and the motion); this one is recomposed for a phone,
-not squeezed.
+GOAL: the series trailer as a YouTube Short that loops. A Short replays as soon as it ends, so the
+first frame is the hook and the last frame runs straight back into the first (Geordie, 2026-11-18:
+hook first, then the slow build, no title or end card, big titles instead). The finished river
+opens under the title with the music's climax, drains back to its source, refills over five
+thousand years with the music building, and arrives where it started.
 
-OUTPUT: HyperFrames, 1080 x 1920, 30 fps. TIME: 60 s x 30 = 1800 frames. Music bed only, no voice:
-`assets/music/river-bed.m4a`, the cut's own bed.
+OUTPUT: HyperFrames, 1080 x 1920, 30 fps. TIME: 110 s x 30 = 3300 frames. Music only, no voice:
+`assets/music/vltava-loop.m4a`, Smetana's *Vltava* by the Musopen Symphony (public domain), cut as
+the loop: the main theme's crest (1:45 to 1:50 in the recording), then the recording from its first
+note to 1:45, so the end runs into the start with no join. One cut, at 5 s, where the picture resets
+too (15 ms fades). Mastered −16.1 LUFS, −1.8 dBTP. No fades at either end.
 
-ENGINE: `assets/river.js`, `FILMS.shortVertical`: the cut's clock and callouts with its own frame.
-Every frame's geometry and type sizes live in `FILMS`, so the landscape films are untouched.
+ENGINE: `assets/river.js`, `FILMS.shortLoop`: the vertical frame of `FILMS.shortVertical` with a
+110 s clock and a hook. Its `draw(t)` takes the hook as a remap of time: before 5.0 s the river is
+drawn finished (the sweep's end plus 1 s), from 5.0 to 5.6 s it runs back to the sweep's start
+(power2.inOut), and from 5.6 s the sweep plays as written; nothing is called out in the hook or the
+drain. The landscape films have no hook and draw as before.
 
 THE APP'S OWN UI: nothing in the top 168 px; every word between y 168 and 1330. Below 1330 the app
-lays its title, channel and buttons over the video, so only the picture goes there: the river's
-harm half runs down to y 1510 under them. The action rail: below y 840, no word passes x 936.
+lays its title, channel and buttons over the video, so only the picture goes there. The action rail:
+below y 840, no word passes x 936.
 
-GEOMETRY, top to bottom: the words stack at the top, the river fills the rest.
-- year counter: x 72, top y 200, 132 px 700, tabular figures; the clock, read first
-- source line: x 72, top y 352, 36 px 400
-- tick labels as a ruler: baseline y 462, 38 px, at least 130 px apart: 500 BCE, 1000, 1700, 1900,
-  2000. Their grid lines hang from y 478, behind the callout, to the river's foot
-- callouts: name baseline y 556 at 60 px 700, meta baseline y 610 at 38 px 400, leader from y 634
-  down to the crest. The words start at the band, or end there when they would pass x 1008; when
-  neither fits they end at x 1008, still over the band
-- river x 72 to 1008 (936 px), axis at y 1090, half-height 420 (y 670 to 1510); the front y 650 to
-  1530
-- type is 1.35 times the landscape sizes (44, 28 px); the year is 132 px, the clock at the top
+GEOMETRY: as the vertical cut. The year counter (x 72, top y 200, 132 px 700) and the source line
+(top y 352, 36 px) at the top, the year labels as a ruler (baseline y 462, 38 px), callouts at
+y 556/610 (60/38 px), the river x 72 to 1008 with its axis at y 1090 and half-height 420.
+
+THE TITLES (`compositions/titles.html`): "5,000 years / of influence", 112 px 700, x 72, top y 196;
+the key "Benefit above the line. / Harm below it.", 52 px 600, x 72, top y 640, in the empty ground
+above the finished river's left half (its benefit starts below y 800 there), clear of the bands.
 
 SHOTS:
-- frame 0: the hook, already set: "Five thousand / years of influence", 112 px 700, x 72, top y 600,
-  over the empty river. It is the first impression in the feed
-- 0.15 to 2.35: the axis draws left to right at y 1090; the key lands either side of it, blurred to
-  sharp in 0.2 s: "Benefit rises above the line." above it at 0.5 s (top y 1018), "Harm falls below
-  it." below it at 0.9 s (top y 1114), 48 px 400 muted
-- 3.95 to 4.3: the title leaves word by word, 0.04 s apart, then the key; the year and source
-  arrive at the top from 3.8 s
-- 4.2 to 46.2: the sweep, as the cut: the front crosses the axis in 42 s, callouts at least 2.55 s
-  apart, none after 44 s
-- 46.5, 48.3, 50.1: the all-time top three, "No. N of 624"
-- 52.0 to 60.0: the river dims to 0.22 and the year and source leave; the end card is centred over
-  the river in y 500 to 1330, below the dimmed ruler: Vaal (the graphic cut-out, 240 px, over the
-  dimmed river), `shadowyrealm.com` 84 px 700, "Who shaped the world, / for better and for
-  worse?" 52 px, and the count on three lines at 40 px muted, its
-  two numbers (entities, links of influence) in 700 ink. The URL ends by x 927, clear of the rail
+- 0.0 to 5.0, the hook: the finished river at 2026, the ruler, the titles; the year and source are
+  off. The river pushes in 3.5% from the ruler (origin 540, 470), so the ruler and titles stay put
+- 4.7 to 5.0: the titles leave (0.3 s, power2.in, blurred); 5.0 to 5.25 the year and source arrive
+- 5.0 to 5.6, the drain: the river runs back to its source, the front and the year rewinding from
+  2026 to 3500 BCE, the push settling back to full size
+- 5.6 to 104.0, the sweep: the front crosses the axis in 98.4 s; a callout at least 3.4 s apart,
+  held 2.4 s, none after 100.5 s
+- 104.0 to 104.6: the front fades; the river is finished
+- 106.5 to 107.1: the year and source leave; 106.9 to 107.4 the titles return (0.5 s, expo.out)
+- 107.4 to 110.0: the frame is the hook's first frame; the last frame is frame 0, pixel for pixel
 
-BANNED: as the cut, plus words below y 1330 or under the rail, an empty bottom third, a black or empty first frame, and
-the landscape film letterboxed or scaled into the frame.
+BANNED: as the cut, plus a title or end card, words below y 1330 or under the rail, a black or empty
+first frame, a join anyone can see or hear at the loop, and the landscape film scaled into the frame.
 
-QA: 0 s (the hook), 1.5 s (the key either side of the axis), 10, 17, 25, 33 and 40 s (callouts at
-both anchors), 46.9, 48.7 and 50.5 s (the top three), 58 s (end card).
+QA: 0 s and 3 s (the hook), 5.2 and 5.45 s (the drain), 10, 30, 55, 70 and 90 s (the build and its
+callouts), 104 s (2026), 107.6 s (the titles back), 109.966 s (the last frame, against frame 0).

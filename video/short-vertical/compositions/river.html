@@ -41,7 +41,7 @@
     }
   </style>
   <div id="root" data-composition-id="river" data-width="1080" data-height="1920">
-    <div id="river-stage" class="clip" data-start="0" data-duration="60" data-track-index="0">
+    <div id="river-stage" class="clip" data-start="0" data-duration="110" data-track-index="0">
       <svg id="river-svg" width="1080" height="1920" viewBox="0 0 1080 1920" aria-hidden="true"></svg>
       <div id="river-year">3500 BCE</div>
       <div id="river-source"></div>
@@ -53,7 +53,7 @@
       const year = document.getElementById("river-year");
       const source = document.getElementById("river-source");
       source.textContent = `shadowyrealm.com · ${realm.entities.length.toLocaleString("en-US")} entities · as of ${realm.as_of_year}`;
-      const film = window.River.FILMS.shortVertical;
+      const film = window.River.FILMS.shortLoop;
       const draw = window.River.mount({
         svg: document.getElementById("river-svg"),
         realm,
@@ -64,6 +64,12 @@
       const state = { t: 0 };
       const tl = gsap.timeline({ paused: true });
       tl.fromTo(state, { t: 0 }, { t: film.duration, duration: film.duration, ease: "none", onUpdate: () => draw(state.t) }, 0);
+      // The hook moves: a slow push into the finished river from the ruler (which stays put, clear of
+      // the title), settling back as it drains, so the first
+      // and the last frame are the same frame.
+      const svg = document.getElementById("river-svg");
+      tl.fromTo(svg, { scale: 1 }, { scale: 1.035, transformOrigin: "540px 470px", duration: film.hook.until, ease: "none" }, 0);
+      tl.to(svg, { scale: 1, transformOrigin: "540px 470px", duration: film.hook.drain, ease: "power2.inOut" }, film.hook.until);
       draw(0);
       window.__timelines["river"] = tl;
     });

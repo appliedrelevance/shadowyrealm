@@ -22,7 +22,7 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 | Film | Project | Length | Spec | Review |
 | --- | --- | --- | --- | --- |
 | The River of Influence | `video/` | 60 s, 1800 frames | `video/SPEC.md` | `video/REVIEW.md` |
-| The River of Influence, vertical (the Short) | `video/short-vertical/` | 60 s, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
+| The River of Influence, vertical (the Short, a loop) | `video/short-vertical/` | 110 s, 3300 frames, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
 | The race | `video/race/` | 269 s, 8070 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
 
 - **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical` and
@@ -37,7 +37,7 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 - **Shared files** live once in `video/assets` and `video/compositions`; `video/race/` symlinks
   them (`realm-data.js`, `river.js`, `river.css`, `images/`, the intro and the end card).
   `video/short-vertical/` symlinks `realm-data.js`, `river.js`, `river.css` and `music/`, and has its
-  own intro, river and end card scenes, recomposed for 1080 x 1920.
+  own river and titles scenes, recomposed for 1080 x 1920; it has no intro or end card.
 - **A render never fetches.** It reads `video/assets/realm-data.js`, a frozen `/api/realm` with
   the race's pictures, leaders' reasons and credits, written by `tools/video-snapshot.ts` and
   committed. A committed snapshot is the record of what a film showed.
@@ -138,7 +138,15 @@ be both renders in both from one build: its film gets a vertical `frame`, as
 `FILMS.shortVertical` does. A vertical film is recomposed, never scaled: every word between y 168
 and 1330 (the app's bars), none below y 840 past x 936 (the action rail); the picture runs on
 below 1330, under the app's title and buttons, so the bottom third is never empty. Type is 1.35
-times the landscape sizes, and frame 0 already carries the hook (the feed shows it first). The segments:
+times the landscape sizes, and frame 0 already carries the hook (the feed shows it first).
+
+**A Short is a loop** (Geordie, 2026-11-18): it replays as soon as it ends. So it has no title or
+end card; big titles sit over the hook instead, and the URL goes in the description. Its first
+seconds are the payoff (the finished river and the music's climax), then it resets and builds, and
+its last frame is its first, pixel for pixel: `FILMS.shortLoop` and its `hook` (`until`, `drain`,
+`outro`) in `river.js`; compare the last frame with frame 0 before every render. Its music must
+loop too: the crest first, then the build that leads into it (`video/music/README.md`). The
+segments:
 
 - **The race:** 3500 BCE to 2026 with the year's leaderboard, ending on the 2026 board, 4:29
   (cut 2026-11-18). Its old all-time tally and countdown (`race-tally.html`, `scripts/countdown.ts`)
@@ -148,8 +156,8 @@ times the landscape sizes, and frame 0 already carries the hook (the feed shows 
   Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot
   fetches pictures only for the race's board and the all-time ten: extend it to every segment's list
   (all ten of the Purest Good have none today).
-- **The 60-second cut** stays as the series trailer, published as the Short from
-  `video/short-vertical/`.
+- **The 60-second cut** stays as the landscape trailer; the Short from `video/short-vertical/` is
+  the same story as a 110 s loop.
 
 ## Planned films
 
@@ -189,8 +197,9 @@ Prior Art film settles how; record the layout here when it does.
   "Who shaped the world, for better and for worse?", its count line "people, institutions and
   events, joined by N links of influence" with both numbers in bold, from `realm.links` (Geordie,
   2026-11-18: the link count is worth highlighting) (`endcard.html`). The YouTube description says
-  the same (`tools/video-description.ts`). The vertical film has its own copies of all three scenes in
-  `video/short-vertical/compositions/`.
+  the same (`tools/video-description.ts`). The vertical Short has its own river scene and its
+  titles, "5,000 years / of influence" and "Benefit above the line. / Harm below it."
+  (`video/short-vertical/compositions/titles.html`).
 - **The mark.** The end cards show Vaal as a graphic cut-out with an alpha channel:
   `assets/vaal-mark.png` in each project links to `src/sites/shadowyrealm/vaal-mark.png` (Geordie,
   2026-11-17: Vaal is the logo, not the site's drawn gate mark, and a graphic, not the photo). It

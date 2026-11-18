@@ -93,6 +93,26 @@
     },
   };
 
+  // The vertical Short as a loop (Geordie, 2026-11-18): a Short replays as soon as it ends, so its
+  // first frame is the hook and its last frame runs straight back into the first. The finished
+  // river opens under the title (hook.until), drains back to its source (hook.drain), refills from
+  // 3500 BCE over the sweep, and the title returns over the finished river from hook.outro, so the
+  // last frame is drawn as the first. No title card, no end card, no all-time finale.
+  FILMS.shortLoop = {
+    ...FILMS.shortVertical,
+    duration: 110,
+    axisIn: 0,
+    axisDur: 0.01,
+    sweep0: 5.6,
+    sweep1: 104.0,
+    calloutGap: 3.4,
+    calloutHold: 2.4,
+    lastCallout: 100.5,
+    ranksAt: [],
+    dimAt: Infinity,
+    hook: { until: 5.0, drain: 0.6, outro: 106.5 },
+  };
+
   // Eras for the race's panel and its YouTube chapters, by the year they begin.
   const ERAS = [
     { year: -3500, name: "The First Cities" },
@@ -539,8 +559,20 @@
       return `${top}${bottom}Z`;
     };
 
+    // A looping film's hook: before hook.until the river is drawn finished; over hook.drain it runs
+    // back to its source, the front and the years rewinding; then the sweep plays as written.
+    // Nothing is called out in either.
+    const finished = film.sweep1 + 1;
+    const hookTime = (t) => {
+      if (!film.hook || t >= film.hook.until + film.hook.drain) return { t, quiet: false };
+      if (t < film.hook.until) return { t: finished, quiet: true };
+      const p = ease.inOut2((t - film.hook.until) / film.hook.drain);
+      return { t: finished + (film.sweep0 - finished) * p, quiet: true };
+    };
+
     let shownCallout = null;
-    return function draw(t) {
+    return function draw(clockTime) {
+      const { t, quiet } = hookTime(clockTime);
       const f = frontAt(t);
       const v = view(film, f);
       let scale = floor;
@@ -554,7 +586,7 @@
       let callout = null;
       let lit = 0;
       for (const c of callouts) {
-        if (t < c.at - 0.05 || t >= c.at + c.hold + 0.5) continue;
+        if (quiet || t < c.at - 0.05 || t >= c.at + c.hold + 0.5) continue;
         callout = c;
         lit = ramp(t, c.at, 0.45, ease.inOut2) * (1 - ramp(t, c.at + c.hold - 0.05, 0.35, ease.inOut2));
       }
@@ -692,8 +724,11 @@
 
       // The counter and the furniture arrive with the front and leave for the end card.
       if (yearEl) yearEl.textContent = ax.formatYear(yearAt(ax, f));
-      const shown = (ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut) * (1 - ramp(t, film.dimAt, 0.4, ease.in2))).toFixed(3);
-      for (const el of furniture) el.style.opacity = shown;
+      // In a loop they arrive as the river drains and leave for the title at hook.outro.
+      const shown = film.hook
+        ? ramp(clockTime, film.hook.until, 0.25, ease.expoOut) * (1 - ramp(clockTime, film.hook.outro, 0.6, ease.in2))
+        : ramp(t, film.sweep0 - 0.4, 0.3, ease.expoOut) * (1 - ramp(t, film.dimAt, 0.4, ease.in2));
+      for (const el of furniture) el.style.opacity = shown.toFixed(3);
 
       // The end card takes the frame: the river stays, dimmed under it.
       world.setAttribute("opacity", (1 - 0.78 * ramp(t, film.dimAt, 0.8, ease.inOut2)).toFixed(3));
