@@ -1,8 +1,8 @@
 # Review: The River of Influence, vertical
 
-Not rendered yet: the stills go to Geordie first. Render to
-`/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`, 1080 x 1920,
-30 fps, 1800 frames, 60.0 s. Data: the `/api/realm` snapshot in `assets/realm-data.js`, taken
+Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`,
+1080 x 1920, 30 fps, 1800 frames, 60.0 s, H.264 and AAC, rendered 2026-11-18 in 1 min 16 s.
+Contact sheet beside it. Data: the `/api/realm` snapshot in `assets/realm-data.js`, taken
 2026-11-17: 624 entities as of 2026.
 
 ## Creative calls
@@ -45,11 +45,12 @@ Not rendered yet: the stills go to Geordie first. Render to
   frames).
 - Frames: stills at 0, 1.5, 10, 17, 25, 33, 40, 46.9, 48.7, 50.5 and 58 s, the review sheet, both
   seams, and the phone sheet, on which every line reads at 360 px wide.
+- Audio from the rendered file: −15.6 LUFS integrated, −2.7 dBTP true peak, the cut's mix.
+- The frame at 58 s cut from the render shows the graphic mark over the dimmed river, as in the
+  58 s still.
 
 ## Not checked
 
-- No render yet, so no loudness measurement; the bed is the cut's, measured at −15.6 LUFS and
-  −2.7 dBTP in the landscape render.
 - The layout has not been seen inside the YouTube app, under its real bars, overlay and rail.
 
 ## Weakest shot

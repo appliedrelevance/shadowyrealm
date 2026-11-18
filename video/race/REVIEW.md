@@ -4,11 +4,9 @@ Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4`, 19
 9000 frames, 300.0 s, H.264 and AAC. Beside it: a contact sheet cut from the render,
 `river-race.description.txt` (the YouTube description: chapters and picture credits, from
 `bun tools/video-description.ts`) and `river-race.credits.txt` (every picture's file, author,
-licence and page, from `--credits`).
-
-Since the render, the end card's mark is Vaal, a graphic cut-out drawn from the site's home-page
-picture, in place of the drawn gate mark (2026-11-17); the render still shows the gate mark, so
-re-render before upload.
+licence and page, from `--credits`). Rendered 2026-11-18 with the end card's mark as Vaal, a
+graphic cut-out drawn from the site's home-page picture, in place of the drawn gate mark. It still
+carries the all-time turn and countdown (259.6 to 292 s), which come out before upload.
 
 ## Creative calls
 
@@ -62,7 +60,7 @@ re-render before upload.
   last place is the genre.
 - Reading load, from the reading plan in a script: a card or an era's name is being read 54.7% of
   the sweep, two at once 0.0% of it.
-- Render: 9000 frames in 6 min 3 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
+- Render: 9000 frames in 5 min 50 s. Audio from the rendered file: −16.1 LUFS integrated, −1.3 dBTP
   true peak, the same mix as before.
 - Frames: snapshots at 10, 30, 45, 70, 121, 188, 250, 262.2, 289.5, 296 and 299.75 s, and the
   contact sheet cut from the render.

@@ -2,11 +2,9 @@
 
 Render: `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4`, 1920 x 1080,
 30 fps, 1800 frames, 60.0 s, H.264 and AAC. Contact sheet beside it. Data: the `/api/realm` snapshot
-in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026.
-
-Since the render, the end card's mark is Vaal, a graphic cut-out drawn from the site's home-page
-picture, in place of the drawn gate mark (2026-11-17); the render still shows the gate mark, so
-re-render before upload.
+in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026. Rendered 2026-11-18 with
+the end card's mark as Vaal, a graphic cut-out drawn from the site's home-page picture, in place
+of the drawn gate mark.
 
 ## Creative calls
 
