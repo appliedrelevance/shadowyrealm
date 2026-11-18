@@ -70,3 +70,30 @@ The second bounce (2026-11-18), with the metronome off and the Steinway, measure
 before mastering and −15.7 LUFS, −1.9 dBTP after, with no click after the music. The first, with
 the metronome on and Pop Producer Keys on the piano, measured −17.2 LUFS before mastering and −15.7 LUFS, −1.9 dBTP
 after; its quietest moments sit at −75 dBFS, with none of the hiss the generated bed had.
+
+## Without a DAW: sfizz
+
+[`render.py`](render.py) renders the same MIDI with no DAW and no screen: each track through an SFZ
+instrument with `sfizz_render`, then levelled, mixed and reverberated with Spotify's `pedalboard`,
+in about 2 s. It writes `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/river-60-sfz.wav`;
+master it as above.
+
+```bash
+video/music/.venv/bin/python video/music/render.py
+video/music/.venv/bin/python video/music/check.py /Volumes/Berthold/Landru/media/exports/shadowyrealm/music/river-60-sfz.wav
+```
+
+- **sfizz 1.2.3**, built from source in `/Volumes/Berthold/DevTools/sfizz/` (`build-arm64/library/bin/sfizz_render`).
+  Two changes were needed on this Mac: `cmake/SfizzConfig.cmake` adds 32-bit ARM flags
+  (`-mfpu=neon -mfloat-abi=hard`) to any processor matching `arm.*`, arm64 included, so its test now
+  matches `^(arm|armv[0-7].*)$`; and the bundled `atomic_queue` needs
+  `-Wno-missing-template-arg-list-after-template-kw` under the current clang.
+- **Samples** in `/Volumes/Berthold/AppData/sfz/`: VSCO 2 Community Edition (CC0), only the six
+  sustain folders the score uses (violin, viola and cello sections, contrabass, tenor trombone,
+  tuba: 330 MB), and the Salamander Grand Piano, 44.1 kHz 16-bit (Alexander Holm, CC BY 3.0: a film
+  that uses it credits him).
+- **What the renderer does for these libraries**: VSCO changes only by velocity layer, so the
+  score's CC1 becomes velocities (lifted by 25, so only the quietest passages use the soft layer)
+  and a volume envelope; its sustains are 3 to 26 s recordings with no loop, so a note held past a
+  bar is played again on each bar line; and the libraries arrive up to 21 dB apart, so each track
+  is set to a measured level.
