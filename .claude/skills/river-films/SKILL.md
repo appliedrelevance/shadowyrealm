@@ -75,7 +75,9 @@ Run from the repo root. The scores change often; refresh the snapshot before any
    `npx --yes hyperframes@0.9.42 render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4`
    in `video/`, `…/river-of-influence-vertical.mp4` in `video/short-vertical/`, and
    `…/river-race.mp4` in `video/race/`. Verify with `ffprobe` (frames, duration, 1080 x 1920 for the
-   Short).
+   Short). For the Short, render to the scratchpad, then copy its video stream and the bed into the
+   export (the command is in `video/short-vertical/REVIEW.md`): the render's mix starts the music
+   9.3 ms late, a gap at the loop point.
 8. Description and credits: write to the scratchpad first, then copy to exports. A shell redirect
    straight into the export truncates it even when the script fails.
    `bun tools/video-description.ts` (chapters, ≥ 10 s each, and picture credits, ≤ 5,000

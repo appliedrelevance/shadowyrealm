@@ -1,9 +1,17 @@
 # Review: The River of Influence, vertical: the loop
 
-Not rendered yet: the stills go to Geordie first. Render to
-`/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`, 1080 x 1920,
-30 fps, 3300 frames, 110.0 s. Data: the `/api/realm` snapshot in `assets/realm-data.js`, taken
-2026-11-17: 624 entities as of 2026.
+Rendered 2026-11-19 with hyperframes 0.9.42 to
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`: 1080 x 1920,
+30 fps, 3300 frames, 110.000 s, 73.4 MB, with its contact sheet beside it. Data: the `/api/realm`
+snapshot in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026.
+
+**After every render, swap in the bed.** The render's mix starts the music 448 samples (9.3 ms)
+late, which puts silence at the loop point. The export carries the video stream from the render and
+the bed itself, both copied, not re-encoded:
+
+```bash
+ffmpeg -i render.mp4 -i assets/music/vltava-loop.m4a -map 0:v -map 1:a -c copy -movflags +faststart river-of-influence-vertical.mp4
+```
 
 ## Creative calls
 
@@ -34,11 +42,20 @@ Not rendered yet: the stills go to Geordie first. Render to
 - The loop audio: 110.000 s; −16.1 LUFS, −1.8 dBTP; the end is the recording at 1:44.99, the start
   the recording at 1:45.00.
 - Stills at 0, 3, 5.2, 5.45, 10, 30, 55, 70, 90, 104, 107.6 and 109.966 s.
+- The render, 2026-11-19: `hyperframes check` again no errors, no warnings. ffprobe: 3300 frames,
+  video and audio both 110.000 s.
+- The seam, picture: the snapshots at 0 and 109.966 s differ in no pixel. In the encode, frame 3299
+  against frame 0 is 43.7 dB PSNR, H.264 noise (frame 0 is a keyframe, frame 3299 a predicted one);
+  frames 3298 and 3299 are identical.
+- The seam, sound: after the swap the decoded audio has 0.02 ms of silence at the start (the
+  render's own mix had 9.33 ms). The 13.06 ms after 110.000 s is the AAC encoder's end padding,
+  which the file's edit list cuts; the music runs to 110.000 s.
+- The export's loudness: −16.1 LUFS, −1.8 dBTP (the render's own mix: −16.2 LUFS, −1.7 dBTP).
 
 ## Not checked
 
-- No render yet, so the loop has not been played through end to start in a player, and the AAC
-  encoder's padding at the loop point is not measured.
+- Nobody has watched it loop end to start in a player; the seam is measured, not heard.
+- YouTube re-encodes the upload, and the Shorts player's restart sets the seam viewers hear.
 - The layout has not been seen inside the YouTube app.
 - YouTube's Content ID may match the recording to a label's Vltava; a claim is disputed with the
   Musopen public-domain source.
