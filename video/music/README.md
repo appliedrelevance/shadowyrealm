@@ -114,3 +114,54 @@ Musopen asks for a courtesy credit: "Music: Smetana, Vltava, performed by the Mu
 (public domain)". The piece is famous and labels register their recordings with YouTube's Content
 ID, which can mistake one orchestra for another; a claim is disputed by citing the recording's
 public-domain source.
+
+## Without a DAW: BBC Symphony Orchestra Discover
+
+Spitfire's free BBC Symphony Orchestra Discover (installed 2026-11-19 with the Spitfire Audio app;
+the library, 243 MB, in `/Volumes/Berthold/Landru/media/audio/spitfire/`) plays from Python with
+no DAW and no window: `pedalboard` loads its VST3 as an instrument, and [`bbcso.py`](bbcso.py)
+picks the instrument by rewriting the plug-in's saved state. Rendering with a 4096-sample buffer
+runs about 50 times faster than real time. Unlike VSCO, its longs swell on CC1 and its shorts
+have real staccato, spiccato, pizzicato and marcato recordings.
+
+- **An instrument is a name.** The state holds the patch as XML whose articulations are named like
+  the library's patch files: `BBCSODi_h___Celli___Long.zmulti` is `h - Celli - Long`. A fresh
+  instance opens on Violins 1; `bbcso.state_for` rewrites it to one articulation of any
+  instrument. The template's `rr_neighbourMin`/`Max` (55 to 97, the violins' compass) silence
+  every note outside it, so the module opens it to 0 to 127.
+- **Wait after a patch change.** The samples load in the background; rendering before they have
+  loaded hangs the plug-in (the bass drum did, after 1.5 s). 10 s is enough for every patch used.
+- **Timpani** play only keys 48 to 74 and sound an octave below the key (key 59 measures 123.5 Hz,
+  B2). **Timpani Long Rolls** render silent, so rolls are written as 32nd-note hits.
+- **Balance is not the orchestra's.** Summed at unity, the longs sound far louder than the shorts
+  at the same marking: the first render put the tutti statement 13 dB under the one before it.
+  Each part renders one stem per section, and the sections are levelled by measure.
+
+## The Short's loop: In the Hall of the Mountain King, slow
+
+[`mountain_king.py`](mountain_king.py) arranges Grieg's *In the Hall of the Mountain King* for BBC
+SO Discover as the vertical Short's 110 s loop (Geordie, 2026-11-19: Mountain King, slow, in
+place of Vltava, which was too flowery). The notes are Grieg's own piano arrangement, Op. 46 No.
+4, The University Society, 1918, typeset by Coyau for the Mutopia Project and placed in the public
+domain ([`sources/`](sources/), the MIDI and the LilyPond). It writes
+[`mountain-king.mid`](mountain-king.mid), 32 parts, and renders, levels and masters
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/mountain-king-loop.wav` and `.m4a`.
+
+```bash
+video/music/.venv/bin/python -I video/music/mountain_king.py           # score, render (about 6 min), master
+video/music/.venv/bin/python -I video/music/mountain_king.py --mix     # remix the rendered stems
+```
+
+- **One tempo**, 75.86 bpm (Grieg marks 138 and speeds up): 33 bars of 3.164 s fill the build,
+  5.6 to 110 s. Bar 0 is Grieg's horn F#; then the theme four times, eight bars each: bassoons and
+  pizzicato celli and basses; the answer on F# with the violas and a horn pedal; bowed, with
+  violins, clarinets, horn chords and timpani; then everyone, the theme in four octaves with the
+  brass on it. Its last bar cadences and swells on F# into the chord at the loop point.
+- **The crest is the film's first 5 s**: B minor for the whole orchestra with cymbal, bass drum
+  and a timpani roll (0 to 2.37 s), a last short stroke at 3.16 s, and silence while the river
+  drains. Sound past the end is folded onto the start, and the limiter runs on three copies end
+  to end, so the file loops without a seam.
+- **Levels**, RMS against the chord (`TARGET`): horns −15 dB, the four statements −16, −12.5, −9
+  and −5 dB, the swell −2 dB. Measured on the master: −16.0 LUFS, −2.0 dBTP, loudness range
+  12.2 LU; the chord −13.2 dBFS RMS, the drain −59.5 dBFS; the join at 110 s a sample step at the
+  67th percentile of the 200 ms around it.
