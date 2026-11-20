@@ -154,14 +154,14 @@ at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by sid
   at the same marking: the first render put the tutti statement 13 dB under the one before it.
   Each part renders one stem per section, and the sections are levelled by measure.
 
-## The Short's loop: In the Hall of the Mountain King, slow
+## The Short's loop: In the Hall of the Mountain King
 
 [`mountain_king.py`](mountain_king.py) arranges Grieg's *In the Hall of the Mountain King* for BBC
 SO Discover as the vertical Short's 110 s loop (Geordie, 2026-11-19: Mountain King, slow, in
 place of Vltava, which was too flowery). The notes are Grieg's own piano arrangement, Op. 46 No.
 4, The University Society, 1918, typeset by Coyau for the Mutopia Project and placed in the public
 domain ([`sources/`](sources/), the MIDI and the LilyPond). It writes
-[`mountain-king.mid`](mountain-king.mid), 32 parts, and renders, levels and masters
+[`mountain-king.mid`](mountain-king.mid), 34 parts, and renders, levels and masters
 `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/mountain-king-loop.wav` and `.m4a`.
 
 ```bash
@@ -169,40 +169,49 @@ video/music/.venv/bin/python -I video/music/mountain_king.py           # score, 
 video/music/.venv/bin/python -I video/music/mountain_king.py --score   # only the score and the breathing check
 ```
 
-- **One tempo**, 75.86 bpm (Grieg marks 138 and speeds up): 33 bars of 3.164 s fill the build,
-  5.6 to 110 s. Bar 0 is Grieg's horn F#. Then four statements, eight bars each, and each takes
-  one passage of Grieg's arrangement whole, the theme with the line he sets under it:
-  1. Bars 1 to 8, the theme in the bassoons and pizzicato celli over the plucked bass.
-  2. Grieg's bars 33 to 40, the answer on F#: clarinets and pizzicato violas, then an octave up in
-     the oboes and second violins. Under it the celli turn C# B# C# on every second and fourth
-     beat, and the horns play his offbeat chords, short.
-  3. Grieg's bars 41 to 48: the theme bowed and climbing an octave, over the celli's running
-     triplets. It ends on his scale down in octaves, B A G F# E D C#, in the trombones, bassoons
-     and low strings.
-  4. Grieg's bars 49 to 55, the Più vivo: the theme in four octaves with the trumpets, over the
-     bass galloping down B A G F# in eighths, with brass chords on beats 1 and 3.
-
-  The last bar is Grieg's cadence from bar 48, F# D F# B, then the swell on F# into the chord at
-  the loop point.
+- **An accelerando** (Geordie, 2026-11-20: at one pace the whole way it sounded slow and
+  disconcerting). The tempo rises by the same ratio on every beat, from 76 bpm at the horns' F# to
+  177 bpm at the chord, so that 49 bars fill the build, 5.6 to 110 s. Bar 0 is Grieg's horn F#.
+  Then six statements, eight bars each, and each takes one passage of Grieg's arrangement whole,
+  the theme with the line he sets under it. Each one is shorter than the last, from 23 s to 11 s:
+  1. 77 bpm, bars 1 to 8: the theme in the bassoons and pizzicato celli over the plucked bass.
+  2. 89 bpm, Grieg's bars 25 to 32: the theme an octave up, in the clarinets and pizzicato violas,
+     then the oboes and second violins. Under it the celli turn F# E# F# on every second and fourth
+     beat, and the horns play his offbeats, short.
+  3. 102 bpm, Grieg's bars 33 to 40: the answer on F#, bowed, in the second violins and clarinets,
+     then the first violins and flutes, over the turn C# B# C#.
+  4. 117 bpm, Grieg's bars 41 to 48: the theme over the celli's running triplets. It ends on his
+     scale down in octaves, B A G F# E D C#, in the trombones, bassoons and low strings.
+  5. 134 bpm (Grieg marks 138), bars 49 to 56, the Più vivo: the theme in four octaves with the
+     trumpets, over the bass galloping down B A G F# in eighths, with brass chords on beats 1 and 3.
+  6. 154 bpm (Grieg's Più vivo marking), bars 57 to 64, sempre stretto: the answer on F# with its
+     chords in the horns and trombones, the gallop now F# E D C#. It ends where Grieg's does, on
+     the dominant: his last half note is the swell into the chord at the loop point.
 - **Players breathe** (Geordie, 2026-11-20: the first version held a horn F# for 25 s, from 0:35).
   The theme passes between sections every four bars, and the winds play short. `check` fails the
-  score in three cases. One is a wind or brass note held past two bars (`HOLD`, 6.3 s). Another
-  is a wind line running past four bars (`LUNG`, 12.7 s, Grieg's phrase) without a 0.3 s gap. The
-  third is anything sustained, strings included, holding one pitch past `HOLD`. A short note
-  counts as sounding 0.25 s. All the parts of one instrument are checked together, because they
-  are the same players.
+  score in three cases:
+  - a wind or brass note held past `HOLD`, 6 s;
+  - a wind line running past `LUNG`, 12 s, without a 0.3 s gap;
+  - anything sustained, strings included, holding one pitch past `HOLD`.
+
+  A short note counts as sounding 0.25 s. All the parts of one instrument are checked together,
+  because they are the same players. The limits are in seconds, so a breath takes more beats as
+  the tempo rises: the bassoons' gallop rests two eighths every fourth bar, because one eighth at
+  140 bpm left a 17 s line.
 - **The theme leads.** Inside each statement, the parts under the theme come down until the
   theme's RMS is 3 dB over the sum of everything else (`LEAD_DB`). Then the statements are levelled
   against each other.
-- **The crest is the film's first 5 s**: B minor for the whole orchestra with cymbal, bass drum
-  and a timpani roll (0 to 2.37 s), a last short stroke at 3.16 s, and silence while the river
-  drains. Sound past the end is folded onto the start, and the limiter runs on three copies end
-  to end, so the file loops without a seam.
-- **Levels**, RMS against the chord (`TARGET`): horns −15 dB, the four statements −16, −12.5, −9
-  and −5 dB, the swell −2 dB. To put the theme 3 dB over the rest, the parts under it came down
-  12.0, 12.4, 9.3 and 9.8 dB in the four statements. Measured on the master, 2026-11-20:
-  - −16.0 LUFS integrated, −2.0 dBTP, loudness range 13.9 LU.
-  - The statements −28.7, −25.5, −21.8 and −18.0 dBFS RMS, the swell −15.0, the chord −13.6.
-  - The drain −60.0 dBFS.
-  - The join at 110 s is a sample step of 0.0108, against a median step of 0.0073 over its last
-    10 ms.
+- **The crest is the film's first 5 s**, back at 76 bpm: B minor for the whole orchestra with
+  cymbal, bass drum and a timpani roll (0 to 2.37 s), a last short stroke at 3.16 s, and silence
+  while the river drains. Sound past the end is folded onto the start, and the limiter runs on
+  three copies end to end, so the file loops without a seam.
+- **Levels**, RMS against the chord (`TARGET`): horns −15 dB, the six statements −16, −13.5, −11,
+  −8.5, −6 and −4 dB, the swell −2 dB. To put the theme 3 dB over the rest, the parts under it came
+  down 9.3 to 12.1 dB in each statement. Measured on the master, 2026-11-20:
+  - −16.0 LUFS integrated, −2.0 dBTP, loudness range 13.7 LU.
+  - The statements −28.7, −26.2, −23.7, −21.3, −18.8 and −16.9 dBFS RMS, the swell −15.1, the
+    chord −13.5.
+  - The drain −60.3 dBFS.
+  - The join at 110 s is a sample step at the 93rd and 41st percentiles (left, right) of the steps
+    in the 200 ms around it: inside the music's own movement, no click.
+- **Rendered** in 236 s on eight plug-ins: 94 stems of 95, one kept from the run before.

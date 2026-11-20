@@ -1,4 +1,4 @@
-"""Grieg's In the Hall of the Mountain King, slow, as the Short's 110 s loop, for BBC SO Discover.
+"""Grieg's In the Hall of the Mountain King as the Short's 110 s loop, for BBC SO Discover.
 
     video/music/.venv/bin/python -I video/music/mountain_king.py           # score, render, master
     video/music/.venv/bin/python -I video/music/mountain_king.py --score   # only mountain-king.mid
@@ -11,23 +11,30 @@ for the Mutopia Project by Coyau and placed in the public domain: `sources/grieg
 `.ly`. Each statement takes one passage of that arrangement whole, the theme with the line Grieg
 sets under it; the orchestration, the tempo and the ending are this file's.
 
-    statement 1  Grieg bars  1 to  8   the theme over the plucked bass
-    statement 2  Grieg bars 33 to 40   the answer on F#, a turn on every second and fourth beat
-    statement 3  Grieg bars 41 to 48   the theme over running triplets, then a scale down in octaves
-    statement 4  Grieg bars 49 to 55   Più vivo: the theme over the bass galloping down B A G F#
+    statement 1  Grieg bars  1 to  8   the theme over the plucked bass                    77 bpm
+    statement 2  Grieg bars 25 to 32   the theme up an octave, a turn F# E# F# under it   89
+    statement 3  Grieg bars 33 to 40   the answer on F#, the turn now C# B# C#           102
+    statement 4  Grieg bars 41 to 48   running triplets, then a scale down in octaves    117
+    statement 5  Grieg bars 49 to 56   Più vivo: the bass galloping down B A G F#        134
+    statement 6  Grieg bars 57 to 64   sempre stretto: the answer, ending on the dominant 154
 
 The loop (Geordie, 2026-11-19: Mountain King, slow). The Short replays as soon as it ends, so the
 music is one piece P whose last 5.6 s are the film's first: the crest, a B minor chord for the
 finished river and a last stroke, then silence while the river drains (5.0 to 5.6 s). From 5.6 s P
-starts again: the horns' F#, then the four statements at one tempo, 75.86 bpm (Grieg marks 138
-and speeds up; this never does), and the last bar's dominant swell arrives at the chord on the
-loop point.
+starts again: the horns' F#, then the six statements, and the last bar's dominant swell arrives at
+the chord on the loop point.
 
-    film  5.6 to 110.0   P   0.0 to 104.4   bar 0 the horns, bars 1 to 32 the four statements
-    film  0.0 to   5.6   P 104.4 to 110.0   bar 33 the chord, bar 34 the stroke, the drain
+The accelerando (Geordie, 2026-11-20: at one pace the whole way it sounded slow and disconcerting).
+The tempo rises by the same ratio on every beat, from T0 at the horns' F# to about 177 bpm at the
+chord, the ratio set so that 49 bars fill the build exactly; each statement starts where the
+table above says (Grieg marks 138, then Più vivo 154). The chord and the stroke broaden back to T0.
+
+    film  5.6 to 110.0   P   0.0 to 104.4   bar 0 the horns, bars 1 to 48 the six statements
+    film  0.0 to   5.6   P 104.4 to 110.0   bar 49 the chord, bar 50 the stroke, the drain
 
 Players breathe (Geordie, 2026-11-20: the first version held a horn F# for 25 s). No wind or brass
-note lasts longer than HOLD, no wind line runs longer than LUNG without a breath, and nothing
+note lasts longer than HOLD, no wind line runs longer than LUNG without a breath (both in seconds,
+so a breath has to grow in beats as the tempo rises), and nothing
 sustained, strings included, holds one pitch longer than HOLD; `check` fails the score otherwise.
 The theme passes between sections every four bars, and the held harmony is gone: the winds play
 Grieg's offbeats short.
@@ -41,6 +48,7 @@ onto its start, so the file loops without a seam.
 import argparse
 import hashlib
 import json
+import math
 import multiprocessing as mp
 import plistlib
 import subprocess
@@ -67,9 +75,9 @@ M4A = EXPORT / "mountain-king-loop.m4a"
 
 FILM = 110.0
 BUILD = 5.6  # FILMS.shortLoop.sweep0: the river starts again
-BARS = 33  # bar 0 the horns' F#, bars 1 to 32 four eight-bar statements
-BAR = (FILM - BUILD) / BARS
-BEAT = BAR / 4
+LENGTH = FILM - BUILD  # P's build, from the horns' F# to the chord on the loop point
+BARS = 49  # bar 0 the horns' F#, bars 1 to 48 six eight-bar statements
+T0 = 76.0  # bpm at the horns' F#; the tempo rises by the same ratio every beat to the chord
 SR = bbcso.SR
 TAIL = 4.0  # rendered past P's end, folded onto its start
 REVERB = 0.25  # the plug-in's own hall, the same on every part
@@ -78,30 +86,60 @@ WORKERS = 8  # plug-ins rendering at once, each in its own process; the Mac has 
 LUFS = -16.0
 LIMIT = 0.79  # alimiter ceiling, linear: about -2 dBFS before the true-peak overshoot
 
-# Breathing. A wind player holds a note at most two bars here (6.3 s) and breathes at least every
-# four (12.7 s, Grieg's phrase); a gap of BREATH is a catch-breath. A short articulation sounds
-# about SHORT whatever its written length, so the silence after it counts.
+# Breathing. A wind player holds a note at most HOLD seconds and breathes at least every LUNG
+# seconds; a gap of BREATH is a catch-breath. A short articulation sounds about SHORT whatever its
+# written length, so the silence after it counts.
 WINDS = {"Woodwinds", "Brass"}
-HOLD = 2 * BAR
-LUNG = 4 * BAR
+HOLD = 6.0
+LUNG = 12.0
 BREATH = 0.3
 SHORT = 0.25
 LEAD_DB = 3.0  # the theme's RMS over the sum of everything under it, in every statement
 
 
+def _rate():
+    """The accelerando: tempo T0 * exp(K * beat), K set so that BARS bars last exactly LENGTH."""
+    q, lo, hi = 4 * BARS, 1e-9, 1.0
+    for _ in range(200):
+        k = (lo + hi) / 2
+        lo, hi = (k, hi) if 60 / (T0 * k) * (1 - math.exp(-k * q)) > LENGTH else (lo, k)
+    return k
+
+
+K = _rate()
+T1 = T0 * math.exp(K * 4 * BARS)  # bpm at the chord, about 177
+HOOK_BEAT = 60 / T0  # the chord and the stroke broaden back to the opening's pulse
+
+
 def at(bar, beat=0.0):
-    """P time of a bar and beat."""
-    return (bar * 4 + beat) * BEAT
+    """P time of a bar and beat: the accelerando to the chord at bar BARS, the opening's pulse after."""
+    q = bar * 4 + beat
+    if q <= 4 * BARS:
+        return 60 / (T0 * K) * (1 - math.exp(-K * q))
+    return LENGTH + (q - 4 * BARS) * HOOK_BEAT
+
+
+def beats_at(t):
+    """The inverse of `at`: the beat (from bar 0) at P time t."""
+    if t <= LENGTH:
+        return -math.log(1 - t * T0 * K / 60) / K
+    return 4 * BARS + (t - LENGTH) / HOOK_BEAT
+
+
+def beat_len(bar, beat=0.0):
+    return at(bar, beat + 1) - at(bar, beat)
 
 
 # The sections, each rendered as one stem per part, and the stretch of P each is measured over.
-GROUPS = ["intro", "s1", "s2", "s3", "s4", "swell", "hook"]
-WINDOWS = {"intro": (at(0), at(1)), "s1": (at(1), at(9)), "s2": (at(9), at(17)), "s3": (at(17), at(25)),
-           "s4": (at(25), at(32, 2)), "swell": (at(32, 2), at(33)), "hook": (at(33), at(33, 3))}
+STATEMENTS = ["s1", "s2", "s3", "s4", "s5", "s6"]
+GROUPS = ["intro", *STATEMENTS, "swell", "hook"]
+WINDOWS = {"intro": (at(0), at(1)), **{s: (at(1 + 8 * i), at(9 + 8 * i)) for i, s in enumerate(STATEMENTS)}}
+WINDOWS.update({"s6": (at(41), at(48, 2)), "swell": (at(48, 2), at(49)), "hook": (at(49), at(49, 3))})
 # Each section's level, RMS in dB against the chord's: a terraced crescendo, a step up per statement.
 # The library's longs sound far louder than its shorts at the same marking (the first render, summed
 # at unity, put the tutti statement 13 dB under the one before it), so the steps are set by measure.
-TARGET = {"intro": -15.0, "s1": -16.0, "s2": -12.5, "s3": -9.0, "s4": -5.0, "swell": -2.0, "hook": 0.0}
+TARGET = {"intro": -15.0, "s1": -16.0, "s2": -13.5, "s3": -11.0, "s4": -8.5, "s5": -6.0, "s6": -4.0,
+          "swell": -2.0, "hook": 0.0}
 # The cymbal and bass drum come through the chord.
 TRIM = {("cymbal", "hook"): 10.0, ("bass-drum", "hook"): 8.0}
 
@@ -252,7 +290,18 @@ def play(part, phrase, at_bar, shift, v0, v1, accent=8, legato=0.9):
     for b, beat, ln, n in phrase:
         f = (b * 4 + beat - t0) / max(t1 - t0, 1e-9)
         vel = v0 + (v1 - v0) * f + (accent if beat in (0.0, 2.0) else 0)
-        part.note(at(at_bar + b, beat), max(ln * BEAT * legato, 0.08), n + shift, vel)
+        start = at(at_bar + b, beat)
+        part.note(start, max((at(at_bar + b, beat + ln) - start) * legato, 0.08), n + shift, vel)
+
+
+def floor(phrase, lowest):
+    """Notes under `lowest` up an octave until they reach it (Grieg's B0 is below the basses)."""
+    out = []
+    for b, beat, ln, n in phrase:
+        while n < lowest:
+            n += 12
+        out.append((b, beat, ln, n))
+    return out
 
 
 HORN_CHORDS = {"Bm": (54, 59, 62), "D": (54, 57, 62)}  # F#3 B3 D4, F#3 A3 D4
@@ -320,14 +369,22 @@ def compose():
             f = (b * 4 + beat - times[0]) / max(times[-1] - times[0], 1e-9)
             timp.note(at(at_bar + b, beat), 0.3, TIMP[n % 12], v0 + (v1_ - v0) * f + (6 if beat == 0 else 0))
 
-    def roll(key, t0, t1, v0, v1_):
-        n = int(round((t1 - t0) / (BEAT / 8)))
+    def roll(key, t0, t1, v0, v1_, step):
+        n = int(round((t1 - t0) / step))
         for i in range(n):
-            timp.note(t0 + i * BEAT / 8, 0.08, key, v0 + (v1_ - v0) * i / max(n - 1, 1), loose=0.004)
+            timp.note(t0 + i * step, 0.08, key, v0 + (v1_ - v0) * i / max(n - 1, 1), loose=0.004)
+
+    def brass(at_bar, count, harmony, v0, beats=(0.0, 2.0)):
+        """Horn and trombone chords, short, on those beats of each bar."""
+        for b in range(count):
+            for beat in beats:
+                h = harmony(b)
+                horns.chord(at(at_bar + b, beat), beat_len(at_bar + b, beat) * 0.9, HORN_CHORDS[h], v0 + b * 3)
+                trombones.chord(at(at_bar + b, beat), beat_len(at_bar + b, beat) * 0.9, TROMBONE_CHORDS[h], v0 - 2 + b * 3)
 
     # Bar 0: the horns' F#, in octaves, pianissimo, as Grieg opens.
     Part.group = "intro"
-    horns_long.chord(at(0), BAR * 0.92, (54, 66), 40, loose=0)
+    horns_long.chord(at(0), (at(1) - at(0)) * 0.92, (54, 66), 40, loose=0)
     horns_long.swell(0.0, at(0, 2), 22, 40)
     horns_long.swell(at(0, 2), at(0, 3.7), 40, 18)
 
@@ -341,86 +398,111 @@ def compose():
     lead(bassoons, celli_pizz)
 
     Part.group = "s2"
-    # Statement 2, bars 9 to 16 (Grieg 33 to 40): the answer on F#, clarinets and the violas'
-    # pizzicato, then an octave up in the oboes and the second violins'. Under it Grieg's left hand:
-    # the bass plucked on beats 1 and 3, and on 2 and 4 the turn, C# B# C#, in the celli; his
-    # offbeat chords in the horns, short and soft; the timpani on the bass.
-    low_half, high_half, left = bars(R, 33, 4), bars(R, 37, 4), bars(L, 33, 8)
-    play(clarinets, top(low_half), 9, 0, 50, 58)
-    play(violas_pizz, top(low_half), 9, 0, 50, 58)
-    play(oboes, top(high_half), 13, 0, 54, 64)
-    play(v2_pizz, top(high_half), 13, 0, 54, 64)
+    # Statement 2, bars 9 to 16 (Grieg 25 to 32): the theme an octave up in the clarinets and the
+    # violas' pizzicato, then another octave up in the oboes and second violins'. Under it Grieg's
+    # left hand: the bass plucked on beats 1 and 3, and on 2 and 4 the turn, F# E# F#, in the celli;
+    # his offbeats in the horns, short and soft; the timpani on the bass.
+    low_half, high_half, left = bars(R, 25, 4), bars(R, 29, 4), bars(L, 25, 8)
+    play(clarinets, top(low_half), 9, 0, 48, 56)
+    play(violas_pizz, top(low_half), 9, 0, 48, 56)
+    play(oboes, top(high_half), 13, 0, 52, 60)
+    play(v2_pizz, top(high_half), 13, 0, 52, 60)
     lead(clarinets, violas_pizz, oboes, v2_pizz)
-    play(horns_stacc, under(low_half), 9, -12, 40, 48, accent=0)
-    play(horns_stacc, under(high_half), 13, -24, 46, 54, accent=0)
-    play(basses_pizz, on_beats(left, {0.0, 2.0}), 9, 0, 52, 64)
-    play(celli, off_beats(left, {0.0, 2.0}), 9, 0, 46, 60, accent=0)
-    drum(left, 9, 40, 58)
+    play(horns_stacc, under(low_half), 9, 0, 38, 46, accent=0)
+    play(horns_stacc, under(high_half), 13, -12, 42, 50, accent=0)
+    play(basses_pizz, floor(on_beats(left, {0.0, 2.0}), 28), 9, 0, 50, 62)
+    play(celli, off_beats(left, {0.0, 2.0}), 9, 0, 44, 56, accent=0)
+    drum(left, 9, 38, 52)
 
     Part.group = "s3"
-    # Statement 3, bars 17 to 24 (Grieg 41 to 48): the theme bowed, clarinets and violas, then
-    # an octave up in the first violins and flutes with the seconds below. Under it the left
+    # Statement 3, bars 17 to 24 (Grieg 33 to 40): the answer on F#, bowed: the second violins and
+    # clarinets, then an octave up in the first violins and flutes. Under it the bass on beats 1 and
+    # 3, the celli's turn C# B# C# on 2 and 4, the horns' offbeats, the timpani on the bass.
+    low_half, high_half, left = bars(R, 33, 4), bars(R, 37, 4), bars(L, 33, 8)
+    play(v2, top(low_half), 17, 0, 56, 64)
+    play(clarinets, top(low_half), 17, 0, 56, 64)
+    play(v1, top(high_half), 21, 0, 60, 70)
+    play(flutes, top(high_half), 21, 0, 60, 70)
+    lead(v2, clarinets, v1, flutes)
+    play(horns_stacc, under(low_half), 17, -12, 46, 54, accent=0)
+    play(horns_stacc, under(high_half), 21, -24, 50, 58, accent=0)
+    play(basses, on_beats(left, {0.0, 2.0}), 17, 0, 56, 66)
+    play(celli, off_beats(left, {0.0, 2.0}), 17, 0, 52, 64, accent=0)
+    drum(left, 17, 46, 62)
+
+    Part.group = "s4"
+    # Statement 4, bars 25 to 32 (Grieg 41 to 48): the theme in the clarinets and violas, then an
+    # octave up in the first violins, flutes and oboes with the seconds below. Under it the left
     # hand's running triplets, B E# F# D E# F#, in the celli over the basses; the horns' offbeats;
     # then Grieg's scale down in octaves, B A G F# E D C#, in the trombones, bassoons and low
     # strings, which lands the theme on B for the Più vivo.
     low_half, high_half, left = bars(R, 41, 4), bars(R, 45, 4), bars(L, 41, 8)
-    play(clarinets, top(low_half), 17, 0, 62, 72)
-    play(violas, top(low_half), 17, 0, 62, 72)
-    play(v1, top(high_half), 21, 0, 72, 86)
-    play(flutes, top(high_half), 21, 0, 72, 86)
-    play(v2, top(high_half), 21, -12, 72, 86)
-    lead(clarinets, violas, v1, flutes, v2)
-    play(horns_stacc, under(low_half), 17, 0, 56, 64, accent=0)
-    play(horns_stacc, under(high_half), 21, -12, 64, 74, accent=0)
+    play(clarinets, top(low_half), 25, 0, 64, 74)
+    play(violas, top(low_half), 25, 0, 64, 74)
+    for prt, k in [(v1, 0), (flutes, 0), (oboes, 0), (v2, -12)]:
+        play(prt, top(high_half), 29, k, 74, 88)
+    lead(clarinets, violas, v1, flutes, oboes, v2)
+    play(horns_stacc, under(low_half), 25, 0, 58, 66, accent=0)
+    play(horns_stacc, under(high_half), 29, -12, 66, 76, accent=0)
     triplets = [x for x in left if x[0] < 6 or (x[0] == 6 and x[1] < 1.0)]
     scale = [x for x in left if x not in triplets]
-    play(basses, on_beats(triplets, {0.0, 2.0}), 17, 0, 62, 80)
-    play(celli, off_beats(triplets, {0.0, 2.0}), 17, 0, 58, 78, accent=0)
-    drum(triplets, 17, 56, 76, beats=(0.0, 2.0))
-    play(trombones, lowest(scale) + highest(scale), 17, 0, 84, 100)
-    play(bassoons, lowest(scale), 17, 0, 80, 96)
-    play(basses, lowest(scale), 17, 0, 84, 100)
-    play(celli, highest(scale), 17, 0, 84, 100)
-    drum(scale, 17, 86, 86)
+    play(basses, on_beats(triplets, {0.0, 2.0}), 25, 0, 64, 82)
+    play(celli, off_beats(triplets, {0.0, 2.0}), 25, 0, 60, 80, accent=0)
+    drum(triplets, 25, 58, 78, beats=(0.0, 2.0))
+    play(trombones, lowest(scale) + highest(scale), 25, 0, 86, 102)
+    play(bassoons, lowest(scale), 25, 0, 82, 98)
+    play(basses, lowest(scale), 25, 0, 86, 102)
+    play(celli, highest(scale), 25, 0, 86, 102)
+    drum(scale, 25, 88, 88)
 
-    Part.group = "s4"
-    # Statement 4, bars 25 to 32 (Grieg 49 to 55, Più vivo): the theme in four octaves, the
-    # trumpets on it. Under it Grieg's gallop, B A G F# in eighths every half bar, in the celli,
-    # violas an octave up, bassoons and basses; the brass chords on beats 1 and 3, the tuba and
-    # timpani on the bass. The last bar is Grieg's cadence from bar 48, F# D F# B, with the
-    # gallop's first half; then the swell on F#. The bassoons drop the eighth before bar 29 to
-    # breathe.
-    tune = top(bars(R, 49, 7)) + moved(top(bars(R, 48, 1)), 7, 12, before=2.0)
-    left = bars(L, 49, 7) + moved(bars(L, 49, 1), 7, before=2.0)
-    for prt, k in [(v1, 0), (flutes, 0), (v2, -12), (oboes, -12), (clarinets, -12), (trumpets, -12)]:
-        play(prt, tune, 25, k, 90, 118)
-    lead(v1, flutes, v2, oboes, clarinets, trumpets)
-    gallop = highest(left)
-    play(celli, gallop, 25, 0, 90, 116)
-    play(violas, gallop, 25, 12, 86, 112)
-    play(basses, gallop, 25, -12, 92, 118)
-    play(bassoons, [x for x in gallop if (x[0], x[1]) != (3, 3.5)], 25, 0, 86, 112)
-    play(tuba, on_beats(lowest(left), {0.0, 2.0}), 25, 0, 88, 116)
-    drum(left, 25, 84, 112, beats=(0.0, 2.0))
-    for b in range(8):
-        h = "D" if b == 3 else "Bm"
-        for beat in ((0.0, 2.0) if b < 7 else (0.0,)):
-            horns.chord(at(25 + b, beat), BEAT * 0.9, HORN_CHORDS[h], 90 + b * 3)
-            trombones.chord(at(25 + b, beat), BEAT * 0.9, TROMBONE_CHORDS[h], 88 + b * 3)
+    # Statements 5 and 6 are everyone: the theme in four octaves with the trumpets on it, and under
+    # it Grieg's gallop, a four-note fall in eighths every half bar, in the celli, the violas an
+    # octave up, the bassoons and the basses; brass chords on beats 1 and 3, the tuba and timpani
+    # on the bass. The bassoons drop the gallop's last two eighths every fourth bar to breathe.
+    def tutti(tune, left, at_bar, shifts, v0, v1_):
+        for prt, k in shifts:
+            play(prt, tune, at_bar, k, v0, v1_)
+        lead(*(prt for prt, _ in shifts))
+        gallop = highest(left)
+        play(celli, gallop, at_bar, 0, v0, v1_ - 2)
+        play(violas, gallop, at_bar, 12, v0 - 4, v1_ - 6)
+        play(basses, gallop, at_bar, -12, v0 + 2, v1_)
+        play(bassoons, [x for x in gallop if not (x[0] % 4 == 3 and x[1] >= 3.0)], at_bar, 0, v0 - 4, v1_ - 6)
+        play(tuba, on_beats(lowest(left), {0.0, 2.0}), at_bar, 0, v0 - 2, v1_ - 2)
+        drum(left, at_bar, v0 - 6, v1_ - 6, beats=(0.0, 2.0))
+
+    Part.group = "s5"
+    # Statement 5, bars 33 to 40 (Grieg 49 to 56, Più vivo): the theme on B, the gallop B A G F#.
+    tutti(top(bars(R, 49, 8)), bars(L, 49, 8), 33,
+          [(v1, 0), (flutes, 0), (v2, -12), (oboes, -12), (clarinets, -12), (trumpets, -12)], 88, 108)
+    brass(33, 8, lambda b: "D" if b % 4 == 3 else "Bm", 88)
+
+    Part.group = "s6"
+    # Statement 6, bars 41 to 48 (Grieg 57 to 64, sempre stretto): the answer on F#, its chords in
+    # the horns and trombones on the beats, the gallop now F# E D C# and D C# D E, then F# E# D# C#.
+    # It ends where Grieg's does, on the dominant: his last half note is the swell.
+    right = bars(R, 57, 7) + moved(bars(R, 64, 1), 7, before=2.0)
+    left = bars(L, 57, 7) + moved(bars(L, 64, 1), 7, before=2.0)
+    tutti(top(right), left, 41,
+          [(v1, -12), (flutes, -12), (v2, -24), (oboes, -12), (clarinets, -24), (trumpets, -24)], 104, 122)
+    chords = under(right)
+    play(horns, on_beats(chords, {0.0, 2.0}), 41, -24, 100, 118, accent=4)
+    play(trombones, on_beats(chords, {1.0, 3.0}), 41, -36, 98, 116, accent=4)
 
     Part.group = "swell"
-    # Bar 32, beats 3 and 4: the dominant swell. F# major in the brass and strings, a timpani roll
+    # Bar 48, beats 3 and 4: the dominant swell. F# major in the brass and strings, a timpani roll
     # on F#, from forte to the top.
-    swell0, swell1 = at(32, 2), at(33) - 0.02
+    swell0, swell1 = at(48, 2), at(49) - 0.02
     for prt, notes in [(horns_long, (54, 58, 61)), (trombones_long, (49, 54)), (btrombones_long, (42,)),
                        (tuba_long, (30,)), (basses_long, (30,)), (v1_trem, (66, 70)), (celli_trem, (42, 49))]:
         prt.chord(swell0, swell1 - swell0, notes, 100, loose=0)
         prt.swell(swell0, swell1, 64, 127, steps=16)
-    roll(54, swell0, swell1, 76, 124)
+    roll(54, swell0, swell1, 76, 124, beat_len(48, 2) / 8)
 
     Part.group = "hook"
-    # Bar 33, the loop point: B minor for the whole orchestra, three beats, cymbal and bass drum.
-    chord0, chord1 = at(33), at(33, 3)
+    # Bar 49, the loop point: B minor for the whole orchestra, three beats at the opening's pulse,
+    # cymbal and bass drum.
+    chord0, chord1 = at(49), at(49, 3)
     voicing = [(basses_long, (35,)), (tuba_long, (35,)), (btrombones_long, (47,)), (celli_long, (47, 54)),
                (bassoons_long, (47, 54)), (trombones_long, (54, 59)), (horns_long, (59, 62, 66)),
                (violas_long, (62, 66)), (v2_long, (66, 71)), (trumpets_long, (71, 74)), (v1_long, (74, 83))]
@@ -428,16 +510,16 @@ def compose():
         prt.chord(chord0, chord1 - chord0, notes, 124, loose=0.003)
         prt.cc(chord0 - 0.05, 1, 124)
         prt.swell(chord1 - 0.4, chord1, 124, 100, steps=6)
-    roll(59, chord0, chord1 - 0.1, 122, 108)
+    roll(59, chord0, chord1 - 0.1, 122, 108, HOOK_BEAT / 8)
     cymbal.note(chord0, 1.0, 50, 116, loose=0)
     bass_drum.note(chord0, 1.0, 50, 118, loose=0)
 
-    # Bar 34, beat 1: the last stroke, short, B in every octave; then nothing while the river drains.
-    stroke = at(34)
+    # Bar 50, beat 1: the last stroke, short, B in every octave; then nothing while the river drains.
+    stroke = at(50)
     for prt, notes in [(trumpets, (71, 74)), (horns, (59, 66)), (trombones, (47, 54)), (tuba, (35,)),
                        (v1, (71, 83)), (v2, (66, 74)), (violas, (62, 66)), (celli, (47, 54)), (basses, (35,)),
                        (bassoons, (47, 54)), (clarinets, (66, 71)), (oboes, (71, 74)), (flutes, (83, 86))]:
-        prt.chord(stroke, BEAT * 0.5, notes, 124, loose=0.003)
+        prt.chord(stroke, HOOK_BEAT * 0.5, notes, 124, loose=0.003)
     timp.note(stroke, 0.3, 59, 127, loose=0)
     bass_drum.note(stroke, 1.0, 50, 104, loose=0)
 
@@ -473,26 +555,28 @@ def check(parts):
 
 
 def write_score(parts):
+    """The score as MIDI, with a tempo change on every beat: the accelerando, then the chord's pulse."""
     tpb = 480
-    tempo = mido.bpm2tempo(60 / BEAT)
     mf = mido.MidiFile(ticks_per_beat=tpb)
-    meta = mido.MidiTrack([mido.MetaMessage("set_tempo", tempo=tempo, time=0),
-                           mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0),
+    meta = mido.MidiTrack([mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0),
                            mido.MetaMessage("key_signature", key="Bm", time=0),
                            mido.MetaMessage("marker", text="film 5.6 s: the horns", time=0)])
-    meta.append(mido.MetaMessage("marker", text="film 0.0 s: the chord, the loop point",
-                                 time=round(at(33) / BEAT * tpb)))
+    for q in range(4 * BARS + 1):
+        tempo = round(beat_len(0, q) * 1e6)
+        meta.append(mido.MetaMessage("set_tempo", tempo=tempo, time=0 if q == 0 else tpb))
+    meta.append(mido.MetaMessage("marker", text="film 0.0 s: the chord, the loop point", time=0))
     mf.tracks.append(meta)
     for part in parts:
         tr = mido.MidiTrack([mido.MetaMessage("track_name", name=f"{part.name}: {part.instrument} {part.artic}", time=0)])
         last = 0
         for m in part.messages():
-            tick = round(m.time / BEAT * tpb)
+            tick = round(beats_at(m.time) * tpb)
             tr.append(m.copy(time=tick - last))
             last = tick
         mf.tracks.append(tr)
     mf.save(SCORE)
-    print(f"wrote {SCORE}: {len(parts)} parts, {sum(len(p.notes) for p in parts)} notes, {60 / BEAT:.2f} bpm")
+    print(f"wrote {SCORE}: {len(parts)} parts, {sum(len(p.notes) for p in parts)} notes, "
+          f"{T0:.0f} to {T1:.1f} bpm, the chord and the stroke at {T0:.0f}")
 
 
 def fingerprint():
