@@ -120,17 +120,34 @@ public-domain source.
 Spitfire's free BBC Symphony Orchestra Discover (installed 2026-11-19 with the Spitfire Audio app;
 the library, 243 MB, in `/Volumes/Berthold/Landru/media/audio/spitfire/`) plays from Python with
 no DAW and no window: `pedalboard` loads its VST3 as an instrument, and [`bbcso.py`](bbcso.py)
-picks the instrument by rewriting the plug-in's saved state. Rendering with a 4096-sample buffer
-runs about 50 times faster than real time. Unlike VSCO, its longs swell on CC1 and its shorts
-have real staccato, spiccato, pizzicato and marcato recordings.
+picks the instrument by rewriting the plug-in's saved state. Unlike VSCO, its longs swell on CC1
+and its shorts have real staccato, spiccato, pizzicato and marcato recordings.
+
+The time goes on loading, not playing. A loaded instrument renders at 19 to 55 times real time
+with a 4096-sample buffer. Each patch change spends about 20 s reading its samples from Berthold,
+at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by side:
+
+- **Stems are kept.** A stem's file name carries a hash of its notes, its patch, the plug-in's
+  version and `bbcso.py`. A run renders only the stems whose hash is new and deletes the rest.
+  With nothing changed, a run takes 4 s.
+- **Eight plug-ins at once** (`WORKERS`), each in its own process, one part at a time. On
+  2026-11-20 the 34 parts, 72 stems, took 116 s, against 27 min one after another. One instance
+  uses about 200 MB of memory.
+- **Every stem is rendered until two renders agree.** The first render after a patch change can
+  miss samples still loading. One after another, the first section of 1 part in 34 came out short
+  (the intro horns, 1.2 dB quiet). Eight at once without the check, 8 parts' first sections lost
+  notes, up to 7 dB. The plug-in is otherwise deterministic: a second render matches the first to
+  better than −190 dB. Spitfire's `defaultShouldStreamNonRealtimeSynchronously` setting changed
+  neither the speed nor the missed samples (tested set to 1, then set back to 0).
 
 - **An instrument is a name.** The state holds the patch as XML whose articulations are named like
   the library's patch files: `BBCSODi_h___Celli___Long.zmulti` is `h - Celli - Long`. A fresh
   instance opens on Violins 1; `bbcso.state_for` rewrites it to one articulation of any
   instrument. The template's `rr_neighbourMin`/`Max` (55 to 97, the violins' compass) silence
   every note outside it, so the module opens it to 0 to 127.
-- **Wait after a patch change.** The samples load in the background; rendering before they have
-  loaded hangs the plug-in (the bass drum did, after 1.5 s). 10 s is enough for every patch used.
+- **Wait after a patch change.** The samples load in the background, and rendering 1.5 s after a
+  patch change hung the plug-in (the bass drum). 10 s avoids the hang, but it does not guarantee a
+  complete render: the agree-twice check above does that.
 - **Timpani** play only keys 48 to 74 and sound an octave below the key (key 59 measures 123.5 Hz,
   B2). **Timpani Long Rolls** render silent, so rolls are written as 32nd-note hits.
 - **Balance is not the orchestra's.** Summed at unity, the longs sound far louder than the shorts
@@ -148,20 +165,44 @@ domain ([`sources/`](sources/), the MIDI and the LilyPond). It writes
 `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/mountain-king-loop.wav` and `.m4a`.
 
 ```bash
-video/music/.venv/bin/python -I video/music/mountain_king.py           # score, render (about 6 min), master
-video/music/.venv/bin/python -I video/music/mountain_king.py --mix     # remix the rendered stems
+video/music/.venv/bin/python -I video/music/mountain_king.py           # score, render what changed, master
+video/music/.venv/bin/python -I video/music/mountain_king.py --score   # only the score and the breathing check
 ```
 
 - **One tempo**, 75.86 bpm (Grieg marks 138 and speeds up): 33 bars of 3.164 s fill the build,
-  5.6 to 110 s. Bar 0 is Grieg's horn F#; then the theme four times, eight bars each: bassoons and
-  pizzicato celli and basses; the answer on F# with the violas and a horn pedal; bowed, with
-  violins, clarinets, horn chords and timpani; then everyone, the theme in four octaves with the
-  brass on it. Its last bar cadences and swells on F# into the chord at the loop point.
+  5.6 to 110 s. Bar 0 is Grieg's horn F#. Then four statements, eight bars each, and each takes
+  one passage of Grieg's arrangement whole, the theme with the line he sets under it:
+  1. Bars 1 to 8, the theme in the bassoons and pizzicato celli over the plucked bass.
+  2. Grieg's bars 33 to 40, the answer on F#: clarinets and pizzicato violas, then an octave up in
+     the oboes and second violins. Under it the celli turn C# B# C# on every second and fourth
+     beat, and the horns play his offbeat chords, short.
+  3. Grieg's bars 41 to 48: the theme bowed and climbing an octave, over the celli's running
+     triplets. It ends on his scale down in octaves, B A G F# E D C#, in the trombones, bassoons
+     and low strings.
+  4. Grieg's bars 49 to 55, the Più vivo: the theme in four octaves with the trumpets, over the
+     bass galloping down B A G F# in eighths, with brass chords on beats 1 and 3.
+
+  The last bar is Grieg's cadence from bar 48, F# D F# B, then the swell on F# into the chord at
+  the loop point.
+- **Players breathe** (Geordie, 2026-11-20: the first version held a horn F# for 25 s, from 0:35).
+  The theme passes between sections every four bars, and the winds play short. `check` fails the
+  score in three cases. One is a wind or brass note held past two bars (`HOLD`, 6.3 s). Another
+  is a wind line running past four bars (`LUNG`, 12.7 s, Grieg's phrase) without a 0.3 s gap. The
+  third is anything sustained, strings included, holding one pitch past `HOLD`. A short note
+  counts as sounding 0.25 s. All the parts of one instrument are checked together, because they
+  are the same players.
+- **The theme leads.** Inside each statement, the parts under the theme come down until the
+  theme's RMS is 3 dB over the sum of everything else (`LEAD_DB`). Then the statements are levelled
+  against each other.
 - **The crest is the film's first 5 s**: B minor for the whole orchestra with cymbal, bass drum
   and a timpani roll (0 to 2.37 s), a last short stroke at 3.16 s, and silence while the river
   drains. Sound past the end is folded onto the start, and the limiter runs on three copies end
   to end, so the file loops without a seam.
 - **Levels**, RMS against the chord (`TARGET`): horns −15 dB, the four statements −16, −12.5, −9
-  and −5 dB, the swell −2 dB. Measured on the master: −16.0 LUFS, −2.0 dBTP, loudness range
-  12.2 LU; the chord −13.2 dBFS RMS, the drain −59.5 dBFS; the join at 110 s a sample step at the
-  67th percentile of the 200 ms around it.
+  and −5 dB, the swell −2 dB. To put the theme 3 dB over the rest, the parts under it came down
+  12.0, 12.4, 9.3 and 9.8 dB in the four statements. Measured on the master, 2026-11-20:
+  - −16.0 LUFS integrated, −2.0 dBTP, loudness range 13.9 LU.
+  - The statements −28.7, −25.5, −21.8 and −18.0 dBFS RMS, the swell −15.0, the chord −13.6.
+  - The drain −60.0 dBFS.
+  - The join at 110 s is a sample step of 0.0108, against a median step of 0.0073 over its last
+    10 ms.
