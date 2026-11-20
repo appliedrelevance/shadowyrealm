@@ -1,8 +1,9 @@
 # Review: The River of Influence, vertical: the loop
 
-Rendered 2026-11-19 with hyperframes 0.9.42 to
+Rendered 2026-11-20 with hyperframes 0.9.42 to
 `/Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence-vertical.mp4`: 1080 x 1920,
-30 fps, 3300 frames, 110.000 s, 73.4 MB, with its contact sheet beside it. Data: the `/api/realm`
+30 fps, 3300 frames, 110.000 s, 73.4 MB, with its contact sheet beside it (the picture is the
+2026-11-19 render's: only the music changed). Data: the `/api/realm`
 snapshot in `assets/realm-data.js`, taken 2026-11-17: 624 entities as of 2026.
 
 **After every render, swap in the bed.** The render's mix starts the music 448 samples (9.3 ms)
@@ -10,7 +11,7 @@ late, which puts silence at the loop point. The export carries the video stream 
 the bed itself, both copied, not re-encoded:
 
 ```bash
-ffmpeg -i render.mp4 -i assets/music/vltava-loop.m4a -map 0:v -map 1:a -c copy -movflags +faststart river-of-influence-vertical.mp4
+ffmpeg -i render.mp4 -i assets/music/mountain-king-loop.m4a -map 0:v -map 1:a -c copy -movflags +faststart river-of-influence-vertical.mp4
 ```
 
 ## Creative calls
@@ -26,10 +27,13 @@ ffmpeg -i render.mp4 -i assets/music/vltava-loop.m4a -map 0:v -map 1:a -c copy -
   settles back as it drains.
 - **The key sits in empty ground.** Over the harm bands it read at 3.9:1 but the dark band edges cut
   its letters; above the finished river's left half (y 640 to 760) nothing is behind it.
-- **The music is Vltava, in E minor to the crest** (Geordie: the slow build; the major-key theme was
-  too stark a cut and too bright for the genocides on the river). The build opens with the
-  recording's source flutes under the ancient world; the main theme enters at 65.7 s, about 1800 on
-  the counter, and crests at the loop.
+- **The music is Grieg's In the Hall of the Mountain King** (Geordie, 2026-11-19: Vltava was too
+  flowery; 2026-11-20, of the accelerando: "That's the stuff!"). It is arranged from Grieg's own
+  piano arrangement for BBC SO Discover by `video/music/mountain_king.py`, with no DAW. The horns'
+  F# starts the build at 5.6 s and 76 bpm. Then six statements accelerate under the river: the
+  Più vivo from 85.0 s at 134 bpm, the stretto from 98.4 s at 154 bpm. Its dominant swells into
+  the B minor chord on the loop point at 177 bpm. The chord and the last stroke, at 3.16 s, are
+  the hook's.
 - **The all-time top three are gone.** There is no time for them, and the hook already shows the
   finished river.
 
@@ -39,29 +43,33 @@ ffmpeg -i render.mp4 -i assets/music/vltava-loop.m4a -map 0:v -map 1:a -c copy -
 - The last frame (109.966 s) against frame 0: identical, pixel for pixel (PIL difference: no box).
 - During the push, the title and ruler band (y 168 to 475) moves only by sub-pixel antialiasing on
   the year labels.
-- The loop audio: 110.000 s; −16.1 LUFS, −1.8 dBTP; the end is the recording at 1:44.99, the start
-  the recording at 1:45.00.
+- The loop audio: 110.000 s; −16.0 LUFS, −2.0 dBTP. Its last sample runs into its first: the join
+  step sits at the 93rd and 41st percentiles (left, right) of the steps in the 200 ms around it.
 - Stills at 0, 3, 5.2, 5.45, 10, 30, 55, 70, 90, 104, 107.6 and 109.966 s.
-- The render, 2026-11-19: `hyperframes check` again no errors, no warnings. ffprobe: 3300 frames,
-  video and audio both 110.000 s.
+- The render, 2026-11-20: `hyperframes check` no errors, no warnings. ffprobe: 3300 frames, video
+  and audio both 110.000 s. Its picture against the 2026-11-19 export: 71.0 dB PSNR on average,
+  56.0 dB at the worst frame, the encoder's noise.
 - The seam, picture: the snapshots at 0 and 109.966 s differ in no pixel. In the encode, frame 3299
   against frame 0 is 43.7 dB PSNR, H.264 noise (frame 0 is a keyframe, frame 3299 a predicted one);
   frames 3298 and 3299 are identical.
-- The seam, sound: after the swap the decoded audio has 0.02 ms of silence at the start (the
-  render's own mix had 9.33 ms). The 13.06 ms after 110.000 s is the AAC encoder's end padding,
-  which the file's edit list cuts; the music runs to 110.000 s.
-- The export's loudness: −16.1 LUFS, −1.8 dBTP (the render's own mix: −16.2 LUFS, −1.7 dBTP).
+- The seam, sound: after the swap the decoded audio sounds from its first sample (the render's
+  own mix started 9.38 ms late). The 16 ms after 110.000 s is the AAC encoder's end padding, which
+  the file's edit list cuts; the music runs to 110.000 s.
+- The export's loudness: −16.1 LUFS, −1.9 dBTP (the render's own mix: −16.1 LUFS, −1.7 dBTP).
 
 ## Not checked
 
-- Nobody has watched it loop end to start in a player; the seam is measured, not heard.
+- Nobody has watched the film loop end to start in a player; Geordie has heard the music loop on
+  its own. The seam in the film is measured, not heard.
 - YouTube re-encodes the upload, and the Shorts player's restart sets the seam viewers hear.
 - The layout has not been seen inside the YouTube app.
-- YouTube's Content ID may match the recording to a label's Vltava; a claim is disputed with the
-  Musopen public-domain source.
+- The music is this project's own render of a public-domain score. Spitfire's terms make
+  recordings made with its libraries, Discover included, royalty-free for commercial release
+  (support article 11815239).
 
 ## Weakest shot
 
-5.6 to about 20 s: the young river is a sliver at the left edge while the flutes play quietly, after
+5.6 to about 20 s: the young river is a sliver at the left edge while the bassoons and plucked
+celli creep in at 77 bpm, after
 a hook that was the whole river. It is the reset the loop is built on, but it asks the viewer to
 wait.

@@ -7,10 +7,12 @@ opens under the title with the music's climax, drains back to its source, refill
 thousand years with the music building, and arrives where it started.
 
 OUTPUT: HyperFrames, 1080 x 1920, 30 fps. TIME: 110 s x 30 = 3300 frames. Music only, no voice:
-`assets/music/vltava-loop.m4a`, Smetana's *Vltava* by the Musopen Symphony (public domain), cut as
-the loop: the main theme's crest (1:45 to 1:50 in the recording), then the recording from its first
-note to 1:45, so the end runs into the start with no join. One cut, at 5 s, where the picture resets
-too (15 ms fades). Mastered −16.1 LUFS, −1.8 dBTP. No fades at either end.
+`assets/music/mountain-king-loop.m4a`, Grieg's *In the Hall of the Mountain King* (public domain),
+arranged from his piano arrangement for BBC Symphony Orchestra Discover by
+`video/music/mountain_king.py` (Geordie, 2026-11-20). The loop: the crest first, a B minor chord
+and a last stroke at 3.16 s, silence while the river drains, then from 5.6 s the horns' F# and six
+statements accelerating from 76 to 177 bpm into the chord. Mastered −16.0 LUFS, −2.0 dBTP. No
+fades at either end.
 
 ENGINE: `assets/river.js`, `FILMS.shortLoop`: the vertical frame of `FILMS.shortVertical` with a
 110 s clock and a hook. Its `draw(t)` takes the hook as a remap of time: before 5.0 s the river is
