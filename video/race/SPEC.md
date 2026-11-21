@@ -30,6 +30,11 @@ GEOMETRY:
   reasons in 400 behind benefit or harm swatches), and up to three 28 px lines of the site's text
 
 OBJECTS:
+- gap cards (Geordie, 2026-11-21): where the lower third would sit empty 8 s or more
+  (`FILMS.race.fillGap`), the biggest arrival in the top three then, by its best place and
+  then its total, gets a card of its name and the site's description, read at the same pace
+  and never while a card or an era's name is read: five on the 2026-11-17 data, a card on
+  screen 72% of the sweep against 54%
 - the river and its front as in the 60-second cut, with a camera: the view is the larger of a
   fifth of the axis and the front ÷ 0.8, capped at the whole axis, with smooth corners (k 0.04).
   Bands are shaded by type: organizations in the site's benefit and harm, people lighter and toward

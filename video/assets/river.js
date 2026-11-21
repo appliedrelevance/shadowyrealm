@@ -59,6 +59,9 @@
       boardSlots: 10,
       // A leader gets a card when it holds the lead 5 s or more.
       leadHold: 5,
+      // Where the lower third would sit empty this long, the biggest arrival in the top three gets
+      // a card of its own (Geordie, 2026-11-21).
+      fillGap: 8,
       boardEnd: 261.0,
       dimAt: 261.0,
       frame: { ...LANDSCAPE, x0: 96, x1: 1250, textRight: 1250 },
@@ -324,10 +327,72 @@
       cards.push({ slug: card.slug, title: card.title, reasons: card.reasons, body: card.body, at: cardAt, readEnd: cardAt + card.read });
       free = cardAt + card.read + 1.0;
     }
-    cards.forEach((card, i) => {
-      const next = i + 1 < cards.length ? cards[i + 1].at : film.boardEnd;
-      const read = card.readEnd - card.at;
-      card.until = Math.min(card.at + Math.min(12, Math.max(read + 1.5, 5)), next - 0.4);
+    const holdUntil = (sorted) =>
+      sorted.map((card, i) => {
+        const next = i + 1 < sorted.length ? sorted[i + 1].at : film.boardEnd;
+        return Math.min(card.at + Math.min(12, Math.max(card.readEnd - card.at + 1.5, 5)), next - 0.4);
+      });
+    // Gap cards: where the lower third would sit empty for film.fillGap seconds or more, a card for
+    // the biggest arrival in the top three then (its best place there, then its total influence),
+    // one not carded yet: its name and the site's description, read at the same pace. It lands as
+    // the card before leaves (or 0.6 s after the arrival), while the entity is still in the top
+    // three, never while a card or an era's name is being read, and is read 1 s before the next.
+    if (film.fillGap) {
+      const standingsOf = board(realm, film).standings;
+      const STEP = 0.1;
+      const stays = [];
+      const open = new Map();
+      for (let k = 0; film.sweep0 + k * STEP <= film.sweep1; k++) {
+        const t = film.sweep0 + k * STEP;
+        const top = standingsOf(t).slice(0, 3);
+        const now = new Set(top.map((r) => r.e.slug));
+        top.forEach((r, i) => {
+          const s = open.get(r.e.slug);
+          if (s) {
+            s.until = t;
+            s.best = Math.min(s.best, i + 1);
+          } else open.set(r.e.slug, { e: r.e, at: t, until: t, best: i + 1 });
+        });
+        for (const [slug, s] of open) {
+          if (!now.has(slug)) {
+            stays.push(s);
+            open.delete(slug);
+          }
+        }
+      }
+      stays.push(...open.values());
+      stays.sort((a, b) => a.best - b.best || b.e.total_magnitude - a.e.total_magnitude || a.at - b.at);
+      const read = labels.filter((l) => l.shown && l.at !== undefined);
+      const busy = (a, z) =>
+        cards.some((c) => a < c.readEnd + 1.0 && c.at < z + 1.0) || read.some((l) => a < l.readEnd + 0.5 && l.at < z + 1.0);
+      for (;;) {
+        const sorted = [...cards].sort((x, y) => x.at - y.at);
+        const until = holdUntil(sorted);
+        const gaps = sorted.map((c, i) => [until[i], i + 1 < sorted.length ? sorted[i + 1].at : film.boardEnd]);
+        const carded = new Set(cards.map((c) => c.slug));
+        let added = null;
+        for (const [g0, g1] of gaps) {
+          if (g1 - g0 < film.fillGap) continue;
+          for (const s of stays) {
+            if (carded.has(s.e.slug) || s.until <= g0 || s.at >= g1) continue;
+            const e = s.e;
+            const length = readTime(wordsIn(e.name) + wordsIn(e.description));
+            let at = Math.max(g0 + 0.4, s.at + 0.6);
+            while (busy(at, at + length) && at < s.until) at += STEP;
+            if (at >= s.until || at + length + 1.0 > g1 || busy(at, at + length)) continue;
+            added = { slug: e.slug, title: e.name, reasons: [], body: e.description || null, at, readEnd: at + length, arrival: true };
+            break;
+          }
+          if (added) break;
+        }
+        if (!added) break;
+        cards.push(added);
+      }
+      cards.sort((x, y) => x.at - y.at);
+    }
+    holdUntil(cards).forEach((until, i) => {
+      const card = cards[i];
+      card.until = until;
       if (card.until < card.readEnd) throw new Error(`The card for ${card.slug} leaves before its words are read`);
     });
     return { cards, eraLabels };
