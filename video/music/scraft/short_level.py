@@ -1,6 +1,6 @@
 """Measure the Short's stems and compute the levelling as automation, the arithmetic orchestra.level did:
 inside each section with a theme, the tracks under it come down until it sits LEAD_DB over them; then a
-gain per section puts each section at its TARGET against the crest. Read-only on the session; prints the
+gain per section puts each section at its TARGET against the reference section (REF). Read-only on the session; prints the
 predicted levels and writes the automation points as JSON for the MCP to apply.
 
     level.py SESSION STEMS_DIR OUT_JSON
@@ -24,9 +24,12 @@ WINDOWS = {
     "cold": (M("Cold War"), M("Build")), "b31": (M("Build"), M("Digital Age")), "b32": (M("Digital Age"), M("Tutti")),
     "c1": (M("Tutti"), M("Trumpets")), "c2": (M("Trumpets"), M("Loop point")),
 }
-TARGET = {"crest": 0.0, "hook": -9.0, "drain": -20.0, "open": -21.0, "a1": -16.0, "a2": -13.0, "b": -15.0,
-          "t1": -9.0, "t2": -6.0, "fall": -9.0, "wars": -7.0, "cold": -18.0, "b31": -17.0, "b32": -12.0,
-          "c1": -4.0, "c2": -2.0}
+# Each section against the last tutti (c2), the build's peak (Geordie, 2026-11-21: the crest is a
+# soft landing, not a blast, so it sits 8 dB under the peak; every other section as before).
+REF = "c2"
+TARGET = {"crest": -8.0, "hook": -14.0, "drain": -20.0, "open": -19.0, "a1": -14.0, "a2": -11.0, "b": -13.0,
+          "t1": -7.0, "t2": -4.0, "fall": -7.0, "wars": -5.0, "cold": -16.0, "b31": -15.0, "b32": -10.0,
+          "c1": -2.0, "c2": 0.0}
 LEADS = {"open": ["Cl"], "a1": ["Vln1", "Cl"], "a2": ["Vln1", "Vln2", "Cl"], "b": ["Ob", "Cel"],
          "t1": ["Vln1", "Vln2", "Fl", "Ob", "Cl"], "t2": ["Vln1", "Vln2", "Fl", "Ob", "Cl", "Hn"],
          "fall": ["Vc", "Bn"], "wars": ["Tbn", "Vc"], "cold": ["Cel"],
@@ -103,17 +106,17 @@ def mix(section_gain):
 gain = dict(flat)
 for _ in range(6):
     total = mix(gain)
-    top = rms_db(total, WINDOWS["crest"])
+    top = rms_db(total, WINDOWS[REF])
     for g in WINDOWS:
-        if g != "crest":
+        if g != REF:
             gain[g] += top + TARGET[g] - rms_db(total, WINDOWS[g])
 total = mix(gain)
-top = rms_db(total, WINDOWS["crest"])
-print("before levelling, each section against the crest (stems as bounced):")
+top = rms_db(total, WINDOWS[REF])
+print("before levelling, each section against the peak (stems as bounced):")
 raw = sum(stems.values())
 for g in order:
-    print(f"  {g:6s} {rms_db(raw, WINDOWS[g]) - rms_db(raw, WINDOWS['crest']):+6.1f} dB")
-print("after: section gain, under-theme trim, level against the crest (target)")
+    print(f"  {g:6s} {rms_db(raw, WINDOWS[g]) - rms_db(raw, WINDOWS[REF]):+6.1f} dB")
+print("after: section gain, under-theme trim, level against the peak (target)")
 for g in order:
     print(f"  {g:6s} gain {gain[g]:+6.1f}  under {under.get(g, 0.0):+5.1f}  level {rms_db(total, WINDOWS[g]) - top:+6.1f} ({TARGET[g]:+.1f})")
 

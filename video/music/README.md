@@ -190,6 +190,13 @@ counterline and theme B in D minor, and a marker for each section.
 - **Checks.** [`scraft/audit.py`](scraft/audit.py) reads the session for overlapping clips, notes
   past their clip, duplicates and the players' breathing; [`scraft/onsets.py`](scraft/onsets.py)
   measures every note's onset in its stem.
+- **The soft crest** (Geordie, 2026-11-21: the opening blast was too jarring for the feed): no
+  crash, drum, timpani hit, bell or trumpets at the first frame; the chord's CC1 rises 40 to 80 over
+  1.4 s and settles to 60; the build's last bar dies away (CC1 to about 58) under a quiet timpani
+  rumble in place of the timpani and snare rolls. `scraft/short_level.py` now sets each section
+  against the build's peak (c2), the crest 8 dB under it. Its stems bounced on six processes in
+  97 s. On the master: every section within 0.4 dB of its target; the first 0.1 s at -24.7 dBFS RMS
+  (-10.9 before), the last 0.1 s at -23.5 dBFS, the join at the 13th and 37th percentiles.
 - **Measured, 2026-11-21:** 1,307 notes, no overlaps or stray notes, the longest wind line 9.8 s.
   Every note sounds in its stem; 13 long or low notes take 60 to 120 ms to rise above -70 dBFS. The
   master: 110.000 s, -16.0 LUFS, -2.0 dBTP; every section within 0.5 dB of its target (mean 0.36

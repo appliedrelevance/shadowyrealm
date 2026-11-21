@@ -35,6 +35,10 @@ ffmpeg -i render.mp4 -i assets/music/short-score.m4a -map 0:v -map 1:a -c copy -
   the eras: theme A from the Iron Age, theme B in the Middle Ages, theme A high from the Early
   Modern World (47.36 s, on its bar's downbeat), the Industrial brass, B flat minor for the World
   Wars, the Cold War pianissimo, the build, and two tutti statements into the crest.
+- **The crest is a soft landing** (Geordie, 2026-11-21: the opening blast would freak people out in
+  the feed). The crash, bass drum, timpani hit, bell and trumpets at the first frame are gone; the
+  chord blooms from soft over 1.4 s; the build's last bar dies away into it instead of rolling up.
+  Levels are set against the build's peak, the crest 8 dB under it.
 - **The all-time top three are gone.** There is no time for them, and the hook already shows the
   finished river.
 
@@ -44,9 +48,11 @@ ffmpeg -i render.mp4 -i assets/music/short-score.m4a -map 0:v -map 1:a -c copy -
 - The last frame (109.966 s) against frame 0: identical, pixel for pixel (PIL difference: no box).
 - During the push, the title and ruler band (y 168 to 475) moves only by sub-pixel antialiasing on
   the year labels.
-- The loop audio: 110.000 s; −16.0 LUFS, −2.0 dBTP; every section within 0.5 dB of its target
-  (mean 0.36 dB). Its last sample runs into its first: the join step sits at the 33rd and 57th
-  percentiles (left, right) of the steps in the 200 ms around it.
+- The loop audio: 110.000 s; −16.0 LUFS, −2.0 dBTP; every section within 0.4 dB of its target
+  (mean 0.19 dB). The first 0.1 s: −24.7 dBFS RMS and −14.9 dBFS peak, against −10.9 and −2.0 with
+  the old crest; the crest 7.8 dB under the build's peak, against 3.4 dB over it. The last 0.1 s
+  before the loop point is −23.5 dBFS, so the join meets the soft chord at its level; the join step
+  sits at the 13th and 37th percentiles (left, right) of the steps in the 200 ms around it.
 - Stills at 0, 3, 5.2, 5.45, 10, 30, 55, 70, 90, 104, 107.6 and 109.966 s.
 - The render, 2026-11-20: `hyperframes check` no errors, no warnings. ffprobe: 3300 frames, video
   and audio both 110.000 s. Its picture against the 2026-11-19 export: 71.0 dB PSNR on average,
