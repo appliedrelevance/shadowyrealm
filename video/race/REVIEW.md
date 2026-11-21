@@ -75,6 +75,13 @@ names the 624 entities and the 3,374 links of influence between them, both numbe
   name) against 41.8 s. The river's names are blocked 192 s of the sweep against 153 s.
   `hyperframes check`: no errors; one known warning (the Chinese Civil War's brief visit to the
   tenth place). Render: 8070 frames, 269.000 s, −16.1 LUFS, −1.9 dBTP.
+- Render, 2026-11-21, last: a card stays until the next one lands, and where the next is 14 s or
+  more off the biggest arrival in the top three takes over (Geordie: still long empty stretches).
+  Seven arrival cards, 21 in all. Measured in the rendered file (the lower third's brightness at
+  4 fps): a card on screen 97% of the sweep, against 73% in the render before; the lower third is
+  empty only before Sumer's card at 5.5 s and for 0.4 s at each change. The longest any card stays
+  up is the Maya's, 28.3 s from 49.6 s, around the Middle Ages' name. The river's names are blocked
+  207 s of the sweep. Render: 8070 frames, 269.000 s, −16.1 LUFS, −1.9 dBTP.
 - Frames: snapshots at 250, 258.8, 260.6, 262, 264, 266.5 and 268.7 s, the frames at 258.8, 260.6
   and 265 s cut from the render, and the contact sheet cut from the render.
 - The snapshot, taken 2026-11-17: 624 entities and 3,374 links (298 curated, 3,076 from System
