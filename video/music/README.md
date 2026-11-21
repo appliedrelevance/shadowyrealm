@@ -153,6 +153,20 @@ at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by sid
 - **Balance is not the orchestra's.** Summed at unity, the longs sound far louder than the shorts
   at the same marking: the first render put the tutti statement 13 dB under the one before it.
   Each part renders one stem per section, and the sections are levelled by measure.
+- **Dynamics.** The longs ignore velocity and swell on CC1: from 40 to 110 the first violins rise
+  5.4 dB. The shorts follow both velocity and CC1, about 7 dB each from 40 to 110, and 20 dB with
+  both. Measured 2026-11-20 on violas spiccato, harp, celeste, snare and timpani. `mountain_king.py`
+  leaves CC1 at 40 under its shorts. `orchestra.py` writes a short note's dynamic in both its
+  velocity and CC1, and a long note's in CC1.
+- **More than the 16 instruments of the presets plays.** The harp, celeste, glockenspiel and
+  tubular bells sound from their `Short … Discover` patches, and the snare and tam-tam from
+  `Untuned Percussion`.
+- **The plug-in crashes its process now and then**: three segfaults in its own threads on
+  2026-11-20, one inside Apple's networking library, none tied to a patch. A
+  `multiprocessing.Pool` never notices a dead worker and waits for ever, with every other worker
+  idle. `orchestra.py` runs its workers in a `ProcessPoolExecutor`, which reports the crash, and
+  sends the unfinished parts round again on a fresh pool, up to three times. The stems already
+  written are kept.
 
 ## The Short's loop: In the Hall of the Mountain King
 
