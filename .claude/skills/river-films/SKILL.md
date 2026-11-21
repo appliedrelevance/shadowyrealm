@@ -117,15 +117,21 @@ subject's films go there; a video cannot be moved between channels later.
   10,000 daily units each. `thumbnails.set` takes JPEG or PNG up to 50 MB and answers 403 when the
   channel may not set custom thumbnails. vidIQ cannot post to YouTube (`vidiq_video_upload` imports
   into vidIQ's own editor) and is connected to LinguaMama only; keep it for keyword volumes and
-  title scores, which Google's APIs do not provide.
+  title scores, which Google's APIs do not provide. On 2026-11-21 no OAuth client for IAmGeordie
+  existed: 1Password's only Google OAuth client and YouTube upload token are LinguaMama's, for
+  LinguaMama's channel, and never used here. Claude in Chrome's `file_upload` takes 10 MB a call,
+  less than any film, so in the browser Geordie drops the file into Studio and the details can be
+  filled in after.
 - **Thumbnails:** a real frame from the render, cut with `ffmpeg -ss <t> -i <mp4> -frames:v 1`, and
   `python3 -I .claude/skills/river-films/scripts/thumbnail.py` (its docstring has the arguments).
   One short claim that adds to the title, never repeats it. Choose a frame with no card or callout
   that the crop would cut, and keep the text off the board. Two or three per film for Test & Compare.
-  2026-11-17: `river-race-thumbnail-board.jpg` (258.5 s, "5,000 years, ranked"),
-  `river-race-thumbnail-maya.jpg` (289.5 s of the old 300 s cut, "Not Rome. The Maya.": the
-  countdown's, not the 269 s race's) and
-  `river-of-influence-thumbnail.jpg` (47.5 s, "5,000 years. 60 seconds.").
+  2026-11-21, from the own-score renders: `river-race-thumbnail-board.jpg` (258.5 s, "5,000 years,
+  ranked") and `river-race-thumbnail-maya.jpg` (70 s, 608 CE, the Maya 3rd and the Roman Empire
+  6th, "Not Rome. The Maya."), both `--crop 80,30,1920,1065 --box 30,24,820,260 --size 110
+  --backing`, so the whole board, the year and the card at the bottom stay in; and
+  `river-of-influence-thumbnail.jpg` (47.5 s, "5,000 years. 60 seconds.", from 2026-11-17, its
+  frame unchanged). Re-cut a thumbnail whenever its film's layout moves.
 - **Titles:** the `ciqsi` skill's `references/titles-and-hooks.md` rules, checked with
   `vidiq_keyword_research` and `vidiq_score_title`. "Bar chart race" is the genre's search term
   (2026-11-17: about 138,000 searches a month, competition 27). Offer two alternatives for
@@ -135,7 +141,9 @@ subject's films go there; a video cannot be moved between channels later.
   under 5,000 characters with a script. Regenerate after any change to `ERAS`, the clock or the
   pictures.
 - **Gate:** an upload is public. Show Geordie the title, description and file, and wait for his yes.
-  The first drafts are in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`.
+  The drafts for all three films (refreshed 2026-11-21) are in
+  `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`. Upload all three as
+  Private first, then fill in each description's links to the others and set them Public.
 
 ## Segments: one per video
 
@@ -154,7 +162,8 @@ times the landscape sizes, and frame 0 already carries the hook (the feed shows 
 
 **A Short is a loop** (Geordie, 2026-11-18): it replays as soon as it ends. So it has no title or
 end card; big titles sit over the hook instead, and the URL goes in the description. Its first
-seconds are the payoff (the finished river and the music's climax), then it resets and builds, and
+seconds are the payoff (the finished river and the music's crest, soft at frame 0: Geordie,
+2026-11-21, an opening blast startles the feed), then it resets and builds, and
 its last frame is its first, pixel for pixel: `FILMS.shortLoop` and its `hook` (`until`, `drain`,
 `outro`) in `river.js`; compare the last frame with frame 0 before every render. Its music must
 loop too: the crest first, then the build that leads into it (`video/music/README.md`). The
@@ -168,8 +177,9 @@ segments:
   Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot
   fetches pictures only for the race's board and the all-time ten: extend it to every segment's list
   (all ten of the Purest Good have none today).
-- **The 60-second cut** stays as the landscape trailer; the Short from `video/short-vertical/` is
-  the same story as a 110 s loop.
+- **The 60-second cut** is the landscape trailer, and goes to YouTube as a regular video beside
+  the race and the Short (Geordie, 2026-11-21: publish all three); the race's description links to
+  it. The Short from `video/short-vertical/` is the same story as a 110 s loop.
 
 ## Planned films
 
