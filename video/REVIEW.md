@@ -23,8 +23,9 @@ between them, both numbers in bold.
   home page's band labels place nothing; the finale replaced them.
 - **Inter only.** The site names Cinzel as its display face, but never loads it, so the live site
   shows Times New Roman. The film uses the face the site actually renders for body text.
-- **Music**: ACE-Step take with seed 91 of three, chosen because its loudness rises from −22 to
-  −12 dB RMS across the minute; the other two are flat or fade.
+- **Music**: our own score (Geordie, 2026-11-21: home-grown compositions only), `video/music/score.py`'s,
+  written against this film's cues and rendered through BBC SO Discover in SoundCraft by scorerender;
+  it replaces the ACE-Step take of 2026-11-13.
 
 Not built: the Lineage Short (one chain lighting up with its shares) and the Prior Art Short
 (relationship types). The snapshot tool takes `inventions` for the second.
@@ -32,8 +33,8 @@ Not built: the Lineage Short (one chain lighting up with its shares) and the Pri
 ## Measured
 
 - `hyperframes check` (0.9.42): no errors, no warnings.
-- Audio from the rendered file: −15.6 LUFS integrated, −2.7 dBTP true peak, no clipping. Its
-  loudest moment is at 50.15 s, on the No. 3 callout, just before the end card.
+- Audio from the render of 2026-11-21 (the picture is unchanged: its contact sheet matches the
+  2026-11-18 one byte for byte): −15.7 LUFS integrated, −1.9 dBTP true peak.
 - Frames: snapshots at 10, 25, 40, 47, 49, 51, 56 and 59.75 s on the 2026-11-17 data, and a
   contact sheet cut from the rendered file. The first review added the phone-width sheet (every
   callout reads at 360 px) and both seams.

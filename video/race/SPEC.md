@@ -68,11 +68,14 @@ SHOTS:
   258.4 s; a longer hold is a dead stretch)
 - 261.0 to 269.0: the river dims and the panel leaves (`boardEnd`, `dimAt`); the end card
 
-SOUND: `assets/music/race-bed.m4a`: ACE-Step take 11 (240 s, two slow swells) lowered 2.7 dB and
-crossfaded over 4 s into the 60-second cut's take 91, whose closing build ends the film; levelled to −16 LUFS, −1.6 dBTP.
-For the 269 s cut (2026-11-18), 31 s came out of take 11's quiet middle (108 to 135 s, at about
-−23 dBFS, joined by a 4 s crossfade), so take 91 still closes the film: 268.9 s, −16.1 LUFS, −1.8 dBTP. Fade
-in 1.5 s, out over the last 3 s.
+SOUND: `assets/music/race-score.m4a`, our own score, written by `video/music/race_score.py` and
+rendered, levelled and mastered through BBC Symphony Orchestra Discover by `orchestra.py`. It keeps
+the form and harmony of the generated bed it replaces (two swells with a quiet middle, a fall, a
+build in D minor) with themes and an orchestration of its own, on a grid of 89.13 bpm whose bar 97
+falls as the front reaches 2026 (`sweep1`, 258.8 s): the World Wars on bar 68, the Cold War on bar
+72's third beat, the Digital Age on bar 81, D major at 2026. 269.0 s, −16.1 LUFS, −1.8 dBTP. It
+opens on the harp from silence; the clip fades out over the last 3 s. A change to the race's
+timings moves `ARRIVAL` in `race_score.py`, and the score is rendered again.
 
 BANNED: as `../SPEC.md`, plus rows jittering between places, names flashing onto the board for less
 than half a second, a dead centre of the frame while the river is still young, text under 28 px, a

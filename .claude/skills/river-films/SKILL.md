@@ -41,6 +41,13 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 - **A render never fetches.** It reads `video/assets/realm-data.js`, a frozen `/api/realm` with
   the race's pictures, leaders' reasons and credits, written by `tools/video-snapshot.ts` and
   committed. A committed snapshot is the record of what a film showed.
+- **The music is our own scores** (Geordie, 2026-11-21: Vltava and Mountain King are gone; no
+  generated beds, no borrowed classics). A score is composed in SoundCraft as a session through its
+  MCP (Geordie, 2026-11-20: a song is a SoundCraft session, not a program). The Short's is
+  `media/exports/shadowyrealm/music/soundcraft/short/short-score.scraft`, in film time, levelled by
+  its own volume automation. The 60-second cut's (`video/music/score.py`, rendered by scorerender) and
+  the race's (`race_score.py`, rendered by `orchestra.py`) still start from scripts. A change to a
+  film's clock means its score is changed and rendered again; `video/music/README.md` has the steps.
 - **Exports** go to `/Volumes/Berthold/Landru/media/exports/shadowyrealm/`: each `.mp4`, its
   contact sheet, and for the race `river-race.description.txt` and `river-race.credits.txt`.
 
@@ -62,7 +69,8 @@ Run from the repo root. The scores change often; refresh the snapshot before any
    - The race ends on the 2026 board: `FILMS.race.boardEnd` and `dimAt` sit 2.6 s after the
      board's last change (258.4 s on 2026-11-18). A later end is a `dead_stretch`. If a refresh
      moves the last change, move both, the race's root durations and the end card's start with
-     them, and re-cut the bed to the new length (`video/race/SPEC.md`, SOUND).
+     them, and re-time the score: `ARRIVAL` and `FILM` in `video/music/race_score.py`, then render
+     it again (`video/music/README.md`).
    - Update `video/race/SPEC.md` where it quotes a changed number.
 5. Check all three: `cd video && npx --yes hyperframes@0.9.42 check --json`, and the same in
    `video/race` and `video/short-vertical`. Fix every error. Known warnings: `line_unread` on brief visits to the tenth place
@@ -75,7 +83,7 @@ Run from the repo root. The scores change often; refresh the snapshot before any
    `npx --yes hyperframes@0.9.42 render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4`
    in `video/`, `…/river-of-influence-vertical.mp4` in `video/short-vertical/`, and
    `…/river-race.mp4` in `video/race/`. Verify with `ffprobe` (frames, duration, 1080 x 1920 for the
-   Short). For the Short, render to the scratchpad, then copy its video stream and the bed into the
+   Short). For the Short, render to the scratchpad, then copy its video stream and the score into the
    export (the command is in `video/short-vertical/REVIEW.md`): the render's mix starts the music
    9.3 ms late, a gap at the loop point.
 8. Description and credits: write to the scratchpad first, then copy to exports. A shell redirect
@@ -213,8 +221,10 @@ Prior Art film settles how; record the layout here when it does.
   its site's own tokens and faces (Prior Art: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
 - **Type shades.** `river.css` shades `t-person` and `t-event`; other types draw as organizations.
   Prior Art's types are person, organization, project, invention and product.
-- **Timings and music.** `FILMS` timings follow from the data (steps 3 and 4); the music bed is
-  ACE-Step through the `media-use` skill.
+- **Timings and music.** `FILMS` timings follow from the data (steps 3 and 4). The music is always
+  our own score, written as notes against the film's cues (`bun tools/music-cues.ts <film>`) and
+  played by BBC SO Discover (Geordie, 2026-11-21: no generated beds, no borrowed classics). A
+  subject's films share their themes, as the race and the Short do.
 
 A new film, as opposed to a new subject in an existing format, follows the `hyperframes` work loop:
 three storylines in words, then `SPEC.md` shot by shot, then build, check, review and render.

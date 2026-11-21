@@ -3,7 +3,7 @@
 GOAL: the viewer watches five thousand years fill in, left to right, and ends knowing that every age
 looked enormous until the next one arrived.
 
-OUTPUT: HyperFrames, 1920 x 1080, 30 fps. TIME: 60 s x 30 = 1800 frames. Music bed only, no voice.
+OUTPUT: HyperFrames, 1920 x 1080, 30 fps. TIME: 60 s x 30 = 1800 frames. Music only, no voice.
 
 ENGINE: `assets/river.js` draws the river for this film and for the race (`race/`); `FILMS.short`
 holds this film's clock and frame, and the numbers below.
@@ -54,8 +54,12 @@ SHOTS:
 - 52.0 to 60.0: the river dims to 0.22; the end card: Vaal, `shadowyrealm.com`, the
   entity count and the link count in bold ink inside a muted line, and the as-of year; hold to the end
 
-SOUND: one ambient bed from ACE-Step, 72 bpm, swelling across the minute; fade in 1.5 s, fade out
-over the last 3 s.
+SOUND: `assets/music/river-60.m4a`, our own score, written by `video/music/score.py` against this
+film's cues (a 0.6 s pickup, then 0.9 s beats: the sweep, the three all-time names and the end card
+on beats) and rendered through BBC Symphony Orchestra Discover by scorerender in SoundCraft, with no
+window. D minor, the sections entering as the centuries arrive, the climax on A as the sweep ends,
+a turn to B flat for the names and D major for the end card. Mastered −15.6 LUFS, −1.8 dBTP, its
+fades (1.5 s in, 3 s out) in the master.
 
 BANNED: the HyperFrames defaults (glow, gradients, particles, cards, corner labels, KPI tiles),
 any colour not on the site, text moving while it is read (callouts and labels are still once

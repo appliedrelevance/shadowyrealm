@@ -7,12 +7,17 @@ opens under the title with the music's climax, drains back to its source, refill
 thousand years with the music building, and arrives where it started.
 
 OUTPUT: HyperFrames, 1080 x 1920, 30 fps. TIME: 110 s x 30 = 3300 frames. Music only, no voice:
-`assets/music/mountain-king-loop.m4a`, Grieg's *In the Hall of the Mountain King* (public domain),
-arranged from his piano arrangement for BBC Symphony Orchestra Discover by
-`video/music/mountain_king.py` (Geordie, 2026-11-20). The loop: the crest first, a B minor chord
-and a last stroke at 3.16 s, silence while the river drains, then from 5.6 s the horns' F# and six
-statements accelerating from 76 to 177 bpm into the chord. Mastered −16.0 LUFS, −2.0 dBTP. No
-fades at either end.
+`assets/music/short-score.m4a`, our own score (Geordie, 2026-11-21: home-grown compositions only),
+composed in SoundCraft through its MCP as the session
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/short/short-score.scraft` and played
+by BBC Symphony Orchestra Discover: the race's themes in D minor on this film's clock, so the series
+trailer carries the series' music. The session is laid out in film time: the crest on bar 1 at 0 s,
+two bars of hook at 85.71 bpm, then 40 bars of 91.95 bpm from the river's restart at 5.6 s to the loop
+point at 110 s; the Early Modern World on its bar's downbeat, the titles' return on bar 42's. The
+loop: the crest (the race's D major arrival chord, 0 to 2.45 s), a last stroke at 2.8 s, the harp and
+celeste running down D minor as the river drains (5.0 to 5.6 s), then the build. Section levels are
+the session's volume automation; the bounce's tail past 110 s is folded onto the start. Mastered
+−16.0 LUFS, −2.0 dBTP. No fades at either end.
 
 ENGINE: `assets/river.js`, `FILMS.shortLoop`: the vertical frame of `FILMS.shortVertical` with a
 110 s clock and a hook. Its `draw(t)` takes the hook as a remap of time: before 5.0 s the river is

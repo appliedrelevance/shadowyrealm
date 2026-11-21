@@ -59,10 +59,10 @@ names the 624 entities and the 3,374 links of influence between them, both numbe
   last place is the genre.
 - Reading load, from the reading plan in a script: a card or an era's name is being read 54.7% of
   the sweep, two at once 0.0% of it.
-- Render: 8070 frames in 4 min 55 s. Audio from the rendered file: −16.2 LUFS integrated, −1.8 dBTP
-  true peak. The bed lost 31 s from take 11's quiet middle (108 to 135 s, about −23 dBFS either
-  side, a 4 s crossfade); RMS across the join stays between −23.6 and −19.5 dBFS a second, and
-  take 91 starts at 204.9 s and still closes the film.
+- Render, 2026-11-21: 8070 frames, 269.000 s, with our own score in place of the generated bed:
+  `video/music/race_score.py`'s, rendered and levelled through BBC SO Discover by `orchestra.py`
+  (every section within 0.8 dB of its target on average). Audio from the rendered file: −16.1 LUFS
+  integrated, −1.8 dBTP true peak. The picture is the 2026-11-18 render's.
 - Frames: snapshots at 250, 258.8, 260.6, 262, 264, 266.5 and 268.7 s, the frames at 258.8, 260.6
   and 265 s cut from the render, and the contact sheet cut from the render.
 - The snapshot, taken 2026-11-17: 624 entities and 3,374 links (298 curated, 3,076 from System
