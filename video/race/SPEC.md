@@ -30,11 +30,12 @@ GEOMETRY:
   reasons in 400 behind benefit or harm swatches), and up to three 28 px lines of the site's text
 
 OBJECTS:
-- gap cards (Geordie, 2026-11-21): where the lower third would sit empty 8 s or more
-  (`FILMS.race.fillGap`), the biggest arrival in the top three then, by its best place and
-  then its total, gets a card of its name and the site's description, read at the same pace
-  and never while a card or an era's name is read: five on the 2026-11-17 data, a card on
-  screen 72% of the sweep against 54%
+- the lower third is never empty after the first card (Geordie, 2026-11-21): a card stays until
+  the next lands; where the next is 14 s or more off (`FILMS.race.fillGap`), the biggest arrival
+  in the top three then, by its best place and then its total, gets a card of its name and the
+  site's description once the card before has had its own time, read at the same pace and never
+  while a card or an era's name is read: seven on the 2026-11-17 data, a card on screen 96% of
+  the sweep, the longest any stays up the Maya's 28.3 s around the Middle Ages' name
 - the river and its front as in the 60-second cut, with a camera: the view is the larger of a
   fifth of the axis and the front ÷ 0.8, capped at the whole axis, with smooth corners (k 0.04).
   Bands are shaded by type: organizations in the site's benefit and harm, people lighter and toward

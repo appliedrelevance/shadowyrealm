@@ -59,9 +59,10 @@
       boardSlots: 10,
       // A leader gets a card when it holds the lead 5 s or more.
       leadHold: 5,
-      // Where the lower third would sit empty this long, the biggest arrival in the top three gets
-      // a card of its own (Geordie, 2026-11-21).
-      fillGap: 8,
+      // A card stays until the next one lands, so the lower third is never empty after the first;
+      // where the next is this far off, the biggest arrival in the top three gets a card of its own
+      // once the one before has had its time (Geordie, 2026-11-21).
+      fillGap: 14,
       boardEnd: 261.0,
       dimAt: 261.0,
       frame: { ...LANDSCAPE, x0: 96, x1: 1250, textRight: 1250 },
@@ -327,16 +328,19 @@
       cards.push({ slug: card.slug, title: card.title, reasons: card.reasons, body: card.body, at: cardAt, readEnd: cardAt + card.read });
       free = cardAt + card.read + 1.0;
     }
+    // A card's own time: its words plus 1.5 s, at least 5 s, at most 12 s. With film.fillGap a card
+    // stays until the next lands (0.4 s before it), so the lower third is never empty after the first.
+    const ownTime = (card) => Math.min(12, Math.max(card.readEnd - card.at + 1.5, 5));
     const holdUntil = (sorted) =>
       sorted.map((card, i) => {
         const next = i + 1 < sorted.length ? sorted[i + 1].at : film.boardEnd;
-        return Math.min(card.at + Math.min(12, Math.max(card.readEnd - card.at + 1.5, 5)), next - 0.4);
+        return film.fillGap ? next - 0.4 : Math.min(card.at + ownTime(card), next - 0.4);
       });
-    // Gap cards: where the lower third would sit empty for film.fillGap seconds or more, a card for
-    // the biggest arrival in the top three then (its best place there, then its total influence),
-    // one not carded yet: its name and the site's description, read at the same pace. It lands as
-    // the card before leaves (or 0.6 s after the arrival), while the entity is still in the top
-    // three, never while a card or an era's name is being read, and is read 1 s before the next.
+    // Gap cards: where the next card lands film.fillGap seconds or more after the one before, a card
+    // for the biggest arrival in the top three then (its best place there, then its total influence),
+    // one not carded yet: its name and the site's description, read at the same pace. It lands once
+    // the card before has had its own time (or 0.6 s after the arrival), while the entity is still in
+    // the top three, never while a card or an era's name is being read, and is read 1 s before the next.
     if (film.fillGap) {
       const standingsOf = board(realm, film).standings;
       const STEP = 0.1;
@@ -367,17 +371,16 @@
         cards.some((c) => a < c.readEnd + 1.0 && c.at < z + 1.0) || read.some((l) => a < l.readEnd + 0.5 && l.at < z + 1.0);
       for (;;) {
         const sorted = [...cards].sort((x, y) => x.at - y.at);
-        const until = holdUntil(sorted);
-        const gaps = sorted.map((c, i) => [until[i], i + 1 < sorted.length ? sorted[i + 1].at : film.boardEnd]);
+        const gaps = sorted.map((c, i) => [c.at + ownTime(c), i + 1 < sorted.length ? sorted[i + 1].at : film.boardEnd, c.at]);
         const carded = new Set(cards.map((c) => c.slug));
         let added = null;
-        for (const [g0, g1] of gaps) {
-          if (g1 - g0 < film.fillGap) continue;
+        for (const [g0, g1, landed] of gaps) {
+          if (g1 - landed < film.fillGap) continue;
           for (const s of stays) {
             if (carded.has(s.e.slug) || s.until <= g0 || s.at >= g1) continue;
             const e = s.e;
             const length = readTime(wordsIn(e.name) + wordsIn(e.description));
-            let at = Math.max(g0 + 0.4, s.at + 0.6);
+            let at = Math.max(g0, s.at + 0.6);
             while (busy(at, at + length) && at < s.until) at += STEP;
             if (at >= s.until || at + length + 1.0 > g1 || busy(at, at + length)) continue;
             added = { slug: e.slug, title: e.name, reasons: [], body: e.description || null, at, readEnd: at + length, arrival: true };
