@@ -20,9 +20,10 @@ GEOMETRY:
 - river x 96 to 1250, axis at y 530, half-height 285, era columns y 235 to 825 behind it; callouts
   above it (name 44 px 700, or an era's name 40 px 600; the line under it 28 px), anchored inside
   x 1250; the source line top left (x 96, top 64)
-- panel x 1320 to 1824: the year at 96 px (top 140), the era at 34 px (top 254), the caption at
-  28 px (top 318), ten rows 66 px apart from y 380, clipped at y 1034 so a row joins from under the
-  tenth place and leaves down past it
+- panel x 1320 to 1824, centred on the river's axis from the year to the tenth row (Geordie,
+  2026-11-21): the year at 96 px (top 83), the era at 34 px (top 197), the caption at 28 px (top
+  261), ten rows 66 px apart from y 323, the tenth ending at y 977, clipped at the frame's edge
+  (y 1080) so a row joins from under the tenth place and leaves down past it into the 103 px below
 - a row: a 52 px picture, the name 28 px 700 beside it (words dropped from the end past 390 px,
   never smaller type), a 14 px bar under it split into benefit then harm: 390 px for the leader
 - the lower third x 96 to 1250, top 888: a 112 px picture, a 28 px line (the name in 700, the

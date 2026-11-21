@@ -2,7 +2,7 @@
 .panel-year {
   position: absolute;
   left: 1320px;
-  top: 140px;
+  top: 83px;
   font-family: "Inter", sans-serif;
   font-weight: 700;
   font-size: 96px;
@@ -15,7 +15,7 @@
 .panel-era {
   position: absolute;
   left: 1320px;
-  top: 254px;
+  top: 197px;
   font-family: "Inter", sans-serif;
   font-weight: 400;
   font-size: 34px;
@@ -26,7 +26,7 @@
 .panel-caption {
   position: absolute;
   left: 1320px;
-  top: 318px;
+  top: 261px;
   font-family: "Inter", sans-serif;
   font-weight: 400;
   font-size: 28px;
@@ -44,13 +44,14 @@
   color: var(--color-ink-muted);
   font-variant-numeric: tabular-nums;
 }
-/* Rows arrive from below the tenth place and leave down past it, behind a clean edge. */
+/* The panel, from the year to the tenth row's bottom, is centred on the river's axis (y 530). Rows
+   arrive from below the tenth place and leave down past it into the 103 px under it, to the frame's edge. */
 .board-rows {
   position: absolute;
   left: 0;
   top: 0;
   width: 1920px;
-  height: 1034px;
+  height: 1080px;
   overflow: hidden;
 }
 .board-row {

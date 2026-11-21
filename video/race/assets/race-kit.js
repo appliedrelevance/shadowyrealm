@@ -18,7 +18,7 @@
 
   // Ten rows 66 px apart from y 380; a name gets 390 px beside its picture; a bar 390 px, or 270
   // beside a value.
-  const ROW_TOP = 380;
+  const ROW_TOP = 323;
   const PITCH = 66;
   const NAME_WIDTH = 390;
   const BAR_RACE = 390;
