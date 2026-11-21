@@ -1,15 +1,32 @@
-# The River of Influence: the score
+# The River of Influence: the scores
 
-The films' music is a score, not generated audio. [`score.py`](score.py) writes it as a MIDI file
-timed to the picture, Logic Pro plays it with its own recorded instruments, and the bounce is
-mastered and placed in the film.
+The films' music is our own, written as notes and timed to each film's picture (Geordie,
+2026-11-21: home-grown compositions only, no generated beds and no borrowed classics). Each script
+writes a MIDI file against the film's own clock (`bun tools/music-cues.ts <film>`), and BBC Symphony
+Orchestra Discover plays it with no DAW and no window.
+
+| Film | Score | Rendered by | In the film |
+|---|---|---|---|
+| The 60-second cut | [`score.py`](score.py) → `river-60.mid` | scorerender, through SoundCraft | `video/assets/music/river-60.m4a` |
+| The race | [`race_score.py`](race_score.py) → `race-score.mid` | [`orchestra.py`](orchestra.py) | `video/race/assets/music/race-score.m4a` |
+| The Short, a loop | [`short_score.py`](short_score.py) → `short-score.mid` | [`orchestra.py`](orchestra.py) | `video/assets/music/short-score.m4a` |
+
+The race and the Short share their themes: the Short is the series trailer, so it carries the
+race's music. `orchestra.py` renders a score's parts, levels each section by measure to the
+script's `TARGET` and masters it; scorerender (`/Volumes/Berthold/Landru/code/artcraft/scorerender`)
+renders any of the MIDI files through SoundCraft, but does not level sections yet, so the race and
+the Short use `orchestra.py`'s renders (the race through scorerender misses its sections' targets
+by up to 4.6 dB, against 0.8 dB on average through `orchestra.py`; measured 2026-11-21).
 
 ```bash
-video/music/.venv/bin/python video/music/score.py   # writes video/music/river-60.mid
-bun tools/music-cues.ts short                       # the cue times it is written against
+video/music/.venv/bin/python video/music/score.py               # writes video/music/river-60.mid
+video/music/.venv/bin/python -I video/music/race_score.py       # the race: score, render what changed, master
+video/music/.venv/bin/python -I video/music/short_score.py      # the Short's loop, the same way
 ```
 
-The environment is `video/music/.venv` (Python 3.13 and `mido`), kept out of git.
+The environment is `video/music/.venv` (Python 3.13, `mido`, `numpy`, `pedalboard`), kept out of
+git. The sections below on Logic and sfizz are how `score.py` was first played; the 60-second cut
+now takes its scorerender render.
 
 ## The grid
 
@@ -98,23 +115,6 @@ video/music/.venv/bin/python video/music/check.py /Volumes/Berthold/Landru/media
   bar is played again on each bar line; and the libraries arrive up to 21 dB apart, so each track
   is set to a measured level.
 
-## A public-domain recording: Vltava
-
-[`vltava.py`](vltava.py) cuts Smetana's *Vltava* (The Moldau), a river from its source to the sea,
-to the 60-second film, from the Musopen Symphony's 2012 recording, public domain worldwide
-(Wikimedia Commons, 143.7 MB FLAC, kept in
-`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/source/`). The film takes one unbroken
-stretch, 0:56.47 to 1:52.47: the flutes under the title, the main theme (E minor) entering with the
-sweep at 4.2 s and building to its crest under the all-time names and the end card, faded out over
-the last 3 s. It stops before the major-key theme and the bright closing chords (Geordie,
-2026-11-18: the cut into them was too stark, and too upbeat for the genocides on the river; that
-cut is commit 0b3083f). Mastered: −15.9 LUFS, −1.7 dBTP.
-
-Musopen asks for a courtesy credit: "Music: Smetana, Vltava, performed by the Musopen Symphony
-(public domain)". The piece is famous and labels register their recordings with YouTube's Content
-ID, which can mistake one orchestra for another; a claim is disputed by citing the recording's
-public-domain source.
-
 ## Without a DAW: BBC Symphony Orchestra Discover
 
 Spitfire's free BBC Symphony Orchestra Discover (installed 2026-11-19 with the Spitfire Audio app;
@@ -125,7 +125,7 @@ and its shorts have real staccato, spiccato, pizzicato and marcato recordings.
 
 The time goes on loading, not playing. A loaded instrument renders at 19 to 55 times real time
 with a 4096-sample buffer. Each patch change spends about 20 s reading its samples from Berthold,
-at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by side:
+at under 1% CPU. So `orchestra.py` keeps stems and runs plug-ins side by side:
 
 - **Stems are kept.** A stem's file name carries a hash of its notes, its patch, the plug-in's
   version and `bbcso.py`. A run renders only the stems whose hash is new and deletes the rest.
@@ -155,8 +155,7 @@ at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by sid
   Each part renders one stem per section, and the sections are levelled by measure.
 - **Dynamics.** The longs ignore velocity and swell on CC1: from 40 to 110 the first violins rise
   5.4 dB. The shorts follow both velocity and CC1, about 7 dB each from 40 to 110, and 20 dB with
-  both. Measured 2026-11-20 on violas spiccato, harp, celeste, snare and timpani. `mountain_king.py`
-  leaves CC1 at 40 under its shorts. `orchestra.py` writes a short note's dynamic in both its
+  both. Measured 2026-11-20 on violas spiccato, harp, celeste, snare and timpani. `orchestra.py` writes a short note's dynamic in both its
   velocity and CC1, and a long note's in CC1.
 - **More than the 16 instruments of the presets plays.** The harp, celeste, glockenspiel and
   tubular bells sound from their `Short … Discover` patches, and the snare and tam-tam from
@@ -168,64 +167,30 @@ at under 1% CPU. So `mountain_king.py` keeps stems and runs plug-ins side by sid
   sends the unfinished parts round again on a fresh pool, up to three times. The stems already
   written are kept.
 
-## The Short's loop: In the Hall of the Mountain King
+## The Short's loop: short_score.py
 
-[`mountain_king.py`](mountain_king.py) arranges Grieg's *In the Hall of the Mountain King* for BBC
-SO Discover as the vertical Short's 110 s loop (Geordie, 2026-11-19: Mountain King, slow, in
-place of Vltava, which was too flowery). The notes are Grieg's own piano arrangement, Op. 46 No.
-4, The University Society, 1918, typeset by Coyau for the Mutopia Project and placed in the public
-domain ([`sources/`](sources/), the MIDI and the LilyPond). It writes
-[`mountain-king.mid`](mountain-king.mid), 34 parts, and renders, levels and masters
-`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/mountain-king-loop.wav` and `.m4a`.
+[`short_score.py`](short_score.py) writes the vertical Short's 110 s loop for BBC SO Discover:
+the race's themes (theme A and its counterline, theme B, the falling bass, the World Wars' darkening,
+the Cold War's Lydian A, the arrival in D major), moved up a fourth into D minor, the key the race
+builds in, and laid on `FILMS.shortLoop`'s clock. Its docstring has the bar plan.
 
-```bash
-video/music/.venv/bin/python -I video/music/mountain_king.py           # score, render what changed, master
-video/music/.venv/bin/python -I video/music/mountain_king.py --score   # only the score and the breathing check
-```
-
-- **An accelerando** (Geordie, 2026-11-20: at one pace the whole way it sounded slow and
-  disconcerting). The tempo rises by the same ratio on every beat, from 76 bpm at the horns' F# to
-  177 bpm at the chord, so that 49 bars fill the build, 5.6 to 110 s. Bar 0 is Grieg's horn F#.
-  Then six statements, eight bars each, and each takes one passage of Grieg's arrangement whole,
-  the theme with the line he sets under it. Each one is shorter than the last, from 23 s to 11 s:
-  1. 77 bpm, bars 1 to 8: the theme in the bassoons and pizzicato celli over the plucked bass.
-  2. 89 bpm, Grieg's bars 25 to 32: the theme an octave up, in the clarinets and pizzicato violas,
-     then the oboes and second violins. Under it the celli turn F# E# F# on every second and fourth
-     beat, and the horns play his offbeats, short.
-  3. 102 bpm, Grieg's bars 33 to 40: the answer on F#, bowed, in the second violins and clarinets,
-     then the first violins and flutes, over the turn C# B# C#.
-  4. 117 bpm, Grieg's bars 41 to 48: the theme over the celli's running triplets. It ends on his
-     scale down in octaves, B A G F# E D C#, in the trombones, bassoons and low strings.
-  5. 134 bpm (Grieg marks 138), bars 49 to 56, the Più vivo: the theme in four octaves with the
-     trumpets, over the bass galloping down B A G F# in eighths, with brass chords on beats 1 and 3.
-  6. 154 bpm (Grieg's Più vivo marking), bars 57 to 64, sempre stretto: the answer on F# with its
-     chords in the horns and trombones, the gallop now F# E D C#. It ends where Grieg's does, on
-     the dominant: his last half note is the swell into the chord at the loop point.
-- **Players breathe** (Geordie, 2026-11-20: the first version held a horn F# for 25 s, from 0:35).
-  The theme passes between sections every four bars, and the winds play short. `check` fails the
-  score in three cases:
-  - a wind or brass note held past `HOLD`, 6 s;
-  - a wind line running past `LUNG`, 12 s, without a 0.3 s gap;
-  - anything sustained, strings included, holding one pitch past `HOLD`.
-
-  A short note counts as sounding 0.25 s. All the parts of one instrument are checked together,
-  because they are the same players. The limits are in seconds, so a breath takes more beats as
-  the tempo rises: the bassoons' gallop rests two eighths every fourth bar, because one eighth at
-  140 bpm left a 17 s line.
-- **The theme leads.** Inside each statement, the parts under the theme come down until the
-  theme's RMS is 3 dB over the sum of everything else (`LEAD_DB`). Then the statements are levelled
-  against each other.
-- **The crest is the film's first 5 s**, back at 76 bpm: B minor for the whole orchestra with
-  cymbal, bass drum and a timpani roll (0 to 2.37 s), a last short stroke at 3.16 s, and silence
-  while the river drains. Sound past the end is folded onto the start, and the limiter runs on
-  three copies end to end, so the file loops without a seam.
-- **Levels**, RMS against the chord (`TARGET`): horns −15 dB, the six statements −16, −13.5, −11,
-  −8.5, −6 and −4 dB, the swell −2 dB. To put the theme 3 dB over the rest, the parts under it came
-  down 9.3 to 12.1 dB in each statement. Measured on the master, 2026-11-20:
-  - −16.0 LUFS integrated, −2.0 dBTP, loudness range 13.7 LU.
-  - The statements −28.7, −26.2, −23.7, −21.3, −18.8 and −16.9 dBFS RMS, the swell −15.1, the
-    chord −13.5.
-  - The drain −60.3 dBFS.
-  - The join at 110 s is a sample step at the 93rd and 41st percentiles (left, right) of the steps
-    in the 200 ms around it: inside the music's own movement, no click.
-- **Rendered** in 236 s on eight plug-ins: 94 stems of 95, one kept from the run before.
+- **The grid.** 4/4 at 91.95 bpm: 40 bars from the river's restart at the film's 5.6 s to the crest
+  on the loop point, so the Early Modern World falls on bar 17's downbeat and the titles return on
+  bar 40's. Every era lands within a beat of the section that marks it; `check_cues` prints where.
+- **The loop.** The score is written as P, from the restart to past the loop point, and the master
+  is P rotated so the film's 0 s is the crest: the race's D major arrival chord for the whole
+  orchestra (0 to 2.35 s), a last stroke at 2.61 s, and the harp running down D minor from D6 to D3
+  while the river drains (5.0 to 5.6 s), into the celli's D on bar 1. Sound past the loop point is
+  folded onto the start, and the limiter runs on three copies end to end with the middle one kept,
+  so its memory crosses the join as it will when the Short repeats.
+- **Players breathe**, by `orchestra.check`: no wind note past 6 s, no wind line past 12 s without a
+  0.3 s gap, nothing sustained on one pitch past 6 s. The longest line is the horns' 9.7 s.
+- **The theme leads**: inside each section with one, the parts under it come down until it sits
+  3 dB over them (`LEAD_DB`); then each section is levelled to `TARGET`, RMS against the crest:
+  open −21, a1 −16, a2 −13, b −15, t1 −9, t2 −6, fall −9, wars −7, cold −18, b31 −17, b32 −12,
+  c1 −4, c2 −2 dB, the hook −9, the drain −20. Every section landed on its target.
+- **Measured on the master, 2026-11-21:** 110.000 s, −16.0 LUFS, −1.6 dBTP. The crest −15.0 dBFS
+  RMS, the hook −23.3, the drain −34.3, the opening −35.2. The join is a sample step at the 60th
+  and 18th percentiles (left, right) of the steps in the 200 ms around it: inside the music's own
+  movement, no click.
+- **Rendered** in 202 s on eight plug-ins: 34 parts, 1,353 notes.
