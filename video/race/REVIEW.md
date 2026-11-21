@@ -63,7 +63,18 @@ names the 624 entities and the 3,374 links of influence between them, both numbe
   the SoundCraft session `race-score.scraft` (from `race_score.py`'s MIDI), bounced through BBC SO
   Discover and levelled by its automation; section by section 0.05 dB from the `orchestra.py` render
   approved the same day. Audio from the rendered file: −16.1 LUFS
-  integrated, −1.8 dBTP true peak. The picture is the 2026-11-18 render's.
+  integrated, −1.9 dBTP true peak.
+- Render, 2026-11-21, later: two changes to the picture (Geordie). The panel, from the year to the
+  tenth row, is centred on the river's axis (y 530): the year from top 140 to 83, the rows from y 380
+  to 323, the tenth ending at y 977 with 103 px under it, so a row leaving the board is seen sliding
+  and fading below the tenth place. And gap cards: where the lower third would sit empty 8 s or
+  more, the biggest arrival in the top three gets a card of its name and description. Five on this
+  data (the Maya at 49.6 s, Islam at 88.8 s, the Columbian exchange at 126.5 s, the Spanish Empire
+  at 137.9 s, the Spanish conquest of the Inca Empire at 149.6 s): a card is on screen 72% of the
+  sweep against 54%, and the longest empty stretch is 17.4 s (from 61.3 s, around the Middle Ages'
+  name) against 41.8 s. The river's names are blocked 192 s of the sweep against 153 s.
+  `hyperframes check`: no errors; one known warning (the Chinese Civil War's brief visit to the
+  tenth place). Render: 8070 frames, 269.000 s, −16.1 LUFS, −1.9 dBTP.
 - Frames: snapshots at 250, 258.8, 260.6, 262, 264, 266.5 and 268.7 s, the frames at 258.8, 260.6
   and 265 s cut from the render, and the contact sheet cut from the render.
 - The snapshot, taken 2026-11-17: 624 entities and 3,374 links (298 curated, 3,076 from System
