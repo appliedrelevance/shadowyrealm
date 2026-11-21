@@ -45,8 +45,10 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
   generated beds, no borrowed classics). A score is composed in SoundCraft as a session through its
   MCP (Geordie, 2026-11-20: a song is a SoundCraft session, not a program). The Short's is
   `media/exports/shadowyrealm/music/soundcraft/short/short-score.scraft`, in film time, levelled by
-  its own volume automation. The 60-second cut's (`video/music/score.py`, rendered by scorerender) and
-  the race's (`race_score.py`, rendered by `orchestra.py`) still start from scripts. A change to a
+  its own volume automation; the 60-second cut's is `soundcraft/river/river-60.scraft` and the race's
+  `soundcraft/race/race-score.scraft` (both imported from their scripts' MIDI on 2026-11-21, the race
+  levelled by automation). Each film's music is its session's bounce, mastered by
+  `video/music/scraft/`. Bounce stems on several `soundcraft-cli` processes at once. A change to a
   film's clock means its score is changed and rendered again; `video/music/README.md` has the steps.
 - **Exports** go to `/Volumes/Berthold/Landru/media/exports/shadowyrealm/`: each `.mp4`, its
   contact sheet, and for the race `river-race.description.txt` and `river-race.credits.txt`.

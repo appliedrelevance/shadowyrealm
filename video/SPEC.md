@@ -56,8 +56,8 @@ SHOTS:
 
 SOUND: `assets/music/river-60.m4a`, our own score, written by `video/music/score.py` against this
 film's cues (a 0.6 s pickup, then 0.9 s beats: the sweep, the three all-time names and the end card
-on beats) and rendered through BBC Symphony Orchestra Discover by scorerender in SoundCraft, with no
-window. D minor, the sections entering as the centuries arrive, the climax on A as the sweep ends,
+on beats), now the SoundCraft session `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/river/river-60.scraft`, played by BBC Symphony
+Orchestra Discover with no window. D minor, the sections entering as the centuries arrive, the climax on A as the sweep ends,
 a turn to B flat for the names and D major for the end card. Mastered −15.6 LUFS, −1.8 dBTP, its
 fades (1.5 s in, 3 s out) in the master.
 

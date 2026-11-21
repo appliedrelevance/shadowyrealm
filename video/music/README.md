@@ -7,17 +7,16 @@ Orchestra Discover plays it with no DAW and no window.
 
 | Film | Score | Rendered by | In the film |
 |---|---|---|---|
-| The 60-second cut | [`score.py`](score.py) → `river-60.mid` | scorerender, through SoundCraft | `video/assets/music/river-60.m4a` |
-| The race | [`race_score.py`](race_score.py) → `race-score.mid` | [`orchestra.py`](orchestra.py) | `video/race/assets/music/race-score.m4a` |
+| The 60-second cut | the SoundCraft session `river/river-60.scraft` | SoundCraft | `video/assets/music/river-60.m4a` |
+| The race | the SoundCraft session `race/race-score.scraft` | SoundCraft | `video/race/assets/music/race-score.m4a` |
 | The Short, a loop | the SoundCraft session `short-score.scraft`, composed through the MCP | SoundCraft | `video/assets/music/short-score.m4a` |
 
 The race and the Short share their themes: the Short is the series trailer, so it carries the
-race's music. A score is composed in SoundCraft as a session (Geordie, 2026-11-20: a song is a
-SoundCraft session, not a program); the Short is the first, and the race and the 60-second cut still
-start from their scripts' MIDI. `orchestra.py` renders the race, levelling each section by measure
-to the script's `TARGET`; scorerender (`/Volumes/Berthold/Landru/code/artcraft/scorerender`) renders a
-MIDI file through SoundCraft but does not level sections (the race through it misses its sections'
-targets by up to 4.6 dB, against 0.8 dB on average through `orchestra.py`; measured 2026-11-21).
+race's music. Every score is a SoundCraft session (Geordie, 2026-11-20: a song is a SoundCraft
+session, not a program), in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/`. The Short's was composed in its session through the MCP; the
+60-second cut's and the race's were imported from `score.py`'s and `race_score.py`'s MIDI, and those
+scripts are now their history: changes go into the sessions. Each film's music is the session's
+own bounce, levelled by the session's automation and mastered by `scraft/`.
 
 ```bash
 video/music/.venv/bin/python video/music/score.py               # writes video/music/river-60.mid
@@ -198,3 +197,23 @@ counterline and theme B in D minor, and a marker for each section.
   one process (peak memory 1.7 GB), the mix 79 s.
 - **Known engine faults** (reported to the SoundCraft session): `edit.copy` of part of a MIDI clip
   also carries the notes after the range; `track.new {kind: "master"}` ignores its name.
+
+## The 60-second cut and the race as sessions
+
+- **The 60-second cut**, `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/river/river-60.scraft`: the import of `river-60.mid`, its tracks renamed
+  (the import had turned their `·` into U+FFFD) and a marker at the sweep, each era, the three
+  all-time names and the end card. Its arc is in its CC1 and CC11, so it needs no automation. Its
+  bounce, shaped like the film's master (60 s, fades 1.5 s in and 3 s out), matches the music in the
+  film: correlation 1.00000, the difference 50.7 dB under it, every second within 0.03 dB.
+- **The race**, `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/race/race-score.scraft`: the import of `race-score.mid` with a marker at each
+  section and the levelling of `orchestra.py` as automation, from [`scraft/race_level.py`](scraft/race_level.py),
+  which reads `race_score.py`'s sections, targets and theme parts: 43 points on the master fader and
+  296 on 30 tracks. A fader stops at +12 dB, so the master lane sits 5 dB under the computed gains
+  (from -5.1 to +11.5 dB); mastering sets the loudness. [`scraft/master.py`](scraft/master.py) cuts the
+  bounce to 269 s and masters it to -16.0 LUFS, -2.0 dBTP. Against the race music approved on
+  2026-11-21 (the `orchestra.py` render), section by section: 0.05 dB apart on average, 0.33 dB at
+  the worst (the dominant).
+- **Rendering**: the race's 37 stems were bounced on six `soundcraft-cli` processes at once, each
+  keeping about six tracks (`track.delete` the rest, then `file.bounce_stems`, stable): 163 s in all,
+  against 43 min for the Short's 34 stems in one process. The mix bounced in 97 s (peak memory 2.8 GB).
+  The automation and markers went in as one `soundcraft-cli script` of 363 engine commands.

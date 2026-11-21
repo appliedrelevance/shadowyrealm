@@ -68,14 +68,15 @@ SHOTS:
   258.4 s; a longer hold is a dead stretch)
 - 261.0 to 269.0: the river dims and the panel leaves (`boardEnd`, `dimAt`); the end card
 
-SOUND: `assets/music/race-score.m4a`, our own score, written by `video/music/race_score.py` and
-rendered, levelled and mastered through BBC Symphony Orchestra Discover by `orchestra.py`. It keeps
+SOUND: `assets/music/race-score.m4a`, our own score, the SoundCraft session
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/race/race-score.scraft` (imported from `video/music/race_score.py`'s MIDI), played by BBC
+Symphony Orchestra Discover and levelled by the session's automation. It keeps
 the form and harmony of the generated bed it replaces (two swells with a quiet middle, a fall, a
 build in D minor) with themes and an orchestration of its own, on a grid of 89.13 bpm whose bar 97
 falls as the front reaches 2026 (`sweep1`, 258.8 s): the World Wars on bar 68, the Cold War on bar
 72's third beat, the Digital Age on bar 81, D major at 2026. 269.0 s, −16.1 LUFS, −1.8 dBTP. It
 opens on the harp from silence; the clip fades out over the last 3 s. A change to the race's
-timings moves `ARRIVAL` in `race_score.py`, and the score is rendered again.
+timings moves the session's notes, markers and automation, and the score is bounced again.
 
 BANNED: as `../SPEC.md`, plus rows jittering between places, names flashing onto the board for less
 than half a second, a dead centre of the frame while the river is still young, text under 28 px, a

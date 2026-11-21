@@ -60,8 +60,9 @@ names the 624 entities and the 3,374 links of influence between them, both numbe
 - Reading load, from the reading plan in a script: a card or an era's name is being read 54.7% of
   the sweep, two at once 0.0% of it.
 - Render, 2026-11-21: 8070 frames, 269.000 s, with our own score in place of the generated bed:
-  `video/music/race_score.py`'s, rendered and levelled through BBC SO Discover by `orchestra.py`
-  (every section within 0.8 dB of its target on average). Audio from the rendered file: −16.1 LUFS
+  the SoundCraft session `race-score.scraft` (from `race_score.py`'s MIDI), bounced through BBC SO
+  Discover and levelled by its automation; section by section 0.05 dB from the `orchestra.py` render
+  approved the same day. Audio from the rendered file: −16.1 LUFS
   integrated, −1.8 dBTP true peak. The picture is the 2026-11-18 render's.
 - Frames: snapshots at 250, 258.8, 260.6, 262, 264, 266.5 and 268.7 s, the frames at 258.8, 260.6
   and 265 s cut from the render, and the contact sheet cut from the render.
