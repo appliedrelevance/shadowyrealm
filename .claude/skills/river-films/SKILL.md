@@ -125,7 +125,9 @@ subject's films go there; a video cannot be moved between channels later.
   YouTube Data API v3 on, a Desktop client, its own 10,000-unit quota) and one sign-in as the
   channel's owner, choosing IAmGeordie if the account has several channels: the refresh token from
   that sign-in decides which channel uploads land on. Publish the consent screen to production;
-  a refresh token from one left in Testing expires after 7 days.
+  a refresh token from one left in Testing expires after 7 days. Its Branding links are Applied
+  Relevance's (Geordie, 2026-11-22): home `https://appliedrelevance.com`, privacy `/privacy`,
+  terms `/terms`, authorized domain `appliedrelevance.com`.
 - **Thumbnails are loud, never cryptic** (Geordie, 2026-11-21, on "Not Rome. The Maya." and "5,000
   years, ranked": "a real compelling thumbnail ... not some cryptic phrase that nobody gives a shit
   about"). A stranger must see at a glance what is at stake: a few huge words that name it (WAR,
