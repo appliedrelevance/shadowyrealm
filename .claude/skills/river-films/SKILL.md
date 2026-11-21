@@ -121,17 +121,25 @@ subject's films go there; a video cannot be moved between channels later.
   existed: 1Password's only Google OAuth client and YouTube upload token are LinguaMama's, for
   LinguaMama's channel, and never used here. Claude in Chrome's `file_upload` takes 10 MB a call,
   less than any film, so in the browser Geordie drops the file into Studio and the details can be
-  filled in after.
-- **Thumbnails:** a real frame from the render, cut with `ffmpeg -ss <t> -i <mp4> -frames:v 1`, and
-  `python3 -I .claude/skills/river-films/scripts/thumbnail.py` (its docstring has the arguments).
-  One short claim that adds to the title, never repeats it. Choose a frame with no card or callout
-  that the crop would cut, and keep the text off the board. Two or three per film for Test & Compare.
-  2026-11-21, from the own-score renders: `river-race-thumbnail-board.jpg` (258.5 s, "5,000 years,
-  ranked") and `river-race-thumbnail-maya.jpg` (70 s, 608 CE, the Maya 3rd and the Roman Empire
-  6th, "Not Rome. The Maya."), both `--crop 80,30,1920,1065 --box 30,24,820,260 --size 110
-  --backing`, so the whole board, the year and the card at the bottom stay in; and
-  `river-of-influence-thumbnail.jpg` (47.5 s, "5,000 years. 60 seconds.", from 2026-11-17, its
-  frame unchanged). Re-cut a thumbnail whenever its film's layout moves.
+  filled in after. For the API, IAmGeordie needs its own OAuth client (a Google Cloud project with
+  YouTube Data API v3 on, a Desktop client, its own 10,000-unit quota) and one sign-in as the
+  channel's owner, choosing IAmGeordie if the account has several channels: the refresh token from
+  that sign-in decides which channel uploads land on. Publish the consent screen to production;
+  a refresh token from one left in Testing expires after 7 days.
+- **Thumbnails are loud, never cryptic** (Geordie, 2026-11-21, on "Not Rome. The Maya." and "5,000
+  years, ranked": "a real compelling thumbnail ... not some cryptic phrase that nobody gives a shit
+  about"). A stranger must see at a glance what is at stake: a few huge words that name it (WAR,
+  GENOCIDE, GOOD, EVIL, #1), real pictures, the films' colours (benefit `#3e9ad6`, harm `#d9534f`,
+  ink `#f8fafc`, ground `#181822`). No quiet intrigue, no withheld answer, no wordplay. Every claim
+  is true in the film, checked with a script (who held No. 1, the harm share of the board). Build
+  them with `scripts/thumbnail-compose.py` from the film's frames and the race's pictures, fetched at
+  800 px from Commons (`Special:FilePath/<credit.file>?width=800`; the snapshot keeps them at 224).
+  Skip pictures of human remains or bodies: YouTube limits graphic thumbnails. Two per film for Test
+  & Compare, each paired with its title. 2026-11-21: `river-race-thumbnail-number-one.jpg`
+  ("HISTORY'S #1" over four No. 1s: genocide, war, pandemic, war), `river-race-thumbnail-today.jpg`
+  ("TODAY'S TOP 10: WAR, FAMINE, GENOCIDE." beside the 2026 board) and
+  `river-of-influence-thumbnail-good-evil.jpg` (the whole river, GOOD and EVIL).
+  `scripts/thumbnail.py` (a frame and a line of text) is for quick drafts only.
 - **Titles:** the `ciqsi` skill's `references/titles-and-hooks.md` rules, checked with
   `vidiq_keyword_research` and `vidiq_score_title`. "Bar chart race" is the genre's search term
   (2026-11-17: about 138,000 searches a month, competition 27). Offer two alternatives for
