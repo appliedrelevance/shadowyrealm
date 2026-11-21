@@ -9,19 +9,19 @@ Orchestra Discover plays it with no DAW and no window.
 |---|---|---|---|
 | The 60-second cut | [`score.py`](score.py) → `river-60.mid` | scorerender, through SoundCraft | `video/assets/music/river-60.m4a` |
 | The race | [`race_score.py`](race_score.py) → `race-score.mid` | [`orchestra.py`](orchestra.py) | `video/race/assets/music/race-score.m4a` |
-| The Short, a loop | [`short_score.py`](short_score.py) → `short-score.mid` | [`orchestra.py`](orchestra.py) | `video/assets/music/short-score.m4a` |
+| The Short, a loop | the SoundCraft session `short-score.scraft`, composed through the MCP | SoundCraft | `video/assets/music/short-score.m4a` |
 
 The race and the Short share their themes: the Short is the series trailer, so it carries the
-race's music. `orchestra.py` renders a score's parts, levels each section by measure to the
-script's `TARGET` and masters it; scorerender (`/Volumes/Berthold/Landru/code/artcraft/scorerender`)
-renders any of the MIDI files through SoundCraft, but does not level sections yet, so the race and
-the Short use `orchestra.py`'s renders (the race through scorerender misses its sections' targets
-by up to 4.6 dB, against 0.8 dB on average through `orchestra.py`; measured 2026-11-21).
+race's music. A score is composed in SoundCraft as a session (Geordie, 2026-11-20: a song is a
+SoundCraft session, not a program); the Short is the first, and the race and the 60-second cut still
+start from their scripts' MIDI. `orchestra.py` renders the race, levelling each section by measure
+to the script's `TARGET`; scorerender (`/Volumes/Berthold/Landru/code/artcraft/scorerender`) renders a
+MIDI file through SoundCraft but does not level sections (the race through it misses its sections'
+targets by up to 4.6 dB, against 0.8 dB on average through `orchestra.py`; measured 2026-11-21).
 
 ```bash
 video/music/.venv/bin/python video/music/score.py               # writes video/music/river-60.mid
 video/music/.venv/bin/python -I video/music/race_score.py       # the race: score, render what changed, master
-video/music/.venv/bin/python -I video/music/short_score.py      # the Short's loop, the same way
 ```
 
 The environment is `video/music/.venv` (Python 3.13, `mido`, `numpy`, `pedalboard`), kept out of
@@ -167,30 +167,34 @@ at under 1% CPU. So `orchestra.py` keeps stems and runs plug-ins side by side:
   sends the unfinished parts round again on a fresh pool, up to three times. The stems already
   written are kept.
 
-## The Short's loop: short_score.py
+## The Short's loop: a SoundCraft session
 
-[`short_score.py`](short_score.py) writes the vertical Short's 110 s loop for BBC SO Discover:
-the race's themes (theme A and its counterline, theme B, the falling bass, the World Wars' darkening,
-the Cold War's Lydian A, the arrival in D major), moved up a fourth into D minor, the key the race
-builds in, and laid on `FILMS.shortLoop`'s clock. Its docstring has the bar plan.
+The Short's score is the session
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/short/short-score.scraft`,
+composed through SoundCraft's MCP (2026-11-21): 34 BBC SO Discover tracks taken from the race's
+session, with their patches and calibrated faders, then 1,307 notes in 140 clips written with
+`midi.new_clip`, `midi.note_add` and `midi.cc_ramp`, and doublings copied between tracks with
+`edit.copy`/`edit.paste` and moved with `midi.notes_move`. It carries the race's theme A, its
+counterline and theme B in D minor, and a marker for each section.
 
-- **The grid.** 4/4 at 91.95 bpm: 40 bars from the river's restart at the film's 5.6 s to the crest
-  on the loop point, so the Early Modern World falls on bar 17's downbeat and the titles return on
-  bar 40's. Every era lands within a beat of the section that marks it; `check_cues` prints where.
-- **The loop.** The score is written as P, from the restart to past the loop point, and the master
-  is P rotated so the film's 0 s is the crest: the race's D major arrival chord for the whole
-  orchestra (0 to 2.35 s), a last stroke at 2.61 s, and the harp running down D minor from D6 to D3
-  while the river drains (5.0 to 5.6 s), into the celli's D on bar 1. Sound past the loop point is
-  folded onto the start, and the limiter runs on three copies end to end with the middle one kept,
-  so its memory crosses the join as it will when the Short repeats.
-- **Players breathe**, by `orchestra.check`: no wind note past 6 s, no wind line past 12 s without a
-  0.3 s gap, nothing sustained on one pitch past 6 s. The longest line is the horns' 9.7 s.
-- **The theme leads**: inside each section with one, the parts under it come down until it sits
-  3 dB over them (`LEAD_DB`); then each section is levelled to `TARGET`, RMS against the crest:
-  open −21, a1 −16, a2 −13, b −15, t1 −9, t2 −6, fall −9, wars −7, cold −18, b31 −17, b32 −12,
-  c1 −4, c2 −2 dB, the hook −9, the drain −20. Every section landed on its target.
-- **Measured on the master, 2026-11-21:** 110.000 s, −16.0 LUFS, −1.6 dBTP. The crest −15.0 dBFS
-  RMS, the hook −23.3, the drain −34.3, the opening −35.2. The join is a sample step at the 60th
-  and 18th percentiles (left, right) of the steps in the 200 ms around it: inside the music's own
-  movement, no click.
-- **Rendered** in 202 s on eight plug-ins: 34 parts, 1,353 notes.
+- **Film time.** The session's 0 s is the film's 0 s: the crest on bar 1, two bars of hook at 85.71
+  bpm, then 40 bars of 91.95 bpm from the river's restart at 5.6 s to the loop point at 110 s (bar
+  43). Notes are in ticks (960 a quarter); clip starts are `bars_beats` positions the engine resolves.
+- **Levels are automation.** The stems, bounced with `file.bounce_stems` (stable), are measured by
+  [`scraft/short_level.py`](scraft/short_level.py): inside each section with a theme the tracks under
+  it come down until it sits 3 dB over them (at most 10 dB), then a gain per section puts each at its
+  target against the crest. The result is volume automation in the session: 30 points on the master
+  fader (`Master 1`), 145 on 23 tracks, gliding 80 ms into each section.
+- **The loop.** `file.bounce_mix` (stable) renders 0 to 114 s; [`scraft/master_loop.py`](scraft/master_loop.py)
+  folds the 4 s past the loop point onto the start and limits three copies end to end, keeping the
+  middle one, to -16.0 LUFS.
+- **Checks.** [`scraft/audit.py`](scraft/audit.py) reads the session for overlapping clips, notes
+  past their clip, duplicates and the players' breathing; [`scraft/onsets.py`](scraft/onsets.py)
+  measures every note's onset in its stem.
+- **Measured, 2026-11-21:** 1,307 notes, no overlaps or stray notes, the longest wind line 9.8 s.
+  Every note sounds in its stem; 13 long or low notes take 60 to 120 ms to rise above -70 dBFS. The
+  master: 110.000 s, -16.0 LUFS, -2.0 dBTP; every section within 0.5 dB of its target (mean 0.36
+  dB); the join at the 33rd and 57th percentiles of the steps around it. The stems took 43 min in
+  one process (peak memory 1.7 GB), the mix 79 s.
+- **Known engine faults** (reported to the SoundCraft session): `edit.copy` of part of a MIDI clip
+  also carries the notes after the range; `track.new {kind: "master"}` ignores its name.
