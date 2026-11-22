@@ -47,9 +47,18 @@ verified (YouTube refuses custom thumbnails otherwise).
   --playlist "River of Influence"
 ```
 
-A description has at most 5,000 characters and no `<` or `>`. The playlist is made Private on first
-use. Each `thumbnails.set`, `playlists.insert` and `playlistItems.insert` costs 50 of the project's
-10,000 daily units; `videos.insert` has its own allowance of 100 a day.
+A description has at most 5,000 bytes (YouTube counts UTF-8 bytes, not characters) and no `<` or
+`>`. The playlist is made Private on first use. Each `thumbnails.set`, `playlists.insert`,
+`playlistItems.insert` and `videos.update` costs 50 of the project's 10,000 daily units;
+`videos.insert` has its own allowance of 100 a day.
+
+`update` replaces a video's description and keeps its title, category and tags, for filling in the
+links between films once all of them have their URLs:
+
+```bash
+.venv/bin/python -I upload.py update --client "$S/client.json" --token "$S/token.json" \
+  --channel-id UCIhEcoShfDRCef41g0Nl5MA --video-id VIDEO_ID --description DESCRIPTION.txt
+```
 
 `auth` is needed again only when the token is revoked or lost. Sign in as the channel's owner and
 pick IAmGeordie if Google lists several channels. Google warns that the app is unverified: click

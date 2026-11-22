@@ -9,10 +9,13 @@ them into a private folder, pass their paths, and delete them afterwards (tools/
     python -I upload.py upload --client CLIENT.json --token TOKEN.json --channel-id UC... \
         --file FILM.mp4 --title "..." --description DESCRIPTION.txt [--thumbnail THUMB.jpg] \
         [--playlist "River of Influence"]
+    python -I upload.py update --client CLIENT.json --token TOKEN.json --channel-id UC... \
+        --video-id ID --description DESCRIPTION.txt
 
 `auth` opens a browser for the one-time sign-in and writes the refresh token; sign in as the
 channel's owner and pick IAmGeordie if Google lists several channels. Every upload is private and
-not made for kids; `upload` refuses to run when the token's channel is not --channel-id.
+not made for kids; `upload` and `update` refuse to run when the token's channel is not
+--channel-id. `update` replaces a video's description and keeps its title and the rest.
 """
 import argparse
 import json
@@ -88,17 +91,41 @@ def playlist_id(youtube, title):
     return made["id"]
 
 
-def cmd_upload(args):
+def youtube_for(args):
+    """The API client, once the token's channel is the one named on the command line."""
     youtube = build("youtube", "v3", credentials=credentials(args))
     ch = channel(youtube)
     if ch["id"] != args.channel_id:
         raise SystemExit(f"the token is for {describe(ch)}, not {args.channel_id}")
+    return youtube
+
+
+def read_description(path):
+    description = Path(path).read_text().strip()
+    size = len(description.encode())
+    if size > 5000 or "<" in description or ">" in description:
+        raise SystemExit(f"a description is at most 5,000 bytes, with no < or >; this one is {size} bytes")
+    return description
+
+
+def cmd_update(args):
+    youtube = youtube_for(args)
+    items = youtube.videos().list(part="snippet", id=args.video_id).execute().get("items", [])
+    if len(items) != 1 or items[0]["snippet"]["channelId"] != args.channel_id:
+        raise SystemExit(f"video {args.video_id} is not on channel {args.channel_id}")
+    old = items[0]["snippet"]
+    snippet = {k: old[k] for k in ("title", "categoryId", "tags", "defaultLanguage") if k in old}
+    snippet["description"] = read_description(args.description)
+    youtube.videos().update(part="snippet", body={"id": args.video_id, "snippet": snippet}).execute()
+    print(f"updated the description of {args.video_id}: {old['title']}")
+
+
+def cmd_upload(args):
+    youtube = youtube_for(args)
     title = args.title
     if not 0 < len(title) <= 100:
         raise SystemExit(f"a title is 1 to 100 characters; this one is {len(title)}")
-    description = Path(args.description).read_text().strip()
-    if len(description) > 5000 or "<" in description or ">" in description:
-        raise SystemExit("a description is at most 5,000 characters, with no < or >")
+    description = read_description(args.description)
     body = {
         "snippet": {"title": title, "description": description, "categoryId": EDUCATION,
                     "defaultLanguage": "en"},
@@ -126,17 +153,20 @@ def cmd_upload(args):
 
 p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 sub = p.add_subparsers(dest="cmd", required=True)
-for name in ("auth", "whoami", "upload"):
+for name in ("auth", "whoami", "upload", "update"):
     s = sub.add_parser(name)
     s.add_argument("--client", required=True)
     s.add_argument("--token", required=True)
-    if name == "upload":
+    if name in ("upload", "update"):
         s.add_argument("--channel-id", required=True)
+        s.add_argument("--description", required=True)
+    if name == "upload":
         s.add_argument("--file", required=True)
         s.add_argument("--title", required=True)
-        s.add_argument("--description", required=True)
         s.add_argument("--thumbnail")
         s.add_argument("--playlist")
+    if name == "update":
+        s.add_argument("--video-id", required=True)
 a = p.parse_args()
-{"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload}[a.cmd](a)
+{"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload, "update": cmd_update}[a.cmd](a)
 sys.exit(0)
