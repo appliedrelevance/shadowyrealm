@@ -11,6 +11,8 @@ them into a private folder, pass their paths, and delete them afterwards (tools/
         [--playlist "River of Influence"]
     python -I upload.py update --client CLIENT.json --token TOKEN.json --channel-id UC... \
         --video-id ID [--description DESCRIPTION.txt] [--playlist "River of Influence" [--position 0]]
+    python -I upload.py privacy --client CLIENT.json --token TOKEN.json --channel-id UC... \
+        --status public --video-id ID [--video-id ID ...] [--playlist "River of Influence"]
 
 `auth` opens a browser for the one-time sign-in and writes the refresh token; sign in as the
 channel's owner and pick IAmGeordie if Google lists several channels. Every upload is private and
@@ -146,6 +148,35 @@ def cmd_update(args):
         add_to_playlist(youtube, args.playlist, args.video_id, args.position)
 
 
+STATUS_WRITABLE = ("privacyStatus", "embeddable", "license", "publicStatsViewable", "publishAt",
+                   "selfDeclaredMadeForKids", "containsSyntheticMedia")
+
+
+def cmd_privacy(args):
+    """Set videos, and a playlist, public, unlisted or private. A status update resets every writable
+    status field it leaves out, so each video's own values are sent back with the new privacy."""
+    youtube = youtube_for(args)
+    items = youtube.videos().list(part="status,snippet", id=",".join(args.video_id)).execute().get("items", [])
+    found = {v["id"]: v for v in items}
+    for vid in args.video_id:
+        if vid not in found or found[vid]["snippet"]["channelId"] != args.channel_id:
+            raise SystemExit(f"video {vid} is not on channel {args.channel_id}")
+    for vid in args.video_id:
+        old = found[vid]["status"]
+        status = {k: old[k] for k in STATUS_WRITABLE if k in old}
+        status["privacyStatus"] = args.status
+        status.pop("publishAt", None)  # a scheduled time applies only to private videos
+        youtube.videos().update(part="status", body={"id": vid, "status": status}).execute()
+        print(f"{vid} is {args.status}: {found[vid]['snippet']['title']}")
+    if args.playlist:
+        pid = playlist_id(youtube, args.playlist)
+        old = youtube.playlists().list(part="snippet", id=pid).execute()["items"][0]["snippet"]
+        snippet = {k: old[k] for k in ("title", "description", "defaultLanguage") if k in old}
+        youtube.playlists().update(part="snippet,status", body={
+            "id": pid, "snippet": snippet, "status": {"privacyStatus": args.status}}).execute()
+        print(f"playlist {args.playlist!r} ({pid}) is {args.status}")
+
+
 def cmd_upload(args):
     youtube = youtube_for(args)
     title = args.title
@@ -176,10 +207,15 @@ def cmd_upload(args):
 
 p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 sub = p.add_subparsers(dest="cmd", required=True)
-for name in ("auth", "whoami", "upload", "update"):
+for name in ("auth", "whoami", "upload", "update", "privacy"):
     s = sub.add_parser(name)
     s.add_argument("--client", required=True)
     s.add_argument("--token", required=True)
+    if name == "privacy":
+        s.add_argument("--channel-id", required=True)
+        s.add_argument("--status", required=True, choices=("public", "unlisted", "private"))
+        s.add_argument("--video-id", required=True, action="append")
+        s.add_argument("--playlist")
     if name in ("upload", "update"):
         s.add_argument("--channel-id", required=True)
         s.add_argument("--description", required=(name == "upload"))
@@ -192,5 +228,5 @@ for name in ("auth", "whoami", "upload", "update"):
         s.add_argument("--video-id", required=True)
         s.add_argument("--position", type=int, help="0 puts the video first in --playlist")
 a = p.parse_args()
-{"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload, "update": cmd_update}[a.cmd](a)
+{"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload, "update": cmd_update, "privacy": cmd_privacy}[a.cmd](a)
 sys.exit(0)

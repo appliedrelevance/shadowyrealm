@@ -151,9 +151,9 @@ subject's films go there; a video cannot be moved between channels later.
   The drafts for all three films (refreshed 2026-11-21) are in
   `/Volumes/Berthold/Landru/media/exports/shadowyrealm/youtube-drafts.md`. Upload all three as
   Private first, then fill in each description's links to the others and set them Public.
-  2026-11-22: all three are up as Private, linked and in the playlist; `tools/youtube/README.md`
-  lists their video IDs. Geordie sets them Public in Studio, adds the race's second title and
-  thumbnail to Test & Compare, and sets the Short's related video to the race; the API does neither.
+  2026-11-22: all three are up, linked, in the playlist and Public (Geordie: "make them public");
+  `tools/youtube/README.md` lists their video IDs. The race's second title and thumbnail for Test
+  & Compare and the Short's related video (the race) are set in Studio; the API does neither.
 
 ## Segments: one per video
 

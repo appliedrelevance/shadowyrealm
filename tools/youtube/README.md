@@ -64,10 +64,19 @@ again after 5, 15 and 45 seconds.
   [--playlist "River of Influence" --position 0]
 ```
 
+`privacy` sets videos, and a playlist, public, unlisted or private. A status update resets every
+writable status field it leaves out, so it sends each video's own values back with the new privacy:
+
+```bash
+.venv/bin/python -I upload.py privacy --client "$S/client.json" --token "$S/token.json" \
+  --channel-id UCIhEcoShfDRCef41g0Nl5MA --status public --video-id VIDEO_ID [--video-id VIDEO_ID ...] \
+  [--playlist "River of Influence"]
+```
+
 ## On the channel
 
-Uploaded 2026-11-22, Private, in the private playlist "River of Influence" (`PLApziCFpKt9w`), in
-this order:
+Uploaded 2026-11-22 as Private and set Public the same day, on Geordie's word, with the playlist
+"River of Influence" (`PLApziCFpKt9w`), in this order:
 
 | Film | Video |
 | --- | --- |
