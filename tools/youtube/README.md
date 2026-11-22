@@ -73,6 +73,14 @@ writable status field it leaves out, so it sends each video's own values back wi
   [--playlist "River of Influence"]
 ```
 
+`auth` is needed again only when the token is revoked or lost. Sign in as the channel's owner and
+pick IAmGeordie if Google lists several channels. Google warns that the app is unverified: click
+Advanced, then "Go to Shadowy Realm (unsafe)". Then replace the 1Password document:
+
+```bash
+op document edit "IAmGeordie - YouTube Upload Token" --vault AppliedRelevance "$S/token.json"
+```
+
 ## On the channel
 
 Uploaded 2026-11-22 as Private and set Public the same day, on Geordie's word, with the playlist
@@ -83,11 +91,3 @@ Uploaded 2026-11-22 as Private and set Public the same day, on Geordie's word, w
 | The race, `river-race.mp4` | https://youtu.be/9nEi6Gickx8 |
 | The 60-second cut, `river-of-influence.mp4` | https://youtu.be/JTV50bwtVFs |
 | The Short, `river-of-influence-vertical.mp4` | https://youtu.be/m5wMhIhgRAw |
-
-`auth` is needed again only when the token is revoked or lost. Sign in as the channel's owner and
-pick IAmGeordie if Google lists several channels. Google warns that the app is unverified: click
-Advanced, then "Go to Shadowy Realm (unsafe)". Then replace the 1Password document:
-
-```bash
-op document edit "IAmGeordie - YouTube Upload Token" --vault AppliedRelevance "$S/token.json"
-```
