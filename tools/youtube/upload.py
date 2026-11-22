@@ -1,6 +1,6 @@
 """Upload the river films to the IAmGeordie YouTube channel through the YouTube Data API v3.
 
-The OAuth client and the refresh token live in 1Password's Personal vault, never in the repo:
+The OAuth client and the refresh token live in 1Password's AppliedRelevance vault, never in the repo:
 "IAmGeordie - YouTube OAuth Client" and "IAmGeordie - YouTube Upload Token" (documents). Fetch
 them into a private folder, pass their paths, and delete them afterwards (tools/youtube/README.md).
 

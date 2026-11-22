@@ -12,7 +12,7 @@ cd tools/youtube && python3 -m venv .venv && .venv/bin/pip install -r requiremen
 
 ## Secrets
 
-Two documents in 1Password's **Personal** vault, never in the repo:
+Two documents in 1Password's **AppliedRelevance** vault, never in the repo:
 
 - **IAmGeordie - YouTube OAuth Client**: the Desktop OAuth client of the Google Cloud project
   `iamgeordie-youtube` (consent screen "Shadowy Realm", published to production).
@@ -25,8 +25,8 @@ Fetch both into a private folder, run, and delete the folder:
 
 ```bash
 S=$(mktemp -d) && chmod 700 "$S"
-op document get "IAmGeordie - YouTube OAuth Client" --vault Personal --out-file "$S/client.json"
-op document get "IAmGeordie - YouTube Upload Token" --vault Personal --out-file "$S/token.json"
+op document get "IAmGeordie - YouTube OAuth Client" --vault AppliedRelevance --out-file "$S/client.json"
+op document get "IAmGeordie - YouTube Upload Token" --vault AppliedRelevance --out-file "$S/token.json"
 .venv/bin/python -I upload.py whoami --client "$S/client.json" --token "$S/token.json"
 rm -rf "$S"
 ```
@@ -56,5 +56,5 @@ pick IAmGeordie if Google lists several channels. Google warns that the app is u
 Advanced, then "Go to Shadowy Realm (unsafe)". Then replace the 1Password document:
 
 ```bash
-op document edit "IAmGeordie - YouTube Upload Token" --vault Personal "$S/token.json"
+op document edit "IAmGeordie - YouTube Upload Token" --vault AppliedRelevance "$S/token.json"
 ```

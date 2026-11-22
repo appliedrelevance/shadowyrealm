@@ -118,7 +118,7 @@ subject's films go there; a video cannot be moved between channels later.
   authorized domain `appliedrelevance.com`. The refresh token from Geordie's sign-in of 2026-11-22
   reaches only Iamgeordie (@iamgeordie, `UCIhEcoShfDRCef41g0Nl5MA`), which is verified for custom
   thumbnails. The token decides which channel an upload lands on, and `upload` refuses any other.
-  Client and token are documents in 1Password's Personal vault; LinguaMama's client and token are
+  Client and token are documents in 1Password's AppliedRelevance vault; LinguaMama's client and token are
   never used here. Per the docs read 2026-11-17: `videos.insert` has its own allowance (100 uploads
   a day), and `videos.update`, `thumbnails.set`, `playlists.insert` and `playlistItems.insert` cost
   50 of the 10,000 daily units each; `thumbnails.set` takes JPEG or PNG up to 50 MB. Studio by hand
