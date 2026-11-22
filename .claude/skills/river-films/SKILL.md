@@ -6,10 +6,10 @@ description: >
   in video/short-vertical/) and the five-minute race with a live leaderboard (video/race/), for
   YouTube. Owns the pipeline (snapshot, reading plan, check,
   stills, render, description, credits, review), the failures already paid for, and the checklist
-  for taking the format to a new subject: Prior Art (inventions) next, then music, fine art,
-  computing, the Space Age and more. Use for any work in video/ or on tools/video-*.ts, and for
+  for taking the format to a new subject: Prior Art (inventions) next, then music, world languages,
+  fine art, computing, the Space Age and more. Use for any work in video/ or on tools/video-*.ts, and for
   "make a video", "river film", "the race", "re-render", "refresh the snapshot", "YouTube
-  description", "a film about inventions / music / art / computing / space", or publishing one.
+  description", "a film about inventions / music / languages / art / computing / space", or publishing one.
 ---
 
 # River films
@@ -206,14 +206,14 @@ From ShadowyRealm's own snapshot, no new site needed (figures from the 2026-11-1
   750 BCE on): Homer, Kumārajīva, Pāṇini. Pure evil is events (8 of 11), and all 11 began in 1478
   or later: the Spanish Inquisition, the Great Famine in Ireland, the Armenian genocide.
 
-Then Prior Art (inventions), and subjects that need a site first: music, fine art, computing, the
-Space Age.
+Then Prior Art (inventions), and subjects that need a site first: music, world languages, fine art,
+computing, the Space Age.
 
 ## A new subject
 
 A film draws one site's realm: `bun tools/video-snapshot.ts <site>`, a key in `SITES`
-(`src/sites/index.ts`). Prior Art exists (`inventions`, priorart.shadowyrealm.com). Music, fine art,
-computing or the Space Age needs its site, its content and its scores first; that is site work,
+(`src/sites/index.ts`). Prior Art exists (`inventions`, priorart.shadowyrealm.com). Music, world
+languages, fine art, computing or the Space Age needs its site, its content and its scores first; that is site work,
 not film work.
 
 Before the first film on another site, these ShadowyRealm-only pieces must become per-subject. The
