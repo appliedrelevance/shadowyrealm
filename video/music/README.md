@@ -183,7 +183,9 @@ counterline and theme B in D minor, and a marker for each section.
   [`scraft/short_level.py`](scraft/short_level.py): inside each section with a theme the tracks under
   it come down until it sits 3 dB over them (at most 10 dB), then a gain per section puts each at its
   target against the crest. The result is volume automation in the session: 30 points on the master
-  fader (`Master 1`), 145 on 23 tracks, gliding 80 ms into each section.
+  fader (`Master 1`), 145 on 23 tracks, gliding 80 ms into each section. The stems are not kept
+  (the race's and the Short's went to Berthold's Trash on 2026-11-22): to level again, or to run
+  `scraft/onsets.py`, bounce them again from the session.
 - **The loop.** `file.bounce_mix` (stable) renders 0 to 114 s; [`scraft/master_loop.py`](scraft/master_loop.py)
   folds the 4 s past the loop point onto the start and limits three copies end to end, keeping the
   middle one, to -16.0 LUFS.
