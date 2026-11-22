@@ -53,12 +53,27 @@ A description has at most 5,000 bytes (YouTube counts UTF-8 bytes, not character
 `videos.insert` has its own allowance of 100 a day.
 
 `update` replaces a video's description and keeps its title, category and tags, for filling in the
-links between films once all of them have their URLs:
+links between films once all of them have their URLs. With `--playlist` it adds the video to a
+playlist, first with `--position 0`. Right after a playlist is made YouTube answers 409
+SERVICE_UNAVAILABLE for a while (2026-11-22, the race's first add); both commands try that one error
+again after 5, 15 and 45 seconds.
 
 ```bash
 .venv/bin/python -I upload.py update --client "$S/client.json" --token "$S/token.json" \
-  --channel-id UCIhEcoShfDRCef41g0Nl5MA --video-id VIDEO_ID --description DESCRIPTION.txt
+  --channel-id UCIhEcoShfDRCef41g0Nl5MA --video-id VIDEO_ID --description DESCRIPTION.txt \
+  [--playlist "River of Influence" --position 0]
 ```
+
+## On the channel
+
+Uploaded 2026-11-22, Private, in the private playlist "River of Influence" (`PLApziCFpKt9w`), in
+this order:
+
+| Film | Video |
+| --- | --- |
+| The race, `river-race.mp4` | https://youtu.be/9nEi6Gickx8 |
+| The 60-second cut, `river-of-influence.mp4` | https://youtu.be/JTV50bwtVFs |
+| The Short, `river-of-influence-vertical.mp4` | https://youtu.be/m5wMhIhgRAw |
 
 `auth` is needed again only when the token is revoked or lost. Sign in as the channel's owner and
 pick IAmGeordie if Google lists several channels. Google warns that the app is unverified: click

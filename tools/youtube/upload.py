@@ -10,22 +10,25 @@ them into a private folder, pass their paths, and delete them afterwards (tools/
         --file FILM.mp4 --title "..." --description DESCRIPTION.txt [--thumbnail THUMB.jpg] \
         [--playlist "River of Influence"]
     python -I upload.py update --client CLIENT.json --token TOKEN.json --channel-id UC... \
-        --video-id ID --description DESCRIPTION.txt
+        --video-id ID [--description DESCRIPTION.txt] [--playlist "River of Influence" [--position 0]]
 
 `auth` opens a browser for the one-time sign-in and writes the refresh token; sign in as the
 channel's owner and pick IAmGeordie if Google lists several channels. Every upload is private and
 not made for kids; `upload` and `update` refuse to run when the token's channel is not
---channel-id. `update` replaces a video's description and keeps its title and the rest.
+--channel-id. `update` replaces a video's description, keeping its title and the rest, and adds
+it to a playlist.
 """
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 
 SCOPES = ["https://www.googleapis.com/auth/youtube"]
@@ -91,6 +94,24 @@ def playlist_id(youtube, title):
     return made["id"]
 
 
+def add_to_playlist(youtube, title, vid, position=None):
+    """Add a video to the named playlist, first when position is 0. YouTube answers 409
+    SERVICE_UNAVAILABLE for a while after a playlist is made; that one error is tried again."""
+    snippet = {"playlistId": playlist_id(youtube, title), "resourceId": {"kind": "youtube#video", "videoId": vid}}
+    if position is not None:
+        snippet["position"] = position
+    for wait in (5, 15, 45, None):
+        try:
+            youtube.playlistItems().insert(part="snippet", body={"snippet": snippet}).execute()
+            print(f"  added to playlist {title!r}" + ("" if position is None else f" at position {position}"))
+            return
+        except HttpError as e:
+            if e.resp.status != 409 or "SERVICE_UNAVAILABLE" not in str(e) or wait is None:
+                raise
+            print(f"  playlist busy (409 SERVICE_UNAVAILABLE), trying again in {wait} s", flush=True)
+            time.sleep(wait)
+
+
 def youtube_for(args):
     """The API client, once the token's channel is the one named on the command line."""
     youtube = build("youtube", "v3", credentials=credentials(args))
@@ -114,10 +135,15 @@ def cmd_update(args):
     if len(items) != 1 or items[0]["snippet"]["channelId"] != args.channel_id:
         raise SystemExit(f"video {args.video_id} is not on channel {args.channel_id}")
     old = items[0]["snippet"]
-    snippet = {k: old[k] for k in ("title", "categoryId", "tags", "defaultLanguage") if k in old}
-    snippet["description"] = read_description(args.description)
-    youtube.videos().update(part="snippet", body={"id": args.video_id, "snippet": snippet}).execute()
-    print(f"updated the description of {args.video_id}: {old['title']}")
+    if not (args.description or args.playlist):
+        raise SystemExit("update needs --description, --playlist or both")
+    if args.description:
+        snippet = {k: old[k] for k in ("title", "categoryId", "tags", "defaultLanguage") if k in old}
+        snippet["description"] = read_description(args.description)
+        youtube.videos().update(part="snippet", body={"id": args.video_id, "snippet": snippet}).execute()
+        print(f"updated the description of {args.video_id}: {old['title']}")
+    if args.playlist:
+        add_to_playlist(youtube, args.playlist, args.video_id, args.position)
 
 
 def cmd_upload(args):
@@ -145,10 +171,7 @@ def cmd_upload(args):
         youtube.thumbnails().set(videoId=vid, media_body=MediaFileUpload(args.thumbnail, mimetype="image/jpeg")).execute()
         print(f"  thumbnail {args.thumbnail}")
     if args.playlist:
-        pid = playlist_id(youtube, args.playlist)
-        youtube.playlistItems().insert(part="snippet", body={"snippet": {
-            "playlistId": pid, "resourceId": {"kind": "youtube#video", "videoId": vid}}}).execute()
-        print(f"  added to playlist {args.playlist!r}")
+        add_to_playlist(youtube, args.playlist, vid)
 
 
 p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -159,14 +182,15 @@ for name in ("auth", "whoami", "upload", "update"):
     s.add_argument("--token", required=True)
     if name in ("upload", "update"):
         s.add_argument("--channel-id", required=True)
-        s.add_argument("--description", required=True)
+        s.add_argument("--description", required=(name == "upload"))
+        s.add_argument("--playlist")
     if name == "upload":
         s.add_argument("--file", required=True)
         s.add_argument("--title", required=True)
         s.add_argument("--thumbnail")
-        s.add_argument("--playlist")
     if name == "update":
         s.add_argument("--video-id", required=True)
+        s.add_argument("--position", type=int, help="0 puts the video first in --playlist")
 a = p.parse_args()
 {"auth": cmd_auth, "whoami": cmd_whoami, "upload": cmd_upload, "update": cmd_update}[a.cmd](a)
 sys.exit(0)
