@@ -1,8 +1,10 @@
-"""Measure the race session's stems and compute its levelling as volume automation: the arithmetic
-orchestra.level did for race_score.py, with that script's own sections, targets and theme parts.
-Inside each section with a theme, the tracks under it come down until it sits LEAD_DB over them;
-then a gain per section puts each section at its TARGET against the arrival. Read-only on the
-session; prints the predicted levels and writes the automation points as JSON for the MCP to apply.
+"""Measure the race session's stems and compute its levelling as volume automation. Inside each
+section with a theme, the tracks under it come down until it sits LEAD_DB over them; then a gain
+per section puts each section at its TARGET against the arrival. Read-only on the session; prints
+the predicted levels and writes the automation points as JSON for the MCP to apply.
+
+The sections, targets and theme parts are the ones race_score.py composed the race with (retired
+2026-11-22; it is in git history). Bounce the stems from the session first (file.bounce_stems).
 
     video/music/.venv/bin/python -I video/music/scraft/race_level.py SESSION STEMS_DIR OUT_JSON
 """
@@ -13,16 +15,53 @@ from pathlib import Path
 import numpy as np
 from pedalboard.io import AudioFile
 
-HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent))
-import race_score  # noqa: E402  (its sections, targets and the parts that carry the theme)
+START, ARRIVAL, ARRIVAL_BAR = 0.30, 258.8, 97  # bar 1's first beat; the front reaches 2026 on bar 97
+BEAT = (ARRIVAL - START) / ((ARRIVAL_BAR - 1) * 4)
+
+
+def at(bar, beat=0.0):
+    """Film time of a bar (from 1) and beat (from 0)."""
+    return START + ((bar - 1) * 4 + beat) * BEAT
+
+
+# The sections, each levelled over its window.
+WINDOWS = {
+    "open": (at(1), at(5)), "sigh": (at(5), at(9)), "a1": (at(9), at(17)), "a2": (at(17), at(25)),
+    "calm": (at(25), at(29)), "b1": (at(29), at(37)), "b2": (at(37), at(41)), "turn": (at(41), at(45)),
+    "t1": (at(45), at(53)), "t2": (at(53), at(61)), "dom": (at(61), at(63)), "fall": (at(63), at(65)),
+    "dark": (at(65), at(68)), "wars": (at(68), at(72, 2)), "cold": (at(72, 2), at(78)),
+    "b78": (at(78), at(81)), "b81": (at(81), at(85)), "b85": (at(85), at(89)), "c1": (at(89), at(93)),
+    "c2": (at(93), at(97)), "arrival": (at(97), at(97, 3)), "coda": (at(98), at(99, 4)),
+}
+# Each section's level, RMS in dB against the arrival.
+TARGET = {
+    "open": -17.0, "sigh": -15.0, "a1": -11.0, "a2": -8.0, "calm": -17.0, "b1": -15.0, "b2": -13.0,
+    "turn": -10.0, "t1": -6.0, "t2": -4.0, "dom": -3.0, "fall": -8.0, "dark": -12.0, "wars": -8.0,
+    "cold": -17.0, "b78": -16.0, "b81": -13.0, "b85": -9.0, "c1": -5.0, "c2": -2.5, "arrival": 0.0,
+    "coda": -12.0,
+}
+# The parts that carry the theme in each section; the tracks of every other part come down under them.
+part_leads = {
+    "sigh": ["clarinets-long"], "a1": ["oboes-long", "violins1-long"],
+    "a2": ["clarinets-long", "flutes-long", "violins1-long", "violins2-long"], "calm": ["celeste"],
+    "b1": ["oboes-long"], "b2": ["flutes-long", "violins1-long"], "turn": ["bassoons-long", "clarinets-long"],
+    "t1": ["flutes-long", "horns-long", "oboes-long", "violins1-long", "violins2-long"],
+    "t2": ["clarinets-long", "flutes-long", "horns-long", "oboes-long", "trumpets-long", "violins1-long",
+           "violins2-long"],
+    "fall": ["bassoons-long", "celli-long"], "dark": ["horns-long"], "wars": ["celli-long", "trombones-long"],
+    "cold": ["celeste"], "b81": ["clarinets-long", "glockenspiel"], "b85": ["horns-long"],
+    "c1": ["bassoons-long", "clarinets-long", "flutes-long", "horns-long", "oboes-long", "violins1-long",
+           "violins2-long"],
+    "c2": ["bassoons-long", "clarinets-long", "flutes-long", "horns-long", "oboes-long", "trumpets-long",
+           "violins1-long", "violins2-long"],
+    "coda": ["celeste"],
+}
+REF = "arrival"
+LEAD_DB, RAMP, SILENT_DB = 3.0, 0.08, -70.0
 
 session, stems_dir, out = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
 d = json.loads(session.read_text())
 SR = d["sample_rate"]
-WINDOWS, TARGET, REF = race_score.WINDOWS, race_score.TARGET, "arrival"
-_, part_leads = race_score.compose()
-LEAD_DB, RAMP, SILENT_DB = 3.0, 0.08, -70.0
 
 tracks = [t for t in d["tracks"] if t["kind"] != "Master"]
 names = [t["name"] for t in tracks]

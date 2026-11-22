@@ -71,8 +71,9 @@ Run from the repo root. The scores change often; refresh the snapshot before any
    - The race ends on the 2026 board: `FILMS.race.boardEnd` and `dimAt` sit 2.6 s after the
      board's last change (258.4 s on 2026-11-18). A later end is a `dead_stretch`. If a refresh
      moves the last change, move both, the race's root durations and the end card's start with
-     them, and re-time the score: `ARRIVAL` and `FILM` in `video/music/race_score.py`, then render
-     it again (`video/music/README.md`).
+     them, and re-time the score: change the session `race-score.scraft`'s tempo so its bar 97
+     lands on the front's arrival at 2026, set `ARRIVAL` in `video/music/scraft/race_level.py` to
+     match, then level, bounce and master it again to the film's length (`video/music/README.md`).
    - Update `video/race/SPEC.md` where it quotes a changed number.
 5. Check all three: `cd video && npx --yes hyperframes@0.9.42 check --json`, and the same in
    `video/race` and `video/short-vertical`. Fix every error. Known warnings: `line_unread` on brief visits to the tenth place
