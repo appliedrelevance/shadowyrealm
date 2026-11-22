@@ -110,24 +110,21 @@ Run from the repo root. The scores change often; refresh the snapshot before any
 films are a personal project, CIqSi is for AI essays, Applied Relevance is client-facing). Every
 subject's films go there; a video cannot be moved between channels later.
 
-- **Uploading:** YouTube Studio by hand, or Google's YouTube Data API v3 once an OAuth client for
-  the IAmGeordie channel exists. Per the docs read 2026-11-17: `videos.insert` has its own allowance
-  (100 uploads a day), uploads from unaudited projects are no longer locked to private, and
-  `videos.update`, `thumbnails.set`, `playlists.insert` and `playlistItems.insert` cost 50 of the
-  10,000 daily units each. `thumbnails.set` takes JPEG or PNG up to 50 MB and answers 403 when the
-  channel may not set custom thumbnails. vidIQ cannot post to YouTube (`vidiq_video_upload` imports
-  into vidIQ's own editor) and is connected to LinguaMama only; keep it for keyword volumes and
-  title scores, which Google's APIs do not provide. On 2026-11-21 no OAuth client for IAmGeordie
-  existed: 1Password's only Google OAuth client and YouTube upload token are LinguaMama's, for
-  LinguaMama's channel, and never used here. Claude in Chrome's `file_upload` takes 10 MB a call,
-  less than any film, so in the browser Geordie drops the file into Studio and the details can be
-  filled in after. For the API, IAmGeordie needs its own OAuth client (a Google Cloud project with
-  YouTube Data API v3 on, a Desktop client, its own 10,000-unit quota) and one sign-in as the
-  channel's owner, choosing IAmGeordie if the account has several channels: the refresh token from
-  that sign-in decides which channel uploads land on. Publish the consent screen to production;
-  a refresh token from one left in Testing expires after 7 days. Its Branding links are Applied
-  Relevance's (Geordie, 2026-11-22): home `https://appliedrelevance.com`, privacy `/privacy`,
-  terms `/terms`, authorized domain `appliedrelevance.com`.
+- **Uploading:** `tools/youtube/upload.py`, through Google's YouTube Data API v3; its README has
+  the commands and the 1Password recipe. The Google Cloud project `iamgeordie-youtube` holds a
+  Desktop OAuth client; its consent screen, "Shadowy Realm", is published to production (a refresh
+  token from one left in Testing expires after 7 days), with Applied Relevance's Branding links
+  (Geordie, 2026-11-22): home `https://appliedrelevance.com`, privacy `/privacy`, terms `/terms`,
+  authorized domain `appliedrelevance.com`. The refresh token from Geordie's sign-in of 2026-11-22
+  reaches only Iamgeordie (@iamgeordie, `UCIhEcoShfDRCef41g0Nl5MA`), which is verified for custom
+  thumbnails. The token decides which channel an upload lands on, and `upload` refuses any other.
+  Client and token are documents in 1Password's Personal vault; LinguaMama's client and token are
+  never used here. Per the docs read 2026-11-17: `videos.insert` has its own allowance (100 uploads
+  a day), and `videos.update`, `thumbnails.set`, `playlists.insert` and `playlistItems.insert` cost
+  50 of the 10,000 daily units each; `thumbnails.set` takes JPEG or PNG up to 50 MB. Studio by hand
+  works too, but Claude in Chrome's `file_upload` takes 10 MB a call, less than any film. vidIQ
+  cannot post to YouTube (`vidiq_video_upload` imports into vidIQ's own editor) and is connected to
+  LinguaMama only; keep it for keyword volumes and title scores, which Google's APIs do not provide.
 - **Thumbnails are loud, never cryptic** (Geordie, 2026-11-21, on "Not Rome. The Maya." and "5,000
   years, ranked": "a real compelling thumbnail ... not some cryptic phrase that nobody gives a shit
   about"). A stranger must see at a glance what is at stake: a few huge words that name it (WAR,
