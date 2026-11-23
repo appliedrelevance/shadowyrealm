@@ -271,8 +271,9 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
         </div>
       </div>
       <figcaption className="mt-3 text-xs text-ink-muted">
-        One band per entity: its own influence each year. Height is on a square-root scale, time on a logarithmic one.
-        Hover to identify, click to read the article Clef scored.
+        Time is stretched toward the present, so the crowded last century has room. Within any year the bands share the
+        height in true proportion; the stream's overall height is compressed so the early centuries stay visible. Hover
+        a band to see what it is, click it to read about it.
       </figcaption>
     </figure>
   );

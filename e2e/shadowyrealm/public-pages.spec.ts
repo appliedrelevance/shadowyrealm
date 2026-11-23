@@ -12,7 +12,7 @@ test.describe("Public pages", () => {
 
   test("music draws the vital articles as one stream, with its families tabled", async ({ page }) => {
     await page.goto("/music");
-    await expect(page.locator("h1")).toContainText("Music, scored");
+    await expect(page.locator("h1")).toContainText("Music, 1400 BCE to today");
     const stream = page.getByRole("img", { name: /Centred stream of .* music entities/ });
     await expect(stream).toBeVisible();
     expect(await stream.locator("a path").count()).toBeGreaterThan(2000);
