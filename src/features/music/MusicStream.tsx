@@ -1,20 +1,22 @@
 /**
- * The music stream: Wikipedia's vital articles in music, scored offline by Clef and frozen in
+ * The music stream: Wikipedia's vital articles in music, scored offline and frozen in
  * public/shadowyrealm/data/music-vital.json (tools/music-snapshot.ts). One band per entity, its own
  * influence, centred on the axis with no meaning above or below it. Hue is the genre family and
  * shade the list's section within it. The outline is the square root of each moment's total, as on
  * the impact river, and inside a moment each band keeps its true share. Families stack in the
  * palette's slot order, sections in the list's order and entries by start year, so each section
- * reads as one block, named where it is thick enough.
+ * reads as one block, named where it is thick enough. A band opens its entity's page, /music/$slug.
  */
 import { memo, useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { FAMILY_COLORS } from "@/lib/chart-colors";
 import { formatSpan, formatYear, unitToYear } from "@/lib/timeline";
 import type { Timeline } from "@/sites/types";
 import { formatMagnitude, TimeAxis, Tooltip, useWidth } from "@/features/realm/chart";
 
 export interface MusicEntity {
+  slug: string;
   name: string;
   type: string;
   /** Index into the snapshot's families. */
@@ -24,8 +26,6 @@ export interface MusicEntity {
   first_year: number;
   last_year: number;
   own_magnitude: number;
-  /** English Wikipedia title of the article Clef read. */
-  wiki: string;
   /** First bucket of the curve. */
   from: number;
   values: number[];
@@ -163,7 +163,7 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
         let d = "";
         for (let k = 0; k < layer.hi.length; k++) d += `${k ? "L" : "M"}${xBucket(layer.start + k).toFixed(1)},${y(layer.lo[k], layer.start + k).toFixed(1)}`;
         for (let k = layer.hi.length - 1; k >= 0; k--) d += `L${xBucket(layer.start + k).toFixed(1)},${y(layer.hi[k], layer.start + k).toFixed(1)}`;
-        return { index: layer.index, d: `${d}Z`, fill: shadeColor(e.family, e.shade, family.shades.length), href: wikipediaUrl(e.wiki) };
+        return { index: layer.index, d: `${d}Z`, fill: shadeColor(e.family, e.shade, family.shades.length), slug: e.slug };
       }),
     [stack, column, W, H],
   );
@@ -199,6 +199,9 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
     setHover({ index, px: e.clientX - box.left, py: e.clientY - box.top });
   }, []);
 
+  const navigate = useNavigate();
+  const onBandOpen = useCallback((slug: string) => navigate({ to: "/music/$slug", params: { slug } }), [navigate]);
+
   const hovered = hover ? data.entities[hover.index] : undefined;
   const hoverUnit = hover ? (hover.px - M.left) / innerW : 0;
   const hoverBucket = Math.min(N - 1, Math.max(0, Math.floor(hoverUnit * N)));
@@ -224,7 +227,7 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
             onPointerLeave={() => setHover(null)}
           >
             <TimeAxis asOfYear={data.as_of_year} x={xUnit} top={M.top} bottom={H - M.bottom} timeline={data.timeline} />
-            <Bands paths={paths} hovered={hover?.index ?? null} onMove={onBandMove} />
+            <Bands paths={paths} hovered={hover?.index ?? null} onMove={onBandMove} onOpen={onBandOpen} />
             <g pointerEvents="none" opacity={hover ? 0.35 : 1}>
               {labels.map((l) => (
                 <text
@@ -263,7 +266,7 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
                 <span className="font-mono text-ink">{formatMagnitude(valueAt(hovered, hoverBucket))}</span>
               </p>
               <p className="mt-1.5 flex justify-between border-t border-line pt-1.5">
-                <span>Own influence</span>
+                <span>Total influence</span>
                 <span className="font-mono text-ink">{formatMagnitude(hovered.own_magnitude)}</span>
               </p>
             </Tooltip>
@@ -273,7 +276,7 @@ export function MusicStream({ data }: { data: MusicSnapshot }) {
       <figcaption className="mt-3 text-xs text-ink-muted">
         Time is stretched toward the present, so the crowded last century has room. Within any year the bands share the
         height in true proportion; the stream's overall height is compressed so the early centuries stay visible. Hover
-        a band to see what it is, click it to read about it.
+        a band to see what it is; click it for its scores and the evidence behind them.
       </figcaption>
     </figure>
   );
@@ -284,15 +287,27 @@ const Bands = memo(function Bands({
   paths,
   hovered,
   onMove,
+  onOpen,
 }: {
-  paths: { index: number; d: string; fill: string; href: string }[];
+  paths: { index: number; d: string; fill: string; slug: string }[];
   hovered: number | null;
   onMove: (index: number, e: React.PointerEvent) => void;
+  onOpen: (slug: string) => void;
 }) {
   return (
     <g>
       {paths.map((p) => (
-        <a key={p.index} href={p.href} target="_blank" rel="noreferrer" onPointerMove={(e) => onMove(p.index, e)}>
+        <a
+          key={p.index}
+          href={`/music/${p.slug}`}
+          onPointerMove={(e) => onMove(p.index, e)}
+          onClick={(e) => {
+            // A plain click navigates in the app; a modified one opens the page as the browser would.
+            if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            onOpen(p.slug);
+          }}
+        >
           <path
             d={p.d}
             style={{ fill: p.fill }}
@@ -376,11 +391,11 @@ export function FamilyTable({ data }: { data: MusicSnapshot }) {
                 </div>
                 <p className="mt-1 text-ink-muted">
                   {r.largest.map((e, k) => (
-                    <span key={e.wiki}>
+                    <span key={e.slug}>
                       {k > 0 && ", "}
-                      <a href={wikipediaUrl(e.wiki)} target="_blank" rel="noreferrer" className="hover:text-ink">
+                      <Link to="/music/$slug" params={{ slug: e.slug }} className="hover:text-ink">
                         {e.name}
-                      </a>
+                      </Link>
                     </span>
                   ))}
                 </p>

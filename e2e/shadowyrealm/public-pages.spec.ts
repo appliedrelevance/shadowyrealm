@@ -20,6 +20,26 @@ test.describe("Public pages", () => {
     await expect(page.locator("table tbody tr").first()).toContainText("Classical");
   });
 
+  test("a band opens its music page, with its score, curve, dimensions, connections and evidence", async ({ page }) => {
+    await page.goto("/music");
+    await page.locator('a[href="/music/the-beatles"]').dispatchEvent("click");
+    await expect(page).toHaveURL(/\/music\/the-beatles$/);
+    await expect(page.locator("h1")).toHaveText("The Beatles");
+    await expect(page.getByText("Total influence")).toBeVisible();
+    await expect(page.getByRole("img", { name: /influence each year/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What it gave" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Members" })).toBeVisible();
+    await page.getByRole("button", { name: "Show evidence" }).click();
+    await expect(page.getByRole("link", { name: "CC BY-SA 4.0" })).toBeVisible();
+    await page.getByRole("link", { name: /John Lennon/ }).click();
+    await expect(page.locator("h1")).toHaveText("John Lennon");
+  });
+
+  test("an unknown music page says so", async ({ page }) => {
+    await page.goto("/music/no-such-entity");
+    await expect(page.locator("h1")).toHaveText("Not found");
+  });
+
   test("the index filters by type and name", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Events" }).click();
