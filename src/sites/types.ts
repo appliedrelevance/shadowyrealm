@@ -120,6 +120,10 @@ export interface SiteBrand {
   fontsHref: string;
   /** Wikimedia rejects requests without one. */
   userAgent: string;
+  /** What the site indexes, in a few words, for the sites menu every site shares. */
+  holds: string;
+  /** Addresses the site used to live at: a GET to one is redirected, permanently, to the same path here. */
+  formerOrigins?: readonly string[];
 }
 
 export interface SiteCopy {

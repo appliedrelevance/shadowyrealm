@@ -3,4 +3,4 @@ Disallow: /login
 Disallow: /api/
 Disallow: /mcp
 
-Sitemap: https://priorart.shadowyrealm.com/sitemap.xml
+Sitemap: https://inventions.shadowyrealm.com/sitemap.xml

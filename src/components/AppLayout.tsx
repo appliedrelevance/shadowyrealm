@@ -7,7 +7,8 @@ import { useSiteMismatch } from "@/lib/site-mismatch";
 import { SITES } from "@/sites";
 import { SITE_UI } from "@/sites/ui";
 import { Logo } from "@/components/Logo";
-import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, ExternalLink, Music } from "lucide-react";
+import { SiteMenu } from "@/components/SiteMenu";
+import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, Music } from "lucide-react";
 import type { ReactNode } from "react";
 
 /** The platform's other sites: one family of indexes under ShadowyRealm. */
@@ -28,10 +29,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-surface text-ink-2">
       <header className="border-b border-line bg-surface-1">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-ink hover:text-action-ink">
-            <Logo className="h-6 w-6" />
-            {COPY.nav.brand}
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold text-ink hover:text-action-ink">
+              <Logo className="h-6 w-6" />
+              {COPY.nav.brand}
+            </Link>
+            <SiteMenu />
+          </div>
 
           {/* Desktop nav */}
           <div className="hidden items-center gap-6 md:flex">
@@ -57,13 +61,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {SITE_UI.music.label}
               </Link>
             )}
-            {SIBLINGS.map((s) => (
-              <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle}`}>
-                {s.brand.name}
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            ))}
-
             {user && (
               <button
                 onClick={() => signOut()}
@@ -115,13 +112,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   {SITE_UI.music.label}
                 </Link>
               )}
-              {SIBLINGS.map((s) => (
-                <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle} text-lg`}>
-                  {s.brand.name}
-                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                </a>
-              ))}
-
               {user && (
                 <>
                   <div className="my-2 border-t border-line" />

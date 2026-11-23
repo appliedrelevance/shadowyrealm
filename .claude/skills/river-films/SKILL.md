@@ -212,7 +212,7 @@ computing, the Space Age.
 ## A new subject
 
 A film draws one site's realm: `bun tools/video-snapshot.ts <site>`, a key in `SITES`
-(`src/sites/index.ts`). Inventions exists (`inventions`, priorart.shadowyrealm.com). Music, world
+(`src/sites/index.ts`). Inventions exists (`inventions`, inventions.shadowyrealm.com). Music, world
 languages, fine art, computing or the Space Age needs its site, its content and its scores first; that is site work,
 not film work.
 

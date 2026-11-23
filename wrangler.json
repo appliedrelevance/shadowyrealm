@@ -78,12 +78,7 @@
         "directory": "./dist/inventions",
         "not_found_handling": "single-page-application",
         "binding": "ASSETS",
-        "run_worker_first": [
-          "/mcp",
-          "/api/*",
-          "/sitemap.xml",
-          "/entity/*"
-        ]
+        "run_worker_first": true
       },
       "ai": {
         "binding": "AI"
@@ -99,6 +94,10 @@
       },
       "workers_dev": true,
       "routes": [
+        {
+          "pattern": "inventions.shadowyrealm.com",
+          "custom_domain": true
+        },
         {
           "pattern": "priorart.shadowyrealm.com",
           "custom_domain": true

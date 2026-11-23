@@ -9,7 +9,7 @@ import { defineConfig, devices } from "@playwright/test";
  * checks what holds on every site of the platform.
  *
  *   bunx playwright test                                              # both, against https://shadowyrealm.com
- *   E2E_SITE=inventions E2E_BASE_URL=https://priorart.shadowyrealm.com bunx playwright test --project=site
+ *   E2E_SITE=inventions E2E_BASE_URL=https://inventions.shadowyrealm.com bunx playwright test --project=site
  *   E2E_BASE_URL=http://localhost:35421 bunx playwright test          # a local wrangler dev
  *   E2E_CHANNEL=chrome bunx playwright test                           # the installed Chrome instead of Playwright's
  */

@@ -11,7 +11,7 @@ const ownActivity = (name: string) => `${name}'s own direct activity`;
 const makingAndUse = (name: string) => `the making and use of ${name}`;
 
 /** A subdomain of ShadowyRealm: Inventions is one of its indexes. */
-const ORIGIN = "https://priorart.shadowyrealm.com";
+const ORIGIN = "https://inventions.shadowyrealm.com";
 
 /** What each tier means on Inventions (inventions-site Requirement 8.2). */
 export const INVENTION_TIER_DESCRIPTORS: Record<TierDef["tier"], string> = {
@@ -40,6 +40,8 @@ export const inventions: SiteConfig = {
     fontsHref:
       "https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: `ShadowyRealm-Inventions/1.0 (${ORIGIN})`,
+    holds: "Inventions, inventors and products",
+    formerOrigins: ["https://priorart.shadowyrealm.com"],
   },
   scoring: {
     breadth: "reach",

@@ -25,6 +25,7 @@ export const shadowyrealm: SiteConfig = {
     fontsHref:
       "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: "ShadowyRealm/1.0 (https://shadowyrealm.com)",
+    holds: "People, institutions and events",
   },
   scoring: {
     breadth: "people",

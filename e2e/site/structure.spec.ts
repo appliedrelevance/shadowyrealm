@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 /**
  * Checks that hold on every site of the platform, whatever its content:
  *
- *   E2E_SITE=inventions E2E_BASE_URL=https://priorart.shadowyrealm.com bunx playwright test --project=site
+ *   E2E_SITE=inventions E2E_BASE_URL=https://inventions.shadowyrealm.com bunx playwright test --project=site
  */
 const SITE = process.env.E2E_SITE ?? "shadowyrealm";
 

@@ -22,6 +22,7 @@
     "site-schema": "bun tools/site-schema.ts"
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@hookform/resolvers": "^5.2.2",
     "@marsidev/react-turnstile": "1.6.3",
     "@modelcontextprotocol/server": "^2.2.0",

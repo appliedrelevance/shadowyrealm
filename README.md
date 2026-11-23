@@ -2,7 +2,7 @@
 
 **[shadowyrealm.com](https://shadowyrealm.com)** ranks people, institutions and events by their influence across five thousand years: who shaped the world, for better and for worse.
 
-The same engine runs a second site, **[Inventions](https://priorart.shadowyrealm.com)**, which scores inventions, inventors and products on dimensions of their own. Each site is a config in `src/sites/`, a Postgres schema and a Worker deployment (spec: [`.kiro/specs/site-platform/`](.kiro/specs/site-platform/)).
+The same engine runs a second site, **[Inventions](https://inventions.shadowyrealm.com)**, which scores inventions, inventors and products on dimensions of their own. Each site is a config in `src/sites/`, a Postgres schema and a Worker deployment (spec: [`.kiro/specs/site-platform/`](.kiro/specs/site-platform/)).
 
 ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a benefit and a harm for each of five dimensions (scientific, economic, human rights, health, cultural). They are never netted against each other. Influence also flows backward through history: each consequence passes a share of its weight to its causes, so the First Crusade credits the Catholic Church, and the Church credits Jesus.
 
@@ -46,7 +46,7 @@ bun run build                         # typecheck, then build each site into dis
 bunx wrangler deploy                  # deploy ShadowyRealm
 bunx wrangler deploy --env inventions # deploy Inventions
 bun run e2e                           # read-only browser tests, against shadowyrealm.com by default
-E2E_SITE=inventions E2E_BASE_URL=https://priorart.shadowyrealm.com bunx playwright test --project=site
+E2E_SITE=inventions E2E_BASE_URL=https://inventions.shadowyrealm.com bunx playwright test --project=site
 SITE=inventions bunx vite             # a dev server for one site
 ```
 
@@ -57,7 +57,7 @@ Content lives in `content/` (ShadowyRealm) and `content/inventions/` (Inventions
 ```bash
 bun tools/content-check.ts content/inventions/index.ts
 MCP_URL=https://shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts --publish
-MCP_URL=https://priorart.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/inventions/index.ts --publish
+MCP_URL=https://inventions.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-load.ts content/inventions/index.ts --publish
 ```
 
 The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has it scored. `content/realm.ts` is the whole index: 624 entities, 733 periods, 298 curated links and 3,576 System One proposals, of which 3,076 are kept as links. `content/NEXT-500.md` is a readable list of the second wave of 500.

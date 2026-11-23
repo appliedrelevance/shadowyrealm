@@ -3,6 +3,11 @@
  * /mcp serves the MCP control surface; /api/* serves the web UI's reads and manual controls.
  * /sitemap.xml and /entity/* are written for crawlers and link previews.
  * All other routes serve the static SPA built for the same site.
+ *
+ * A GET or HEAD to one of the site's former addresses (brand.formerOrigins) is redirected, permanently,
+ * to the same path on its address. Other methods are served where they arrive, so an MCP client still
+ * pointed at the old address keeps working. A site with former addresses runs the Worker first for
+ * every path (wrangler.json), or its static pages would be served without reaching this check.
  */
 import { SITES } from "../sites";
 import { handleApiRequest } from "./api";
@@ -63,6 +68,11 @@ export default {
       );
     }
     const url = new URL(request.url);
+    const { brand } = SITES[env.SITE];
+    const moved = brand.formerOrigins?.some((o) => new URL(o).host === url.host);
+    if (moved && (request.method === "GET" || request.method === "HEAD")) {
+      return Response.redirect(`${brand.origin}${url.pathname}${url.search}`, 301);
+    }
 
     if (url.pathname === "/mcp") {
       return handleMcpRequest(request, env, ctx);
