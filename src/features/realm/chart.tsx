@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SITE } from "@/lib/site";
 import { formatYear, yearToUnit } from "@/lib/timeline";
+import type { Timeline } from "@/sites/types";
 
 /** Buckets across the site's whole axis. */
 export const BUCKET_COUNT = SITE.timeline.buckets;
@@ -68,6 +69,7 @@ export function TimeAxis({
   top,
   bottom,
   minSpacing = 58,
+  timeline = SITE.timeline,
 }: {
   asOfYear: number;
   x: (unit: number) => number;
@@ -76,13 +78,15 @@ export function TimeAxis({
   top: number;
   bottom: number;
   minSpacing?: number;
+  /** The site's axis unless a chart draws another field's, such as /music's. */
+  timeline?: Timeline;
 }) {
   const left = x(fromUnit);
   const right = x(toUnit);
   const ticks: { year: number; px: number }[] = [];
   // Most recent first, so the readable end of the axis keeps its labels.
-  for (const year of [...SITE.timeline.ticks].reverse()) {
-    const u = yearToUnit(year, asOfYear, SITE.timeline);
+  for (const year of [...timeline.ticks].reverse()) {
+    const u = yearToUnit(year, asOfYear, timeline);
     if (u < fromUnit || u > toUnit) continue;
     const px = x(u);
     if (ticks.length > 0 && ticks[ticks.length - 1].px - px < minSpacing) continue;

@@ -75,6 +75,21 @@
   --color-series-4: #3496de;
   --color-series-5: #cd689b;
 
+  /* ---- Music families — CATEGORICAL ---------------------------------------
+     The /music stream's eight genre families, in slot order: the dataviz
+     reference palette's dark steps, which pass its checks together on
+     surface-1, the stream's ground (worst adjacent CVD ΔE 8.4). A family's
+     sections are color-mix steps of its hue toward surface-1 and ink, so hue
+     always names the family. */
+  --color-family-1: #3987e5;
+  --color-family-2: #d95926;
+  --color-family-3: #199e70;
+  --color-family-4: #c98500;
+  --color-family-5: #d55181;
+  --color-family-6: #0ca30c;
+  --color-family-7: #9085e9;
+  --color-family-8: #e66767;
+
   /* ---- Benefit and harm — DIVERGING ---------------------------------------
      Brand extension for the impact charts: benefit rises above the axis and
      harm falls below it, so position carries the polarity and colour repeats

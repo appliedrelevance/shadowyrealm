@@ -12,6 +12,7 @@ ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a
 - **Lineage** (`/realm`): every entity placed at the year it began, with arrows from cause to consequence. Selecting one lights up the chain it draws credit from and the chain it passes credit to.
 - **Profiles**: total influence split into own and credited, the influence curve, the ten-number profile, lineage with shares, and the evidence each period was scored from.
 - **Compare** and **How It Works**.
+- **Music** (`/music`): the 2,093 music entries on Wikipedia's Vital Articles list, scored offline by Clef on feeling, devotion, gathering, memory and how far each travelled, drawn as one centred stream with no harm side. Hue is the genre family, shade the list's section. The page reads a frozen snapshot, `public/shadowyrealm/data/music-vital.json`, written from the benchmark's scores by `bun tools/music-snapshot.ts <results.json>`.
 
 ## How a score is made
 

@@ -10,4 +10,6 @@ export interface SiteUi {
   typeIcons: Readonly<Record<string, LucideIcon>>;
   /** The methodology page's prose, around the shared tables. */
   Methodology: ComponentType;
+  /** The /music page and its nav label, on a site that shows the music stream. */
+  music?: { label: string; Page: ComponentType };
 }

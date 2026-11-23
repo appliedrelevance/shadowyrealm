@@ -24,6 +24,18 @@ export const SERIES_COLORS = [
   "var(--color-series-5)",
 ] as const;
 
+/** The music stream's genre families, in the palette's slot order. Never cycled: a ninth family needs a ninth validated hue. */
+export const FAMILY_COLORS = [
+  "var(--color-family-1)",
+  "var(--color-family-2)",
+  "var(--color-family-3)",
+  "var(--color-family-4)",
+  "var(--color-family-5)",
+  "var(--color-family-6)",
+  "var(--color-family-7)",
+  "var(--color-family-8)",
+] as const;
+
 /** Pick a series colour by index, wrapping past the end of the ramp. */
 export function seriesColor(index: number): string {
   return SERIES_COLORS[index % SERIES_COLORS.length];

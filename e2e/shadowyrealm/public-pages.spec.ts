@@ -10,6 +10,16 @@ test.describe("Public pages", () => {
     expect(await rows.count()).toBeGreaterThan(10);
   });
 
+  test("music draws the vital articles as one stream, with its families tabled", async ({ page }) => {
+    await page.goto("/music");
+    await expect(page.locator("h1")).toContainText("Music, scored");
+    const stream = page.getByRole("img", { name: /Centred stream of .* music entities/ });
+    await expect(stream).toBeVisible();
+    expect(await stream.locator("a path").count()).toBeGreaterThan(2000);
+    await expect(page.locator("table tbody tr")).toHaveCount(8);
+    await expect(page.locator("table tbody tr").first()).toContainText("Classical");
+  });
+
   test("the index filters by type and name", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Events" }).click();

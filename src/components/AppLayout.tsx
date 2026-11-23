@@ -5,8 +5,9 @@ import { COPY } from "@/lib/copy";
 import { SITE } from "@/lib/site";
 import { useSiteMismatch } from "@/lib/site-mismatch";
 import { SITES } from "@/sites";
+import { SITE_UI } from "@/sites/ui";
 import { Logo } from "@/components/Logo";
-import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, ExternalLink } from "lucide-react";
+import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, ExternalLink, Music } from "lucide-react";
 import type { ReactNode } from "react";
 
 /** The platform's other sites: one family of indexes under ShadowyRealm. */
@@ -50,6 +51,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <BookOpen className="h-4 w-4" />
               {COPY.nav.howItWorks}
             </Link>
+            {SITE_UI.music && (
+              <Link to="/music" className={navLinkBase} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
+                <Music className="h-4 w-4" />
+                {SITE_UI.music.label}
+              </Link>
+            )}
             {SIBLINGS.map((s) => (
               <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle}`}>
                 {s.brand.name}
@@ -102,6 +109,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 <BookOpen className="h-5 w-5" />
                 {COPY.nav.howItWorks}
               </Link>
+              {SITE_UI.music && (
+                <Link to="/music" onClick={closeMenu} className={`${navLinkBase} text-lg`} activeProps={{ className: navLinkActive }} inactiveProps={{ className: navLinkIdle }}>
+                  <Music className="h-5 w-5" />
+                  {SITE_UI.music.label}
+                </Link>
+              )}
               {SIBLINGS.map((s) => (
                 <a key={s.key} href={s.brand.origin} className={`${navLinkBase} ${navLinkIdle} text-lg`}>
                   {s.brand.name}

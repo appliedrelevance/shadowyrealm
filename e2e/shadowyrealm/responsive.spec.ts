@@ -11,7 +11,7 @@ test.describe("Mobile (375px)", () => {
     await expect(page.locator("h1")).toHaveText("How It Works");
   });
 
-  for (const path of ["/", "/realm", "/compare", "/methodology", "/entity/catholic-church", "/login"]) {
+  for (const path of ["/", "/realm", "/compare", "/methodology", "/music", "/entity/catholic-church", "/login"]) {
     test(`${path} has no horizontal page scroll`, async ({ page }) => {
       await page.goto(path);
       await expect(page.locator("h1")).toBeVisible();
