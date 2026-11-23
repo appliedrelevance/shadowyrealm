@@ -4,11 +4,12 @@
  */
 import { inventions } from "./inventions";
 import { history } from "./history";
+import { music } from "./music";
 import type { DimensionDef, EntityTypeDef, LinkLabels, LinkTypeDef, SiteConfig } from "./types";
 
 export type { SiteConfig } from "./types";
 
-export const SITES: Readonly<Record<string, SiteConfig>> = { history, inventions };
+export const SITES: Readonly<Record<string, SiteConfig>> = { history, inventions, music };
 
 export function siteFor(key: string | undefined): SiteConfig {
   const site = key ? SITES[key] : undefined;

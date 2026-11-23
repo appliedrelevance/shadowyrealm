@@ -11,8 +11,8 @@ import { SiteMenu } from "@/components/SiteMenu";
 import { LogOut, LayoutGrid, Network, Scale, BookOpen, Menu, X, Music } from "lucide-react";
 import type { ReactNode } from "react";
 
-/** The platform's other sites: one family of indexes under ShadowyRealm. */
-const SIBLINGS = Object.values(SITES).filter((s) => s.key !== SITE.key);
+/** The platform's other sites that are open: one family of indexes under ShadowyRealm. */
+const SIBLINGS = Object.values(SITES).filter((s) => s.key !== SITE.key && !s.brand.unlisted);
 
 const navLinkBase = "flex items-center gap-1 text-sm transition-colors duration-150";
 const navLinkIdle = "text-ink-muted hover:text-ink";

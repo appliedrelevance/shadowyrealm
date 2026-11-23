@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { buildClefRequest, CLEF_MAX_QUESTIONS } from "../src/lib/clef";
+import { buildClefRequest, CLEF_MAX_QUESTIONS, CLEF_MODEL, readClefAnswers } from "../src/lib/clef";
+import { keyOf } from "../src/lib/system-one";
 import { SITES } from "../src/sites";
-import { inventions } from "../src/sites/inventions";
 import { history } from "../src/sites/history";
+import { inventions } from "../src/sites/inventions";
+import { music } from "../src/sites/music";
 import fixtures from "./fixtures/clef-history.json";
+import musicFixtures from "./fixtures/clef-music.json";
 
 describe("History's Clef requests", () => {
   // The fixtures are the requests built before the platform (site-platform 6.5), with two changes since:
@@ -31,6 +34,11 @@ describe("every site's intensity questions", () => {
       });
       const q = r.questions as Record<string, { criteria: readonly string[] }>;
       for (const d of site.scoring.dimensions) {
+        if (site.scoring.sides.length === 1) {
+          expect(q[d.key].criteria).toEqual(site.scoring.rubrics.intensity.benefit);
+          expect(q[`${d.key}_harm`]).toBeUndefined();
+          continue;
+        }
         expect(q[`${d.key}_benefit`].criteria).toEqual(site.scoring.rubrics.intensity.benefit);
         expect(q[`${d.key}_harm`].criteria).toEqual(site.scoring.rubrics.intensity.harm);
       }
@@ -77,6 +85,35 @@ describe("Inventions' Clef requests", () => {
   });
 });
 
+describe("Music's Clef requests", () => {
+  // Each key is the System One cache's key of a request the offline music run sent (Landru
+  // work/shadowyrealm/music-vital/score.ts). A match means score_period reads that answer instead of
+  // paying for it again; on 2026-11-23 all 2,093 of music's periods matched.
+  test("are byte for byte the ones its answers were paid for with", () => {
+    for (const p of musicFixtures.periods) {
+      expect(keyOf(CLEF_MODEL, buildClefRequest(music, { ...p.input, entity_type: p.entity_type }))).toBe(p.key);
+    }
+  });
+
+  test("ask one question per dimension, about the effect, and how far it travelled", () => {
+    const q = buildClefRequest(music, { ...musicFixtures.periods[0].input, entity_type: musicFixtures.periods[0].entity_type })
+      .questions as Record<string, { instructions: string }>;
+    expect(Object.keys(q)).toEqual([...music.scoring.dimensions.map((d) => d.key), "reach", "persistence"]);
+    expect(q.feeling.instructions).toContain("Rate the intensity of the effect that");
+    expect(q.reach.instructions).toContain("across how much of the world was it heard or played?");
+  });
+
+  test("read benefit from the dimension's own answer and leave harm at zero", () => {
+    const answer = { type: "score", score: 4.5, confidence: 0.8 };
+    const answers = Object.fromEntries([...music.scoring.dimensions.map((d) => [d.key, answer]), ["reach", answer], ["persistence", answer]]);
+    const scores = readClefAnswers(music.scoring, { answers });
+    for (const d of music.scoring.dimensions) {
+      expect(scores.benefit[d.key]).toBe(5);
+      expect(scores.harm[d.key]).toBe(0);
+    }
+  });
+});
+
 describe("every site", () => {
   test("asks no more questions than Clef answers", () => {
     for (const site of Object.values(SITES)) {
@@ -89,7 +126,7 @@ describe("every site", () => {
         excluded: [],
         evidence: "e",
       });
-      expect(Object.keys(r.questions).length).toBe(site.scoring.dimensions.length * 2 + 2);
+      expect(Object.keys(r.questions).length).toBe(site.scoring.dimensions.length * site.scoring.sides.length + 2);
       expect(Object.keys(r.questions).length).toBeLessThanOrEqual(CLEF_MAX_QUESTIONS);
     }
   });

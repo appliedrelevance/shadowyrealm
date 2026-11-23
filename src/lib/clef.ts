@@ -12,6 +12,9 @@
  * error naming that question; nothing is substituted, and there is no fallback
  * model.
  *
+ * A one-sided site (ScoringConfig.sides) asks one question per dimension, keyed
+ * by the dimension alone, about the effect the subject had; its harm is zero.
+ *
  * A site that measures breadth in people (ScoringConfig.breadth) reads each
  * benefit and harm as depth instead of Clef's expected value: the probability
  * on each level above a flat answer, weighted by the level (depthOf). Clairic
@@ -60,6 +63,17 @@ export function buildClefRequest(site: SiteConfig, p: PeriodToScore) {
 
   const questions: Record<string, unknown> = {};
   for (const d of dimensions) {
+    if (site.scoring.sides.length === 1) {
+      questions[d.key] = {
+        type: "score",
+        instructions:
+          `Judge only from the evidence text. Rate the intensity of the effect that ${subject} during ${when} had on ` +
+          `${d.clef.affected}, in the area of ${d.clef.area}. ${d.clef.depth} Score only that activity in that period. ` +
+          `${leaveOut} If the evidence shows no effect in this area, choose the lowest level.`,
+        criteria: rubrics.intensity.benefit,
+      };
+      continue;
+    }
     for (const kind of ["benefit", "harm"] as const) {
       questions[`${d.key}_${kind}`] = {
         type: "score",
@@ -73,11 +87,12 @@ export function buildClefRequest(site: SiteConfig, p: PeriodToScore) {
       };
     }
   }
+  const reachQuestion = rubrics.reachQuestion
+    ? rubrics.reachQuestion(subject, when)
+    : `How many people did ${subject} during ${when} affect while it lasted?`;
   questions.reach = {
     type: "score",
-    instructions:
-      `Judge only from the evidence text. How many people did ${subject} during ${when} ` +
-      `affect while it lasted? ${leaveOut}`,
+    instructions: `Judge only from the evidence text. ${reachQuestion} ${leaveOut}`,
     criteria: rubrics.reach,
   };
   questions.persistence = {
@@ -161,7 +176,7 @@ function factor(score: number): number {
 }
 
 export function readClefAnswers(
-  scoring: Pick<ScoringConfig, "dimensions" | "breadth" | "rubrics">,
+  scoring: Pick<ScoringConfig, "dimensions" | "breadth" | "rubrics" | "sides">,
   response: unknown,
 ): ClefScores {
   const body = response as { answers?: Record<string, Answer> } | null;
@@ -175,6 +190,12 @@ export function readClefAnswers(
   const { intensity } = scoring.rubrics;
   const depth = (id: string, levels: number) => Math.round(depthOf(probabilitiesOf(answers, id, levels)) * 100) / 100;
   for (const d of keys) {
+    if (scoring.sides.length === 1) {
+      const b = read(answers, d);
+      benefit[d] = scoring.breadth === "people" ? depth(d, intensity.benefit.length) : level(b.score);
+      confidences.push(b.confidence);
+      continue;
+    }
     const b = read(answers, `${d}_benefit`);
     const h = read(answers, `${d}_harm`);
     benefit[d] = scoring.breadth === "people" ? depth(`${d}_benefit`, intensity.benefit.length) : level(b.score);

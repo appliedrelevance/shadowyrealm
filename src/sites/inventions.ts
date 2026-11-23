@@ -44,6 +44,7 @@ export const inventions: SiteConfig = {
     formerOrigins: ["https://priorart.shadowyrealm.com"],
   },
   scoring: {
+    sides: ["benefit", "harm"],
     breadth: "reach",
     dimensions: [
       {

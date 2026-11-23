@@ -64,7 +64,15 @@ export interface Rubrics {
   persistence: readonly string[];
   /** Years for a fading legacy to fall to 1/e, one per persistence level. Infinity never fades. */
   persistenceTimeConstants: readonly number[];
+  /**
+   * Clef's reach question, for a field whose breadth is not a head-count: music asks how far a work or
+   * a style travelled. Without it, Clef is asked how many people the subject affected.
+   */
+  reachQuestion?: (subject: string, when: string) => string;
 }
+
+/** Benefit is good done; harm is damage done. A one-sided site weighs only benefit. */
+export type Side = "benefit" | "harm";
 
 export interface TierDef {
   tier: ATISTier;
@@ -74,6 +82,13 @@ export interface TierDef {
 }
 
 export interface ScoringConfig {
+  /**
+   * ["benefit", "harm"]: every dimension is scored on both sides, kept apart and never netted.
+   * ["benefit"]: a field with no harm to weigh, such as music. Clef is asked one question per dimension,
+   * about the effect it had, and every page leaves harm out. The schema keeps its harm columns, at zero,
+   * so every site has the same tables.
+   */
+  sides: readonly ["benefit", "harm"] | readonly ["benefit"];
   dimensions: readonly DimensionDef[];
   rubrics: Rubrics;
   /**
@@ -124,6 +139,8 @@ export interface SiteBrand {
   holds: string;
   /** Addresses the site used to live at: a GET to one is redirected, permanently, to the same path here. */
   formerOrigins?: readonly string[];
+  /** A site still being built: the sites menu and every footer leave it out until it opens. */
+  unlisted?: boolean;
 }
 
 export interface SiteCopy {

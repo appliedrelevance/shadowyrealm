@@ -5,10 +5,11 @@ import { SITES } from "@/sites";
 
 /**
  * The sites menu every site shares: each site on the engine, from SITES, with its mark, name and what it
- * holds. Nothing in it is written for one site; a new site appears here when its config is registered.
+ * holds. Nothing in it is written for one site; a new site appears here when its config is registered,
+ * and a site still being built (brand.unlisted) appears only in its own menu.
  */
 export function SiteMenu() {
-  const sites = Object.values(SITES);
+  const sites = Object.values(SITES).filter((s) => !s.brand.unlisted || s.key === SITE.key);
   return (
     <Menu.Root>
       <Menu.Trigger

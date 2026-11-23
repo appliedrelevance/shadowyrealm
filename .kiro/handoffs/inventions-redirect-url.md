@@ -1,5 +1,7 @@
 # Handoff: allow Google sign-in on inventions.shadowyrealm.com
 
+**Folded into `music-and-inventions-schema.md`, step 7, which also adds Music's address.**
+
 Inventions (the site called Prior Art until 2026-11-23) moved from `priorart.shadowyrealm.com` to
 `inventions.shadowyrealm.com` on 2026-11-23. The old address now redirects every GET there.
 

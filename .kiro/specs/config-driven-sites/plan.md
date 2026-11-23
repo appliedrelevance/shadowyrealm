@@ -37,22 +37,34 @@ system's mechanism: brands differ in values, never in names), `public/<site>/` a
 4. **Former addresses.** `brand.formerOrigins`: a GET to one is redirected, permanently, to the same path
    on `brand.origin`; other methods are served, so an MCP client on the old address keeps working.
 
+## Decisions, 2026-11-23
+
+- The root site is **History** (key `history`, schema still `shadowyrealm`); the others are **Inventions**
+  and **Music**, at `inventions.` and `music.shadowyrealm.com`. ShadowyRealm is the name over all of them.
+- **One side** is a setting, not a different back end: music keeps the same tables, harm columns at zero.
+- **Inventions comes up to History's method**: head-counts for breadth (Clairic, share of everyone alive)
+  and credit links built from the evidence. Both change its rankings, so its river is shown first.
+- Every schema keeps evidence once and four-place strengths, whatever its breadth.
+
 ## Stages
 
 Each ends deployed, tested in production and committed.
 
-1. **Sites menu**, from `SITES`, in place of the sibling links. Base UI `Menu` (the design canon's
-   headless library).
-2. **Inventions moves** to `inventions.shadowyrealm.com`; `priorart.shadowyrealm.com` redirects.
-   Handoff: Google sign-in needs the new origin among the auth redirect URLs (the monorepo owns that config).
-3. **No UI code per site**: logos, heroes, type icons and method prose become data; `src/sites/ui.ts` goes.
-4. **Sides** in the engine, with the cache-identity test for music's requests.
-5. **Picture** in the engine: the stream as a configured home picture.
-6. **Music credit shares**, read from the evidence: for each of the 1,624 entities that owe credit, the
-   share of it owed to its listed causes and its split among them. Offline, cached, at most $2.67 at list
-   price; the stream is shown to Geordie before anything deploys.
-7. **The music site**: `src/sites/music.ts`, its tokens and favicon, `content/music/` generated from
-   `music-vital/`. Handoff: its schema (from `tools/site-schema.ts`) to the monorepo. Load through its MCP
-   tools, calibrate tiers, deploy at `music.shadowyrealm.com`.
-8. **Retire the music page**: `shadowyrealm.com/music` and `/music/*` redirect to the music site; the
-   frozen files and `src/features/music/` are deleted.
+1. **Sites menu** (done).
+2. **Inventions moves** to `inventions.shadowyrealm.com` (done).
+3. **History rename** (done, `b92edb1`).
+4. **Monorepo handoff** (`.kiro/handoffs/music-and-inventions-schema.md`): music's schema, Inventions'
+   head-count columns, both sign-in addresses. Geordie carries it to a monorepo session.
+5. **Sides** in the engine: Clef's request and answers (done: all 2,093 music requests match the answers
+   already paid for), the service writing zero harm, every page leaving harm out.
+6. **The credit tool**, for any site: Clef proposes the causes an article names that have no link, Clairic
+   sizes each share and what each consequence owes in all, and `tools/credit-graph.ts` stores the graph.
+   History's 2026-11-14 pilot ran this once; it is written again as a tool, priced before it runs.
+7. **Inventions on head-counts**: `breadth: "people"`, its graph from stage 6, a re-score of its 945
+   periods (Clairic at most $1.96), tiers calibrated again, its river shown before deploying.
+8. **Picture** in the engine: the stream as a configured home picture.
+9. **No UI code per site**: logos, heroes, type icons and method prose become data; `src/sites/ui.ts` goes.
+10. **The music site**: its tokens, favicon and og image, `content/music/` from `music-vital/`, its graph
+    from stage 6, loaded through its MCP tools, tiers calibrated, deployed at `music.shadowyrealm.com`.
+11. **Retire the music page**: `shadowyrealm.com/music` and `/music/*` redirect to the music site; the
+    frozen files and `src/features/music/` are deleted.

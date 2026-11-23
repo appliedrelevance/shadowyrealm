@@ -7,12 +7,14 @@ import { siteSchemaDdl } from "../tools/site-schema";
 for (const site of Object.values(SITES)) {
   describe(site.key, () => {
     const enums = (Constants as Record<string, { Enums: Record<string, readonly string[]> }>)[site.schema]?.Enums;
+    // A site still being built has no schema until the monorepo creates it from this DDL.
+    const awaitingSchema = site.brand.unlisted === true && enums === undefined;
 
-    test("has its schema in the generated database types", () => {
+    test.skipIf(awaitingSchema)("has its schema in the generated database types", () => {
       expect(enums).toBeDefined();
     });
 
-    test("names the same entity types and link types as its schema's enums", () => {
+    test.skipIf(awaitingSchema)("names the same entity types and link types as its schema's enums", () => {
       expect([...enums.entity_type]).toEqual(site.entityTypes.map((t) => t.key));
       expect([...enums.relationship_type]).toEqual(site.linkTypes.map((t) => t.key));
     });
@@ -28,15 +30,15 @@ for (const site of Object.values(SITES)) {
       expect(ddl).toContain(`create or replace function ${site.schema}.update_updated_at()`);
     });
 
-    test("counts people and keeps four-place strengths only where the site measures breadth in people", () => {
+    test("counts people only where the site measures breadth in people, and keeps evidence once and four-place strengths everywhere", () => {
       const ddl = siteSchemaDdl(site);
       const people = site.scoring.breadth === "people";
       for (const d of site.scoring.dimensions) {
         expect(ddl.includes(`${d.key}_benefit_people numeric`)).toBe(people);
         expect(ddl.includes(`${d.key}_harm_people numeric`)).toBe(people);
       }
-      expect(ddl.includes("  evidence text")).toBe(people);
-      expect(ddl).toContain(people ? "strength numeric(5,4)" : "strength numeric(3,2)");
+      expect(ddl).toContain("  evidence text");
+      expect(ddl).toContain("strength numeric(5,4)");
     });
   });
 }

@@ -30,6 +30,7 @@ export const history: SiteConfig = {
     holds: "People, institutions and events",
   },
   scoring: {
+    sides: ["benefit", "harm"],
     breadth: "people",
     dimensions: [
       {
