@@ -3,10 +3,10 @@
  * work directory (Landru/work/shadowyrealm/music-vital/: results.json from its score.ts, the entity
  * and link set music-vital.json, and the articles it read, articles.jsonl) and writes:
  *
- * - public/shadowyrealm/data/music-vital.json, what the stream draws: each entity's slug, family and
+ * - public/history/data/music-vital.json, what the stream draws: each entity's slug, family and
  *   shade as indexes into the family list, its span, its influence and its curve to three
  *   significant figures.
- * - public/shadowyrealm/data/music/<slug>.json, what an entity's page shows: its description, rank,
+ * - public/history/data/music/<slug>.json, what an entity's page shows: its description, rank,
  *   influence by dimension, its period with the levels, reach and persistence it was scored at and
  *   the evidence it was scored from, and its connections to the other entities.
  *
@@ -26,7 +26,7 @@ import { permalink, wholeArticleEvidence } from "./wiki-evidence";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: bun tools/music-snapshot.ts <music-vital directory>");
-const dataDir = resolve(import.meta.dir, "../public/shadowyrealm/data");
+const dataDir = resolve(import.meta.dir, "../public/history/data");
 const streamOut = join(dataDir, "music-vital.json");
 const pagesOut = join(dataDir, "music");
 

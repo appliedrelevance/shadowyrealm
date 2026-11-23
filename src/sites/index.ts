@@ -3,12 +3,12 @@
  * request; the SPA is built for one site by its Vite mode.
  */
 import { inventions } from "./inventions";
-import { shadowyrealm } from "./shadowyrealm";
+import { history } from "./history";
 import type { DimensionDef, EntityTypeDef, LinkLabels, LinkTypeDef, SiteConfig } from "./types";
 
 export type { SiteConfig } from "./types";
 
-export const SITES: Readonly<Record<string, SiteConfig>> = { shadowyrealm, inventions };
+export const SITES: Readonly<Record<string, SiteConfig>> = { history, inventions };
 
 export function siteFor(key: string | undefined): SiteConfig {
   const site = key ? SITES[key] : undefined;

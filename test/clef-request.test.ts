@@ -2,16 +2,16 @@ import { describe, expect, test } from "bun:test";
 import { buildClefRequest, CLEF_MAX_QUESTIONS } from "../src/lib/clef";
 import { SITES } from "../src/sites";
 import { inventions } from "../src/sites/inventions";
-import { shadowyrealm } from "../src/sites/shadowyrealm";
-import fixtures from "./fixtures/clef-shadowyrealm.json";
+import { history } from "../src/sites/history";
+import fixtures from "./fixtures/clef-history.json";
 
-describe("ShadowyRealm's Clef requests", () => {
+describe("History's Clef requests", () => {
   // The fixtures are the requests built before the platform (site-platform 6.5), with two changes since:
   // an entity with no linked consequences counts the effects that followed from it (2026-11-14), and
   // benefit questions are scored on the benefit-worded levels (2026-11-15).
   test("are byte for byte the recorded requests", () => {
     for (const f of fixtures) {
-      const built = buildClefRequest(shadowyrealm, { ...f.input, entity_type: f.entity_type });
+      const built = buildClefRequest(history, { ...f.input, entity_type: f.entity_type });
       expect(JSON.stringify(built)).toBe(JSON.stringify(f.request));
     }
   });

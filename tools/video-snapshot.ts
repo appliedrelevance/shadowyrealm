@@ -9,7 +9,7 @@
  * `video/assets/images/` (made with macOS sips and ffmpeg). Committing both makes each video a record of one known
  * state of the data; re-run this to refresh it.
  *
- *   bun tools/video-snapshot.ts               # shadowyrealm
+ *   bun tools/video-snapshot.ts               # history
  *   bun tools/video-snapshot.ts inventions    # Inventions
  */
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -44,7 +44,7 @@ interface Profile {
   score: { profile: { own: { benefit: Record<string, number>; harm: Record<string, number> } } };
 }
 
-const key = process.argv[2] ?? "shadowyrealm";
+const key = process.argv[2] ?? "history";
 const site = siteFor(key);
 const headers = { "User-Agent": site.brand.userAgent };
 

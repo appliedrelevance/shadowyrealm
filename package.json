@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "lint:tokens": "node tools/check-tokens.mjs",
-    "dev": "SITE=shadowyrealm vite --host 0.0.0.0 --port 35420",
+    "dev": "SITE=history vite --host 0.0.0.0 --port 35420",
     "dev:inventions": "SITE=inventions vite --host 0.0.0.0 --port 35422",
-    "build": "tsc && SITE=shadowyrealm vite build && SITE=inventions vite build",
+    "build": "tsc && SITE=history vite build && SITE=inventions vite build",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:inventions": "wrangler deploy --env inventions",

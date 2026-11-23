@@ -5,7 +5,7 @@ import { defineConfig, devices } from "@playwright/test";
  * writes nothing, so it is safe to run against production. Content is loaded
  * through the MCP tools (tools/realm-load.ts), never by the tests.
  *
- * Two projects: "shadowyrealm" checks ShadowyRealm's own content; "site"
+ * Two projects: "history" checks History's own content; "site"
  * checks what holds on every site of the platform.
  *
  *   bunx playwright test                                              # both, against https://shadowyrealm.com
@@ -26,8 +26,8 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "shadowyrealm",
-      testDir: "./e2e/shadowyrealm",
+      name: "history",
+      testDir: "./e2e/history",
       use: { ...devices["Desktop Chrome"], ...(process.env.E2E_CHANNEL ? { channel: process.env.E2E_CHANNEL } : {}) },
     },
     {

@@ -17,7 +17,7 @@ import systemOne from "./system-one-graph.json";
 import type { RealmContent } from "./types";
 
 /** The site this content belongs to (src/sites). */
-export const site = "shadowyrealm";
+export const site = "history";
 
 const parts = [benchmark, ancient, earlyModern, modern, secondWave];
 

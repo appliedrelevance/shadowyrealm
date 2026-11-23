@@ -3,24 +3,24 @@ import { buildClairicRequest, CLAIRIC_MODEL, readClairicAnswers } from "../src/l
 import { walkShares } from "../src/lib/credit";
 import { buildClefRequest, CLEF_MODEL, depthOf, readClefAnswers } from "../src/lib/clef";
 import { inventions } from "../src/sites/inventions";
-import { shadowyrealm } from "../src/sites/shadowyrealm";
+import { history } from "../src/sites/history";
 import { keyOf } from "../src/lib/system-one";
-import recorded from "./fixtures/system-one-shadowyrealm.json";
+import recorded from "./fixtures/system-one-history.json";
 
-describe("ShadowyRealm's System One requests", () => {
+describe("History's System One requests", () => {
   // The fixture is one period of the 2026-11-15 pilot over whole Wikipedia articles, which froze the
   // scoring; the keys are the System One cache's keys of the requests that pilot sent, the Clef one as
   // re-asked the same day with benefit questions on the benefit-worded levels. The key is the one
   // score_period computes, so the cache's answers are the Worker's.
   test("are byte for byte the ones the frozen scoring was measured with", () => {
-    expect(keyOf(CLEF_MODEL, buildClefRequest(shadowyrealm, recorded.input))).toBe(recorded.clef_key);
-    expect(keyOf(CLAIRIC_MODEL, buildClairicRequest(shadowyrealm, recorded.input))).toBe(recorded.clairic_key);
+    expect(keyOf(CLEF_MODEL, buildClefRequest(history, recorded.input))).toBe(recorded.clef_key);
+    expect(keyOf(CLAIRIC_MODEL, buildClairicRequest(history, recorded.input))).toBe(recorded.clairic_key);
   });
 
   test("ask Clairic for every dimension's benefit and harm, in people a year", () => {
-    const r = buildClairicRequest(shadowyrealm, recorded.input);
+    const r = buildClairicRequest(history, recorded.input);
     const fields = r.fields as Record<string, { type: string; min: number; max: number; scale: string; instructions: string }>;
-    expect(Object.keys(fields)).toEqual(shadowyrealm.scoring.dimensions.flatMap((d) => [`${d.key}_benefit`, `${d.key}_harm`]));
+    expect(Object.keys(fields)).toEqual(history.scoring.dimensions.flatMap((d) => [`${d.key}_benefit`, `${d.key}_harm`]));
     for (const f of Object.values(fields)) {
       expect(f).toMatchObject({ type: "estimate", min: 1, max: 10_000_000_000, scale: "log" });
       expect(f.instructions).toContain("how many living people");
@@ -42,31 +42,31 @@ describe("depth", () => {
     expect(depthOf(sure)).toBeGreaterThan(depthOf(spread));
   });
 
-  test("is what ShadowyRealm reads from Clef, and Inventions still reads the expected value", () => {
+  test("is what History reads from Clef, and Inventions still reads the expected value", () => {
     const response = { answers: recorded.clef_answers };
-    const people = readClefAnswers(shadowyrealm.scoring, response);
-    for (const d of shadowyrealm.scoring.dimensions) {
+    const people = readClefAnswers(history.scoring, response);
+    for (const d of history.scoring.dimensions) {
       const p = (recorded.clef_answers as Record<string, { probabilities: Record<string, number> }>)[`${d.key}_benefit`].probabilities;
       const expected = Math.round(depthOf(Array.from({ length: 10 }, (_, k) => p[String(k)])) * 100) / 100;
       expect(people.benefit[d.key]).toBe(expected);
     }
-    const reachMode = readClefAnswers({ ...shadowyrealm.scoring, breadth: "reach" }, response);
-    const score = (recorded.clef_answers as Record<string, { score: number }>)[`${shadowyrealm.scoring.dimensions[0].key}_benefit`].score;
-    expect(reachMode.benefit[shadowyrealm.scoring.dimensions[0].key]).toBe(Math.round(((score * 10) / 9) * 100) / 100);
+    const reachMode = readClefAnswers({ ...history.scoring, breadth: "reach" }, response);
+    const score = (recorded.clef_answers as Record<string, { score: number }>)[`${history.scoring.dimensions[0].key}_benefit`].score;
+    expect(reachMode.benefit[history.scoring.dimensions[0].key]).toBe(Math.round(((score * 10) / 9) * 100) / 100);
     expect(inventions.scoring.breadth).toBe("reach");
   });
 
   test("an answer without probabilities is an error naming the question", () => {
     const answers = structuredClone(recorded.clef_answers) as Record<string, { probabilities?: unknown }>;
     delete answers.health_harm.probabilities;
-    expect(() => readClefAnswers(shadowyrealm.scoring, { answers })).toThrow(/"health_harm" has no probabilities/);
+    expect(() => readClefAnswers(history.scoring, { answers })).toThrow(/"health_harm" has no probabilities/);
   });
 });
 
 describe("Clairic's head-counts", () => {
   test("are each field's median", () => {
-    const people = readClairicAnswers(shadowyrealm.scoring, { answers: recorded.clairic_answers });
-    for (const d of shadowyrealm.scoring.dimensions) {
+    const people = readClairicAnswers(history.scoring, { answers: recorded.clairic_answers });
+    for (const d of history.scoring.dimensions) {
       const a = recorded.clairic_answers as Record<string, { median: number }>;
       expect(people.benefit[d.key]).toBe(a[`${d.key}_benefit`].median);
       expect(people.harm[d.key]).toBe(a[`${d.key}_harm`].median);
@@ -76,7 +76,7 @@ describe("Clairic's head-counts", () => {
   test("a field without a usable median is an error naming it", () => {
     const answers = structuredClone(recorded.clairic_answers) as Record<string, { median?: unknown }>;
     answers.economic_benefit = {};
-    expect(() => readClairicAnswers(shadowyrealm.scoring, { answers })).toThrow(/"economic_benefit" has no usable median/);
+    expect(() => readClairicAnswers(history.scoring, { answers })).toThrow(/"economic_benefit" has no usable median/);
   });
 });
 

@@ -3,7 +3,7 @@
 // (tools/video-snapshot.ts), or the site's type icon for an entity with no free picture. Every
 // image is decoded before a composition registers its timeline, so no frame waits on one.
 (() => {
-  // The site's type icons: lucide 0.577 (ISC), as src/sites/shadowyrealm/ui.tsx uses them.
+  // The site's type icons: lucide 0.577 (ISC), as src/sites/history/ui.tsx uses them.
   const icon = (paths) =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
   const ICONS = {

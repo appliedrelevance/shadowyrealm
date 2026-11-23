@@ -22,7 +22,7 @@ walk and the answer cache (2026-11-15 commits `d386bf6`, `f908f88`, `101db45`, `
 | Code | Site | Fate (plan.md) |
 |---|---|---|
 | `src/sites/<site>/Logo.tsx`, `Hero.tsx`, `Methodology.tsx`, `ui.tsx` | both | stage 3: assets and config data |
-| `src/features/music/`, `src/sites/shadowyrealm/Music.tsx`, `src/routes/music/`, `tools/music-snapshot.ts`, `public/shadowyrealm/data/` | root | stage 8: deleted once music is a site |
+| `src/features/music/`, `src/sites/history/Music.tsx`, `src/routes/music/`, `tools/music-snapshot.ts`, `public/history/data/` | root | stage 8: deleted once music is a site |
 
 ## What music needs from the back end
 

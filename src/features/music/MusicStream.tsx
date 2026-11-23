@@ -1,6 +1,6 @@
 /**
  * The music stream: Wikipedia's vital articles in music, scored offline and frozen in
- * public/shadowyrealm/data/music-vital.json (tools/music-snapshot.ts). One band per entity, its own
+ * public/history/data/music-vital.json (tools/music-snapshot.ts). One band per entity, its own
  * influence, centred on the axis with no meaning above or below it. Hue is the genre family and
  * shade the list's section within it. The outline is the square root of each moment's total, as on
  * the impact river, and inside a moment each band keeps its true share. Families stack in the

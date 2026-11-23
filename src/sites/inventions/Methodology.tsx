@@ -115,8 +115,7 @@ export function Methodology() {
 
         <h2 className="font-display text-ink">One of the ShadowyRealm indexes</h2>
         <p>
-          Inventions runs on the same engine as ShadowyRealm, which scores people, institutions and events across
-          history. Each credit share adds up every route through the links, and the same calculator turns periods into
+          Inventions runs on the same engine as History, the ShadowyRealm index of people, institutions and events. Each credit share adds up every route through the links, and the same calculator turns periods into
           curves and areas for every page and for the MCP tools that maintain the index.
         </p>
         <p>

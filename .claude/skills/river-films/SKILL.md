@@ -234,7 +234,7 @@ Inventions film settles how; record the layout here when it does.
   titles, "5,000 years / of influence" and "Benefit above the line. / Harm below it."
   (`video/short-vertical/compositions/titles.html`).
 - **The mark.** The end cards show Vaal as a graphic cut-out with an alpha channel:
-  `assets/vaal-mark.png` in each project links to `src/sites/shadowyrealm/vaal-mark.png` (Geordie,
+  `assets/vaal-mark.png` in each project links to `src/sites/history/vaal-mark.png` (Geordie,
   2026-11-17: Vaal is the logo, not the site's drawn gate mark, and a graphic, not the photo). It
   was redrawn from the site's `hero.jpg` with fal.ai `nano-banana-2/edit` and cut out with
   `birefnet/v2`; the other three redraws are in `media/exports/shadowyrealm/vaal-mark/`. The

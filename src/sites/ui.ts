@@ -4,10 +4,10 @@
  */
 import { SITE } from "@/lib/site";
 import { ui as inventions } from "./inventions/ui";
-import { ui as shadowyrealm } from "./shadowyrealm/ui";
+import { ui as history } from "./history/ui";
 import type { SiteUi } from "./ui-types";
 
-const UIS: Readonly<Record<string, SiteUi>> = { shadowyrealm, inventions };
+const UIS: Readonly<Record<string, SiteUi>> = { history, inventions };
 
 function uiFor(key: string): SiteUi {
   const found = UIS[key];

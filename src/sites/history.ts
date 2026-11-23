@@ -1,7 +1,9 @@
 /**
- * ShadowyRealm: people, institutions and events ranked by their influence
- * across five thousand years. Every value here reproduces the constants the
- * site ran on before the platform, so its scores and Clef requests are unchanged.
+ * History, the ShadowyRealm index at the bare domain: people, institutions and
+ * events ranked by their influence across five thousand years. Its schema keeps
+ * the name shadowyrealm from before the platform had more than one site. Every
+ * value here reproduces the constants the site ran on before the platform, so
+ * its scores and Clef requests are unchanged.
  */
 import { HISTORICAL_RUBRICS } from "./rubrics";
 import type { SiteConfig } from "./types";
@@ -10,13 +12,13 @@ const PEOPLE = "the people it affected";
 const DEPTH = "Rate how deeply those people were affected, not how many; breadth is judged separately.";
 const ownActivity = (name: string) => `${name}'s own direct activity`;
 
-export const shadowyrealm: SiteConfig = {
-  key: "shadowyrealm",
+export const history: SiteConfig = {
+  key: "history",
   schema: "shadowyrealm",
   brand: {
-    name: "ShadowyRealm",
+    name: "History",
     origin: "https://shadowyrealm.com",
-    title: "ShadowyRealm — Impact Assessment Through the Ages",
+    title: "History — People, Institutions and Events Ranked by Their Influence",
     description:
       "Research, assess, and compare the historical impact of people, organizations, and events across five dimensions.",
     ogImage: "https://shadowyrealm.com/og.jpg",
@@ -190,12 +192,12 @@ export const shadowyrealm: SiteConfig = {
         "share of its influence back up the chain: the Crusades to the Church, the Church to Jesus.",
     },
     auth: { signInHeading: "Sign In", signingIn: "Signing in..." },
-    footer: { tagline: "ShadowyRealm — Historical Impact Assessment" },
+    footer: { tagline: "History — a ShadowyRealm index" },
   },
   mcp: {
-    serverName: "shadowyrealm",
+    serverName: "history",
     about:
-      "ShadowyRealm is a historical impact index that measures influence, not net good. An entity is a person, " +
+      "History is a ShadowyRealm index of people, institutions and events that measures influence, not net good. An entity is a person, " +
       "organization or event; whether it really existed does not matter.",
     linkExamples: "Jesus -> Catholic Church, Catholic Church -> First Crusade",
   },

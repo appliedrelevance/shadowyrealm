@@ -1,7 +1,7 @@
 /**
  * One music entity's page, /music/$slug: the shape of the impact profile page (header, score,
  * influence over time, profile by dimension, connections, periods and evidence) for a field with
- * one side and no credit. Its data is frozen in public/shadowyrealm/data/music/<slug>.json by
+ * one side and no credit. Its data is frozen in public/history/data/music/<slug>.json by
  * tools/music-snapshot.ts.
  */
 import { useMemo, useState } from "react";

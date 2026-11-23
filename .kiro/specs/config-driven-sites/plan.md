@@ -17,7 +17,7 @@ A new site is a config file, a token file and its content. Nothing else.
 | `src/sites/<site>/Methodology.tsx`, prose in JSX | the site's method prose as config data (`copy.methodology.sections`), rendered by the shared page around the shared tables |
 | `src/sites/ui.ts` and `ui-types.ts`, the per-site UI registry | deleted |
 | Sibling-site links in `AppLayout` | one shared site menu built from `SITES` |
-| `src/features/music/*`, `src/sites/shadowyrealm/Music.tsx`, `/music` routes, frozen JSON in `public/shadowyrealm/data/` | the music site, on the shared pages, from its own schema |
+| `src/features/music/*`, `src/sites/history/Music.tsx`, `/music` routes, frozen JSON in `public/history/data/` | the music site, on the shared pages, from its own schema |
 
 Kept per site, because they are data: `src/sites/<site>.ts`, `src/sites/<site>/tokens.css` (the design
 system's mechanism: brands differ in values, never in names), `public/<site>/` assets and `content/<site>/`.

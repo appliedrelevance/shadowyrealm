@@ -53,7 +53,7 @@ for (const site of Object.values(SITES)) {
 
 describe("the registry", () => {
   test("refuses an unknown or missing site, naming the ones it holds", () => {
-    expect(() => siteFor("nope")).toThrow(/shadowyrealm, inventions/);
+    expect(() => siteFor("nope")).toThrow(/history, inventions/);
     expect(() => siteFor(undefined)).toThrow(/SITE must be one of/);
   });
 });

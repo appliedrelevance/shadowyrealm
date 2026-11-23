@@ -17,7 +17,7 @@ LOOK: the site's own dark ground, not an invented void, and the river fills the 
 - ink `#f8fafc`, muted `#94a3b8`, hairlines `#333350` and `#4a4a70`
 - benefit `#3e9ad6` above the axis, harm `#d9534f` below it, bands at 0.92 opacity with a
   0.5 px ground-coloured seam, exactly as the home page draws them
-- the mark: Vaal as a graphic cut-out with an alpha channel (`src/sites/shadowyrealm/vaal-mark.png`,
+- the mark: Vaal as a graphic cut-out with an alpha channel (`src/sites/history/vaal-mark.png`,
   linked as `assets/vaal-mark.png`), drawn from the site's home-page picture, 200 px, on the end card
   only, over the dimmed river
 - one face, Inter: 700 for names, numbers and the title, 400 for meta lines; tabular figures on

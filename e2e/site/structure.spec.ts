@@ -5,7 +5,7 @@ import { test, expect } from "@playwright/test";
  *
  *   E2E_SITE=inventions E2E_BASE_URL=https://inventions.shadowyrealm.com bunx playwright test --project=site
  */
-const SITE = process.env.E2E_SITE ?? "shadowyrealm";
+const SITE = process.env.E2E_SITE ?? "history";
 
 test.describe(`Site structure (${SITE})`, () => {
   test("every API response names the site", async ({ request }) => {
