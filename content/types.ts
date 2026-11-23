@@ -63,7 +63,7 @@ export type RealmEntity = SiteEntity<RealmEntityType>;
 export type RealmLink = SiteLink<RealmLinkType>;
 export type RealmContent = SiteContent<RealmEntityType, RealmLinkType>;
 
-// ---------- Prior Art ----------
+// ---------- Inventions ----------
 
 export type InventionsEntityType = "person" | "organization" | "project" | "invention" | "product" | "discovery";
 export type InventionsLinkType =
@@ -77,7 +77,7 @@ export type InventionsLinkType =
   | "rivalry"
   | "supersedes";
 export interface InventionsLink extends SiteLink<InventionsLinkType> {
-  /** Prior Art has no default link type. */
+  /** Inventions has no default link type. */
   type: InventionsLinkType;
 }
 export interface InventionsContent {

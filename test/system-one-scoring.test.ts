@@ -42,7 +42,7 @@ describe("depth", () => {
     expect(depthOf(sure)).toBeGreaterThan(depthOf(spread));
   });
 
-  test("is what ShadowyRealm reads from Clef, and Prior Art still reads the expected value", () => {
+  test("is what ShadowyRealm reads from Clef, and Inventions still reads the expected value", () => {
     const response = { answers: recorded.clef_answers };
     const people = readClefAnswers(shadowyrealm.scoring, response);
     for (const d of shadowyrealm.scoring.dimensions) {

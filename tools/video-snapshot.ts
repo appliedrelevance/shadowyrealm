@@ -10,7 +10,7 @@
  * state of the data; re-run this to refresh it.
  *
  *   bun tools/video-snapshot.ts               # shadowyrealm
- *   bun tools/video-snapshot.ts inventions    # Prior Art
+ *   bun tools/video-snapshot.ts inventions    # Inventions
  */
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

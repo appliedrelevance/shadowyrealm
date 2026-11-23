@@ -1,5 +1,5 @@
 /**
- * Prior Art coverage, 2026-11-16: entries for the gaps a comparison with Wikipedia's Timeline of historic
+ * Inventions coverage, 2026-11-16: entries for the gaps a comparison with Wikipedia's Timeline of historic
  * inventions found (Landru work/shadowyrealm/prior-art-coverage.md), in eight batches drafted in parallel,
  * plus the hand-built aviation chain, and, from 2026-11-17, two batches of the creators of those entries.
  * Each batch's links stay inside it or reach existing entries; the links between batches are joined

@@ -1,5 +1,5 @@
 /**
- * Prior Art launch set, the industrial era (1700–1945): textiles, railways and
+ * Inventions launch set, the industrial era (1700–1945): textiles, railways and
  * steel, wired and wireless communication, recorded sound and photography,
  * vaccines and germ theory, explosives and the machine gun, flight and the
  * petrol engine. Links run between these entries and from the benchmark into

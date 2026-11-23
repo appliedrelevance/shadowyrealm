@@ -1,5 +1,5 @@
 /**
- * Prior Art launch set, modern era: the atomic age, computing and networks,
+ * Inventions launch set, modern era: the atomic age, computing and networks,
  * medicine, farming, freight, light and the platforms of the twenty-first
  * century. Links run within this file and from the benchmark into it.
  */

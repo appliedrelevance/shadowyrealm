@@ -2,7 +2,7 @@
 
 **[shadowyrealm.com](https://shadowyrealm.com)** ranks people, institutions and events by their influence across five thousand years: who shaped the world, for better and for worse.
 
-The same engine runs a second site, **[Prior Art](https://priorart.shadowyrealm.com)**, which scores inventions, inventors and products on dimensions of their own. Each site is a config in `src/sites/`, a Postgres schema and a Worker deployment (spec: [`.kiro/specs/site-platform/`](.kiro/specs/site-platform/)).
+The same engine runs a second site, **[Inventions](https://priorart.shadowyrealm.com)**, which scores inventions, inventors and products on dimensions of their own. Each site is a config in `src/sites/`, a Postgres schema and a Worker deployment (spec: [`.kiro/specs/site-platform/`](.kiro/specs/site-platform/)).
 
 ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a benefit and a harm for each of five dimensions (scientific, economic, human rights, health, cultural). They are never netted against each other. Influence also flows backward through history: each consequence passes a share of its weight to its causes, so the First Crusade credits the Catholic Church, and the Church credits Jesus.
 
@@ -22,7 +22,7 @@ ShadowyRealm measures influence, not virtue. Every entity carries ten numbers, a
 4. The **influence graph** is the curated links plus the causes Clef proposed and Clairic sized (`content/system-one-graph.json`). Each consequence gives away at most what Clairic says it owes its causes together, and its links are scaled to fit (`tools/credit-graph.ts`).
 5. The **Worker** computes the credit (`walkShares` in `src/lib/credit.ts`): an ancestor's share of a descendant is the chance that a walk upstream from the descendant, taking each cause with its link's strength, reaches the ancestor, every route added up. It adds each descendant's own profile × share and serves one computation to every page and to the MCP tools.
 
-Prior Art keeps the earlier scoring, Clef alone and a level of weight × value × reach, and takes its credit from the same walk. `ScoringConfig.breadth` (`src/sites/types.ts`) chooses between the two scorings.
+Inventions keeps the earlier scoring, Clef alone and a level of weight × value × reach, and takes its credit from the same walk. `ScoringConfig.breadth` (`src/sites/types.ts`) chooses between the two scorings.
 
 The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/specs/influence-graph/).
 
@@ -30,7 +30,7 @@ The full design and its decisions are in [`.kiro/specs/influence-graph/`](.kiro/
 
 | Layer | What it is |
 |---|---|
-| Sites | `src/sites/<site>.ts` holds everything specific to a field: dimensions, weights, Clef wording, rubrics, entity and link types, timeline, tiers, copy and brand. `shadowyrealm` and `inventions` (Prior Art) are registered. |
+| Sites | `src/sites/<site>.ts` holds everything specific to a field: dimensions, weights, Clef wording, rubrics, entity and link types, timeline, tiers, copy and brand. `shadowyrealm` and `inventions` (Inventions) are registered. |
 | Front end | React 19, Vite, TanStack Router and Query, Tailwind v4 on the Applied Relevance design tokens, d3-scale and d3-shape for the charts |
 | Worker | One Cloudflare Worker serves the SPA, `/api/*` (reads plus the owner's status control), `/mcp`, and crawler-friendly `/entity/*` pages and `/sitemap.xml` |
 | Control layer | An MCP server with 13 tools (`src/worker/mcp.ts`) over a single service layer (`src/lib/sr-service.ts`). Every write, including content loading, goes through it. |
@@ -44,7 +44,7 @@ bun install
 bun run test                          # unit tests, run against every site's config
 bun run build                         # typecheck, then build each site into dist/<site>/
 bunx wrangler deploy                  # deploy ShadowyRealm
-bunx wrangler deploy --env inventions # deploy Prior Art
+bunx wrangler deploy --env inventions # deploy Inventions
 bun run e2e                           # read-only browser tests, against shadowyrealm.com by default
 E2E_SITE=inventions E2E_BASE_URL=https://priorart.shadowyrealm.com bunx playwright test --project=site
 SITE=inventions bunx vite             # a dev server for one site
@@ -52,7 +52,7 @@ SITE=inventions bunx vite             # a dev server for one site
 
 CI (`.github/workflows/ci.yml`) runs the lint, the design-token check, the unit tests and the build on every push to `main` and every pull request. Deploys stay manual.
 
-Content lives in `content/` (ShadowyRealm) and `content/inventions/` (Prior Art). Check a content index, then load it through that site's MCP tools:
+Content lives in `content/` (ShadowyRealm) and `content/inventions/` (Inventions). Check a content index, then load it through that site's MCP tools:
 
 ```bash
 bun tools/content-check.ts content/inventions/index.ts

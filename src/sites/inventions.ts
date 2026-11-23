@@ -1,5 +1,5 @@
 /**
- * Prior Art: inventions, inventors and products ranked by their influence,
+ * Inventions: inventions, inventors and products ranked by their influence,
  * from the first farms to the smartphone. Spec: .kiro/specs/inventions-site.
  */
 import { HISTORICAL_RUBRICS } from "./rubrics";
@@ -10,11 +10,11 @@ const DEPTH = "Rate how deeply those people were affected, not how many; breadth
 const ownActivity = (name: string) => `${name}'s own direct activity`;
 const makingAndUse = (name: string) => `the making and use of ${name}`;
 
-/** A subdomain of ShadowyRealm: Prior Art is one of its indexes. */
+/** A subdomain of ShadowyRealm: Inventions is one of its indexes. */
 const ORIGIN = "https://priorart.shadowyrealm.com";
 
-/** What each tier means on Prior Art (inventions-site Requirement 8.2). */
-export const PRIOR_ART_TIER_DESCRIPTORS: Record<TierDef["tier"], string> = {
+/** What each tier means on Inventions (inventions-site Requirement 8.2). */
+export const INVENTION_TIER_DESCRIPTORS: Record<TierDef["tier"], string> = {
   minimal: "Changed one industry or one era",
   moderate: "Changed work or life across a nation or a field",
   significant: "Changed daily life across nations and generations",
@@ -29,17 +29,17 @@ export const inventions: SiteConfig = {
   key: "inventions",
   schema: "inventions",
   brand: {
-    name: "Prior Art",
+    name: "Inventions",
     origin: ORIGIN,
-    title: "Prior Art — The Influence of Invention",
+    title: "Inventions — Ranked by Their Influence",
     description:
-      "Prior Art ranks inventions, inventors and products by their influence, from the first farms to the smartphone: what each did to the world, for better and for worse.",
+      "Inventions, inventors and products ranked by their influence, from the first farms to the smartphone: what each did to the world, for better and for worse.",
     ogImage: `${ORIGIN}/og-image.png`,
-    ogImageAlt: "The Prior Art mark, a patent drawing of meshing gears, on blueprint paper",
+    ogImageAlt: "The Inventions mark, a patent drawing of a gear, on blueprint paper",
     themeColor: "#0e1a2b",
     fontsHref:
       "https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
-    userAgent: `PriorArt/1.0 (${ORIGIN})`,
+    userAgent: `ShadowyRealm-Inventions/1.0 (${ORIGIN})`,
   },
   scoring: {
     breadth: "reach",
@@ -101,11 +101,11 @@ export const inventions: SiteConfig = {
      * rule is from .kiro/specs/inventions-site/research.md.
      */
     tiers: [
-      { tier: "minimal", min: 0, label: "Notable", descriptor: PRIOR_ART_TIER_DESCRIPTORS.minimal },
-      { tier: "moderate", min: 50, label: "Major", descriptor: PRIOR_ART_TIER_DESCRIPTORS.moderate },
-      { tier: "significant", min: 100, label: "Great", descriptor: PRIOR_ART_TIER_DESCRIPTORS.significant },
-      { tier: "transformational", min: 500, label: "Epochal", descriptor: PRIOR_ART_TIER_DESCRIPTORS.transformational },
-      { tier: "legendary", min: 10000, label: "Legendary", descriptor: PRIOR_ART_TIER_DESCRIPTORS.legendary },
+      { tier: "minimal", min: 0, label: "Notable", descriptor: INVENTION_TIER_DESCRIPTORS.minimal },
+      { tier: "moderate", min: 50, label: "Major", descriptor: INVENTION_TIER_DESCRIPTORS.moderate },
+      { tier: "significant", min: 100, label: "Great", descriptor: INVENTION_TIER_DESCRIPTORS.significant },
+      { tier: "transformational", min: 500, label: "Epochal", descriptor: INVENTION_TIER_DESCRIPTORS.transformational },
+      { tier: "legendary", min: 10000, label: "Legendary", descriptor: INVENTION_TIER_DESCRIPTORS.legendary },
     ],
   },
   entityTypes: [
@@ -251,7 +251,7 @@ export const inventions: SiteConfig = {
     home: {
       heading: "Which inventions changed how we live — for better and for worse?",
       lede:
-        "Prior Art scores inventions, inventors and products by their influence, from the first farms to the smartphone. " +
+        "Inventions, inventors and products, scored by their influence from the first farms to the smartphone. " +
         "Benefit and harm are kept apart, never netted, and every invention passes a share of its weight back to the people and ideas it was built on.",
       toLineage: "Trace the lineage",
       toMethod: "How the score works",
@@ -280,12 +280,12 @@ export const inventions: SiteConfig = {
         "integrated circuit, the integrated circuit to Kilby and Noyce.",
     },
     auth: { signInHeading: "Sign In", signingIn: "Signing in..." },
-    footer: { tagline: "Prior Art — a ShadowyRealm index of invention" },
+    footer: { tagline: "Inventions — a ShadowyRealm index" },
   },
   mcp: {
-    serverName: "prior-art",
+    serverName: "inventions",
     about:
-      "Prior Art is an index of inventions, inventors and products that measures influence, not net good. An entity " +
+      "Inventions is a ShadowyRealm index of inventions, inventors and products that measures influence, not net good. An entity " +
       "is a person, organization, project, invention, product or discovery. What an invention made possible reaches " +
       "it as credit from the things built on it, so no dimension measures technology itself.",
     linkExamples:

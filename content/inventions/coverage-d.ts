@@ -1,5 +1,5 @@
 /**
- * Prior Art coverage batch d: materials and weapons. Glass, brick, pottery,
+ * Inventions coverage batch d: materials and weapons. Glass, brick, pottery,
  * porcelain, stainless steel and the first plastics, with Wallace Carothers and
  * DuPont; the sword, bow, crossbow and catapult, the bomb, the land mine, the
  * tank and the thermonuclear weapon. Links run into these entries from bronze,

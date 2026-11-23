@@ -1,5 +1,5 @@
 /**
- * Prior Art coverage batch b: land and water transport, energy and
+ * Inventions coverage batch b: land and water transport, energy and
  * electricity. Entries found missing by the audit against Wikipedia's
  * Timeline of historic inventions. Links to or from other batches' entries
  * wait in crossLinksB until those batches are merged.

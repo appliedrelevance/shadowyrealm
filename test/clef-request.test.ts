@@ -44,7 +44,7 @@ describe("every site's intensity questions", () => {
   });
 });
 
-describe("Prior Art's Clef requests", () => {
+describe("Inventions' Clef requests", () => {
   const period = {
     entity: "Transistor",
     entity_type: "invention",

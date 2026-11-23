@@ -1,5 +1,5 @@
 /**
- * Prior Art content: the benchmark chains, the launch set and the coverage entries. Load with
+ * Inventions content: the benchmark chains, the launch set and the coverage entries. Load with
  * tools/realm-load.ts and check first with tools/content-check.ts.
  *
  * A link's share is the part of the consequence credited to the cause, smaller

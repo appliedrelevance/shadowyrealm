@@ -1,5 +1,5 @@
 /**
- * Prior Art coverage batch c: food and farming, money and commerce. Drafted from a
+ * Inventions coverage batch c: food and farming, money and commerce. Drafted from a
  * coverage audit against Wikipedia's Timeline of historic inventions.
  */
 import type { InventionsContent, InventionsLink } from "../types";

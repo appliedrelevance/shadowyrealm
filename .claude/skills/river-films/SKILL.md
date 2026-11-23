@@ -6,7 +6,7 @@ description: >
   in video/short-vertical/) and the five-minute race with a live leaderboard (video/race/), for
   YouTube. Owns the pipeline (snapshot, reading plan, check,
   stills, render, description, credits, review), the failures already paid for, and the checklist
-  for taking the format to a new subject: Prior Art (inventions) next, then music, world languages,
+  for taking the format to a new subject: Inventions next, then music, world languages,
   fine art, computing, the Space Age and more. Use for any work in video/ or on tools/video-*.ts, and for
   "make a video", "river film", "the race", "re-render", "refresh the snapshot", "YouTube
   description", "a film about inventions / music / languages / art / computing / space", or publishing one.
@@ -206,24 +206,24 @@ From ShadowyRealm's own snapshot, no new site needed (figures from the 2026-11-1
   750 BCE on): Homer, Kumārajīva, Pāṇini. Pure evil is events (8 of 11), and all 11 began in 1478
   or later: the Spanish Inquisition, the Great Famine in Ireland, the Armenian genocide.
 
-Then Prior Art (inventions), and subjects that need a site first: music, world languages, fine art,
+Then Inventions, and subjects that need a site first: music, world languages, fine art,
 computing, the Space Age.
 
 ## A new subject
 
 A film draws one site's realm: `bun tools/video-snapshot.ts <site>`, a key in `SITES`
-(`src/sites/index.ts`). Prior Art exists (`inventions`, priorart.shadowyrealm.com). Music, world
+(`src/sites/index.ts`). Inventions exists (`inventions`, priorart.shadowyrealm.com). Music, world
 languages, fine art, computing or the Space Age needs its site, its content and its scores first; that is site work,
 not film work.
 
 Before the first film on another site, these ShadowyRealm-only pieces must become per-subject. The
-Prior Art film settles how; record the layout here when it does.
+Inventions film settles how; record the layout here when it does.
 
 - **Data paths.** The snapshot always writes `video/assets/realm-data.js` and
   `video/assets/images/`, and `tools/video-description.ts` reads them: a second subject would
   overwrite ShadowyRealm's.
 - **Eras.** `ERAS` in `river.js` are human-history eras from 3500 BCE. Each subject needs its own,
-  and they are the YouTube chapters. The axis comes from the site's `timeline` (Prior Art starts at
+  and they are the YouTube chapters. The axis comes from the site's `timeline` (Inventions starts at
   10,000 BCE).
 - **Words on screen.** The intro title "Five thousand years of influence" (`intro.html`); the
   source line "shadowyrealm.com · N entities" (`river.html`, `race-river.html`); the end card's URL,
@@ -241,9 +241,9 @@ Prior Art film settles how; record the layout here when it does.
   HyperFrames `remove-background` finds no subject in the photo: it is made for people. A
   subject's film shows its own site's mark.
 - **Look.** The films use ShadowyRealm's tokens (ground `#181822`, Inter). A subject's film takes
-  its site's own tokens and faces (Prior Art: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
+  its site's own tokens and faces (Inventions: `#0e1a2b`, IBM Plex Serif); see the `ar-design` skill.
 - **Type shades.** `river.css` shades `t-person` and `t-event`; other types draw as organizations.
-  Prior Art's types are person, organization, project, invention and product.
+  Inventions' types are person, organization, project, invention and product.
 - **Timings and music.** `FILMS` timings follow from the data (steps 3 and 4). The music is always
   our own score, written as notes against the film's cues (`bun tools/music-cues.ts <film>`) and
   played by BBC SO Discover (Geordie, 2026-11-21: no generated beds, no borrowed classics). A

@@ -1,5 +1,5 @@
 /**
- * Prior Art coverage batch f: knowledge, measurement and communication.
+ * Inventions coverage batch f: knowledge, measurement and communication.
  * Drafted against Wikipedia's Timeline of historic inventions; every endpoint
  * of `links` is an entity in content/inventions/.
  */

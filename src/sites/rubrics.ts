@@ -1,6 +1,6 @@
 /**
  * The rubrics Clef scores against, for sites whose influence plays out over
- * years to millennia. ShadowyRealm and Prior Art both use them.
+ * years to millennia. ShadowyRealm and Inventions both use them.
  */
 import type { Rubrics } from "./types";
 

@@ -1,5 +1,5 @@
 /**
- * The Prior Art benchmark (inventions-site Requirement 10.1): four chains that
+ * The Inventions benchmark (inventions-site Requirement 10.1): four chains that
  * exercise every credit-bearing link type, both kinds of two-sided entity,
  * simultaneous invention, and a scale pair.
  */

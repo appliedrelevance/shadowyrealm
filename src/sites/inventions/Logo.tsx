@@ -1,5 +1,5 @@
 /**
- * The Prior Art mark: a gear drawn like a patent figure, its outline in the
+ * The Inventions mark: a gear drawn like a patent figure, its outline in the
  * drawing's ink with a copper hub. public/inventions/favicon.svg is the same
  * drawing on its own blueprint ground.
  */

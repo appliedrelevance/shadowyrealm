@@ -27,7 +27,7 @@ between them, both numbers in bold.
   written against this film's cues and rendered through BBC SO Discover in SoundCraft by scorerender;
   it replaces the ACE-Step take of 2026-11-13.
 
-Not built: the Lineage Short (one chain lighting up with its shares) and the Prior Art Short
+Not built: the Lineage Short (one chain lighting up with its shares) and the Inventions Short
 (relationship types). The snapshot tool takes `inventions` for the second.
 
 ## Measured

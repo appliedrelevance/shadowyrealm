@@ -1,5 +1,5 @@
 /**
- * Prior Art launch set, ancient and medieval: farming, metals, writing,
+ * Inventions launch set, ancient and medieval: farming, metals, writing,
  * paper and printing, magnetism, gunpowder, power from water and wind,
  * timekeeping, and the lens with the instruments built on it.
  */

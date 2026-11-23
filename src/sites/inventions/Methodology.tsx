@@ -10,12 +10,12 @@ import {
   TierTable,
 } from "@/features/methodology/tables";
 
-/** Prior Art's account of its method; the tables come from the site config. */
+/** The Inventions index's account of its method; the tables come from the site config. */
 export function Methodology() {
   return (
     <>
       <p className="mt-4 text-lg text-ink-2">
-        Prior Art measures what inventions did to the world, not how clever they were. Fritz Haber's ammonia process
+        This index measures what inventions did to the world, not how clever they were. Fritz Haber's ammonia process
         feeds billions, and Haber also ran Germany's chlorine gas programme. Thomas Midgley gave the world leaded petrol
         and CFCs. The score keeps both sides of each.
       </p>
@@ -115,10 +115,9 @@ export function Methodology() {
 
         <h2 className="font-display text-ink">One of the ShadowyRealm indexes</h2>
         <p>
-          Prior Art runs on the same engine as ShadowyRealm, which scores people, institutions and events across
-          history. The credit shares are computed inside Postgres by a recursive query over the links, and a small
-          TypeScript calculator in a Cloudflare Worker turns periods into curves and areas for every page and for the
-          MCP tools that maintain the index.
+          Inventions runs on the same engine as ShadowyRealm, which scores people, institutions and events across
+          history. Each credit share adds up every route through the links, and the same calculator turns periods into
+          curves and areas for every page and for the MCP tools that maintain the index.
         </p>
         <p>
           <Link to="/realm">See the lineage</Link> or <Link to="/">return to the index</Link>.

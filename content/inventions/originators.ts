@@ -1,6 +1,6 @@
 /**
  * The originators of launch-set inventions that had no credit link, so that
- * every entry in Prior Art sits in the lineage graph.
+ * every entry in Inventions sits in the lineage graph.
  */
 import type { InventionsContent } from "../types";
 
