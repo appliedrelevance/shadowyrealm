@@ -14,6 +14,7 @@ import { launchAncient } from "./launch-ancient";
 import { launchIndustrial } from "./launch-industrial";
 import { launchModern } from "./launch-modern";
 import { originators } from "./originators";
+import systemOne from "./system-one-graph.json";
 
 /** The site this content belongs to (src/sites). */
 export const site = "inventions";
@@ -23,6 +24,8 @@ const parts: InventionsContent[] = [benchmark, launchAncient, launchIndustrial, 
 const content: InventionsContent = {
   entities: parts.flatMap((p) => p.entities),
   links: parts.flatMap((p) => p.links),
+  /** tools/credit-search.ts, 2026-11-24: 259 proposed links and 254 inherited shares. */
+  systemOne,
 };
 
 export default content;

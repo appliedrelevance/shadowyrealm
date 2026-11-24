@@ -79,7 +79,8 @@ export type InventionsLinkType =
   | "mentorship"
   | "collaboration"
   | "rivalry"
-  | "supersedes";
+  | "supersedes"
+  | "influence";
 export interface InventionsLink extends SiteLink<InventionsLinkType> {
   /** Inventions has no default link type. */
   type: InventionsLinkType;
@@ -87,6 +88,7 @@ export interface InventionsLink extends SiteLink<InventionsLinkType> {
 export interface InventionsContent {
   entities: SiteEntity<InventionsEntityType>[];
   links: InventionsLink[];
+  systemOne?: SystemOneGraph;
 }
 
 // ---------- Music ----------

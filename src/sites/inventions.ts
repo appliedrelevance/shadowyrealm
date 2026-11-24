@@ -235,6 +235,15 @@ export const inventions: SiteConfig = {
       labels: { cause: "Replaced by", consequence: "Replaced" },
       meaning: "the consequence replaced the cause (old -> new)",
     },
+    {
+      // Last, as the schema's enum has it: the value was added after the others.
+      key: "influence",
+      credit: true,
+      from: "any",
+      to: "any",
+      labels: { cause: "Influenced", consequence: "Influenced by" },
+      meaning: "the cause shaped the consequence; System One's proposed links are this type",
+    },
   ],
   timeline: {
     /** The first farming. */
