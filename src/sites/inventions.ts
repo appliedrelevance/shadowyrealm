@@ -100,15 +100,16 @@ export const inventions: SiteConfig = {
     /**
      * In influence-centuries of total magnitude: the round values of the 1-2-5
      * series nearest the 20th, 50th, 80th and 95th percentiles over the 344
-     * entities published on 2026-11-17 (53.9, 134.8, 718.2, 7,587.9). The
-     * rule is from .kiro/specs/inventions-site/research.md.
+     * entities scored on 2026-11-24 with Clairic's head-counts and System One's
+     * links (7.7, 24.5, 122.1, 1,391.9). The rule is from
+     * .kiro/specs/inventions-site/research.md.
      */
     tiers: [
       { tier: "minimal", min: 0, label: "Notable", descriptor: INVENTION_TIER_DESCRIPTORS.minimal },
-      { tier: "moderate", min: 50, label: "Major", descriptor: INVENTION_TIER_DESCRIPTORS.moderate },
-      { tier: "significant", min: 100, label: "Great", descriptor: INVENTION_TIER_DESCRIPTORS.significant },
-      { tier: "transformational", min: 500, label: "Epochal", descriptor: INVENTION_TIER_DESCRIPTORS.transformational },
-      { tier: "legendary", min: 10000, label: "Legendary", descriptor: INVENTION_TIER_DESCRIPTORS.legendary },
+      { tier: "moderate", min: 10, label: "Major", descriptor: INVENTION_TIER_DESCRIPTORS.moderate },
+      { tier: "significant", min: 20, label: "Great", descriptor: INVENTION_TIER_DESCRIPTORS.significant },
+      { tier: "transformational", min: 100, label: "Epochal", descriptor: INVENTION_TIER_DESCRIPTORS.transformational },
+      { tier: "legendary", min: 1000, label: "Legendary", descriptor: INVENTION_TIER_DESCRIPTORS.legendary },
     ],
   },
   entityTypes: [
