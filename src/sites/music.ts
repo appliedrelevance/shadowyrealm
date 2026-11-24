@@ -55,7 +55,7 @@ export const music: SiteConfig = {
       "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: `ShadowyRealm-Music/1.0 (${ORIGIN})`,
     holds: "Musicians, works, genres and instruments",
-    hero: "/hero.png",
+    hero: "/hero.jpg",
   },
   scoring: {
     sides: ["benefit"],
@@ -250,7 +250,8 @@ export const music: SiteConfig = {
         "Each band is what one entry gave people that year; the further it travelled, the thicker it is. Colour is the family, shade the branch.",
       indexHeading: "The Index",
       indexSubtitle: "Ranked by total influence: what it gave, plus the share credited from everything that drew on it.",
-      heroAlt: "The stream of music through time, one band for each entry, coloured by its family",
+      heroAlt:
+        "An 18th-century portrait of a woman in a white gown and rose sash, her cheek against the neck of a tall walnut lyre as she plays",
       empty: "No entries yet",
       loading: "Loading...",
     },
