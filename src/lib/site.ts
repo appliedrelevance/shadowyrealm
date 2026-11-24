@@ -7,6 +7,9 @@ import { siteFor } from "@/sites";
 
 export const SITE = siteFor(import.meta.env.VITE_SITE);
 
+/** Whether the site weighs harm beside benefit (ScoringConfig.sides). A one-sided site's pages show no harm. */
+export const HAS_HARM: boolean = SITE.scoring.sides.length === 2;
+
 export const DIMENSION_KEYS: string[] = SITE.scoring.dimensions.map((d) => d.key);
 
 export const DIMENSION_LABELS: Record<string, string> = Object.fromEntries(
@@ -34,7 +37,7 @@ export function assertSameSite(response: Response): void {
 export function profileSizeWords(): string {
   const words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
     "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
-  const n = DIMENSION_KEYS.length * 2;
+  const n = DIMENSION_KEYS.length * SITE.scoring.sides.length;
   return `${words[n] ?? String(n)}-number`;
 }
 

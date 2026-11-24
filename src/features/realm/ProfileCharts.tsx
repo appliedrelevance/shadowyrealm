@@ -1,11 +1,12 @@
 /**
  * The profile page's two charts: one entity's influence curve over time, and
- * its benefit-and-harm profile. Both split own impact (solid) from impact credited
- * from its consequences (hatched).
+ * its profile by dimension. Both split own impact (solid) from impact credited
+ * from its consequences (hatched). On a one-sided site (ScoringConfig.sides) both
+ * draw benefit alone, across the whole chart.
  */
 import { useId, useMemo, useState } from "react";
 import { area, curveMonotoneX } from "d3-shape";
-import { DIMENSION_KEYS, DIMENSION_LABELS, profileSizeWords, SITE } from "@/lib/site";
+import { DIMENSION_KEYS, DIMENSION_LABELS, HAS_HARM, profileSizeWords, SITE } from "@/lib/site";
 import { formatYear, unitToYear } from "@/lib/timeline";
 import type { EntityProfile } from "./api";
 import {
@@ -23,6 +24,9 @@ import {
   useWidth,
 } from "./chart";
 
+/** A one-sided site has no harm to tell its benefit from, so its keys name the influence itself. */
+const OWN_BENEFIT = HAS_HARM ? "Own benefit" : "Own influence";
+const CREDITED_BENEFIT = HAS_HARM ? "Credited benefit" : "Credited influence";
 
 function Legend() {
   const swatch = (color: string, hatched: boolean) => (
@@ -37,10 +41,14 @@ function Legend() {
   );
   return (
     <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-muted">
-      <span className="flex items-center gap-1.5">{swatch(BENEFIT, false)}Own benefit</span>
-      <span className="flex items-center gap-1.5">{swatch(BENEFIT, true)}Credited benefit</span>
-      <span className="flex items-center gap-1.5">{swatch(HARM, false)}Own harm</span>
-      <span className="flex items-center gap-1.5">{swatch(HARM, true)}Credited harm</span>
+      <span className="flex items-center gap-1.5">{swatch(BENEFIT, false)}{OWN_BENEFIT}</span>
+      <span className="flex items-center gap-1.5">{swatch(BENEFIT, true)}{CREDITED_BENEFIT}</span>
+      {HAS_HARM && (
+        <>
+          <span className="flex items-center gap-1.5">{swatch(HARM, false)}Own harm</span>
+          <span className="flex items-center gap-1.5">{swatch(HARM, true)}Credited harm</span>
+        </>
+      )}
     </p>
   );
 }
@@ -58,7 +66,8 @@ export function InfluenceCurve({ profile }: { profile: EntityProfile }) {
   const fromUnit = from / BUCKET_COUNT;
   const toUnit = (from + len) / BUCKET_COUNT;
   const x = (u: number) => M.left + ((u - fromUnit) / (toUnit - fromUnit || 1)) * (W - M.left - M.right);
-  const half = (H - M.top - M.bottom) / 2;
+  // Two sides meet at the middle; one side stands on the bottom axis.
+  const half = (H - M.top - M.bottom) / (HAS_HARM ? 2 : 1);
   const mid = M.top + half;
 
   const rows = useMemo(
@@ -95,7 +104,11 @@ export function InfluenceCurve({ profile }: { profile: EntityProfile }) {
           width={W}
           height={H}
           role="img"
-          aria-label={`${profile.entity.name}'s influence over time: own and credited benefit above the axis, harm below`}
+          aria-label={
+            HAS_HARM
+              ? `${profile.entity.name}'s influence over time: own and credited benefit above the axis, harm below`
+              : `${profile.entity.name}'s own and credited influence over time`
+          }
           onPointerMove={(e) => {
             const box = e.currentTarget.getBoundingClientRect();
             const mx = e.clientX - box.left;
@@ -119,25 +132,37 @@ export function InfluenceCurve({ profile }: { profile: EntityProfile }) {
           />
           <path d={shape(() => 0, (r) => r.ob)} fill={BENEFIT} />
           <path d={shape((r) => r.ob, (r) => r.ob + r.cb)} fill={`url(#${hatch}-b)`} />
-          <path d={shape(() => 0, (r) => -r.oh)} fill={HARM} />
-          <path d={shape((r) => -r.oh, (r) => -(r.oh + r.ch))} fill={`url(#${hatch}-h)`} />
+          {HAS_HARM && (
+            <>
+              <path d={shape(() => 0, (r) => -r.oh)} fill={HARM} />
+              <path d={shape((r) => -r.oh, (r) => -(r.oh + r.ch))} fill={`url(#${hatch}-h)`} />
+            </>
+          )}
           <line x1={M.left} x2={W - M.right} y1={mid} y2={mid} stroke={GRID} />
-          <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
-            Benefit ↑
-          </text>
-          <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
-            Harm ↓
-          </text>
+          {HAS_HARM && (
+            <>
+              <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
+                Benefit ↑
+              </text>
+              <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
+                Harm ↓
+              </text>
+            </>
+          )}
           {hover && <line x1={hover.px} x2={hover.px} y1={M.top} y2={H - M.bottom} stroke="var(--color-ink-muted)" />}
         </svg>
         {hover && row && (
           <Tooltip x={hover.px} y={hover.py} width={W} height={H}>
             <p className="mb-1 text-ink-muted">Around {formatYear(yearOf(hover.k))}, per year</p>
             {[
-              { label: "Own benefit", value: row.ob, color: BENEFIT, dashed: false },
-              { label: "Credited benefit", value: row.cb, color: BENEFIT, dashed: true },
-              { label: "Own harm", value: row.oh, color: HARM, dashed: false },
-              { label: "Credited harm", value: row.ch, color: HARM, dashed: true },
+              { label: OWN_BENEFIT, value: row.ob, color: BENEFIT, dashed: false },
+              { label: CREDITED_BENEFIT, value: row.cb, color: BENEFIT, dashed: true },
+              ...(HAS_HARM
+                ? [
+                    { label: "Own harm", value: row.oh, color: HARM, dashed: false },
+                    { label: "Credited harm", value: row.ch, color: HARM, dashed: true },
+                  ]
+                : []),
             ].map((r) => (
               <p key={r.label} className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5">
@@ -165,8 +190,9 @@ export function ProfileBars({ profile }: { profile: EntityProfile }) {
   const rowH = 36;
   const bar = 16;
   const H = DIMENSION_KEYS.length * rowH + 8;
-  const center = labelW + (W - labelW) / 2;
-  const reachPx = (W - labelW) / 2 - valueW;
+  // Benefit runs right of the centre and harm left of it; one side starts at the labels.
+  const center = HAS_HARM ? labelW + (W - labelW) / 2 : labelW;
+  const reachPx = (W - labelW) / (HAS_HARM ? 2 : 1) - valueW;
   const max = Math.max(
     1e-9,
     ...DIMENSION_KEYS.flatMap((d) => [own.benefit[d] + credited.benefit[d], own.harm[d] + credited.harm[d]]),
@@ -193,30 +219,38 @@ export function ProfileBars({ profile }: { profile: EntityProfile }) {
             return (
               <g key={d}>
                 <title>
-                  {`${DIMENSION_LABELS[d]}: benefit ${formatMagnitude(benefitTotal)} (own ${formatMagnitude(own.benefit[d])}), harm ${formatMagnitude(harmTotal)} (own ${formatMagnitude(own.harm[d])})`}
+                  {HAS_HARM
+                    ? `${DIMENSION_LABELS[d]}: benefit ${formatMagnitude(benefitTotal)} (own ${formatMagnitude(own.benefit[d])}), harm ${formatMagnitude(harmTotal)} (own ${formatMagnitude(own.harm[d])})`
+                    : `${DIMENSION_LABELS[d]}: ${formatMagnitude(benefitTotal)} (own ${formatMagnitude(own.benefit[d])})`}
                 </title>
                 <text x={0} y={cy + 4} fontSize={12} fill="var(--color-ink-2)">
                   {DIMENSION_LABELS[d]}
                 </text>
                 <rect x={center + 1} y={cy - bar / 2} width={ob} height={bar} fill={BENEFIT} />
                 <rect x={center + 1 + ob} y={cy - bar / 2} width={cb} height={bar} fill={`url(#${hatch}-b)`} rx={0} />
-                <rect x={center - 1 - oh} y={cy - bar / 2} width={oh} height={bar} fill={HARM} />
-                <rect x={center - 1 - oh - ch} y={cy - bar / 2} width={ch} height={bar} fill={`url(#${hatch}-h)`} />
                 <text x={center + 6 + ob + cb} y={cy + 4} fontSize={11} fill="var(--color-ink-2)" className="font-mono">
                   {formatMagnitude(benefitTotal)}
                 </text>
-                <text x={center - 6 - oh - ch} y={cy + 4} fontSize={11} fill="var(--color-ink-2)" textAnchor="end" className="font-mono">
-                  {formatMagnitude(harmTotal)}
-                </text>
+                {HAS_HARM && (
+                  <>
+                    <rect x={center - 1 - oh} y={cy - bar / 2} width={oh} height={bar} fill={HARM} />
+                    <rect x={center - 1 - oh - ch} y={cy - bar / 2} width={ch} height={bar} fill={`url(#${hatch}-h)`} />
+                    <text x={center - 6 - oh - ch} y={cy + 4} fontSize={11} fill="var(--color-ink-2)" textAnchor="end" className="font-mono">
+                      {formatMagnitude(harmTotal)}
+                    </text>
+                  </>
+                )}
               </g>
             );
           })}
         </svg>
       </div>
-      <p className="mt-2 flex justify-between text-xs text-ink-muted" style={{ paddingLeft: labelW }}>
-        <span>← Harm</span>
-        <span>Benefit →</span>
-      </p>
+      {HAS_HARM && (
+        <p className="mt-2 flex justify-between text-xs text-ink-muted" style={{ paddingLeft: labelW }}>
+          <span>← Harm</span>
+          <span>Benefit →</span>
+        </p>
+      )}
       <Legend />
     </figure>
   );

@@ -1,12 +1,12 @@
 /**
  * The impact river: every entity's own influence across five thousand years.
  * Benefit stacks above the axis and harm below it, one band per entity, oldest
- * nearest the axis. Only own influence is drawn, so nothing is counted twice:
+ * nearest the axis; a one-sided site's benefit stands on the bottom axis. Only own influence is drawn, so nothing is counted twice:
  * credit is a share of a band already on the chart.
  */
 import { memo, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { SITE } from "@/lib/site";
+import { HAS_HARM, SITE } from "@/lib/site";
 import { formatSpan, formatYear, unitToYear } from "@/lib/timeline";
 import type { Realm, RealmEntity } from "./api";
 import {
@@ -46,7 +46,7 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
   const H = W < 900 ? 420 : 560;
   const M = { top: 18, right: 14, bottom: 30, left: 14 };
   const innerW = W - M.left - M.right;
-  const half = (H - M.top - M.bottom) / 2;
+  const half = (H - M.top - M.bottom) / (HAS_HARM ? 2 : 1);
   const mid = M.top + half;
   const x = (u: number) => M.left + u * innerW;
 
@@ -158,18 +158,22 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
             width={W}
             height={H}
             role="img"
-            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(SITE.timeline.start)} to ${realm.as_of_year}, benefit above the axis and harm below`}
+            aria-label={`Impact river: the own influence of ${layers.length} entities from ${formatYear(SITE.timeline.start)} to ${realm.as_of_year}${HAS_HARM ? ", benefit above the axis and harm below" : ""}`}
             onPointerLeave={() => setHover(null)}
           >
             <TimeAxis asOfYear={realm.as_of_year} x={x} top={M.top} bottom={H - M.bottom} />
             <Bands paths={paths} hovered={hover?.slug ?? null} onMove={onBandMove} onOpen={onBandOpen} />
             <line x1={M.left} x2={W - M.right} y1={mid} y2={mid} stroke={GRID} strokeWidth={1} />
-            <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
-              Benefit ↑
-            </text>
-            <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
-              Harm ↓
-            </text>
+            {HAS_HARM && (
+              <>
+                <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
+                  Benefit ↑
+                </text>
+                <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
+                  Harm ↓
+                </text>
+              </>
+            )}
             <g pointerEvents="none">
               {labels.map((l) => (
                 <text
@@ -196,13 +200,15 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
               </p>
               <p className="mt-1.5 text-ink-muted">Around {formatYear(hoverYear)}, per year</p>
               <p className="flex justify-between">
-                <span>Benefit</span>
+                <span>{HAS_HARM ? "Benefit" : "Influence"}</span>
                 <span className="font-mono text-ink">{formatMagnitude(levelAt(hovered, "benefit"))}</span>
               </p>
-              <p className="flex justify-between">
-                <span>Harm</span>
-                <span className="font-mono text-ink">{formatMagnitude(levelAt(hovered, "harm"))}</span>
-              </p>
+              {HAS_HARM && (
+                <p className="flex justify-between">
+                  <span>Harm</span>
+                  <span className="font-mono text-ink">{formatMagnitude(levelAt(hovered, "harm"))}</span>
+                </p>
+              )}
               <p className="mt-1.5 flex justify-between border-t border-line pt-1.5">
                 <span>Total influence</span>
                 <span className="font-mono text-ink">{formatMagnitude(hovered.entity.total_magnitude)}</span>
@@ -212,14 +218,18 @@ export function ImpactRiver({ realm }: { realm: Realm }) {
         </div>
       </div>
       <figcaption className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-muted">
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-4 rounded-sm bg-benefit" aria-hidden="true" />
-          Benefit
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-4 rounded-sm bg-harm" aria-hidden="true" />
-          Harm
-        </span>
+        {HAS_HARM && (
+          <>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-2.5 w-4 rounded-sm bg-benefit" aria-hidden="true" />
+              Benefit
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-2.5 w-4 rounded-sm bg-harm" aria-hidden="true" />
+              Harm
+            </span>
+          </>
+        )}
         <span>
           One band per entity: its own influence each year. Height is on a square-root scale, time on a
           logarithmic one. Hover to identify, click to open.
@@ -248,7 +258,7 @@ const Bands = memo(function Bands({
         return (
           <g key={p.slug} opacity={opacity} onPointerMove={(e) => onMove(p.slug, e)} onClick={() => onOpen(p.slug)}>
             <path d={p.benefit} fill={BENEFIT} />
-            <path d={p.harm} fill={HARM} />
+            {HAS_HARM && <path d={p.harm} fill={HARM} />}
           </g>
         );
       })}

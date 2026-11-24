@@ -5,7 +5,7 @@
  */
 import { describeEnds } from "@/sites";
 import { formatMagnitude } from "@/features/realm/chart";
-import { SITE } from "@/lib/site";
+import { HAS_HARM, SITE } from "@/lib/site";
 
 export function DimensionTable() {
   return (
@@ -58,16 +58,16 @@ export function IntensityTable() {
       <thead>
         <tr>
           <th>Intensity</th>
-          <th>Clef's level for a benefit</th>
-          <th>Clef's level for a harm</th>
+          <th>{HAS_HARM ? "Clef's level for a benefit" : "Clef's level"}</th>
+          {HAS_HARM && <th>Clef's level for a harm</th>}
         </tr>
       </thead>
       <tbody>
-        {harm.map((label, i) => (
+        {benefit.map((label, i) => (
           <tr key={label}>
             <td>{((i * 10) / 9).toFixed(1)}</td>
-            <td>{benefit[i]}</td>
             <td>{label}</td>
+            {HAS_HARM && <td>{harm[i]}</td>}
           </tr>
         ))}
       </tbody>

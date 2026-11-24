@@ -8,7 +8,7 @@ import { formatMagnitude } from "@/features/realm/chart";
 import { InfluenceCurve, ProfileBars } from "@/features/realm/ProfileCharts";
 import { typeIcons } from "@/features/realm/RealmHome";
 import { COPY } from "@/lib/copy";
-import { dimensionCountWords, SITE } from "@/lib/site";
+import { dimensionCountWords, HAS_HARM, SITE } from "@/lib/site";
 import { creditTypes, linkLabels } from "@/sites";
 import { formatSpan, formatYear } from "@/lib/timeline";
 import { usePageTitle } from "@/lib/usePageTitle";
@@ -116,8 +116,12 @@ export function EntityProfilePage({ slug }: { slug: string }) {
             {formatMagnitude(score.credited_magnitude)} · in {SITE.scoring.unit.name}
           </p>
         </div>
-        <Stat label="Benefit" value={score.benefit_total} swatch="bg-benefit" />
-        <Stat label="Harm" value={score.harm_total} swatch="bg-harm" />
+        {HAS_HARM && (
+          <>
+            <Stat label="Benefit" value={score.benefit_total} swatch="bg-benefit" />
+            <Stat label="Harm" value={score.harm_total} swatch="bg-harm" />
+          </>
+        )}
       </section>
 
       <section className="mt-6 rounded-lg border border-line bg-surface-1 p-4">
@@ -137,8 +141,9 @@ export function EntityProfilePage({ slug }: { slug: string }) {
       <section className="mt-6 rounded-lg border border-line bg-surface-1 p-4">
         <h2 className="font-display text-lg font-semibold text-ink">Impact profile</h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">
-          Benefit and harm for each of the {dimensionCountWords()} dimensions, in {SITE.scoring.unit.name}. They are never
-          netted.
+          {HAS_HARM
+            ? `Benefit and harm for each of the ${dimensionCountWords()} dimensions, in ${SITE.scoring.unit.name}. They are never netted.`
+            : `Influence on each of the ${dimensionCountWords()} dimensions, in ${SITE.scoring.unit.name}.`}
         </p>
         <ProfileBars profile={profile} />
       </section>

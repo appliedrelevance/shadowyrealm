@@ -9,7 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { arc } from "d3-shape";
 import { ArrowRight } from "lucide-react";
 import { creditTypes } from "@/sites";
-import { SITE } from "@/lib/site";
+import { HAS_HARM, SITE } from "@/lib/site";
 import { formatSpan, yearToUnit } from "@/lib/timeline";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useEntityProfile, type Realm, type RealmEntity } from "./api";
@@ -241,14 +241,18 @@ export function LineageGraph({ realm }: { realm: Realm }) {
           </svg>
         </div>
         <figcaption className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-muted">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-benefit" aria-hidden="true" />
-            Benefit share
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-harm" aria-hidden="true" />
-            Harm share
-          </span>
+          {HAS_HARM && (
+            <>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-benefit" aria-hidden="true" />
+                Benefit share
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-harm" aria-hidden="true" />
+                Harm share
+              </span>
+            </>
+          )}
           <span>
             Each circle is an entity at the year it began, sized by total influence. Arrows run from cause to
             consequence, thicker for a larger credited share. Select one to trace its lineage.
@@ -295,10 +299,14 @@ function FocusPanel({
         <dd className="text-right font-mono text-ink">{formatMagnitude(entity.own_magnitude)}</dd>
         <dt className="text-ink-muted">Credited</dt>
         <dd className="text-right font-mono text-ink">{formatMagnitude(entity.credited_magnitude)}</dd>
-        <dt className="text-ink-muted">Benefit</dt>
-        <dd className="text-right font-mono text-ink">{formatMagnitude(entity.benefit_total)}</dd>
-        <dt className="text-ink-muted">Harm</dt>
-        <dd className="text-right font-mono text-ink">{formatMagnitude(entity.harm_total)}</dd>
+        {HAS_HARM && (
+          <>
+            <dt className="text-ink-muted">Benefit</dt>
+            <dd className="text-right font-mono text-ink">{formatMagnitude(entity.benefit_total)}</dd>
+            <dt className="text-ink-muted">Harm</dt>
+            <dd className="text-right font-mono text-ink">{formatMagnitude(entity.harm_total)}</dd>
+          </>
+        )}
       </dl>
       <p className="mt-4 text-xs text-ink-muted">
         Draws credit from {downstream} {downstream === 1 ? "consequence" : "consequences"} · passes credit to {upstream}{" "}

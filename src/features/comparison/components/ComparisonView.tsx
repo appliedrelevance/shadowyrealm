@@ -17,7 +17,7 @@ import {
 } from "@/features/realm/chart";
 import { seriesColor } from "@/lib/chart-colors";
 import { COPY } from "@/lib/copy";
-import { DIMENSION_KEYS, DIMENSION_LABELS, profileSizeWords, SITE } from "@/lib/site";
+import { DIMENSION_KEYS, DIMENSION_LABELS, HAS_HARM, profileSizeWords, SITE } from "@/lib/site";
 import { usePageTitle } from "@/lib/usePageTitle";
 
 const MAX_SELECTED = 5;
@@ -108,7 +108,9 @@ export function ComparisonView() {
           <section className="mt-8 rounded-lg border border-line bg-surface-1 p-4">
             <h2 className="font-display text-lg font-semibold text-ink">Total influence over time</h2>
             <p className="mb-3 mt-1 text-sm text-ink-muted">
-              Own plus credited influence per year: benefit above the line, harm below it.
+              {HAS_HARM
+                ? "Own plus credited influence per year: benefit above the line, harm below it."
+                : "Own plus credited influence per year."}
             </p>
             <CompareCurves profiles={loaded} />
           </section>
@@ -141,7 +143,8 @@ function CompareCurves({ profiles }: { profiles: EntityProfile[] }) {
   const toUnit = last / BUCKET_COUNT;
   const x = (u: number) => M.left + ((u - fromUnit) / (toUnit - fromUnit || 1)) * (W - M.left - M.right);
   const max = Math.max(1e-9, ...series.flatMap((s) => [...s.benefit, ...s.harm]));
-  const half = (H - M.top - M.bottom) / 2;
+  // Two sides meet at the middle; one side stands on the bottom axis.
+  const half = (H - M.top - M.bottom) / (HAS_HARM ? 2 : 1);
   const mid = M.top + half;
 
   const line = (s: (typeof series)[number], values: number[], sign: 1 | -1) => {
@@ -163,15 +166,19 @@ function CompareCurves({ profiles }: { profiles: EntityProfile[] }) {
           {series.map((s, i) => (
             <g key={s.p.entity.slug} fill="none" stroke={seriesColor(i)} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round">
               <path d={line(s, s.benefit, 1)} />
-              <path d={line(s, s.harm, -1)} />
+              {HAS_HARM && <path d={line(s, s.harm, -1)} />}
             </g>
           ))}
-          <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
-            Benefit ↑
-          </text>
-          <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
-            Harm ↓
-          </text>
+          {HAS_HARM && (
+            <>
+              <text x={M.left + 4} y={M.top + 12} fontSize={11} fill={AXIS_TEXT}>
+                Benefit ↑
+              </text>
+              <text x={M.left + 4} y={H - M.bottom - 6} fontSize={11} fill={AXIS_TEXT}>
+                Harm ↓
+              </text>
+            </>
+          )}
         </svg>
       </div>
       <figcaption className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-muted">
@@ -191,12 +198,19 @@ function CompareTable({ profiles }: { profiles: EntityProfile[] }) {
     { label: "Total influence", values: profiles.map((p) => p.score.total_magnitude), strong: true },
     { label: "Own", values: profiles.map((p) => p.score.own_magnitude) },
     { label: "Credited", values: profiles.map((p) => p.score.credited_magnitude) },
-    { label: "Benefit", values: profiles.map((p) => p.score.benefit_total) },
-    { label: "Harm", values: profiles.map((p) => p.score.harm_total) },
-    ...DIMENSION_KEYS.flatMap((d) => [
-      { label: `${DIMENSION_LABELS[d]} benefit`, values: profiles.map((p) => p.score.profile.total.benefit[d]) },
-      { label: `${DIMENSION_LABELS[d]} harm`, values: profiles.map((p) => p.score.profile.total.harm[d]) },
-    ]),
+    ...(HAS_HARM
+      ? [
+          { label: "Benefit", values: profiles.map((p) => p.score.benefit_total) },
+          { label: "Harm", values: profiles.map((p) => p.score.harm_total) },
+          ...DIMENSION_KEYS.flatMap((d) => [
+            { label: `${DIMENSION_LABELS[d]} benefit`, values: profiles.map((p) => p.score.profile.total.benefit[d]) },
+            { label: `${DIMENSION_LABELS[d]} harm`, values: profiles.map((p) => p.score.profile.total.harm[d]) },
+          ]),
+        ]
+      : DIMENSION_KEYS.map((d) => ({
+          label: DIMENSION_LABELS[d],
+          values: profiles.map((p) => p.score.profile.total.benefit[d]),
+        }))),
   ];
   return (
     <section className="mt-6 overflow-x-auto rounded-lg border border-line">

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, RefreshCw, Search } from "lucide-react";
-import { SITE } from "@/lib/site";
+import { HAS_HARM, SITE } from "@/lib/site";
 import { SITE_UI } from "@/sites/ui";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
@@ -156,7 +156,9 @@ function IndexTable({ realm }: { realm: Realm }) {
               <th scope="col" className="w-12 px-3 py-2 text-right font-medium">#</th>
               <th scope="col" className="px-3 py-2 font-medium">Entity</th>
               <th scope="col" className="px-3 py-2 font-medium">When</th>
-              <th scope="col" className="w-[30%] px-3 py-2 font-medium">Benefit · Harm</th>
+              <th scope="col" className="w-[30%] px-3 py-2 font-medium">
+                {HAS_HARM ? "Benefit · Harm" : <span className="sr-only">Influence, as a bar</span>}
+              </th>
               <th scope="col" className="px-3 py-2 text-right font-medium">Influence</th>
               <th scope="col" className="px-3 py-2 font-medium">Tier</th>
             </tr>
@@ -202,10 +204,20 @@ function IndexTable({ realm }: { realm: Realm }) {
                     <div
                       className="flex h-2.5 gap-[2px]"
                       style={{ width: `${Math.max(scale * 100, 1.5)}%` }}
-                      title={`Benefit ${formatMagnitude(e.benefit_total)} · harm ${formatMagnitude(e.harm_total)}`}
+                      title={
+                        HAS_HARM
+                          ? `Benefit ${formatMagnitude(e.benefit_total)} · harm ${formatMagnitude(e.harm_total)}`
+                          : `Influence ${formatMagnitude(e.total_magnitude)}`
+                      }
                     >
-                      <span className="h-full rounded-l-sm bg-benefit" style={{ width: `${benefitShare * 100}%` }} />
-                      <span className="h-full flex-1 rounded-r-sm bg-harm" />
+                      {HAS_HARM ? (
+                        <>
+                          <span className="h-full rounded-l-sm bg-benefit" style={{ width: `${benefitShare * 100}%` }} />
+                          <span className="h-full flex-1 rounded-r-sm bg-harm" />
+                        </>
+                      ) : (
+                        <span className="h-full flex-1 rounded-sm bg-benefit" />
+                      )}
                     </div>
                   </td>
                   <td className="px-3 py-2 text-right font-mono tabular-nums text-ink">
