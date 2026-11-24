@@ -325,19 +325,24 @@ export async function addAssessment(env: ServiceEnv, args: AddAssessmentInput) {
   return data;
 }
 
-/** The evidence and sources a period's Clef assessment was scored from. */
+/**
+ * The evidence and sources a period's Clef assessment was scored from. A site that counts people keeps
+ * it in evidence; an assessment made before the site counted people kept it in the first dimension's
+ * justification, as getEntityProfile reads it.
+ */
 async function storedEvidence(db: ReturnType<typeof connect>, site: SiteConfig, periodId: number) {
-  const column = site.scoring.breadth === "people" ? "evidence" : `${dimensionKeys(site)[0]}_justification`;
+  const justification = `${dimensionKeys(site)[0]}_justification`;
+  const columns = site.scoring.breadth === "people" ? `evidence, ${justification}` : justification;
   const { data, error } = await db
     .from("assessments")
-    .select(`${column}, sources`)
+    .select(`${columns}, sources`)
     .eq("period_id", periodId)
     .eq("ai_model_used", CLEF_MODEL)
     .order("created_at", { ascending: false })
     .limit(1)
     .returns<({ sources: string[] | null } & Record<string, unknown>)[]>();
   if (error) fail("load the period's evidence", error);
-  const evidence = data[0]?.[column];
+  const evidence = data[0]?.evidence ?? data[0]?.[justification];
   if (typeof evidence !== "string" || evidence.length === 0) {
     throw new Error(`Period ${periodId} has no Clef assessment to take evidence from; pass evidence`);
   }

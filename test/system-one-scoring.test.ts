@@ -3,6 +3,7 @@ import { buildClairicRequest, CLAIRIC_MODEL, readClairicAnswers } from "../src/l
 import { walkShares } from "../src/lib/credit";
 import { buildClefRequest, CLEF_MODEL, depthOf, readClefAnswers } from "../src/lib/clef";
 import { inventions } from "../src/sites/inventions";
+import { music } from "../src/sites/music";
 import { history } from "../src/sites/history";
 import { keyOf } from "../src/lib/system-one";
 import recorded from "./fixtures/system-one-history.json";
@@ -42,7 +43,7 @@ describe("depth", () => {
     expect(depthOf(sure)).toBeGreaterThan(depthOf(spread));
   });
 
-  test("is what History reads from Clef, and Inventions still reads the expected value", () => {
+  test("is what History and Inventions read from Clef, and Music, which measures reach, reads the expected value", () => {
     const response = { answers: recorded.clef_answers };
     const people = readClefAnswers(history.scoring, response);
     for (const d of history.scoring.dimensions) {
@@ -53,7 +54,8 @@ describe("depth", () => {
     const reachMode = readClefAnswers({ ...history.scoring, breadth: "reach" }, response);
     const score = (recorded.clef_answers as Record<string, { score: number }>)[`${history.scoring.dimensions[0].key}_benefit`].score;
     expect(reachMode.benefit[history.scoring.dimensions[0].key]).toBe(Math.round(((score * 10) / 9) * 100) / 100);
-    expect(inventions.scoring.breadth).toBe("reach");
+    expect(inventions.scoring.breadth).toBe("people");
+    expect(music.scoring.breadth).toBe("reach");
   });
 
   test("an answer without probabilities is an error naming the question", () => {

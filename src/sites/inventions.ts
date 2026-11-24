@@ -45,7 +45,7 @@ export const inventions: SiteConfig = {
   },
   scoring: {
     sides: ["benefit", "harm"],
-    breadth: "reach",
+    breadth: "people",
     dimensions: [
       {
         key: "prosperity",
