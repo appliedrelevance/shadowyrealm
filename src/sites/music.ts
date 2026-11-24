@@ -6,7 +6,16 @@
  */
 import { method } from "./music/method";
 import { HISTORICAL_RUBRICS } from "./rubrics";
-import type { SiteConfig } from "./types";
+import type { SiteConfig, TierDef } from "./types";
+
+/** What each tier means on Music. */
+export const MUSIC_TIER_DESCRIPTORS: Record<TierDef["tier"], string> = {
+  minimal: "Loved in one place or one scene",
+  moderate: "Heard across a nation or a whole genre",
+  significant: "Heard across nations and generations",
+  transformational: "Defined an era of music for much of the world",
+  legendary: "Has moved people everywhere, for centuries",
+};
 
 /** A subdomain of ShadowyRealm: Music is one of its indexes. */
 const ORIGIN = "https://music.shadowyrealm.com";
@@ -47,7 +56,6 @@ export const music: SiteConfig = {
     userAgent: `ShadowyRealm-Music/1.0 (${ORIGIN})`,
     holds: "Musicians, works, genres and instruments",
     hero: "/hero.png",
-    unlisted: true,
   },
   scoring: {
     sides: ["benefit"],
@@ -93,7 +101,18 @@ export const music: SiteConfig = {
         `How far did ${subject} during ${when} travel while it lasted: across how much of the world was it heard or played?`,
     },
     unit: { years: 100, name: "influence-centuries" },
-    tiers: null,
+    /**
+     * In influence-centuries of total magnitude: the 1-2-5 values nearest the 20th, 50th, 80th and 95th
+     * percentiles over the 2,093 entries scored on 2026-11-24 (35.7, 61.9, 138.2, 910.6). The 20th and
+     * 50th both lie nearest 50, so the four are the distinct rising values nearest the four together.
+     */
+    tiers: [
+      { tier: "minimal", min: 0, label: "Notable", descriptor: MUSIC_TIER_DESCRIPTORS.minimal },
+      { tier: "moderate", min: 20, label: "Major", descriptor: MUSIC_TIER_DESCRIPTORS.moderate },
+      { tier: "significant", min: 50, label: "Great", descriptor: MUSIC_TIER_DESCRIPTORS.significant },
+      { tier: "transformational", min: 100, label: "Epochal", descriptor: MUSIC_TIER_DESCRIPTORS.transformational },
+      { tier: "legendary", min: 1000, label: "Legendary", descriptor: MUSIC_TIER_DESCRIPTORS.legendary },
+    ],
   },
   entityTypes: [
     {
