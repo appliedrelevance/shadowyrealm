@@ -368,6 +368,7 @@ export type Database = {
         | "collaboration"
         | "rivalry"
         | "supersedes"
+        | "influence"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1204,6 +1205,7 @@ export const Constants = {
         "collaboration",
         "rivalry",
         "supersedes",
+        "influence",
       ],
     },
   },
