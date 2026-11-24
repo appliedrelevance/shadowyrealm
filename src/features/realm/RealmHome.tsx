@@ -76,8 +76,10 @@ export function RealmHome() {
         {realm && realm.entities.length === 0 && <p className="py-12 text-center text-ink-muted">{COPY.home.empty}</p>}
       </section>
 
+      {realm && realm.entities.length > 0 && <IndexTable realm={realm} />}
+
       {SITE.picture.kind === "stream" && realm && realm.entities.length > 0 && (
-        <section className="mt-8" aria-labelledby="groups-heading">
+        <section className="mt-10" aria-labelledby="groups-heading">
           <h2 id="groups-heading" className="font-display text-xl font-bold text-ink">
             The {SITE.picture.grouping.labels.groups.toLowerCase()}
           </h2>
@@ -86,8 +88,6 @@ export function RealmHome() {
           </div>
         </section>
       )}
-
-      {realm && realm.entities.length > 0 && <IndexTable realm={realm} />}
     </div>
   );
 }
