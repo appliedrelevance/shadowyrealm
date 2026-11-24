@@ -60,6 +60,10 @@ export function HatchDefs({ id, color }: { id: string; color: string }) {
   );
 }
 
+/** The width of one character of an 11px axis label, and the least gap between two labels. */
+const LABEL_CHAR_PX = 6.2;
+const LABEL_GAP_PX = 10;
+
 /** Vertical hairlines and year labels for the ticks that fall inside [fromUnit, toUnit]. */
 export function TimeAxis({
   asOfYear,
@@ -83,19 +87,28 @@ export function TimeAxis({
 }) {
   const left = x(fromUnit);
   const right = x(toUnit);
-  const ticks: { year: number; px: number }[] = [];
+  const anchorOf = (px: number) => (px - left < 24 ? "start" : right - px < 24 ? "end" : "middle");
+  // A label's span on the axis, from its anchor and an 11px label's width.
+  const span = (year: number, px: number) => {
+    const w = formatYear(year).length * LABEL_CHAR_PX;
+    const anchor = anchorOf(px);
+    return anchor === "start" ? [px, px + w] : anchor === "end" ? [px - w, px] : [px - w / 2, px + w / 2];
+  };
+  const ticks: { year: number; px: number; from: number }[] = [];
   // Most recent first, so the readable end of the axis keeps its labels.
   for (const year of [...timeline.ticks].reverse()) {
     const u = yearToUnit(year, asOfYear, timeline);
     if (u < fromUnit || u > toUnit) continue;
     const px = x(u);
-    if (ticks.length > 0 && ticks[ticks.length - 1].px - px < minSpacing) continue;
-    ticks.push({ year, px });
+    const [from, to] = span(year, px);
+    const last = ticks[ticks.length - 1];
+    if (last && (last.px - px < minSpacing || last.from - to < LABEL_GAP_PX)) continue;
+    ticks.push({ year, px, from });
   }
   return (
     <g aria-hidden="true">
       {ticks.map((t) => {
-        const anchor = t.px - left < 24 ? "start" : right - t.px < 24 ? "end" : "middle";
+        const anchor = anchorOf(t.px);
         return (
           <g key={t.year}>
             <line x1={t.px} x2={t.px} y1={top} y2={bottom} stroke={GRID} strokeWidth={1} />
