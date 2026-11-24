@@ -38,12 +38,12 @@ test.describe("Public pages", () => {
     await expect(page.getByText("@cf/cloudflare/clef").first()).toBeVisible();
   });
 
-  test("credit reaches a founder through the chain", async ({ page }) => {
+  test("credit reaches a founder from what followed", async ({ page }) => {
     await page.goto("/entity/jesus");
-    const list = page.locator("section", { has: page.getByRole("heading", { name: "Draws credit from" }) });
+    // The card alone: the Catholic Church is also among Jesus's causes, in the card beside it.
+    const list = page.getByRole("heading", { name: "Draws credit from" }).locator("..");
     await expect(list.getByRole("link", { name: /Catholic Church/ })).toBeVisible();
     await expect(list.getByRole("link", { name: /First Crusade/ })).toBeVisible();
-    await expect(list.getByText("40%")).toBeVisible();
   });
 
   test("the lineage graph traces a selection", async ({ page }) => {

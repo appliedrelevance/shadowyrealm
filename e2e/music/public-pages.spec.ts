@@ -14,7 +14,8 @@ test.describe("Music", () => {
 
   test("a band opens the entry's profile, with no harm anywhere", async ({ page }) => {
     await page.goto("/");
-    await page.locator('a[href="/entity/the-beatles"]').dispatchEvent("click");
+    const stream = page.getByRole("img", { name: /Centred stream of .* entities by family/ });
+    await stream.locator('a[href="/entity/the-beatles"]').dispatchEvent("click");
     await expect(page).toHaveURL(/\/entity\/the-beatles$/);
     await expect(page.locator("h1")).toHaveText("The Beatles");
     await expect(page.getByText("Total influence")).toBeVisible();
