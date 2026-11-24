@@ -162,7 +162,8 @@ function IndexTable({ realm }: { realm: Realm }) {
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-line">
+      {/* Relative, so a screen-reader-only header is held inside the scroll and cannot widen the page. */}
+      <div className="relative mt-4 overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-surface-1 text-left text-xs uppercase tracking-wider text-ink-muted">
             <tr>

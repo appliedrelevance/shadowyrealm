@@ -284,7 +284,7 @@ function FocusPanel({
 }) {
   const { data: profile } = useEntityProfile(entity.slug);
   return (
-    <aside className="rounded-lg border border-line bg-surface-1 p-4 lg:sticky lg:top-4 lg:self-start" aria-live="polite">
+    <aside className="min-w-0 rounded-lg border border-line bg-surface-1 p-4 lg:sticky lg:top-4 lg:self-start" aria-live="polite">
       <p className="text-xs uppercase tracking-wider text-ink-muted">
         <span className="capitalize">{entity.entity_type}</span>
         {entity.first_year !== null && ` · ${formatSpan(entity.first_year, entity.last_year!, asOfYear)}`}

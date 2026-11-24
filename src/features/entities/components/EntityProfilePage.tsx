@@ -195,7 +195,7 @@ function Lineage({ profile }: { profile: EntityProfile }) {
   if (profile.contributors.length === 0 && profile.credits.length === 0 && descriptive.length === 0) return null;
   return (
     <section className="mt-6 grid gap-6 md:grid-cols-2">
-      <div className="rounded-lg border border-line bg-surface-1 p-4">
+      <div className="min-w-0 rounded-lg border border-line bg-surface-1 p-4">
         <h2 className="font-display text-lg font-semibold text-ink">Draws credit from</h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">Its consequences, and the share of each credited back to it.</p>
         {profile.contributors.length === 0 ? (
@@ -204,7 +204,7 @@ function Lineage({ profile }: { profile: EntityProfile }) {
           <LineageList rows={profile.contributors.map((r) => ({ ...r, label: directLabel(profile, r.slug, "outgoing") }))} />
         )}
       </div>
-      <div className="rounded-lg border border-line bg-surface-1 p-4">
+      <div className="min-w-0 rounded-lg border border-line bg-surface-1 p-4">
         <h2 className="font-display text-lg font-semibold text-ink">Passes credit to</h2>
         <p className="mb-3 mt-1 text-sm text-ink-muted">Its causes, and how much of its own influence each receives.</p>
         {profile.credits.length === 0 ? (
