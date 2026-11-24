@@ -7,7 +7,8 @@
     "lint:tokens": "node tools/check-tokens.mjs",
     "dev": "SITE=history vite --host 0.0.0.0 --port 35420",
     "dev:inventions": "SITE=inventions vite --host 0.0.0.0 --port 35422",
-    "build": "tsc && SITE=history vite build && SITE=inventions vite build",
+    "dev:music": "SITE=music vite --host 0.0.0.0 --port 35423",
+    "build": "tsc && SITE=history vite build && SITE=inventions vite build && SITE=music vite build",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:inventions": "wrangler deploy --env inventions",
@@ -19,7 +20,8 @@
     "e2e": "playwright test",
     "content:load": "bun tools/realm-load.ts content/realm.ts",
     "content:load:inventions": "bun tools/realm-load.ts content/inventions/index.ts",
-    "site-schema": "bun tools/site-schema.ts"
+    "site-schema": "bun tools/site-schema.ts",
+    "deploy:music": "wrangler deploy --env music"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
