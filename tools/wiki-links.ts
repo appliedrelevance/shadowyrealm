@@ -10,7 +10,7 @@
  *   redirects.jsonl  { title, redirects }, the titles that redirect to an article
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
-import type { Article } from "./wiki-evidence";
+import { type Article, wikipediaJson } from "./wiki-evidence";
 
 const API = "https://en.wikipedia.org/w/api.php";
 /** Titles or revisions per API request, the most Wikipedia allows a client that is not a bot. */
@@ -70,12 +70,7 @@ export class WikiStore {
 
   private async get(params: Record<string, string>): Promise<Record<string, unknown>> {
     const url = `${API}?${new URLSearchParams({ format: "json", formatversion: "2", ...params })}`;
-    for (let attempt = 0; ; attempt++) {
-      const res = await fetch(url, { headers: { "User-Agent": this.userAgent } });
-      if (res.ok) return (await res.json()) as Record<string, unknown>;
-      if (attempt >= 8 || !(res.status === 429 || res.status >= 500)) throw new Error(`Wikipedia: HTTP ${res.status} for ${url.slice(0, 200)}`);
-      await Bun.sleep(10_000 * (attempt + 1));
-    }
+    return wikipediaJson<Record<string, unknown>>(url, this.userAgent);
   }
 
   /** The article filed under a title, read from Wikipedia the first time and kept. */

@@ -40,7 +40,7 @@ import { creditTypes, siteFor } from "../src/sites";
 import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
 import { keyOf, SystemOneCache } from "./system-one-cache";
-import { storedArticles, Wikipedia } from "./wiki-evidence";
+import { storedArticles, Wikipedia, wikipediaJson } from "./wiki-evidence";
 import { DOLLARS_PER_CHAR_AT_MOST } from "./workers-ai";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
@@ -90,11 +90,10 @@ async function call<T = unknown>(name: string, input: Record<string, unknown>): 
 // ---------- Wikipedia ----------
 
 async function thumbnail(title: string): Promise<{ image_url?: string; page_url: string }> {
-  const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`, {
-    headers: WIKI_HEADERS,
-  });
-  if (!res.ok) throw new Error(`Wikipedia summary ${title}: HTTP ${res.status}`);
-  const data = (await res.json()) as { thumbnail?: { source: string }; content_urls?: { desktop?: { page?: string } } };
+  const data = await wikipediaJson<{ thumbnail?: { source: string }; content_urls?: { desktop?: { page?: string } } }>(
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
+    WIKI_HEADERS["User-Agent"],
+  );
   return {
     image_url: data.thumbnail?.source,
     page_url: data.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`,

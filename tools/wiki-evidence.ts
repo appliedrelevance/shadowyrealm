@@ -26,6 +26,21 @@ export interface Article {
   revid: number;
 }
 
+/**
+ * A Wikipedia API read as JSON. Wikimedia answers a client it thinks too quick with 429, and its
+ * servers sometimes with 5xx: both are waited out, longer each time, eight times at most.
+ */
+export async function wikipediaJson<T>(url: string, userAgent: string): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { headers: { "User-Agent": userAgent } });
+    if (res.ok) return (await res.json()) as T;
+    if (attempt >= 8 || !(res.status === 429 || res.status >= 500)) {
+      throw new Error(`Wikipedia: HTTP ${res.status} for ${url.slice(0, 200)}`);
+    }
+    await Bun.sleep(10_000 * (attempt + 1));
+  }
+}
+
 /** Articles stored as JSONL rows of { key, article } (tools/wiki-links.ts's store), by their key. */
 export async function storedArticles(path: string): Promise<Map<string, Article>> {
   const out = new Map<string, Article>();
@@ -69,9 +84,8 @@ export class Wikipedia {
         redirects: "1",
         format: "json",
       });
-    const res = await fetch(url, { headers: { "User-Agent": this.userAgent } });
-    if (!res.ok) throw new Error(`Wikipedia ${title}: HTTP ${res.status}`);
-    const pages = (await res.json()).query.pages as Record<
+    const body = await wikipediaJson<{ query: { pages: Record<string, unknown> } }>(url, this.userAgent);
+    const pages = body.query.pages as Record<
       string,
       { title: string; extract?: string; missing?: string; revisions?: { revid: number }[] }
     >;
