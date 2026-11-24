@@ -26,11 +26,35 @@ export interface Article {
   revid: number;
 }
 
+/** Articles stored as JSONL rows of { key, article } (tools/wiki-links.ts's store), by their key. */
+export async function storedArticles(path: string): Promise<Map<string, Article>> {
+  const out = new Map<string, Article>();
+  for (const line of (await Bun.file(path).text()).split("\n")) {
+    if (!line) continue;
+    const row = JSON.parse(line) as { key: string; article: Article };
+    out.set(row.key, row.article);
+  }
+  if (out.size === 0) throw new Error(`${path} holds no articles`);
+  return out;
+}
+
 export class Wikipedia {
   private articles = new Map<string, Article>();
-  constructor(private readonly userAgent: string) {}
+  /**
+   * With stored articles, every article is read from them, as it stood when it was stored, and none is
+   * fetched: a period is then scored from the same text as the offline run that stored them.
+   */
+  constructor(
+    private readonly userAgent: string,
+    private readonly stored?: ReadonlyMap<string, Article>,
+  ) {}
 
   async article(title: string): Promise<Article> {
+    if (this.stored) {
+      const found = this.stored.get(title);
+      if (!found) throw new Error(`The stored articles have no "${title}"`);
+      return found;
+    }
     const cached = this.articles.get(title);
     if (cached) return cached;
     const url =

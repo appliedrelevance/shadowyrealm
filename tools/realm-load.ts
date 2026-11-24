@@ -8,7 +8,7 @@
  * scores every period again, from the evidence it was last scored from;
  * --refresh reads its article from Wikipedia again).
  *
- *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore [--refresh]] [--pay] [--publish] [--concurrency 4]
+ *   MCP_URL=http://localhost:35421/mcp MCP_API_KEY=… bun tools/realm-load.ts content/realm.ts [--only slug,slug] [--rescore [--refresh]] [--articles <jsonl>] [--pay] [--publish] [--concurrency 4]
  *
  * No model is paid for twice. Every Clef and Clairic answer is kept in the
  * System One cache (system-one-cache.ts), and score_period is given the ones
@@ -22,6 +22,9 @@
  * Wikipedia revision it was read from, so a score's source can be read again
  * exactly as it stood. Every period is scored from its whole article
  * (wiki-evidence.ts), cut only where it would not fit Clef's context.
+ *
+ * --articles scores every period from the article revisions stored in that file (tools/wiki-links.ts's
+ * store, as the offline run that wrote the content read them) instead of today's Wikipedia.
  *
  * --concurrency creates and scores that many entities at once; links are
  * always added one at a time, so the credit cap is checked in order.
@@ -37,7 +40,7 @@ import { creditTypes, siteFor } from "../src/sites";
 import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
 import { keyOf, SystemOneCache } from "./system-one-cache";
-import { Wikipedia } from "./wiki-evidence";
+import { storedArticles, Wikipedia } from "./wiki-evidence";
 import { DOLLARS_PER_CHAR_AT_MOST } from "./workers-ai";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
@@ -53,6 +56,7 @@ const refresh = args.includes("--refresh");
 const pay = args.includes("--pay");
 const publish = args.includes("--publish");
 const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
+const articlesFile = args.includes("--articles") ? args[args.indexOf("--articles") + 1] : undefined;
 
 const cache = new SystemOneCache();
 
@@ -199,7 +203,7 @@ async function main() {
   const site = siteFor(mod.site);
   await checkScorePeriodTakesAnswers();
   WIKI_HEADERS = { "User-Agent": site.brand.userAgent };
-  wiki = new Wikipedia(site.brand.userAgent);
+  wiki = new Wikipedia(site.brand.userAgent, articlesFile ? await storedArticles(articlesFile) : undefined);
   const dims = site.scoring.dimensions.map((d) => d.key);
   const content = mod.default;
   checkRequiredLinks(site, content);
