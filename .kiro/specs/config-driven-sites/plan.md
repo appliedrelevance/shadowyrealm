@@ -66,6 +66,7 @@ Each ends deployed, tested in production and committed.
 9. **No UI code per site**: logos, heroes, type icons and method prose become data; `src/sites/ui.ts` goes
    (done, `d92f013`).
 10. **The music site**: its tokens, favicon and og image, `content/music/` from `music-vital/`, its graph
-    from stage 6, loaded through its MCP tools, tiers calibrated, deployed at `music.shadowyrealm.com`.
+    from stage 6, loaded through its MCP tools, tiers calibrated, deployed at `music.shadowyrealm.com`
+    (done 2026-11-24, Worker `7acd1b04`: 2,093 entries and 8,594 links, tiers 20 / 50 / 100 / 1,000).
 11. **Retire the music page**: `shadowyrealm.com/music` and `/music/*` redirect to the music site; the
     frozen files and `src/features/music/` are deleted (`d92f013`, with stage 9).
