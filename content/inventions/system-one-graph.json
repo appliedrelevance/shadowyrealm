@@ -1,0 +1,1814 @@
+{
+ "inherited": {
+  "william-shockley": 0.36,
+  "john-bardeen": 0.26,
+  "walter-brattain": 0.45,
+  "transistor": 0.53,
+  "shockley-semiconductor": 0.6,
+  "fairchild-semiconductor": 0.44,
+  "texas-instruments": 0.3,
+  "jack-kilby": 0.28,
+  "robert-noyce": 0.2,
+  "integrated-circuit": 0.44,
+  "intel": 0.33,
+  "ted-hoff": 0.28,
+  "federico-faggin": 0.33,
+  "microprocessor": 0.57,
+  "intel-4004": 0.65,
+  "lithium-ion-battery": 0.54,
+  "multi-touch": 0.4,
+  "apple-inc": 0.36,
+  "steve-jobs": 0.36,
+  "iphone": 0.59,
+  "carl-bosch": 0.4,
+  "basf": 0.28,
+  "haber-process": 0.6,
+  "thomas-newcomen": 0.29,
+  "newcomen-engine": 0.41,
+  "james-watt": 0.33,
+  "watt-steam-engine": 0.45,
+  "internal-combustion-engine": 0.44,
+  "karl-benz": 0.3,
+  "benz-patent-motorwagen": 0.52,
+  "ford-motor-company": 0.36,
+  "assembly-line": 0.39,
+  "ford-model-t": 0.49,
+  "thomas-midgley": 0.2,
+  "general-motors": 0.35,
+  "tetraethyllead": 0.34,
+  "chlorofluorocarbons": 0.5,
+  "electromagnetic-induction": 0.47,
+  "joseph-swan": 0.28,
+  "incandescent-light-bulb": 0.5,
+  "general-electric": 0.33,
+  "george-westinghouse": 0.31,
+  "westinghouse-electric": 0.3,
+  "led-lamp": 0.53,
+  "printing-press": 0.58,
+  "sony": 0.24,
+  "walkman": 0.35,
+  "plough": 0.44,
+  "irrigation": 0.37,
+  "silk": 0.35,
+  "ferrous-metallurgy": 0.21,
+  "writing": 0.27,
+  "phoenician-alphabet": 0.4,
+  "hindu-arabic-numerals": 0.29,
+  "paper": 0.3,
+  "movable-type": 0.49,
+  "compass": 0.48,
+  "cannon": 0.5,
+  "stirrup": 0.41,
+  "water-wheel": 0.43,
+  "windmill": 0.37,
+  "archimedes-screw": 0.36,
+  "clock": 0.43,
+  "lens": 0.35,
+  "eyeglasses": 0.46,
+  "telescope": 0.4,
+  "galileo-galilei": 0.2,
+  "microscope": 0.43,
+  "antonie-van-leeuwenhoek": 0.28,
+  "spinning-jenny": 0.62,
+  "cotton-gin": 0.36,
+  "steam-locomotive": 0.44,
+  "george-stephenson": 0.32,
+  "bessemer-process": 0.41,
+  "electrical-telegraph": 0.36,
+  "telephone": 0.47,
+  "electric-generator": 0.59,
+  "phonograph": 0.3,
+  "daguerreotype": 0.56,
+  "smallpox-vaccine": 0.41,
+  "germ-theory": 0.49,
+  "pasteurization": 0.44,
+  "louis-pasteur": 0.2,
+  "penicillin": 0.48,
+  "alexander-fleming": 0.36,
+  "dynamite": 0.4,
+  "alfred-nobel": 0.29,
+  "maxim-gun": 0.39,
+  "radio": 0.49,
+  "guglielmo-marconi": 0.32,
+  "wright-flyer": 0.48,
+  "wright-brothers": 0.36,
+  "gottlieb-daimler": 0.31,
+  "manhattan-project": 0.34,
+  "j-robert-oppenheimer": 0.36,
+  "nuclear-weapon": 0.52,
+  "nuclear-power": 0.51,
+  "eniac": 0.62,
+  "laser": 0.41,
+  "solar-cell": 0.24,
+  "light-emitting-diode": 0.36,
+  "combined-oral-contraceptive": 0.6,
+  "polio-vaccine": 0.32,
+  "ddt": 0.32,
+  "high-yielding-variety": 0.44,
+  "mrna-vaccine": 0.36,
+  "crispr": 0.57,
+  "intermodal-container": 0.43,
+  "arpanet": 0.16,
+  "internet-protocol-suite": 0.49,
+  "vint-cerf": 0.31,
+  "world-wide-web": 0.36,
+  "gps": 0.5,
+  "television": 0.48,
+  "oxycontin": 0.47,
+  "purdue-pharma": 0.48,
+  "facebook": 0.25,
+  "google-search": 0.33,
+  "chatgpt": 0.54,
+  "gregory-pincus": 0.23,
+  "jennifer-doudna": 0.22,
+  "portland-cement": 0.37,
+  "hot-air-balloon": 0.36,
+  "parachute": 0.3,
+  "airship": 0.45,
+  "zeppelin": 0.48,
+  "otto-lilienthal": 0.28,
+  "aeroplane": 0.59,
+  "helicopter": 0.4,
+  "jet-engine": 0.44,
+  "jet-airliner": 0.49,
+  "boeing": 0.34,
+  "rocket": 0.43,
+  "liquid-propellant-rocket": 0.41,
+  "v-2-rocket": 0.44,
+  "wernher-von-braun": 0.33,
+  "sergei-korolev": 0.31,
+  "r-7-semyorka": 0.39,
+  "satellite": 0.47,
+  "sputnik-1": 0.62,
+  "communications-satellite": 0.58,
+  "weather-satellite": 0.43,
+  "nasa": 0.28,
+  "apollo-program": 0.45,
+  "space-station": 0.44,
+  "international-space-station": 0.5,
+  "space-shuttle": 0.5,
+  "hubble-space-telescope": 0.5,
+  "spacex": 0.32,
+  "falcon-9": 0.39,
+  "car": 0.65,
+  "bicycle": 0.31,
+  "pneumatic-tyre": 0.4,
+  "tractor": 0.6,
+  "wheelbarrow": 0.28,
+  "road": 0.32,
+  "diesel-engine": 0.4,
+  "tram": 0.4,
+  "high-speed-rail": 0.4,
+  "sail": 0.28,
+  "hovercraft": 0.43,
+  "horseshoe": 0.37,
+  "electric-motor": 0.41,
+  "wind-turbine": 0.46,
+  "fuel-cell": 0.3,
+  "electrolysis": 0.31,
+  "agriculture": 0.24,
+  "rice-farming": 0.4,
+  "cooking": 0.23,
+  "bread": 0.58,
+  "cheese": 0.4,
+  "wine": 0.4,
+  "noodle": 0.57,
+  "salt-making": 0.2,
+  "coin": 0.3,
+  "banknote": 0.49,
+  "cheque": 0.43,
+  "pottery": 0.21,
+  "porcelain": 0.49,
+  "glass": 0.12,
+  "stainless-steel": 0.29,
+  "polyvinyl-chloride": 0.31,
+  "polyethylene": 0.29,
+  "nylon": 0.58,
+  "wallace-carothers": 0.29,
+  "dupont": 0.14,
+  "sword": 0.46,
+  "crossbow": 0.42,
+  "catapult": 0.35,
+  "bomb": 0.52,
+  "land-mine": 0.45,
+  "tank": 0.49,
+  "thermonuclear-weapon": 0.48,
+  "radiography": 0.49,
+  "morphine": 0.34,
+  "general-anaesthesia": 0.25,
+  "stethoscope": 0.4,
+  "caesarean-section": 0.33,
+  "plastic-surgery": 0.3,
+  "sewing-machine": 0.52,
+  "scissors": 0.34,
+  "match": 0.56,
+  "zipper": 0.6,
+  "ballpoint-pen": 0.31,
+  "vacuum-cleaner": 0.36,
+  "toilet-paper": 0.33,
+  "shoe": 0.2,
+  "mobile-phone": 0.63,
+  "motorola": 0.36,
+  "android": 0.39,
+  "google": 0.26,
+  "hard-disk-drive": 0.37,
+  "ibm": 0.24,
+  "calculator": 0.48,
+  "laptop": 0.67,
+  "personal-computer": 0.63,
+  "graphical-user-interface": 0.35,
+  "touchscreen": 0.21,
+  "video-game-console": 0.6,
+  "mp3": 0.36,
+  "bluetooth": 0.4,
+  "podcast": 0.56,
+  "wikipedia": 0.29,
+  "youtube": 0.37,
+  "amazon": 0.31,
+  "dictionary": 0.39,
+  "newspaper": 0.41,
+  "lithography": 0.31,
+  "morse-code": 0.44,
+  "braille": 0.37,
+  "astrolabe": 0.1,
+  "atomic-clock": 0.35,
+  "barometer": 0.29,
+  "seismometer": 0.36,
+  "electron-microscope": 0.4,
+  "radiocarbon-dating": 0.42,
+  "de-havilland-aircraft-company": 0.5,
+  "john-boyd-dunlop": 0.19,
+  "charles-f-brush": 0.31,
+  "william-tritton": 0.17,
+  "walter-gordon-wilson": 0.08,
+  "openai": 0.18,
+  "larry-sanger": 0.36,
+  "louis-daguerre": 0.27,
+  "john-logie-baird": 0.35,
+  "philo-farnsworth": 0.33,
+  "vladimir-zworykin": 0.28,
+  "bradford-parkinson": 0.25,
+  "roger-l-easton": 0.19,
+  "william-t-g-morton": 0.32,
+  "crawford-long": 0.24,
+  "isaac-singer": 0.24,
+  "gideon-sundback": 0.31,
+  "louis-braille": 0.31
+ },
+ "proposals": [
+  {
+   "from": "william-shockley",
+   "to": "bell-labs",
+   "p": 0.7441,
+   "share": 0.03
+  },
+  {
+   "from": "john-bardeen",
+   "to": "bell-labs",
+   "p": 0.544,
+   "share": 0.03
+  },
+  {
+   "from": "bell-labs",
+   "to": "william-shockley",
+   "p": 0.7862,
+   "share": 0.44
+  },
+  {
+   "from": "bell-labs",
+   "to": "john-bardeen",
+   "p": 0.7411,
+   "share": 0.24
+  },
+  {
+   "from": "walter-brattain",
+   "to": "john-bardeen",
+   "p": 0.5998,
+   "share": 0.2
+  },
+  {
+   "from": "bell-labs",
+   "to": "walter-brattain",
+   "p": 0.7191,
+   "share": 0.6
+  },
+  {
+   "from": "texas-instruments",
+   "to": "transistor",
+   "p": 0.6545,
+   "share": 0.05
+  },
+  {
+   "from": "bell-labs",
+   "to": "shockley-semiconductor",
+   "p": 0.5887,
+   "share": 0.41
+  },
+  {
+   "from": "transistor",
+   "to": "shockley-semiconductor",
+   "p": 0.7878,
+   "share": 0.58
+  },
+  {
+   "from": "bell-labs",
+   "to": "fairchild-semiconductor",
+   "p": 0.5943,
+   "share": 0.24
+  },
+  {
+   "from": "william-shockley",
+   "to": "fairchild-semiconductor",
+   "p": 0.7975,
+   "share": 0.48
+  },
+  {
+   "from": "transistor",
+   "to": "fairchild-semiconductor",
+   "p": 0.803,
+   "share": 0.56
+  },
+  {
+   "from": "shockley-semiconductor",
+   "to": "fairchild-semiconductor",
+   "p": 0.9049,
+   "share": 0.6
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "fairchild-semiconductor",
+   "p": 0.5019,
+   "share": 0.54
+  },
+  {
+   "from": "transistor",
+   "to": "texas-instruments",
+   "p": 0.567,
+   "share": 0.63
+  },
+  {
+   "from": "texas-instruments",
+   "to": "jack-kilby",
+   "p": 0.6821,
+   "share": 0.43
+  },
+  {
+   "from": "shockley-semiconductor",
+   "to": "robert-noyce",
+   "p": 0.7055,
+   "share": 0.15
+  },
+  {
+   "from": "bell-labs",
+   "to": "integrated-circuit",
+   "p": 0.6698,
+   "share": 0.37
+  },
+  {
+   "from": "apollo-program",
+   "to": "integrated-circuit",
+   "p": 0.7271,
+   "share": 0.11
+  },
+  {
+   "from": "transistor",
+   "to": "intel",
+   "p": 0.7892,
+   "share": 0.6
+  },
+  {
+   "from": "fairchild-semiconductor",
+   "to": "intel",
+   "p": 0.7268,
+   "share": 0.3
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "intel",
+   "p": 0.7103,
+   "share": 0.79
+  },
+  {
+   "from": "federico-faggin",
+   "to": "intel",
+   "p": 0.6938,
+   "share": 0.16
+  },
+  {
+   "from": "microprocessor",
+   "to": "intel",
+   "p": 0.5063,
+   "share": 0.69
+  },
+  {
+   "from": "intel-4004",
+   "to": "intel",
+   "p": 0.5377,
+   "share": 0.38
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "ted-hoff",
+   "p": 0.6241,
+   "share": 0.4
+  },
+  {
+   "from": "intel",
+   "to": "ted-hoff",
+   "p": 0.6536,
+   "share": 0.51
+  },
+  {
+   "from": "transistor",
+   "to": "federico-faggin",
+   "p": 0.525,
+   "share": 0.31
+  },
+  {
+   "from": "fairchild-semiconductor",
+   "to": "federico-faggin",
+   "p": 0.6559,
+   "share": 0.4
+  },
+  {
+   "from": "robert-noyce",
+   "to": "federico-faggin",
+   "p": 0.6103,
+   "share": 0.1
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "federico-faggin",
+   "p": 0.5862,
+   "share": 0.59
+  },
+  {
+   "from": "intel",
+   "to": "federico-faggin",
+   "p": 0.5619,
+   "share": 0.44
+  },
+  {
+   "from": "bell-labs",
+   "to": "microprocessor",
+   "p": 0.7163,
+   "share": 0.16
+  },
+  {
+   "from": "transistor",
+   "to": "microprocessor",
+   "p": 0.9023,
+   "share": 0.69
+  },
+  {
+   "from": "fairchild-semiconductor",
+   "to": "microprocessor",
+   "p": 0.6107,
+   "share": 0.29
+  },
+  {
+   "from": "texas-instruments",
+   "to": "microprocessor",
+   "p": 0.7998,
+   "share": 0.23
+  },
+  {
+   "from": "robert-noyce",
+   "to": "microprocessor",
+   "p": 0.7578,
+   "share": 0.4
+  },
+  {
+   "from": "intel-4004",
+   "to": "microprocessor",
+   "p": 0.9468,
+   "share": 0.44
+  },
+  {
+   "from": "motorola",
+   "to": "microprocessor",
+   "p": 0.8172,
+   "share": 0.12
+  },
+  {
+   "from": "transistor",
+   "to": "intel-4004",
+   "p": 0.9309,
+   "share": 0.57
+  },
+  {
+   "from": "fairchild-semiconductor",
+   "to": "intel-4004",
+   "p": 0.6553,
+   "share": 0.24
+  },
+  {
+   "from": "robert-noyce",
+   "to": "intel-4004",
+   "p": 0.7487,
+   "share": 0.31
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "intel-4004",
+   "p": 0.9215,
+   "share": 0.75
+  },
+  {
+   "from": "ted-hoff",
+   "to": "intel-4004",
+   "p": 0.9293,
+   "share": 0.58
+  },
+  {
+   "from": "personal-computer",
+   "to": "apple-inc",
+   "p": 0.6296,
+   "share": 0.49
+  },
+  {
+   "from": "graphical-user-interface",
+   "to": "apple-inc",
+   "p": 0.5014,
+   "share": 0.19
+  },
+  {
+   "from": "personal-computer",
+   "to": "steve-jobs",
+   "p": 0.5243,
+   "share": 0.68
+  },
+  {
+   "from": "telephone",
+   "to": "iphone",
+   "p": 0.7188,
+   "share": 0.35
+  },
+  {
+   "from": "graphical-user-interface",
+   "to": "iphone",
+   "p": 0.7462,
+   "share": 0.33
+  },
+  {
+   "from": "touchscreen",
+   "to": "iphone",
+   "p": 0.712,
+   "share": 0.6
+  },
+  {
+   "from": "fritz-haber",
+   "to": "carl-bosch",
+   "p": 0.5855,
+   "share": 0.37
+  },
+  {
+   "from": "basf",
+   "to": "carl-bosch",
+   "p": 0.7207,
+   "share": 0.42
+  },
+  {
+   "from": "fritz-haber",
+   "to": "basf",
+   "p": 0.7193,
+   "share": 0.29
+  },
+  {
+   "from": "thomas-savery",
+   "to": "thomas-newcomen",
+   "p": 0.8956,
+   "share": 0.35
+  },
+  {
+   "from": "thomas-newcomen",
+   "to": "james-watt",
+   "p": 0.8112,
+   "share": 0.4
+  },
+  {
+   "from": "newcomen-engine",
+   "to": "james-watt",
+   "p": 0.7737,
+   "share": 0.49
+  },
+  {
+   "from": "thomas-newcomen",
+   "to": "watt-steam-engine",
+   "p": 0.7646,
+   "share": 0.41
+  },
+  {
+   "from": "thomas-savery",
+   "to": "watt-steam-engine",
+   "p": 0.7566,
+   "share": 0.07
+  },
+  {
+   "from": "rudolf-diesel",
+   "to": "internal-combustion-engine",
+   "p": 0.9551,
+   "share": 0.15
+  },
+  {
+   "from": "nicephore-niepce",
+   "to": "internal-combustion-engine",
+   "p": 0.5795,
+   "share": 0.02
+  },
+  {
+   "from": "nikolaus-otto",
+   "to": "karl-benz",
+   "p": 0.5524,
+   "share": 0.16
+  },
+  {
+   "from": "internal-combustion-engine",
+   "to": "karl-benz",
+   "p": 0.6015,
+   "share": 0.45
+  },
+  {
+   "from": "nikolaus-otto",
+   "to": "benz-patent-motorwagen",
+   "p": 0.6145,
+   "share": 0.26
+  },
+  {
+   "from": "internal-combustion-engine",
+   "to": "ford-motor-company",
+   "p": 0.909,
+   "share": 0.63
+  },
+  {
+   "from": "benz-patent-motorwagen",
+   "to": "ford-motor-company",
+   "p": 0.645,
+   "share": 0.15
+  },
+  {
+   "from": "assembly-line",
+   "to": "ford-motor-company",
+   "p": 0.5603,
+   "share": 0.48
+  },
+  {
+   "from": "ford-model-t",
+   "to": "ford-motor-company",
+   "p": 0.5401,
+   "share": 0.44
+  },
+  {
+   "from": "ford-model-t",
+   "to": "assembly-line",
+   "p": 0.5424,
+   "share": 0.48
+  },
+  {
+   "from": "car",
+   "to": "assembly-line",
+   "p": 0.5191,
+   "share": 0.41
+  },
+  {
+   "from": "henry-ford",
+   "to": "ford-model-t",
+   "p": 0.9702,
+   "share": 0.7
+  },
+  {
+   "from": "internal-combustion-engine",
+   "to": "thomas-midgley",
+   "p": 0.5367,
+   "share": 0.33
+  },
+  {
+   "from": "car",
+   "to": "thomas-midgley",
+   "p": 0.5854,
+   "share": 0.3
+  },
+  {
+   "from": "internal-combustion-engine",
+   "to": "general-motors",
+   "p": 0.8046,
+   "share": 0.54
+  },
+  {
+   "from": "car",
+   "to": "general-motors",
+   "p": 0.5034,
+   "share": 0.88
+  },
+  {
+   "from": "dupont",
+   "to": "general-motors",
+   "p": 0.5695,
+   "share": 0.05
+  },
+  {
+   "from": "michael-faraday",
+   "to": "joseph-swan",
+   "p": 0.6088,
+   "share": 0.17
+  },
+  {
+   "from": "michael-faraday",
+   "to": "incandescent-light-bulb",
+   "p": 0.6685,
+   "share": 0.1
+  },
+  {
+   "from": "incandescent-light-bulb",
+   "to": "general-electric",
+   "p": 0.6536,
+   "share": 0.2
+  },
+  {
+   "from": "charles-f-brush",
+   "to": "general-electric",
+   "p": 0.5184,
+   "share": 0.01
+  },
+  {
+   "from": "steam-locomotive",
+   "to": "george-westinghouse",
+   "p": 0.7552,
+   "share": 0.22
+  },
+  {
+   "from": "electric-generator",
+   "to": "george-westinghouse",
+   "p": 0.5061,
+   "share": 0.45
+  },
+  {
+   "from": "electric-generator",
+   "to": "westinghouse-electric",
+   "p": 0.6852,
+   "share": 0.44
+  },
+  {
+   "from": "writing",
+   "to": "printing-press",
+   "p": 0.6857,
+   "share": 0.6
+  },
+  {
+   "from": "transistor",
+   "to": "sony",
+   "p": 0.6003,
+   "share": 0.4
+  },
+  {
+   "from": "radio",
+   "to": "sony",
+   "p": 0.7401,
+   "share": 0.2
+  },
+  {
+   "from": "tractor",
+   "to": "plough",
+   "p": 0.6612,
+   "share": 0.16
+  },
+  {
+   "from": "water-wheel",
+   "to": "irrigation",
+   "p": 0.8277,
+   "share": 0.08
+  },
+  {
+   "from": "archimedes-screw",
+   "to": "irrigation",
+   "p": 0.7876,
+   "share": 0.04
+  },
+  {
+   "from": "bessemer-process",
+   "to": "ferrous-metallurgy",
+   "p": 0.9217,
+   "share": 0.13
+  },
+  {
+   "from": "henry-bessemer",
+   "to": "ferrous-metallurgy",
+   "p": 0.9669,
+   "share": 0.09
+  },
+  {
+   "from": "paper",
+   "to": "writing",
+   "p": 0.8583,
+   "share": 0.22
+  },
+  {
+   "from": "water-wheel",
+   "to": "paper",
+   "p": 0.5199,
+   "share": 0.16
+  },
+  {
+   "from": "agriculture",
+   "to": "water-wheel",
+   "p": 0.8642,
+   "share": 0.44
+  },
+  {
+   "from": "wheel",
+   "to": "windmill",
+   "p": 0.6748,
+   "share": 0.3
+  },
+  {
+   "from": "atomic-clock",
+   "to": "clock",
+   "p": 0.5571,
+   "share": 0.04
+  },
+  {
+   "from": "louis-essen",
+   "to": "clock",
+   "p": 0.8237,
+   "share": 0.01
+  },
+  {
+   "from": "archimedes",
+   "to": "galileo-galilei",
+   "p": 0.6694,
+   "share": 0.06
+  },
+  {
+   "from": "microscope",
+   "to": "antonie-van-leeuwenhoek",
+   "p": 0.6593,
+   "share": 0.63
+  },
+  {
+   "from": "james-watt",
+   "to": "steam-locomotive",
+   "p": 0.5949,
+   "share": 0.28
+  },
+  {
+   "from": "james-watt",
+   "to": "george-stephenson",
+   "p": 0.5537,
+   "share": 0.3
+  },
+  {
+   "from": "michael-faraday",
+   "to": "electrical-telegraph",
+   "p": 0.6481,
+   "share": 0.05
+  },
+  {
+   "from": "thomas-edison",
+   "to": "electrical-telegraph",
+   "p": 0.8409,
+   "share": 0.01
+  },
+  {
+   "from": "elisha-gray",
+   "to": "electrical-telegraph",
+   "p": 0.5785,
+   "share": 0.01
+  },
+  {
+   "from": "westinghouse-electric",
+   "to": "electric-generator",
+   "p": 0.8741,
+   "share": 0.04
+  },
+  {
+   "from": "charles-f-brush",
+   "to": "electric-generator",
+   "p": 0.8619,
+   "share": 0.02
+  },
+  {
+   "from": "antonie-van-leeuwenhoek",
+   "to": "louis-pasteur",
+   "p": 0.8791,
+   "share": 0.2
+  },
+  {
+   "from": "germ-theory",
+   "to": "alexander-fleming",
+   "p": 0.7777,
+   "share": 0.55
+  },
+  {
+   "from": "gunpowder",
+   "to": "alfred-nobel",
+   "p": 0.5375,
+   "share": 0.45
+  },
+  {
+   "from": "bell-labs",
+   "to": "radio",
+   "p": 0.6053,
+   "share": 0.06
+  },
+  {
+   "from": "westinghouse-electric",
+   "to": "radio",
+   "p": 0.631,
+   "share": 0.06
+  },
+  {
+   "from": "motorola",
+   "to": "radio",
+   "p": 0.7571,
+   "share": 0.02
+  },
+  {
+   "from": "electrical-telegraph",
+   "to": "guglielmo-marconi",
+   "p": 0.7369,
+   "share": 0.38
+  },
+  {
+   "from": "george-cayley",
+   "to": "wright-brothers",
+   "p": 0.6882,
+   "share": 0.11
+  },
+  {
+   "from": "otto-lilienthal",
+   "to": "wright-brothers",
+   "p": 0.9635,
+   "share": 0.25
+  },
+  {
+   "from": "aeroplane",
+   "to": "wright-brothers",
+   "p": 0.6098,
+   "share": 0.28
+  },
+  {
+   "from": "nikolaus-otto",
+   "to": "gottlieb-daimler",
+   "p": 0.6953,
+   "share": 0.26
+  },
+  {
+   "from": "nuclear-fission",
+   "to": "manhattan-project",
+   "p": 0.8477,
+   "share": 0.74
+  },
+  {
+   "from": "nuclear-weapon",
+   "to": "manhattan-project",
+   "p": 0.5258,
+   "share": 0.76
+  },
+  {
+   "from": "dupont",
+   "to": "manhattan-project",
+   "p": 0.7263,
+   "share": 0.1
+  },
+  {
+   "from": "nuclear-fission",
+   "to": "j-robert-oppenheimer",
+   "p": 0.7545,
+   "share": 0.48
+  },
+  {
+   "from": "manhattan-project",
+   "to": "j-robert-oppenheimer",
+   "p": 0.5109,
+   "share": 0.58
+  },
+  {
+   "from": "nuclear-power",
+   "to": "j-robert-oppenheimer",
+   "p": 0.5899,
+   "share": 0.17
+  },
+  {
+   "from": "thermonuclear-weapon",
+   "to": "nuclear-weapon",
+   "p": 0.5885,
+   "share": 0.18
+  },
+  {
+   "from": "nuclear-weapon",
+   "to": "nuclear-power",
+   "p": 0.5654,
+   "share": 0.41
+  },
+  {
+   "from": "william-shockley",
+   "to": "eniac",
+   "p": 0.54,
+   "share": 0
+  },
+  {
+   "from": "vint-cerf",
+   "to": "arpanet",
+   "p": 0.6736,
+   "share": 0.27
+  },
+  {
+   "from": "arpanet",
+   "to": "vint-cerf",
+   "p": 0.6299,
+   "share": 0.51
+  },
+  {
+   "from": "bell-labs",
+   "to": "television",
+   "p": 0.6655,
+   "share": 0.07
+  },
+  {
+   "from": "general-electric",
+   "to": "television",
+   "p": 0.5948,
+   "share": 0.04
+  },
+  {
+   "from": "westinghouse-electric",
+   "to": "television",
+   "p": 0.6437,
+   "share": 0.02
+  },
+  {
+   "from": "oxycontin",
+   "to": "purdue-pharma",
+   "p": 0.6189,
+   "share": 0.61
+  },
+  {
+   "from": "tim-berners-lee",
+   "to": "facebook",
+   "p": 0.5297,
+   "share": 0.16
+  },
+  {
+   "from": "carl-djerassi",
+   "to": "gregory-pincus",
+   "p": 0.8834,
+   "share": 0.17
+  },
+  {
+   "from": "emmanuelle-charpentier",
+   "to": "jennifer-doudna",
+   "p": 0.8719,
+   "share": 0.32
+  },
+  {
+   "from": "dupont",
+   "to": "parachute",
+   "p": 0.7485,
+   "share": 0.08
+  },
+  {
+   "from": "zeppelin",
+   "to": "airship",
+   "p": 0.8884,
+   "share": 0.3
+  },
+  {
+   "from": "ferdinand-von-zeppelin",
+   "to": "airship",
+   "p": 0.8954,
+   "share": 0.23
+  },
+  {
+   "from": "george-cayley",
+   "to": "otto-lilienthal",
+   "p": 0.6992,
+   "share": 0.1
+  },
+  {
+   "from": "wright-flyer",
+   "to": "aeroplane",
+   "p": 0.8724,
+   "share": 0.23
+  },
+  {
+   "from": "jet-engine",
+   "to": "aeroplane",
+   "p": 0.6997,
+   "share": 0.28
+  },
+  {
+   "from": "boeing",
+   "to": "aeroplane",
+   "p": 0.8438,
+   "share": 0.1
+  },
+  {
+   "from": "general-electric",
+   "to": "jet-engine",
+   "p": 0.5406,
+   "share": 0.03
+  },
+  {
+   "from": "wheel",
+   "to": "jet-engine",
+   "p": 0.6992,
+   "share": 0.02
+  },
+  {
+   "from": "geoffrey-de-havilland",
+   "to": "jet-airliner",
+   "p": 0.9715,
+   "share": 0.2
+  },
+  {
+   "from": "aeroplane",
+   "to": "boeing",
+   "p": 0.7252,
+   "share": 0.72
+  },
+  {
+   "from": "wernher-von-braun",
+   "to": "rocket",
+   "p": 0.7124,
+   "share": 0.11
+  },
+  {
+   "from": "r-7-semyorka",
+   "to": "liquid-propellant-rocket",
+   "p": 0.6377,
+   "share": 0.05
+  },
+  {
+   "from": "rocket",
+   "to": "v-2-rocket",
+   "p": 0.7967,
+   "share": 0.39
+  },
+  {
+   "from": "robert-goddard",
+   "to": "v-2-rocket",
+   "p": 0.7379,
+   "share": 0.15
+  },
+  {
+   "from": "rocket",
+   "to": "wernher-von-braun",
+   "p": 0.6975,
+   "share": 0.68
+  },
+  {
+   "from": "robert-goddard",
+   "to": "wernher-von-braun",
+   "p": 0.6105,
+   "share": 0.1
+  },
+  {
+   "from": "v-2-rocket",
+   "to": "wernher-von-braun",
+   "p": 0.5534,
+   "share": 0.45
+  },
+  {
+   "from": "rocket",
+   "to": "sergei-korolev",
+   "p": 0.7592,
+   "share": 0.63
+  },
+  {
+   "from": "liquid-propellant-rocket",
+   "to": "sergei-korolev",
+   "p": 0.514,
+   "share": 0.46
+  },
+  {
+   "from": "v-2-rocket",
+   "to": "sergei-korolev",
+   "p": 0.5151,
+   "share": 0.2
+  },
+  {
+   "from": "rocket",
+   "to": "r-7-semyorka",
+   "p": 0.8778,
+   "share": 0.48
+  },
+  {
+   "from": "sputnik-1",
+   "to": "satellite",
+   "p": 0.8775,
+   "share": 0.38
+  },
+  {
+   "from": "rocket",
+   "to": "sputnik-1",
+   "p": 0.8776,
+   "share": 0.45
+  },
+  {
+   "from": "v-2-rocket",
+   "to": "sputnik-1",
+   "p": 0.7407,
+   "share": 0.27
+  },
+  {
+   "from": "solar-cell",
+   "to": "communications-satellite",
+   "p": 0.5654,
+   "share": 0.12
+  },
+  {
+   "from": "rocket",
+   "to": "communications-satellite",
+   "p": 0.8576,
+   "share": 0.58
+  },
+  {
+   "from": "robert-goddard",
+   "to": "nasa",
+   "p": 0.6421,
+   "share": 0.1
+  },
+  {
+   "from": "satellite",
+   "to": "nasa",
+   "p": 0.5182,
+   "share": 0.39
+  },
+  {
+   "from": "sputnik-1",
+   "to": "nasa",
+   "p": 0.8848,
+   "share": 0.23
+  },
+  {
+   "from": "apollo-program",
+   "to": "nasa",
+   "p": 0.5206,
+   "share": 0.25
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "apollo-program",
+   "p": 0.5183,
+   "share": 0.19
+  },
+  {
+   "from": "boeing",
+   "to": "apollo-program",
+   "p": 0.5849,
+   "share": 0.02
+  },
+  {
+   "from": "rocket",
+   "to": "apollo-program",
+   "p": 0.9197,
+   "share": 0.6
+  },
+  {
+   "from": "liquid-propellant-rocket",
+   "to": "apollo-program",
+   "p": 0.8071,
+   "share": 0.5
+  },
+  {
+   "from": "v-2-rocket",
+   "to": "apollo-program",
+   "p": 0.6735,
+   "share": 0.1
+  },
+  {
+   "from": "nasa",
+   "to": "apollo-program",
+   "p": 0.9088,
+   "share": 0.84
+  },
+  {
+   "from": "ibm",
+   "to": "apollo-program",
+   "p": 0.6934,
+   "share": 0.03
+  },
+  {
+   "from": "boeing",
+   "to": "international-space-station",
+   "p": 0.7348,
+   "share": 0.09
+  },
+  {
+   "from": "nasa",
+   "to": "international-space-station",
+   "p": 0.936,
+   "share": 0.5
+  },
+  {
+   "from": "space-shuttle",
+   "to": "international-space-station",
+   "p": 0.6953,
+   "share": 0.3
+  },
+  {
+   "from": "boeing",
+   "to": "space-shuttle",
+   "p": 0.6077,
+   "share": 0.02
+  },
+  {
+   "from": "apollo-program",
+   "to": "space-shuttle",
+   "p": 0.5783,
+   "share": 0.1
+  },
+  {
+   "from": "liquid-propellant-rocket",
+   "to": "spacex",
+   "p": 0.7785,
+   "share": 0.64
+  },
+  {
+   "from": "satellite",
+   "to": "spacex",
+   "p": 0.5831,
+   "share": 0.48
+  },
+  {
+   "from": "falcon-9",
+   "to": "spacex",
+   "p": 0.5796,
+   "share": 0.58
+  },
+  {
+   "from": "elon-musk",
+   "to": "falcon-9",
+   "p": 0.9238,
+   "share": 0.68
+  },
+  {
+   "from": "nikolaus-otto",
+   "to": "car",
+   "p": 0.8101,
+   "share": 0.21
+  },
+  {
+   "from": "benz-patent-motorwagen",
+   "to": "car",
+   "p": 0.9497,
+   "share": 0.47
+  },
+  {
+   "from": "henry-ford",
+   "to": "car",
+   "p": 0.8875,
+   "share": 0.36
+  },
+  {
+   "from": "ford-motor-company",
+   "to": "car",
+   "p": 0.8248,
+   "share": 0.2
+  },
+  {
+   "from": "thomas-midgley",
+   "to": "car",
+   "p": 0.5023,
+   "share": 0.01
+  },
+  {
+   "from": "general-motors",
+   "to": "car",
+   "p": 0.8648,
+   "share": 0.09
+  },
+  {
+   "from": "diesel-engine",
+   "to": "car",
+   "p": 0.666,
+   "share": 0.1
+  },
+  {
+   "from": "rudolf-diesel",
+   "to": "car",
+   "p": 0.7887,
+   "share": 0.05
+  },
+  {
+   "from": "plough",
+   "to": "tractor",
+   "p": 0.7702,
+   "share": 0.42
+  },
+  {
+   "from": "car",
+   "to": "road",
+   "p": 0.5058,
+   "share": 0.23
+  },
+  {
+   "from": "westinghouse-electric",
+   "to": "tram",
+   "p": 0.7905,
+   "share": 0.01
+  },
+  {
+   "from": "saddle",
+   "to": "horseshoe",
+   "p": 0.6379,
+   "share": 0.07
+  },
+  {
+   "from": "general-electric",
+   "to": "electric-motor",
+   "p": 0.5769,
+   "share": 0.05
+  },
+  {
+   "from": "plough",
+   "to": "agriculture",
+   "p": 0.8638,
+   "share": 0.24
+  },
+  {
+   "from": "irrigation",
+   "to": "agriculture",
+   "p": 0.7388,
+   "share": 0.27
+  },
+  {
+   "from": "water-wheel",
+   "to": "agriculture",
+   "p": 0.7478,
+   "share": 0.05
+  },
+  {
+   "from": "writing",
+   "to": "banknote",
+   "p": 0.8533,
+   "share": 0.5
+  },
+  {
+   "from": "wheel",
+   "to": "pottery",
+   "p": 0.8878,
+   "share": 0.18
+  },
+  {
+   "from": "agriculture",
+   "to": "pottery",
+   "p": 0.9159,
+   "share": 0.14
+  },
+  {
+   "from": "dupont",
+   "to": "wallace-carothers",
+   "p": 0.7447,
+   "share": 0.54
+  },
+  {
+   "from": "wallace-carothers",
+   "to": "dupont",
+   "p": 0.6063,
+   "share": 0.1
+  },
+  {
+   "from": "dupont",
+   "to": "thermonuclear-weapon",
+   "p": 0.6316,
+   "share": 0.01
+  },
+  {
+   "from": "transistor",
+   "to": "mobile-phone",
+   "p": 0.6596,
+   "share": 0.69
+  },
+  {
+   "from": "microprocessor",
+   "to": "mobile-phone",
+   "p": 0.6728,
+   "share": 0.5
+  },
+  {
+   "from": "lithium-ion-battery",
+   "to": "mobile-phone",
+   "p": 0.6597,
+   "share": 0.36
+  },
+  {
+   "from": "iphone",
+   "to": "mobile-phone",
+   "p": 0.5194,
+   "share": 0.24
+  },
+  {
+   "from": "graphical-user-interface",
+   "to": "mobile-phone",
+   "p": 0.5016,
+   "share": 0.2
+  },
+  {
+   "from": "radio",
+   "to": "motorola",
+   "p": 0.7915,
+   "share": 0.64
+  },
+  {
+   "from": "graphical-user-interface",
+   "to": "android",
+   "p": 0.7323,
+   "share": 0.3
+  },
+  {
+   "from": "touchscreen",
+   "to": "android",
+   "p": 0.508,
+   "share": 0.32
+  },
+  {
+   "from": "world-wide-web",
+   "to": "google",
+   "p": 0.9103,
+   "share": 0.68
+  },
+  {
+   "from": "tim-berners-lee",
+   "to": "google",
+   "p": 0.7906,
+   "share": 0.36
+  },
+  {
+   "from": "google-search",
+   "to": "google",
+   "p": 0.868,
+   "share": 0.6
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "ibm",
+   "p": 0.5087,
+   "share": 0.49
+  },
+  {
+   "from": "intel",
+   "to": "calculator",
+   "p": 0.6387,
+   "share": 0.04
+  },
+  {
+   "from": "microprocessor",
+   "to": "calculator",
+   "p": 0.8582,
+   "share": 0.29
+  },
+  {
+   "from": "intel-4004",
+   "to": "calculator",
+   "p": 0.8003,
+   "share": 0.08
+  },
+  {
+   "from": "intel",
+   "to": "laptop",
+   "p": 0.6372,
+   "share": 0.2
+  },
+  {
+   "from": "microprocessor",
+   "to": "laptop",
+   "p": 0.8261,
+   "share": 0.58
+  },
+  {
+   "from": "fairchild-semiconductor",
+   "to": "personal-computer",
+   "p": 0.5322,
+   "share": 0.2
+  },
+  {
+   "from": "robert-noyce",
+   "to": "personal-computer",
+   "p": 0.7017,
+   "share": 0.46
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "personal-computer",
+   "p": 0.8847,
+   "share": 0.72
+  },
+  {
+   "from": "intel",
+   "to": "personal-computer",
+   "p": 0.8623,
+   "share": 0.58
+  },
+  {
+   "from": "federico-faggin",
+   "to": "personal-computer",
+   "p": 0.7503,
+   "share": 0.26
+  },
+  {
+   "from": "intel-4004",
+   "to": "personal-computer",
+   "p": 0.6741,
+   "share": 0.43
+  },
+  {
+   "from": "steve-jobs",
+   "to": "personal-computer",
+   "p": 0.7755,
+   "share": 0.29
+  },
+  {
+   "from": "hard-disk-drive",
+   "to": "personal-computer",
+   "p": 0.7492,
+   "share": 0.23
+  },
+  {
+   "from": "graphical-user-interface",
+   "to": "personal-computer",
+   "p": 0.7259,
+   "share": 0.31
+  },
+  {
+   "from": "integrated-circuit",
+   "to": "bluetooth",
+   "p": 0.6535,
+   "share": 0.49
+  },
+  {
+   "from": "tim-berners-lee",
+   "to": "wikipedia",
+   "p": 0.9054,
+   "share": 0.4
+  },
+  {
+   "from": "william-shockley",
+   "to": "youtube",
+   "p": 0.5752,
+   "share": 0.04
+  },
+  {
+   "from": "transistor",
+   "to": "youtube",
+   "p": 0.6734,
+   "share": 0.41
+  },
+  {
+   "from": "arpanet",
+   "to": "youtube",
+   "p": 0.6465,
+   "share": 0.55
+  },
+  {
+   "from": "world-wide-web",
+   "to": "amazon",
+   "p": 0.8649,
+   "share": 0.72
+  },
+  {
+   "from": "johannes-gutenberg",
+   "to": "newspaper",
+   "p": 0.7029,
+   "share": 0.48
+  },
+  {
+   "from": "paper",
+   "to": "lithography",
+   "p": 0.6309,
+   "share": 0.44
+  },
+  {
+   "from": "wheel",
+   "to": "astrolabe",
+   "p": 0.7045,
+   "share": 0.12
+  },
+  {
+   "from": "robert-william-thomson",
+   "to": "john-boyd-dunlop",
+   "p": 0.5151,
+   "share": 0.07
+  },
+  {
+   "from": "electric-generator",
+   "to": "charles-f-brush",
+   "p": 0.5677,
+   "share": 0.5
+  },
+  {
+   "from": "walter-gordon-wilson",
+   "to": "william-tritton",
+   "p": 0.684,
+   "share": 0.2
+  },
+  {
+   "from": "william-tritton",
+   "to": "walter-gordon-wilson",
+   "p": 0.5814,
+   "share": 0.16
+  },
+  {
+   "from": "elon-musk",
+   "to": "openai",
+   "p": 0.7552,
+   "share": 0.24
+  },
+  {
+   "from": "world-wide-web",
+   "to": "larry-sanger",
+   "p": 0.578,
+   "share": 0.52
+  },
+  {
+   "from": "lens",
+   "to": "louis-daguerre",
+   "p": 0.609,
+   "share": 0.16
+  },
+  {
+   "from": "nicephore-niepce",
+   "to": "louis-daguerre",
+   "p": 0.6335,
+   "share": 0.38
+  },
+  {
+   "from": "television",
+   "to": "john-logie-baird",
+   "p": 0.6724,
+   "share": 0.67
+  },
+  {
+   "from": "television",
+   "to": "philo-farnsworth",
+   "p": 0.5634,
+   "share": 0.64
+  },
+  {
+   "from": "westinghouse-electric",
+   "to": "vladimir-zworykin",
+   "p": 0.5371,
+   "share": 0.22
+  },
+  {
+   "from": "television",
+   "to": "vladimir-zworykin",
+   "p": 0.5444,
+   "share": 0.64
+  },
+  {
+   "from": "satellite",
+   "to": "bradford-parkinson",
+   "p": 0.5731,
+   "share": 0.5
+  },
+  {
+   "from": "satellite",
+   "to": "roger-l-easton",
+   "p": 0.5189,
+   "share": 0.62
+  },
+  {
+   "from": "sputnik-1",
+   "to": "roger-l-easton",
+   "p": 0.5152,
+   "share": 0.07
+  },
+  {
+   "from": "general-anaesthesia",
+   "to": "william-t-g-morton",
+   "p": 0.6057,
+   "share": 0.63
+  },
+  {
+   "from": "dentistry",
+   "to": "william-t-g-morton",
+   "p": 0.6708,
+   "share": 0.32
+  },
+  {
+   "from": "general-anaesthesia",
+   "to": "crawford-long",
+   "p": 0.5011,
+   "share": 0.45
+  },
+  {
+   "from": "elias-howe",
+   "to": "isaac-singer",
+   "p": 0.7538,
+   "share": 0.12
+  },
+  {
+   "from": "whitcomb-l-judson",
+   "to": "gideon-sundback",
+   "p": 0.901,
+   "share": 0.33
+  },
+  {
+   "from": "braille",
+   "to": "louis-braille",
+   "p": 0.5166,
+   "share": 0.63
+  }
+ ]
+}
