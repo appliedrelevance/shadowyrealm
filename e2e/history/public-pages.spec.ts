@@ -10,34 +10,13 @@ test.describe("Public pages", () => {
     expect(await rows.count()).toBeGreaterThan(10);
   });
 
-  test("music draws the vital articles as one stream, with its families tabled", async ({ page }) => {
-    await page.goto("/music");
-    await expect(page.locator("h1")).toContainText("Music, 1400 BCE to today");
-    const stream = page.getByRole("img", { name: /Centred stream of .* music entities/ });
-    await expect(stream).toBeVisible();
-    expect(await stream.locator("a path").count()).toBeGreaterThan(2000);
-    await expect(page.locator("table tbody tr")).toHaveCount(8);
-    await expect(page.locator("table tbody tr").first()).toContainText("Classical");
-  });
-
-  test("a band opens its music page, with its score, curve, dimensions, connections and evidence", async ({ page }) => {
-    await page.goto("/music");
-    await page.locator('a[href="/music/the-beatles"]').dispatchEvent("click");
-    await expect(page).toHaveURL(/\/music\/the-beatles$/);
-    await expect(page.locator("h1")).toHaveText("The Beatles");
-    await expect(page.getByText("Total influence")).toBeVisible();
-    await expect(page.getByRole("img", { name: /influence each year/ })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "What it gave" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Members" })).toBeVisible();
-    await page.getByRole("button", { name: "Show evidence" }).click();
-    await expect(page.getByRole("link", { name: "CC BY-SA 4.0" })).toBeVisible();
-    await page.getByRole("link", { name: /John Lennon/ }).click();
-    await expect(page.locator("h1")).toHaveText("John Lennon");
-  });
-
-  test("an unknown music page says so", async ({ page }) => {
-    await page.goto("/music/no-such-entity");
-    await expect(page.locator("h1")).toHaveText("Not found");
+  test("the old music pages redirect to the Music site", async ({ request }) => {
+    const stream = await request.get("/music", { maxRedirects: 0 });
+    expect(stream.status()).toBe(301);
+    expect(stream.headers().location).toBe("https://music.shadowyrealm.com/");
+    const entry = await request.get("/music/the-beatles", { maxRedirects: 0 });
+    expect(entry.status()).toBe(301);
+    expect(entry.headers().location).toBe("https://music.shadowyrealm.com/entity/the-beatles");
   });
 
   test("the index filters by type and name", async ({ page }) => {
