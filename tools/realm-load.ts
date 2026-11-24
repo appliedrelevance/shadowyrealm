@@ -26,11 +26,11 @@
  * --concurrency creates and scores that many entities at once; links are
  * always added one at a time, so the credit cap is checked in order.
  *
- * A site that counts people (ScoringConfig.breadth) takes its links from the stored graph
- * (tools/credit-graph.ts): the curated links and System One's proposals, scaled
- * to each consequence's inherited share. A link already in the index whose
- * strength differs is set to the stored one, lowered strengths first so the
- * credit cap holds throughout.
+ * A content file that includes System One's graph (tools/credit-search.ts) takes its links from the
+ * stored graph (tools/credit-graph.ts): the curated links and System One's proposals, scaled to each
+ * consequence's inherited share. A site that counts people (ScoringConfig.breadth) must include it.
+ * A link already in the index whose strength differs is set to the stored one, lowered strengths
+ * first so the credit cap holds throughout.
  */
 import type { SiteContent } from "../content/types";
 import { creditTypes, siteFor } from "../src/sites";
@@ -38,6 +38,7 @@ import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
 import { keyOf, SystemOneCache } from "./system-one-cache";
 import { Wikipedia } from "./wiki-evidence";
+import { DOLLARS_PER_CHAR_AT_MOST } from "./workers-ai";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
 const MCP_API_KEY = process.env.MCP_API_KEY;
@@ -54,16 +55,6 @@ const publish = args.includes("--publish");
 const concurrency = args.includes("--concurrency") ? Number(args[args.indexOf("--concurrency") + 1]) : 1;
 
 const cache = new SystemOneCache();
-
-/**
- * The most a character of request can cost: the most input tokens a character has taken over the
- * whole-article requests in the System One cache (2026-11-14 and 15: Clef 0.4429, Clairic 0.4738),
- * at Cloudflare's list price per input token (Clef $0.24 a million, Clairic $0.10).
- */
-const DOLLARS_PER_CHAR_AT_MOST: Record<string, number> = {
-  "@cf/cloudflare/clef": 0.4429 * 0.24e-6,
-  "@cf/cloudflare/clairic": 0.4738 * 0.1e-6,
-};
 
 let WIKI_HEADERS: Record<string, string> = {};
 let wiki: Wikipedia;
@@ -249,13 +240,17 @@ async function main() {
     }
   });
 
-  const countsPeople = site.scoring.breadth === "people";
   const curated = content.links.map((l) => ({ from: l.from, to: l.to, share: l.share, type: linkTypeOf(site, l), why: l.why }));
-  let links: StoredLink[] = curated.map((l) => ({ ...l, proposed: false }));
-  if (countsPeople) {
-    if (!content.systemOne) throw new Error(`${site.brand.name} counts people, so ${file} must include systemOne`);
-    links = storedGraph(curated, creditTypes(site), content.systemOne);
+  if (site.scoring.breadth === "people" && !content.systemOne) {
+    throw new Error(`${site.brand.name} counts people, so ${file} must include systemOne`);
   }
+  const fromGraph = content.systemOne !== undefined;
+  const links: StoredLink[] = content.systemOne
+    ? storedGraph(curated, creditTypes(site), content.systemOne)
+    : curated.map((l) => {
+        if (l.share == null) throw new Error(`The link ${l.from} -> ${l.to} has no share, and ${file} has no systemOne to set it`);
+        return { ...l, share: l.share, proposed: false };
+      });
   const sources = new Map<string, EntityDetail>();
   const adds: StoredLink[] = [];
   const changes: { link: StoredLink; from: number }[] = [];
@@ -266,7 +261,7 @@ async function main() {
       .get(l.from)!
       .relationships.find((r) => r.direction === "outgoing" && r.other.slug === l.to && r.relationship_type === l.type);
     if (!found) adds.push(l);
-    else if (countsPeople && Math.abs(Number(found.strength) - l.share) > 0.0005) changes.push({ link: l, from: Number(found.strength) });
+    else if (fromGraph && Math.abs(Number(found.strength) - l.share) > 0.0005) changes.push({ link: l, from: Number(found.strength) });
   }
   // Lowered strengths first, then new links, then raised strengths: a consequence's credit cap holds at every step.
   const lowered = changes.filter((c) => c.link.share < c.from);

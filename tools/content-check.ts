@@ -65,11 +65,12 @@ for (const l of content.links) {
   if (seen.has(key)) problems.push(`${name}: linked twice`);
   seen.add(key);
   if (!l.why.trim()) problems.push(`${name}: no why`);
-  if (l.share < 0 || l.share > 1) problems.push(`${name}: share ${l.share} outside 0-1`);
+  if (l.share == null && !content.systemOne) problems.push(`${name}: no share, and no systemOne to set it`);
+  if (l.share != null && (l.share < 0 || l.share > 1)) problems.push(`${name}: share ${l.share} outside 0-1`);
   if (from && to && !allowsEnds(def, from.type, to.type)) {
     problems.push(`${name}: runs ${from.type} -> ${to.type}; ${def.key} allows ${describeEnds(def.from)} -> ${describeEnds(def.to)}`);
   }
-  if (def.credit) incoming.set(l.to, (incoming.get(l.to) ?? 0) + l.share);
+  if (def.credit && l.share != null) incoming.set(l.to, (incoming.get(l.to) ?? 0) + l.share);
 }
 for (const [slug, total] of incoming) {
   if (total > 1.000001) problems.push(`${slug}: credits ${total.toFixed(2)} of itself to its causes, more than 1.00`);

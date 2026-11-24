@@ -37,8 +37,11 @@ export interface SiteLink<L extends string> {
   from: string;
   /** The consequence. */
   to: string;
-  /** For a credit-bearing link, the share of the consequence credited to the cause. */
-  share: number;
+  /**
+   * For a credit-bearing link, the share of the consequence credited to the cause. Left out where
+   * System One sets it: tools/credit-search.ts asks Clairic, and the graph keeps it (systemOne.shares).
+   */
+  share?: number;
   /** Required unless the site has an "influence" link type, which is the default. */
   type?: L;
   why: string;
@@ -48,8 +51,9 @@ export interface SiteContent<E extends string, L extends string> {
   entities: SiteEntity<E>[];
   links: SiteLink<L>[];
   /**
-   * For a site that counts people (ScoringConfig.breadth): System One's proposed links and each
-   * consequence's inherited share, which tools/credit-graph.ts combines with links into the stored graph.
+   * System One's proposed links, the shares it set for links that carry none, and each consequence's
+   * inherited share (tools/credit-search.ts), which tools/credit-graph.ts combines with links into the
+   * stored graph.
    */
   systemOne?: SystemOneGraph;
 }
@@ -83,4 +87,17 @@ export interface InventionsLink extends SiteLink<InventionsLinkType> {
 export interface InventionsContent {
   entities: SiteEntity<InventionsEntityType>[];
   links: InventionsLink[];
+}
+
+// ---------- Music ----------
+
+export type MusicEntityType = "person" | "group" | "style" | "work" | "instrument";
+export type MusicLinkType = "genre" | "gave_rise" | "member" | "made" | "influence";
+export interface MusicLink extends SiteLink<MusicLinkType> {
+  type: MusicLinkType;
+}
+export interface MusicContent {
+  entities: SiteEntity<MusicEntityType>[];
+  links: MusicLink[];
+  systemOne?: SystemOneGraph;
 }

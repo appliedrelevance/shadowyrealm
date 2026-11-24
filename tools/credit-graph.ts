@@ -1,7 +1,8 @@
 /**
- * The influence graph the index stores, for a site that counts people (ScoringConfig.breadth):
- * the curated links plus System One's proposals (content/system-one-graph.json), with every
- * consequence's credit-bearing links scaled to what it owes its causes.
+ * The influence graph the index stores for a site whose content includes System One's graph
+ * (tools/credit-search.ts; History's is content/system-one-graph.json): the curated links plus
+ * System One's proposals, with every consequence's credit-bearing links scaled to what it owes its
+ * causes. A curated link that carries no share takes the one System One set for it (shares).
  *
  * A consequence gives away at most Clairic's share of it owed to all its causes together (inherited).
  * When its curated links and proposals add up to more, all of them are scaled down by the same
@@ -16,22 +17,33 @@ export const MIN_SHARE = 0.05;
 export interface SystemOneGraph {
   inherited: Record<string, number>;
   proposals: { from: string; to: string; p: number; share: number }[];
+  /** Clairic's share for each curated link that carries none. */
+  shares?: { from: string; to: string; type: string; share: number }[];
 }
 
 export interface CuratedLink {
   from: string;
   to: string;
-  share: number;
+  /** Left out where System One sets it (SystemOneGraph.shares). */
+  share?: number;
   type: string;
   why: string;
 }
 
 export interface StoredLink extends CuratedLink {
+  share: number;
   proposed: boolean;
 }
 
-export function storedGraph(curated: CuratedLink[], creditTypes: ReadonlySet<string>, systemOne: SystemOneGraph): StoredLink[] {
-  const carries = (l: CuratedLink) => creditTypes.has(l.type) && l.share > 0;
+export function storedGraph(given: CuratedLink[], creditTypes: ReadonlySet<string>, systemOne: SystemOneGraph): StoredLink[] {
+  const set = new Map((systemOne.shares ?? []).map((s) => [`${s.from} ${s.to} ${s.type}`, s.share]));
+  const curated = given.map((l) => {
+    if (l.share != null) return { ...l, share: l.share };
+    const share = set.get(`${l.from} ${l.to} ${l.type}`);
+    if (share === undefined) throw new Error(`The link ${l.from} -> ${l.to} (${l.type}) has no share, and System One set none`);
+    return { ...l, share };
+  });
+  const carries = (l: { type: string; share: number }) => creditTypes.has(l.type) && l.share > 0;
   const held = new Map<string, number>();
   for (const l of curated) if (carries(l)) held.set(l.to, (held.get(l.to) ?? 0) + l.share);
 
