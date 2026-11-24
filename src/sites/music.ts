@@ -179,6 +179,28 @@ export const music: SiteConfig = {
     near: 10,
     buckets: 200,
   },
+  /**
+   * Families in the palette's slot order (the order the eight hues pass the dataviz checks in, on
+   * surface-1), shaded by the Vital Articles list's sections: Classical by era, the world's music by region.
+   */
+  picture: {
+    kind: "stream",
+    grouping: {
+      key: "family",
+      shadeKey: "shade",
+      labels: { group: "Family", groups: "Families", shades: "Sections" },
+      groups: [
+        { name: "Classical", shades: ["Ancient", "Medieval & Renaissance", "Baroque", "Classical era", "Romantic", "Modern", "Screen", "Anthems"] },
+        { name: "Blues & Jazz", shades: ["Blues", "Early jazz", "Swing", "Modern jazz", "Free & fusion", "Vocal jazz", "Jazz beyond the US"] },
+        { name: "R&B & Hip-hop", shades: ["Gospel", "Soul & R&B", "Funk & disco", "Hip-hop"] },
+        { name: "Rock, Folk & Country", shades: ["Folk", "Country", "Rock and roll", "Rock", "Metal & hard rock", "Punk", "Alternative"] },
+        { name: "Pop & Electronic", shades: ["Pop", "Stage & screen", "Electronic"] },
+        { name: "World popular music", shades: ["Latin America & Iberia", "Caribbean", "Africa", "Europe", "Middle East & Central Asia", "South Asia", "East & Southeast Asia"] },
+        { name: "Traditions & world", shades: ["Europe", "Middle East & Central Asia", "South Asia", "East & Southeast Asia", "Africa", "Americas", "Oceania", "Traditional songs"] },
+        { name: "Instruments", shades: ["String instruments", "Wind instruments", "Percussion instruments", "Keyboard instruments", "Electronic instruments"] },
+      ],
+    },
+  },
   copy: {
     nav: {
       index: "Index",

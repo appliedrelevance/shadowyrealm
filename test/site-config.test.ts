@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { FAMILY_COLORS } from "../src/lib/chart-colors";
 import { SITES, siteFor } from "../src/sites";
 
 /** Every registered site config meets site-platform Requirement 2. */
@@ -34,6 +35,18 @@ for (const site of Object.values(SITES)) {
       }
       for (const t of site.entityTypes) if (t.requiresOutgoing) expect(linkKeys.has(t.requiresOutgoing)).toBe(true);
       expect(site.linkTypes.some((l) => l.credit)).toBe(true);
+    });
+
+    test("a stream's groups fit the palette, with distinct names and distinct shades in each", () => {
+      if (site.picture.kind !== "stream") return;
+      const { groups } = site.picture.grouping;
+      expect(groups.length).toBeGreaterThanOrEqual(1);
+      expect(groups.length).toBeLessThanOrEqual(FAMILY_COLORS.length);
+      expect(new Set(groups.map((g) => g.name)).size).toBe(groups.length);
+      for (const g of groups) {
+        expect(g.shades.length).toBeGreaterThanOrEqual(1);
+        expect(new Set(g.shades).size).toBe(g.shades.length);
+      }
     });
 
     test("puts every tick inside its timeline", () => {

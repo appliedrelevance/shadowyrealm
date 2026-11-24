@@ -153,6 +153,7 @@ export const history: SiteConfig = {
     near: 40,
     buckets: 200,
   },
+  picture: { kind: "river" },
   copy: {
     nav: {
       index: "Index",

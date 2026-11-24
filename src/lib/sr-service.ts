@@ -866,9 +866,33 @@ function yearsOf(scoring: Scoring, entityId: number) {
 }
 
 /** Everything the timeline and the graph draw: every entity's own curve and every link. */
+/**
+ * Where an entity sits in a stream site's picture (SitePicture): its group and its shade within
+ * that group, as indexes into the grouping, read from the metadata keys the grouping names. Null on
+ * a site whose picture is the river. An entity whose metadata names neither is a content error.
+ */
+export function streamPlace(
+  site: SiteConfig,
+  entity: { name: string; metadata: Json | null },
+): { group: number; shade: number } | null {
+  if (site.picture.kind !== "stream") return null;
+  const g = site.picture.grouping;
+  const meta = (entity.metadata ?? {}) as Record<string, unknown>;
+  const group = g.groups.findIndex((x) => x.name === meta[g.key]);
+  if (group < 0) {
+    throw new Error(`${entity.name}: metadata.${g.key} is "${String(meta[g.key])}", none of ${site.brand.name}'s ${g.groups.length} groups`);
+  }
+  const shade = g.groups[group].shades.indexOf(String(meta[g.shadeKey]));
+  if (shade < 0) {
+    throw new Error(`${entity.name}: metadata.${g.shadeKey} is "${String(meta[g.shadeKey])}", not one of ${g.groups[group].name}'s shades`);
+  }
+  return { group, shade };
+}
+
 export async function getRealm(env: ServiceEnv, includeDrafts: boolean) {
   const scoring = await loadScoring(env, includeDrafts);
-  const edges = bucketEdges(scoring.as_of_year, siteOf(env).timeline);
+  const site = siteOf(env);
+  const edges = bucketEdges(scoring.as_of_year, site.timeline);
   return {
     as_of_year: scoring.as_of_year,
     entities: scoring.ranked.map((e) => ({
@@ -876,6 +900,7 @@ export async function getRealm(env: ServiceEnv, includeDrafts: boolean) {
       description: e.description,
       image_url: e.image_url,
       ...yearsOf(scoring, e.id),
+      stream: streamPlace(site, e),
       curve: trimmed(sampleCurve(scoring.scores.get(e.id)!.own.curve, edges)),
     })),
     links: scoring.links.map((l) => ({

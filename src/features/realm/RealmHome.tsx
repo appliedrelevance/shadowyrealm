@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useRealm, type Realm, type RealmEntity } from "./api";
 import { formatMagnitude } from "./chart";
 import { ImpactRiver } from "./ImpactRiver";
+import { GroupTable, Stream } from "./Stream";
 
 type TypeFilter = "" | RealmEntity["entity_type"];
 
@@ -70,9 +71,20 @@ export function RealmHome() {
         <p className="mb-3 mt-1 text-sm text-ink-muted">{COPY.home.riverSubtitle}</p>
         {error && <LoadError message={error.message} />}
         {isLoading && <div className="h-[560px] animate-pulse rounded bg-surface-2" />}
-        {realm && realm.entities.length > 0 && <ImpactRiver realm={realm} />}
+        {realm && realm.entities.length > 0 && (SITE.picture.kind === "stream" ? <Stream realm={realm} /> : <ImpactRiver realm={realm} />)}
         {realm && realm.entities.length === 0 && <p className="py-12 text-center text-ink-muted">{COPY.home.empty}</p>}
       </section>
+
+      {SITE.picture.kind === "stream" && realm && realm.entities.length > 0 && (
+        <section className="mt-8" aria-labelledby="groups-heading">
+          <h2 id="groups-heading" className="font-display text-xl font-bold text-ink">
+            The {SITE.picture.grouping.labels.groups.toLowerCase()}
+          </h2>
+          <div className="mt-3">
+            <GroupTable realm={realm} />
+          </div>
+        </section>
+      )}
 
       {realm && realm.entities.length > 0 && <IndexTable realm={realm} />}
     </div>

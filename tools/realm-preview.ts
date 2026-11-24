@@ -27,6 +27,7 @@ import { buildClairicRequest, CLAIRIC_MODEL, readClairicAnswers } from "../src/l
 import { buildClefRequest, CLEF_MODEL, readClefAnswers, type PeriodToScore } from "../src/lib/clef";
 import { composeScores, walkShares, type AssessmentRow, type LinkRow, type PeriodRow } from "../src/lib/credit";
 import { sampleCurve } from "../src/lib/atis-calculator";
+import { streamPlace } from "../src/lib/sr-service";
 import { keyOf } from "../src/lib/system-one";
 import { bucketEdges } from "../src/lib/timeline";
 import { creditTypes, siteFor } from "../src/sites";
@@ -266,6 +267,7 @@ const realm = {
       description: e.description,
       first_year: own.length ? Math.min(...own.map((p) => p.start_year)) : null,
       last_year: own.length ? Math.max(...own.map((p) => p.end_year)) : null,
+      stream: streamPlace(site, { name: e.name, metadata: e.metadata ?? null }),
       curve: trimmed(sampleCurve(s.own.curve, edges)),
     };
   }),

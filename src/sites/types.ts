@@ -169,6 +169,27 @@ export interface SiteCopy {
   footer: { tagline: string };
 }
 
+/**
+ * The home page's picture of every entity's own influence over time. "river": the impact river,
+ * benefit above the axis and harm below. "stream": a centred stream with no meaning above or below
+ * its centre, one band per entity, coloured by the group its metadata names and shaded by its
+ * place within that group.
+ */
+export type SitePicture = { kind: "river" } | { kind: "stream"; grouping: StreamGrouping };
+
+export interface StreamGrouping {
+  /** The metadata keys naming an entity's group and its shade within that group. */
+  key: string;
+  shadeKey: string;
+  /** What one group, all groups and a group's shades are called: "Family", "Families", "Sections". */
+  labels: { group: string; groups: string; shades: string };
+  /**
+   * In the palette's slot order, as the stream stacks them: group i is drawn in
+   * --color-family-{i+1}, and its shades stack in the order listed.
+   */
+  groups: readonly { name: string; shades: readonly string[] }[];
+}
+
 export interface SiteMcp {
   serverName: string;
   /** What the index is, for the server instructions' first paragraph. */
@@ -186,6 +207,7 @@ export interface SiteConfig {
   entityTypes: readonly EntityTypeDef[];
   linkTypes: readonly LinkTypeDef[];
   timeline: Timeline;
+  picture: SitePicture;
   copy: SiteCopy;
   mcp: SiteMcp;
 }
