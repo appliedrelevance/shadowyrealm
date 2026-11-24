@@ -55,16 +55,17 @@ Each ends deployed, tested in production and committed.
 3. **History rename** (done, `b92edb1`).
 4. **Monorepo handoff** (`.kiro/handoffs/music-and-inventions-schema.md`): music's schema, Inventions'
    head-count columns, both sign-in addresses. Geordie carries it to a monorepo session.
-5. **Sides** in the engine: Clef's request and answers (done: all 2,093 music requests match the answers
-   already paid for), the service writing zero harm, every page leaving harm out.
-6. **The credit tool**, for any site: Clef proposes the causes an article names that have no link, Clairic
+5. **Sides** in the engine: Clef's request and answers (all 2,093 music requests match the answers
+   already paid for), the service writing zero harm, every page leaving harm out (done, `66ce7f1`).
+6. **The credit tool** (done, `48b81f1`), for any site: Clef proposes the causes an article names that have no link, Clairic
    sizes each share and what each consequence owes in all, and `tools/credit-graph.ts` stores the graph.
    History's 2026-11-14 pilot ran this once; it is written again as a tool, priced before it runs.
-7. **Inventions on head-counts**: `breadth: "people"`, its graph from stage 6, a re-score of its 945
-   periods (Clairic at most $1.96), tiers calibrated again, its river shown before deploying.
-8. **Picture** in the engine: the stream as a configured home picture.
-9. **No UI code per site**: logos, heroes, type icons and method prose become data; `src/sites/ui.ts` goes.
+7. **Inventions on head-counts** (done 2026-11-24, Worker `933aeb8b`): `breadth: "people"`, its graph
+   from stage 6, a re-score of its 945 periods, tiers calibrated again, its river shown before deploying.
+8. **Picture** in the engine: the stream as a configured home picture (done, `abf6a42`).
+9. **No UI code per site**: logos, heroes, type icons and method prose become data; `src/sites/ui.ts` goes
+   (done, `d92f013`).
 10. **The music site**: its tokens, favicon and og image, `content/music/` from `music-vital/`, its graph
     from stage 6, loaded through its MCP tools, tiers calibrated, deployed at `music.shadowyrealm.com`.
 11. **Retire the music page**: `shadowyrealm.com/music` and `/music/*` redirect to the music site; the
-    frozen files and `src/features/music/` are deleted.
+    frozen files and `src/features/music/` are deleted (`d92f013`, with stage 9).
