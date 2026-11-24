@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, test } from "bun:test";
 import { FAMILY_COLORS } from "../src/lib/chart-colors";
 import { SITES, siteFor } from "../src/sites";
@@ -46,6 +48,12 @@ for (const site of Object.values(SITES)) {
       for (const g of groups) {
         expect(g.shades.length).toBeGreaterThanOrEqual(1);
         expect(new Set(g.shades).size).toBe(g.shades.length);
+      }
+    });
+
+    test("ships its favicon and hero in public/<site>/", () => {
+      for (const file of ["/favicon.svg", site.brand.hero]) {
+        expect(existsSync(join(import.meta.dir, "..", "public", site.key, file))).toBe(true);
       }
     });
 

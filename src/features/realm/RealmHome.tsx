@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, RefreshCw, Search } from "lucide-react";
 import { HAS_HARM, SITE } from "@/lib/site";
-import { SITE_UI } from "@/sites/ui";
+import { TYPE_ICONS } from "@/lib/icons";
 import { MagnitudeBadge } from "@/components/MagnitudeBadge";
 import { useOperator } from "@/features/entities/hooks/useEntityMutations";
 import { COPY } from "@/lib/copy";
@@ -20,8 +20,6 @@ const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
   { value: "", label: "All" },
   ...SITE.entityTypes.map((t) => ({ value: t.key, label: t.plural })),
 ];
-
-export const typeIcons = SITE_UI.typeIcons;
 
 export function RealmHome() {
   usePageTitle();
@@ -58,8 +56,11 @@ export function RealmHome() {
             )}
           </div>
         </div>
-        <SITE_UI.Hero
+        <img
+          src={SITE.brand.hero}
           alt={COPY.home.heroAlt}
+          width={512}
+          height={512}
           className="hidden h-56 w-56 rounded-lg border border-line shadow-lg shadow-crit/25 md:block"
         />
       </header>
@@ -177,7 +178,7 @@ function IndexTable({ realm }: { realm: Realm }) {
           </thead>
           <tbody>
             {rows.map(({ entity: e, rank }) => {
-              const Icon = typeIcons[e.entity_type];
+              const Icon = TYPE_ICONS[e.entity_type];
               const scale = e.total_magnitude / max;
               const benefitShare = e.total_magnitude > 0 ? e.benefit_total / e.total_magnitude : 0;
               return (

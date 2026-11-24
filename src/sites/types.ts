@@ -22,11 +22,30 @@ export interface DimensionDef {
   };
 }
 
+/** The icons an entity type can show, by their lucide names; src/lib/icons.ts maps each to its drawing. */
+export const ENTITY_ICONS = [
+  "building",
+  "guitar",
+  "layers",
+  "lightbulb",
+  "mic-vocal",
+  "music",
+  "package",
+  "rocket",
+  "telescope",
+  "user",
+  "users",
+  "zap",
+] as const;
+export type EntityIcon = (typeof ENTITY_ICONS)[number];
+
 export interface EntityTypeDef {
   key: string;
   label: string;
   /** For the index filter. */
   plural: string;
+  /** Beside an entity without a picture of its own. */
+  icon: EntityIcon;
   /** How Clef's questions name the thing being scored. */
   clefSubject: (name: string) => string;
   /** The conventional metadata keys, for the create_entity description. */
@@ -137,8 +156,15 @@ export interface SiteBrand {
   userAgent: string;
   /** What the site indexes, in a few words, for the sites menu every site shares. */
   holds: string;
+  /** The home page's illustration, a file in public/<site>/, square and drawn at 512 pixels. */
+  hero: string;
   /** Addresses the site used to live at: a GET to one is redirected, permanently, to the same path here. */
   formerOrigins?: readonly string[];
+  /**
+   * Pages that moved to another address. A GET or HEAD to the path `from` is redirected, permanently,
+   * to `to`; a `from` ending in "/" covers every path under it, and the rest of the path follows `to`.
+   */
+  movedPaths?: readonly { from: string; to: string }[];
   /** A site still being built: the sites menu and every footer leave it out until it opens. */
   unlisted?: boolean;
 }
@@ -161,7 +187,7 @@ export interface SiteCopy {
     loading: string;
   };
   entity: { notFound: string; notFoundDescription: string; returnToIndex: string };
-  methodology: { heading: string };
+  methodology: SiteMethod;
   /** Slugs the comparison opens with. */
   compare: { opening: readonly string[] };
   lineage: { heading: string; lede: string };
@@ -188,6 +214,25 @@ export interface StreamGrouping {
    * --color-family-{i+1}, and its shades stack in the order listed.
    */
   groups: readonly { name: string; shades: readonly string[] }[];
+}
+
+/** A table the How It Works page draws from the site's config, between its paragraphs. */
+export type MethodTable =
+  | "dimensions"
+  | "linkTypes"
+  | "level"
+  | "intensity"
+  | "reach"
+  | "persistence"
+  | "credit"
+  | "tiers";
+
+/** The How It Works page: a lede, then Markdown and the config's tables in order. */
+export interface SiteMethod {
+  heading: string;
+  lede: string;
+  /** Markdown, whose links to a path ("/realm") stay in the app, or one of the config's tables. */
+  blocks: readonly (string | { table: MethodTable })[];
 }
 
 export interface SiteMcp {

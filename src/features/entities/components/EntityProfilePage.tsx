@@ -6,7 +6,7 @@ import { EntityProfileSkeleton } from "@/components/Skeleton";
 import { useEntityProfile, type EntityProfile } from "@/features/realm/api";
 import { formatMagnitude } from "@/features/realm/chart";
 import { InfluenceCurve, ProfileBars } from "@/features/realm/ProfileCharts";
-import { typeIcons } from "@/features/realm/RealmHome";
+import { TYPE_ICONS } from "@/lib/icons";
 import { COPY } from "@/lib/copy";
 import { dimensionCountWords, HAS_HARM, SITE } from "@/lib/site";
 import { creditTypes, linkLabels } from "@/sites";
@@ -50,7 +50,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   }
 
   const { entity, score } = profile;
-  const Icon = typeIcons[entity.entity_type];
+  const Icon = TYPE_ICONS[entity.entity_type];
   const metadata = (entity.metadata ?? {}) as Record<string, string>;
   const periods = profile.periods;
   const first = periods[0]?.start_year;

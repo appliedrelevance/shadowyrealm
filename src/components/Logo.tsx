@@ -1,7 +1,4 @@
-import { SITE_UI } from "@/sites/ui";
-
-/** The active site's mark. */
+/** The active site's mark: the favicon every site ships in public/<site>/, drawn on its own ground. */
 export function Logo({ className }: { className?: string }) {
-  const Mark = SITE_UI.Logo;
-  return <Mark className={className} />;
+  return <img src="/favicon.svg" alt="" aria-hidden="true" className={className} />;
 }

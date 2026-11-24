@@ -2,6 +2,7 @@
  * Inventions: inventions, inventors and products ranked by their influence,
  * from the first farms to the smartphone. Spec: .kiro/specs/inventions-site.
  */
+import { method } from "./inventions/method";
 import { HISTORICAL_RUBRICS } from "./rubrics";
 import type { SiteConfig, TierDef } from "./types";
 
@@ -41,6 +42,7 @@ export const inventions: SiteConfig = {
       "https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: `ShadowyRealm-Inventions/1.0 (${ORIGIN})`,
     holds: "Inventions, inventors and products",
+    hero: "/hero.svg",
     formerOrigins: ["https://priorart.shadowyrealm.com"],
   },
   scoring: {
@@ -117,6 +119,7 @@ export const inventions: SiteConfig = {
       key: "person",
       label: "Person",
       plural: "People",
+      icon: "user",
       clefSubject: ownActivity,
       metadataKeys: "birth_date, death_date, nationality, field, wikipedia_url",
     },
@@ -124,6 +127,7 @@ export const inventions: SiteConfig = {
       key: "organization",
       label: "Organization",
       plural: "Organizations",
+      icon: "building",
       clefSubject: ownActivity,
       metadataKeys:
         "founded_date, dissolved_date, headquarters, organization_type (company|laboratory|university|government), wikipedia_url",
@@ -132,6 +136,7 @@ export const inventions: SiteConfig = {
       key: "project",
       label: "Project",
       plural: "Projects",
+      icon: "rocket",
       clefSubject: ownActivity,
       metadataKeys: "start_date, end_date, sponsor, wikipedia_url",
     },
@@ -139,6 +144,7 @@ export const inventions: SiteConfig = {
       key: "invention",
       label: "Invention",
       plural: "Inventions",
+      icon: "lightbulb",
       clefSubject: makingAndUse,
       metadataKeys: "invented_date, place, field, wikipedia_url",
     },
@@ -146,6 +152,7 @@ export const inventions: SiteConfig = {
       key: "product",
       label: "Product",
       plural: "Products",
+      icon: "package",
       clefSubject: makingAndUse,
       metadataKeys: "introduced_date, discontinued_date, maker, wikipedia_url",
     },
@@ -153,6 +160,7 @@ export const inventions: SiteConfig = {
       key: "discovery",
       label: "Discovery",
       plural: "Discoveries",
+      icon: "telescope",
       clefSubject: (name) => `the spread and use of ${name}`,
       metadataKeys: "discovered_date, field, wikipedia_url",
       requiresOutgoing: "builds_on",
@@ -284,7 +292,7 @@ export const inventions: SiteConfig = {
       notFoundDescription: "This entry does not exist.",
       returnToIndex: "Return to Index",
     },
-    methodology: { heading: "How It Works" },
+    methodology: method,
     compare: { opening: ["transistor", "printing-press", "haber-process"] },
     lineage: {
       heading: "Lineage",

@@ -5,6 +5,7 @@
  * value here reproduces the constants the site ran on before the platform, so
  * its scores and Clef requests are unchanged.
  */
+import { method } from "./history/method";
 import { HISTORICAL_RUBRICS } from "./rubrics";
 import type { SiteConfig } from "./types";
 
@@ -28,6 +29,12 @@ export const history: SiteConfig = {
       "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: "ShadowyRealm/1.0 (https://shadowyrealm.com)",
     holds: "People, institutions and events",
+    hero: "/hero.jpg",
+    /** The music stream and its pages, which became the Music site on 2026-11-24. */
+    movedPaths: [
+      { from: "/music/", to: "https://music.shadowyrealm.com/entity/" },
+      { from: "/music", to: "https://music.shadowyrealm.com/" },
+    ],
   },
   scoring: {
     sides: ["benefit", "harm"],
@@ -92,6 +99,7 @@ export const history: SiteConfig = {
       key: "person",
       label: "Person",
       plural: "People",
+      icon: "user",
       clefSubject: ownActivity,
       metadataKeys: "birth_date, death_date, nationality, gender, wikipedia_url",
     },
@@ -99,6 +107,7 @@ export const history: SiteConfig = {
       key: "organization",
       label: "Organization",
       plural: "Organizations",
+      icon: "building",
       clefSubject: ownActivity,
       metadataKeys:
         "founded_date, dissolved_date, headquarters, organization_type (corporation|ngo|government|institution|military), wikipedia_url",
@@ -107,6 +116,7 @@ export const history: SiteConfig = {
       key: "event",
       label: "Event",
       plural: "Events",
+      icon: "zap",
       clefSubject: ownActivity,
       metadataKeys:
         "start_date, end_date, location, event_type (war|discovery|movement|disaster|treaty|revolution), wikipedia_url",
@@ -185,7 +195,7 @@ export const history: SiteConfig = {
       notFoundDescription: "This entity does not exist.",
       returnToIndex: "Return to Index",
     },
-    methodology: { heading: "How It Works" },
+    methodology: method,
     compare: { opening: ["jesus", "muhammad", "the-buddha"] },
     lineage: {
       heading: "Lineage",

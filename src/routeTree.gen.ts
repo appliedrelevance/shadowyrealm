@@ -14,8 +14,6 @@ import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as MusicIndexRouteImport } from './routes/music/index'
-import { Route as MusicSlugRouteImport } from './routes/music/$slug'
 import { Route as EntitySlugRouteImport } from './routes/entity/$slug'
 
 const RealmRoute = RealmRouteImport.update({
@@ -43,16 +41,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MusicIndexRoute = MusicIndexRouteImport.update({
-  id: '/music/',
-  path: '/music/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MusicSlugRoute = MusicSlugRouteImport.update({
-  id: '/music/$slug',
-  path: '/music/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EntitySlugRoute = EntitySlugRouteImport.update({
   id: '/entity/$slug',
   path: '/entity/$slug',
@@ -66,8 +54,6 @@ export interface FileRoutesByFullPath {
   '/methodology': typeof MethodologyRoute
   '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/music/$slug': typeof MusicSlugRoute
-  '/music/': typeof MusicIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,8 +62,6 @@ export interface FileRoutesByTo {
   '/methodology': typeof MethodologyRoute
   '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/music/$slug': typeof MusicSlugRoute
-  '/music': typeof MusicIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,8 +71,6 @@ export interface FileRoutesById {
   '/methodology': typeof MethodologyRoute
   '/realm': typeof RealmRoute
   '/entity/$slug': typeof EntitySlugRoute
-  '/music/$slug': typeof MusicSlugRoute
-  '/music/': typeof MusicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,18 +81,8 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/realm'
     | '/entity/$slug'
-    | '/music/$slug'
-    | '/music/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/compare'
-    | '/login'
-    | '/methodology'
-    | '/realm'
-    | '/entity/$slug'
-    | '/music/$slug'
-    | '/music'
+  to: '/' | '/compare' | '/login' | '/methodology' | '/realm' | '/entity/$slug'
   id:
     | '__root__'
     | '/'
@@ -119,8 +91,6 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/realm'
     | '/entity/$slug'
-    | '/music/$slug'
-    | '/music/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,8 +100,6 @@ export interface RootRouteChildren {
   MethodologyRoute: typeof MethodologyRoute
   RealmRoute: typeof RealmRoute
   EntitySlugRoute: typeof EntitySlugRoute
-  MusicSlugRoute: typeof MusicSlugRoute
-  MusicIndexRoute: typeof MusicIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -171,20 +139,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/music/': {
-      id: '/music/'
-      path: '/music'
-      fullPath: '/music/'
-      preLoaderRoute: typeof MusicIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/music/$slug': {
-      id: '/music/$slug'
-      path: '/music/$slug'
-      fullPath: '/music/$slug'
-      preLoaderRoute: typeof MusicSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/entity/$slug': {
       id: '/entity/$slug'
       path: '/entity/$slug'
@@ -202,8 +156,6 @@ const rootRouteChildren: RootRouteChildren = {
   MethodologyRoute: MethodologyRoute,
   RealmRoute: RealmRoute,
   EntitySlugRoute: EntitySlugRoute,
-  MusicSlugRoute: MusicSlugRoute,
-  MusicIndexRoute: MusicIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

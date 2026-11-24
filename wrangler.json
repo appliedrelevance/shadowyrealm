@@ -13,7 +13,9 @@
       "/mcp",
       "/api/*",
       "/sitemap.xml",
-      "/entity/*"
+      "/entity/*",
+      "/music",
+      "/music/*"
     ]
   },
   "ai": {

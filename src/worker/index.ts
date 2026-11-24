@@ -7,7 +7,9 @@
  * A GET or HEAD to one of the site's former addresses (brand.formerOrigins) is redirected, permanently,
  * to the same path on its address. Other methods are served where they arrive, so an MCP client still
  * pointed at the old address keeps working. A site with former addresses runs the Worker first for
- * every path (wrangler.json), or its static pages would be served without reaching this check.
+ * every path (wrangler.json), or its static pages would be served without reaching this check. A page
+ * that moved to another site (brand.movedPaths) is redirected the same way, and its paths run the
+ * Worker first too.
  */
 import { SITES } from "../sites";
 import { handleApiRequest } from "./api";
@@ -48,6 +50,16 @@ async function cachedForVisitors(
   return response;
 }
 
+/** Where a moved page now lives (SiteBrand.movedPaths), or null if this path did not move. */
+export function movedTo(moved: readonly { from: string; to: string }[], url: URL): string | null {
+  for (const { from, to } of moved) {
+    if (from.endsWith("/") ? url.pathname.startsWith(from) : url.pathname === from) {
+      return `${to}${from.endsWith("/") ? url.pathname.slice(from.length) : ""}${url.search}`;
+    }
+  }
+  return null;
+}
+
 /** Every /api response names its site, so an SPA built for another site can refuse it. */
 function withSite(response: Response, site: string): Response {
   const named = new Response(response.body, response);
@@ -72,6 +84,10 @@ export default {
     const moved = brand.formerOrigins?.some((o) => new URL(o).host === url.host);
     if (moved && (request.method === "GET" || request.method === "HEAD")) {
       return Response.redirect(`${brand.origin}${url.pathname}${url.search}`, 301);
+    }
+    const to = movedTo(brand.movedPaths ?? [], url);
+    if (to && (request.method === "GET" || request.method === "HEAD")) {
+      return Response.redirect(to, 301);
     }
 
     if (url.pathname === "/mcp") {

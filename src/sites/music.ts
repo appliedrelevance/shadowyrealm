@@ -4,6 +4,7 @@
  * questions are the ones the 2,093 entries were first scored with (Landru work/shadowyrealm/music-vital/
  * score.ts), so the answers already paid for are read from the System One cache.
  */
+import { method } from "./music/method";
 import { HISTORICAL_RUBRICS } from "./rubrics";
 import type { SiteConfig } from "./types";
 
@@ -45,6 +46,7 @@ export const music: SiteConfig = {
       "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: `ShadowyRealm-Music/1.0 (${ORIGIN})`,
     holds: "Musicians, works, genres and instruments",
+    hero: "/hero.png",
     unlisted: true,
   },
   scoring: {
@@ -98,6 +100,7 @@ export const music: SiteConfig = {
       key: "person",
       label: "Musician",
       plural: "Musicians",
+      icon: "mic-vocal",
       clefSubject: ownActivity,
       metadataKeys: "family, shade, section, birth_date, death_date, wikidata_id, wikipedia_url",
     },
@@ -105,6 +108,7 @@ export const music: SiteConfig = {
       key: "group",
       label: "Group",
       plural: "Groups",
+      icon: "users",
       clefSubject: ownActivity,
       metadataKeys: "family, shade, section, founded_date, dissolved_date, wikidata_id, wikipedia_url",
     },
@@ -112,6 +116,7 @@ export const music: SiteConfig = {
       key: "style",
       label: "Genre or tradition",
       plural: "Genres and traditions",
+      icon: "layers",
       clefSubject: (name) => `the spread and practice of ${name}`,
       metadataKeys: "family, shade, section, origin_date, wikidata_id, wikipedia_url",
     },
@@ -119,6 +124,7 @@ export const music: SiteConfig = {
       key: "work",
       label: "Work",
       plural: "Works",
+      icon: "music",
       clefSubject: (name) => `the performance and hearing of ${name}`,
       metadataKeys: "family, shade, section, first_performed_date, wikidata_id, wikipedia_url",
     },
@@ -126,6 +132,7 @@ export const music: SiteConfig = {
       key: "instrument",
       label: "Instrument",
       plural: "Instruments",
+      icon: "guitar",
       clefSubject: (name) => `the making and playing of ${name}`,
       metadataKeys: "family, shade, section, invented_date, wikidata_id, wikipedia_url",
     },
@@ -233,7 +240,7 @@ export const music: SiteConfig = {
       notFoundDescription: "This entry does not exist.",
       returnToIndex: "Return to Index",
     },
-    methodology: { heading: "How It Works" },
+    methodology: method,
     compare: { opening: ["the-beatles", "johann-sebastian-bach", "jazz"] },
     lineage: {
       heading: "Lineage",
