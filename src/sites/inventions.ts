@@ -42,7 +42,7 @@ export const inventions: SiteConfig = {
       "https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap",
     userAgent: `ShadowyRealm-Inventions/1.0 (${ORIGIN})`,
     holds: "Inventions, inventors and products",
-    hero: "/hero.svg",
+    hero: "/hero.jpg",
     formerOrigins: ["https://priorart.shadowyrealm.com"],
   },
   scoring: {
@@ -283,7 +283,8 @@ export const inventions: SiteConfig = {
         "Every entry's own influence, year by year. Benefit rises above the line and harm falls below it.",
       indexHeading: "The Index",
       indexSubtitle: "Ranked by total influence: own impact plus the share credited from everything built on it.",
-      heroAlt: "A patent drawing of meshing gears, a light bulb and a microchip on blueprint paper",
+      heroAlt:
+        "A Renaissance notebook page in brown ink: a hand holding a small flip-open communicator with its perforated lid raised, beside studies of it closed and of its hinge",
       empty: "No entries yet",
       loading: "Loading...",
     },
