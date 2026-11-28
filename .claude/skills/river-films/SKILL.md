@@ -24,10 +24,12 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 | The River of Influence | `video/` | 60 s, 1800 frames | `video/SPEC.md` | `video/REVIEW.md` |
 | The River of Influence, vertical (the Short, a loop) | `video/short-vertical/` | 110 s, 3300 frames, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
 | The race | `video/race/` | 269 s, 8070 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
+| The countdown: The 10 worst things in history (a Short, a loop) | `video/countdown/` | 120 s, 3600 frames, 1080 x 1920 | `video/countdown/SPEC.md` | `video/countdown/REVIEW.md` |
 
-- **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical` and
-  `FILMS.race` hold each film's clock and timings; `ERAS` holds the race's eras and the YouTube
-  chapters. Race-only behaviour is switched on by `FILMS.race` and must not change the other films.
+- **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical`,
+  `FILMS.race` and `FILMS.countdown` hold each film's clock and timings; `ERAS` holds the race's eras
+  and the YouTube chapters; `RANKINGS` the countdowns' five rankings. Race-only behaviour is switched
+  on by `FILMS.race`, the countdown's by its `ranking`, and neither may change the other films.
 - **Each film's `frame`** holds its whole geometry: the river's ends, the axis and half-height, the
   callout, tick and leader positions, the tick spacing and every type size (`LANDSCAPE` for the 16:9
   films). `river.css` holds no sizes; `mount` sets them from the frame, so what it measures is what
@@ -38,6 +40,8 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
   them (`realm-data.js`, `river.js`, `river.css`, `images/`, the intro and the end card).
   `video/short-vertical/` symlinks `realm-data.js`, `river.js`, `river.css` and `music/`, and has its
   own river and titles scenes, recomposed for 1080 x 1920; it has no intro or end card.
+  `video/countdown/` symlinks `realm-data.js`, `river.js`, `river.css`, `images/` and the race's
+  `race-kit.js` (its pictures), and keeps its own score in `assets/music/`.
 - **A render never fetches.** It reads `video/assets/realm-data.js`, a frozen `/api/realm` with
   the race's pictures, leaders' reasons and credits, written by `tools/video-snapshot.ts` and
   committed. A committed snapshot is the record of what a film showed.
@@ -92,7 +96,9 @@ Run from the repo root. The scores change often; refresh the snapshot before any
 8. Description and credits: write to the scratchpad first, then copy to exports. A shell redirect
    straight into the export truncates it even when the script fails.
    `bun tools/video-description.ts` (chapters, ≥ 10 s each, and picture credits, ≤ 5,000
-   characters) and `bun tools/video-description.ts --credits`. CC BY and GFDL pictures are
+   characters) and `bun tools/video-description.ts --credits`; `… countdown` and
+   `… countdown --credits` for the countdown. Each film credits only the pictures it shows. CC BY
+   and GFDL pictures are
    credited by name, public domain and CC0 are not; any other licence stops the script and is a
    decision for Geordie.
 9. Measure and cut: loudness with
@@ -184,10 +190,15 @@ segments:
   (cut 2026-11-18). Its old all-time tally and countdown (`race-tally.html`, `scripts/countdown.ts`)
   are in commit 03cc185, to start the countdown segment from.
 - **Countdowns** on the finished river, No. 10 to No. 1, each entry's band lit with a card. One
-  segment type, five rankings: Top 10 of all time (total), Best (net), Worst (net), Purest Good,
-  Purest Evil. With a card per entry at the race's reading pace, each runs about 2:10. The snapshot
-  fetches pictures only for the race's board and the all-time ten: extend it to every segment's list
-  (all ten of the Purest Good have none today).
+  segment type, five rankings (`River.RANKINGS`): Top 10 of all time (total), Best (net), Worst
+  (net), Purest Good, Purest Evil. Worst is built (2026-11-28, storyline Lights out,
+  `video/countdown/STORYLINES.md`): a 120 s vertical loop at 90 bpm, each card on a beat for its
+  words plus 1 s (`River.countdownPlan`, `bun tools/music-cues.ts countdown`). Another ranking is
+  the same build with `FILMS.countdown.ranking` changed, and its own score. At 120 s and 90 bpm
+  (computed 2026-11-28) Worst, Purest Good and Purest Evil fit with 1 s to spare a card, Best needs
+  0.7 s and the Top 10 of all time 0.5 s, or a longer film. The snapshot
+  fetches every ranking's pictures; Avicenna's (Purest Good) carries the licence "No restrictions",
+  a case for Geordie before that film's credits.
 - **The 60-second cut** is the landscape trailer, and goes to YouTube as a regular video beside
   the race and the Short (Geordie, 2026-11-21: publish all three); the race's description links to
   it. The Short from `video/short-vertical/` is the same story as a 110 s loop.
