@@ -178,13 +178,23 @@ Write one paragraph of 100 to 140 words.
 - Then show the damage (or the good) where the score facts put it first, through what happened to people: who was killed, enslaved, starved, uprooted, taxed, taught, healed, fed. Name the places and the people involved. Never name an area as a category, such as "human rights", "health", "economic" or "cultural".
 - Then say what outlived it, in the article's own terms: the institutions, beliefs, populations, languages, borders or wealth it left behind. Where the score facts say most of its weight came after it ended, make that legacy the heart of the paragraph; where they say it came through what it caused, say how it brought about one or two of the things it led to. Never list names.
 - Use only facts in the article or the score facts. Every number you write must appear in one of them.
-- Write plainly and concretely, in the past tense for what happened. No hedging (perhaps, arguably, roughly, about, around, approximately, some say, it is believed). Never mention scores, weights, ranks, percentages of influence, the years since it ended as a count, the article, Wikipedia, sources or this site. Do not moralise.
+- Write plainly and concretely, in the past tense for what happened. Never use the word "machinery". No hedging (perhaps, arguably, roughly, about, around, approximately, some say, it is believed). Never mention scores, weights, ranks, percentages of influence, the years since it ended as a count, the article, Wikipedia, sources or this site. Do not moralise.
 
 Return only the paragraph.`;
 
 const HEDGES = /\b(perhaps|arguably|roughly|approximately|about \d|around \d|some say|it is believed|possibly|likely|may have|might have)\b/i;
+// Talk of the score or its sources. Lowercase only, so proper names pass (the Universal Declaration of
+// Human Rights, NATO's Article 5, the Index of Prohibited Books); a word the entity's own description
+// or periods use (Wikipedia, for its founders) is its subject, not machinery.
 const MACHINERY =
-  /\b(score[ds]?|scoring|weight|influence|ranks? (of|among)|wikipedia|article|index|magnitude|this site|so harmful|so beneficial|while it lasted|after it ended|through what it caused|years to 2026|led to nothing|human rights|economic (life|harm|damage)|cultural (losses|harm|damage))\b/i;
+  /\b(score[ds]?|scoring|weights?|ranks? (of|among)|wikipedia|articles?|index|magnitude|machinery|this site|so harmful|so beneficial|while it lasted|after it ended|through what it caused|years to 2026|led to nothing|human rights|economic (life|harm|damage)|cultural (losses|harm|damage))\b/;
+
+/** The first machinery word in the text that the entity's own description and periods do not use. */
+function machinery(text: string, facts: string[]) {
+  const own = [facts[0], ...facts.filter((f) => f.startsWith("Period "))].join(" ").toLowerCase();
+  for (const m of text.matchAll(new RegExp(MACHINERY.source, "g"))) if (!own.includes(m[0].toLowerCase())) return m[0];
+  return null;
+}
 
 function check(text: string, facts: string[], articles: string[]) {
   const words = text.split(/\s+/).filter(Boolean).length;
@@ -198,7 +208,7 @@ function check(text: string, facts: string[], articles: string[]) {
     words < 90 || words > 150 ? `${words} words` : "",
     firstWords > 25 ? `first sentence ${firstWords} words` : "",
     HEDGES.test(text) ? `hedge: "${text.match(HEDGES)![0]}"` : "",
-    MACHINERY.test(text) ? `machinery: "${text.match(MACHINERY)![0]}"` : "",
+    machinery(text, facts) ? `machinery: "${machinery(text, facts)}"` : "",
     unsourced.length ? `unsourced numbers: ${unsourced.join(", ")}` : "",
   ].filter(Boolean);
   return { words, firstSentence, problems };
