@@ -39,23 +39,27 @@ beats, from bar 3; the hook takes bars 1 and 2, and the outro the time left afte
 
 LOOK: the films' ground `#181822`, Inter (400, 700, 900), ink `#f8fafc`, muted `#94a3b8`, benefit
 `#3e9ad6`, harm `#d9534f`. The material is light: the river at 12% opacity, the band in the card
-at 100% with a 1.5 px ink edge, every band already counted at 50%. The harm share in the card's
+at 100% with a 1.5 px edge in its own colour (so a thin benefit side reads blue), every band
+already counted at 40%. The harm share in the card's
 meta line is the one accent, in harm red.
 
 THE APP'S OWN UI: nothing in the top 168 px; every word between y 168 and 1330; below y 840 no word
 passes x 936. The river's harm runs on below 1330 under the app's title and buttons.
 
 GEOMETRY (px):
-- The card, top to bottom from y 192: the rank "#10" in Inter 900, 176 px, at x 72; the picture,
-  176 x 176 with a 12 px radius and a 2 px line border, its right edge at x 1008, its top at y 192;
-  the name, 64 px 700, line height 72, at most two lines, from y 400; the meta ("Event · 1492–1700 ·
+- The card, top to bottom from y 192: the rank "#10" in Inter 900, 160 px, at x 72; the picture,
+  160 x 160 with a 12 px radius and a 2 px line border, its right edge at x 1008, its top at y 192;
+  the name, 64 px 700, line height 72, at most two lines, from y 376; the meta ("Event · 1492–1700 ·
   82% harm"), 38 px 400 muted, the share in harm red, 14 px under the name; the description, 34 px
-  400 in ink-2, line height 44, at most four lines, 18 px under the meta. Width 936 (x 72 to 1008).
-  A description past four lines, or a name past two, stops the build: words are cut, never type.
-- The ruler: the site's year labels, 38 px 400 muted, baseline y 852; grid lines from y 868 to the
+  400 in ink-2, line height 44, at most five lines, 18 px under the meta. Width 936 (x 72 to 1008).
+  A name past two lines, a description past five, or a card whose foot passes y 842 stops the
+  build: words are cut, never type. The fit is measured 900 px wide, since the Studio preview and
+  the headless renderer break lines a few pixels apart (the Inca's description: four lines and
+  five). The longest card, the Inca's, ends at y 818.
+- The ruler: the site's year labels, 38 px 400 muted, baseline y 900; grid lines from y 916 to the
   river's foot.
-- The river: x 72 to 1008, the axis at y 1210, half-height 320 (benefit up to y 890, harm down to
-  y 1530).
+- The river: x 72 to 1008, the axis at y 1250, half-height 316 (benefit up to y 934, harm down to
+  y 1566).
 - The hook's title, "The 10 worst / things in / history", 132 px 700, line height 1.0, tracking
   −0.02 em, x 72, top y 196; under it, 36 px 400 muted, "Benefit minus harm · shadowyrealm.com".
 
@@ -63,11 +67,11 @@ MOTION: enter expo.out, exit power2.in, the bands' light inOut2. The number land
 0.35 s from 1.12 scale and 6 px blur to 1 and sharp, origin its left baseline. The rest of the card
 lands 0.12 s after it, 0.3 s blur to sharp, all at once, and holds still. The card leaves 0.2 s
 (blur to 6 px) ending 0.15 s before the next card's beat. A band lights 0 to 100% over 0.45 s from
-its beat; the band before falls to 50% over the same 0.45 s.
+its beat; the band before falls to 40% over the same 0.45 s.
 
 SHOTS:
 - 0.0 to 4.8, the hook: the title, the source line and the ruler over the river, all ten bands lit
-  at 100%. The river pushes in 3% from (540, 860), the ruler holding still.
+  at 100%. The river pushes in 3% from (540, 900), the ruler's baseline.
 - 4.8 to 5.1: the title and source line leave (0.3 s, power2.in, blurred); 4.9 to 5.3 the ten go
   dark to 0% and the push settles back to 100%.
 - 5.333 to 114.667, the countdown: on each card's beat the number lands, its band lights, and the
