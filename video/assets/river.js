@@ -131,6 +131,10 @@
     hookBars: 2,
     outroBars: 2, // at least
     cardPad: 1.0,
+    // Each card's line plays one word at a time on the score's eighth notes, from fromBeats after
+    // the rank lands; a word with a digit or of `long` letters or more takes two eighths, and the
+    // last holds until the card leaves (Geordie, 2026-11-28: "one word at a time dynamic captions").
+    captions: { fromBeats: 1.5, long: 9 },
     finished: true,
     axisIn: 0,
     axisDur: 0.01,
@@ -487,7 +491,8 @@
   // An entry's words are its rank, name, meta line and why: the first sentence of its narrative,
   // from the snapshot's media. It holds for them plus
   // film.cardPad, rounded up to whole beats. Each entry is lit from `at` until the next lands
-  // (`until`); No. 1's until is the outro. `beat` counts from 0 at the film's start, and `bar` and
+  // (`until`); No. 1's until is the outro. Each entry's `captions` are its line's words, each with
+  // the time it lands. `beat` counts from 0 at the film's start, and `bar` and
   // `beatInBar` (both from 1) place it in the score.
   function countdownPlan(realm, film) {
     const ranking = RANKINGS[film.ranking];
@@ -524,6 +529,21 @@
       throw new Error(`The cards end on beat ${outro.beat}; the outro needs ${film.outroBars} bars before the loop at beat ${loopBeat}`);
     }
     for (const entry of entries) entry.until = entry.rank === 1 ? outro.at : entries[entry.rank - 2].at;
+    const eighth = beat / 2;
+    for (const entry of entries) {
+      let k = film.captions.fromBeats * 2;
+      entry.captions = entry.body.split(/\s+/).filter(Boolean).map((text) => {
+        const number = /\d/.test(text);
+        const at = entry.at + k * eighth;
+        k += number || text.replace(/[^\p{L}]/gu, "").length >= film.captions.long ? 2 : 1;
+        return { text, at, number };
+      });
+      // The card starts leaving 0.35 s before the next one lands (card.html).
+      const end = entry.at + k * eighth;
+      if (end > entry.until - 0.35) {
+        throw new Error(`${entry.name}'s words run to ${end.toFixed(3)} s; its card leaves at ${(entry.until - 0.35).toFixed(3)} s`);
+      }
+    }
     return { ranking, entries, bar, beat, outro, outroAt: outro.at, loopBeat };
   }
 

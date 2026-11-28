@@ -55,10 +55,13 @@ GEOMETRY (px):
 - The card, top to bottom from y 192: the rank "#10" in Inter 900, 160 px, at x 72; the picture,
   160 x 160 with a 12 px radius and a 2 px line border, its right edge at x 1008, its top at y 192;
   the name, 64 px 700, line height 72, at most two lines, from y 376; the meta ("Event · 1492–1700 ·
-  82% harm"), 38 px 400 muted, the share in harm red, 14 px under the name; why, 52 px 600 in ink,
-  line height 62, tracking −0.01 em, at most three lines, 24 px under the meta. Width 936 (x 72 to
-  1008). A name past two lines, why past three, or a card whose foot passes y 842 stops the build:
-  words are cut, never type. The fit is measured 900 px wide, since the Studio preview and the
+  82% harm"), 38 px 400 muted, the share in harm red, 14 px under the name; why, one word at a
+  time, 120 px 900 in ink (a word with a digit in harm red), tracking −0.02 em, its box from y 640
+  at x 72. A word lands on an eighth note from 1.5 beats after the rank (two eighths for a word
+  with a digit or of nine letters or more), 1.18 times its size settling in 0.14 s, and stays until
+  the next; the last stays until the card leaves (`FILMS.countdown.captions`). A name past two
+  lines, a meta line ending below y 616, a word wider than 900 px, or words that run past the card's
+  leaving stops the build: words are cut, never type. The fit is measured 900 px wide, since the Studio preview and the
   headless renderer break lines a few pixels apart.
 - The ruler: the site's year labels, 38 px 400 muted, baseline y 900; grid lines from y 916 to the
   river's foot.

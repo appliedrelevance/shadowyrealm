@@ -13,8 +13,8 @@
       font-family: "Inter", sans-serif;
     }
     /* The card above the ruler, x 72 to 1008, y 192 down to the ruler's labels (baseline y 900):
-       the rank and the picture on one row, then the name, the meta line and why: the first
-       sentence of the entity's narrative. */
+       the rank and the picture on one row, then the name and the meta line, and under them why,
+       the line of the entity's narrative, one big word at a time. */
     #card {
       position: absolute;
       left: 0;
@@ -94,17 +94,28 @@
     #card-share.side-benefit {
       color: var(--color-benefit);
     }
-    #card-body {
-      margin-top: 24px;
-      font-weight: 600;
-      font-size: 52px;
-      line-height: 62px;
-      letter-spacing: -0.01em;
+    /* One word at a time, always in the same place: left at x 72, its box from y 640. */
+    #card-word {
+      position: absolute;
+      left: 72px;
+      top: 640px;
+      font-weight: 900;
+      font-size: 120px;
+      line-height: 132px;
+      letter-spacing: -0.02em;
       color: var(--color-ink);
+      white-space: nowrap;
+      transform-origin: 0 66px;
+    }
+    #card-word.number {
+      color: var(--color-harm);
+    }
+    #card-word.number.side-benefit {
+      color: var(--color-benefit);
     }
   </style>
   <div id="root" data-composition-id="card" data-width="1080" data-height="1920">
-    <!-- data-hold: a card holds still while it is read, at 0.3 s a word. -->
+    <!-- data-hold: the rank, name and meta hold still while the words play under them. -->
     <div id="card-stage" class="clip" data-start="0" data-duration="90.666" data-track-index="0" data-hold>
       <div id="card">
         <div id="card-rank"></div>
@@ -112,8 +123,8 @@
         <div id="card-text">
           <div id="card-name"></div>
           <div id="card-meta"><span id="card-kind"></span> · <span id="card-share"></span></div>
-          <div id="card-body"></div>
         </div>
+        <div id="card-word"></div>
       </div>
     </div>
   </div>
@@ -132,22 +143,21 @@
       const nameEl = document.getElementById("card-name");
       const kindEl = document.getElementById("card-kind");
       const shareEl = document.getElementById("card-share");
-      const bodyEl = document.getElementById("card-body");
+      const wordEl = document.getElementById("card-word");
       const textEl = document.getElementById("card-text");
       shareEl.className = `side-${plan.ranking.side}`;
 
-      // Every card's words fit their lines: a name in two, why in three, the meta line in one, and
-      // the card's foot 20 px above the ruler's labels (baseline y 900, 38 px). Words are cut,
-      // never type. Measured in a probe on the page's body, which is laid out before the scene is
-      // shown, in the face and sizes the card draws with, 900 px wide: the Studio preview and the
-      // headless renderer break lines a few pixels apart, so the probe measures with 36 px to spare.
+      // Every card's words fit: a name in two lines, the meta line in one, the meta's foot 24 px
+      // above the words' box (y 640), and every word of why on one line. Words are cut, never type.
+      // Measured in a probe on the page's body, which is laid out before the scene is shown, in the
+      // face and sizes the card draws with, 900 px wide: the Studio preview and the headless
+      // renderer break lines a few pixels apart, so the probe measures with 36 px to spare.
       const MEASURE = 900;
       const fill = (entry) => {
         rankEl.textContent = `#${entry.rank}`;
         nameEl.textContent = entry.name;
         kindEl.textContent = entry.kindSpan;
         shareEl.textContent = entry.share;
-        bodyEl.textContent = entry.body;
       };
       const probe = document.createElement("div");
       probe.setAttribute("data-layout-ignore", "");
@@ -165,18 +175,19 @@
       };
       const NAME = { font: '700 64px "Inter"', lineHeight: "72px", letterSpacing: "-0.64px" };
       const META = { font: '400 38px "Inter"', lineHeight: "46px" };
-      const BODY = { font: '600 52px "Inter"', lineHeight: "62px", letterSpacing: "-0.52px" };
-      const FOOT = 900 - 38 - 20;
+      const WORD = { font: '900 120px "Inter"', lineHeight: "132px", letterSpacing: "-2.4px" };
+      const WORD_TOP = 640;
       for (const entry of plan.entries) {
         const name = measure(entry.name, NAME);
-        const body = measure(entry.body, BODY);
         const meta = measure(`${entry.kindSpan} · ${entry.share}`, META, true);
         if (name.lines > 2) throw new Error(`${entry.name} runs to ${name.lines} lines; the card has two`);
-        if (body.lines > 3) throw new Error(`Why ${entry.name} ranks runs to ${body.lines} lines; the card has three`);
         if (meta.width > MEASURE) throw new Error(`The meta line of ${entry.name} is ${Math.ceil(meta.width)} px wide; it may be ${MEASURE}`);
-        const foot = 376 + name.lines * 72 + 14 + 46 + 24 + body.lines * 62;
-        if (foot > FOOT) throw new Error(`The card for ${entry.name} reaches y ${foot}; the ruler's labels start at ${FOOT + 20}`);
-        entry.foot = foot;
+        const metaFoot = 376 + name.lines * 72 + 14 + 46;
+        if (metaFoot > WORD_TOP - 24) throw new Error(`The meta line of ${entry.name} ends at y ${metaFoot}; the words start at ${WORD_TOP}`);
+        for (const c of entry.captions) {
+          const word = measure(c.text, WORD, true);
+          if (word.width > MEASURE) throw new Error(`"${c.text}" in ${entry.name}'s line is ${Math.ceil(word.width)} px wide; it may be ${MEASURE}`);
+        }
       }
       probe.remove();
 
@@ -190,8 +201,12 @@
 
       // One card at a time: the rank lands on the card's beat (0.35 s from 1.12 and blurred), the
       // rest 0.12 s after it (0.3 s, blurred to sharp), and all of it leaves 0.2 s, ending 0.15 s
-      // before the next card's beat.
+      // before the next card's beat. Each word of why cuts in on its eighth note, 1.18 times its
+      // size and settling in 0.14 s, and stays until the next word; the last stays until the card
+      // leaves.
+      wordEl.classList.toggle("side-benefit", plan.ranking.side === "benefit");
       let shown = null;
+      let shownWord = null;
       const draw = (t) => {
         const entry = plan.entries.find((e) => t >= e.at - 0.02 && t < e.until - 0.15) ?? null;
         if (entry !== shown) {
@@ -217,6 +232,20 @@
         for (const el of [picsEl, textEl]) {
           el.style.opacity = restIn.toFixed(3);
           el.style.filter = `blur(${(6 * (1 - restIn)).toFixed(2)}px)`;
+        }
+        let word = null;
+        for (const c of entry.captions) if (t >= c.at - 1e-6) word = c;
+        if (word !== shownWord) {
+          wordEl.textContent = word ? word.text : "";
+          wordEl.classList.toggle("number", Boolean(word?.number));
+          shownWord = word;
+        }
+        if (word) {
+          const pop = ramp(t, word.at, 0.14, ease.expoOut);
+          wordEl.style.opacity = "1";
+          wordEl.style.transform = `scale(${(1.18 - 0.18 * pop).toFixed(4)})`;
+        } else {
+          wordEl.style.opacity = "0";
         }
       };
 

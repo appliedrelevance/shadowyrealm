@@ -30,6 +30,11 @@ ffmpeg -i render.mp4 -i assets/music/countdown-score.m4a -map 0:v -map 1:a -c co
   sentence"). Each card's only text under its name and meta is the line of the entity's narrative,
   12 words at most, in 52 px semibold ink: what was done, and to whom. The site's description is
   gone from the card.
+- **One word at a time** (Geordie, 2026-11-28: "It is still not dynamic enough. Can we do one
+  word at a time dynamic captions?"). The line plays as single words, 120 px black, cutting in on
+  the score's eighth notes, where the strings' ostinato already pulses, so the card timings and the
+  score stand. Every card's last word holds at least 0.98 s before the card leaves. The one-line
+  cut is beside this one as `river-countdown-worst-lines.mp4`.
 - **As long as its words** (Geordie, 2026-11-28: "88s is fine"). Each card holds for its words at
   0.3 s a word plus 1 s, rounded up to beats: 11 or 12 beats, 7.3 or 8 s. The ten need 64.1 s of
   reading and end on beat 125; the next whole bar after a 2-bar outro is bar 35, so the film is 34
