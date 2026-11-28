@@ -15,6 +15,13 @@
   stroke: var(--color-ink);
   stroke-width: 1.5;
 }
+/* The countdown's lit bands: edged in their own colour, so a thin side still reads as benefit or harm. */
+.river-spot-own .river-band-b {
+  stroke: var(--color-benefit);
+}
+.river-spot-own .river-band-h {
+  stroke: var(--color-harm);
+}
 .river-grid {
   stroke: var(--color-line);
   stroke-width: 1;

@@ -142,21 +142,21 @@
     // The river at dim. A band rises to full strength over `on` as its card lands and falls to
     // `counted` as the next lands. In the hook all ten are lit and go dark from `dark` over
     // `darkDur`; in the outro they rise again over `rise`.
-    light: { dim: 0.12, counted: 0.5, on: 0.45, dark: 4.9, darkDur: 0.4, rise: 0.6 },
+    light: { dim: 0.12, counted: 0.4, on: 0.45, dark: 4.9, darkDur: 0.4, rise: 0.6 },
     frame: {
       x0: 72,
       x1: 1008,
       textRight: 1008,
-      tickY: 852,
+      tickY: 900,
       tickGap: 130,
-      gridTop: 868,
+      gridTop: 916,
       nameY: 556,
       metaY: 610,
       leaderTop: 634,
-      ruleTop: 870,
-      mid: 1210,
-      half: 320,
-      ruleBottom: 1540,
+      ruleTop: 916,
+      mid: 1250,
+      half: 316,
+      ruleBottom: 1574,
       type: { name: 60, meta: 38, tick: 38, era: 54 },
     },
   };
@@ -170,31 +170,31 @@
     total: {
       side: "harm",
       title: ["The 10 biggest", "influences in", "history"],
-      method: "Benefit plus harm",
+      method: "Ranked by benefit plus harm",
       order: (es) => [...es].sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
     },
     best: {
       side: "benefit",
       title: ["The 10 best", "things in", "history"],
-      method: "Benefit minus harm",
+      method: "Ranked by benefit minus harm",
       order: (es) => [...es].sort((a, b) => netOf(b) - netOf(a) || byName(a, b)),
     },
     worst: {
       side: "harm",
       title: ["The 10 worst", "things in", "history"],
-      method: "Benefit minus harm",
+      method: "Ranked by benefit minus harm",
       order: (es) => [...es].sort((a, b) => netOf(a) - netOf(b) || byName(a, b)),
     },
     pureGood: {
       side: "benefit",
       title: ["The 10 purest", "good things in", "history"],
-      method: "Under 2% harm, by size",
+      method: "Under 2% harm, ranked by size",
       order: (es) => es.filter((e) => shareOf(e, "harm") < 0.02).sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
     },
     pureEvil: {
       side: "harm",
       title: ["The 10 purest", "evils in", "history"],
-      method: "Under 2% benefit, by size",
+      method: "Under 2% benefit, ranked by size",
       order: (es) => es.filter((e) => shareOf(e, "benefit") < 0.02).sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
     },
   };
@@ -549,7 +549,8 @@
     const eraGroup = film.eras ? make("g", { class: "river-eras" }, world) : null;
     const gridGroup = make("g", {}, world);
     const bandsGroup = make("g", { class: "river-bands" }, world);
-    const spotGroup = make("g", { class: "river-spot", opacity: 0 }, world);
+    // A countdown's lit bands keep their own colours at the edge, so a sliver reads as its side.
+    const spotGroup = make("g", { class: film.ranking ? "river-spot river-spot-own" : "river-spot", opacity: 0 }, world);
     const axisLine = make("line", { class: "river-axis", x1: X0, y1: MID, x2: X0, y2: MID }, world);
     const front = make("line", { class: "river-front", x1: X0, y1: RULE_TOP, x2: X0, y2: RULE_BOTTOM, opacity: 0 }, world);
     const tickGroup = make("g", {}, world);
