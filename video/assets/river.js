@@ -124,7 +124,7 @@
   // from bar hookBars + 1; the outro takes the time left after No. 1. The hook and the outro show
   // all ten lit under the title, so the last frame is the first.
   FILMS.countdown = {
-    duration: 120,
+    duration: (34 * 240) / 90, // 34 bars at 90 bpm, 90.667 s: the ten cards' one-line why (2026-11-28)
     ranking: "worst",
     slots: 10,
     bpm: 90,
@@ -484,7 +484,8 @@
   }
 
   // ---- the countdown's plan: the ranking's top entries, No. 10 first, each on a beat ----
-  // An entry's words are its rank, name, meta line and description; it holds for them plus
+  // An entry's words are its rank, name, meta line and why: the first sentence of its narrative,
+  // from the snapshot's media. It holds for them plus
   // film.cardPad, rounded up to whole beats. Each entry is lit from `at` until the next lands
   // (`until`); No. 1's until is the outro. `beat` counts from 0 at the film's start, and `bar` and
   // `beatInBar` (both from 1) place it in the score.
@@ -501,8 +502,10 @@
       const span = e.first_year === null ? null : ax.formatSpan(e.first_year, e.last_year ?? e.first_year);
       const share = `${Math.round(100 * shareOf(e, ranking.side))}% ${ranking.side}`;
       const kindSpan = span ? `${kind} · ${span}` : kind;
-      const words = 1 + wordsIn(e.name) + wordsIn(kindSpan) + wordsIn(share) + wordsIn(e.description);
-      return { rank: i + 1, e, slug: e.slug, name: e.name, kindSpan, share, body: e.description || "", read: readTime(words) };
+      const why = realm.media?.[e.slug]?.why;
+      if (!why) throw new Error(`${e.name} has no narrative to say why: write it with tools/entity-narrative.ts, then refresh the snapshot`);
+      const words = 1 + wordsIn(e.name) + wordsIn(kindSpan) + wordsIn(share) + wordsIn(why);
+      return { rank: i + 1, e, slug: e.slug, name: e.name, kindSpan, share, body: why, read: readTime(words) };
     });
     const beat = bar / 4;
     const place = (b) => ({ beat: b, bar: Math.floor(b / 4) + 1, beatInBar: (b % 4) + 1, at: b * beat });

@@ -6,36 +6,41 @@ they sit. Storyline A, Lights out (Geordie, 2026-11-28: "Worst, A"; the others a
 `STORYLINES.md`).
 
 OUTPUT: HyperFrames, 1080 x 1920, 30 fps, a YouTube Short that loops: no title card, no end card,
-the last frame is frame 0 pixel for pixel. TIME: 120 s x 30 = 3600 frames. Music only, no voice:
+the last frame is frame 0 pixel for pixel. TIME: 90.667 s x 30 = 2720 frames. Music only, no voice:
 our own score, composed in SoundCraft as the session
 `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/countdown/countdown-score.scraft`
 and played by BBC SO Discover, on the race's themes in D minor. 90 bpm in 4/4: a beat is 0.667 s,
-a bar 2.667 s, 120 s is 45 bars, and every card lands on a beat (`bun tools/music-cues.ts
+a bar 2.667 s, the film is 34 bars, and every card lands on a beat (`bun tools/music-cues.ts
 countdown` prints them).
 
 DATA: `assets/realm-data.js`, the frozen `/api/realm`. The ranking is benefit minus harm, lowest
 first (`FILMS.countdown.ranking: "worst"`, `River.RANKINGS.worst`). The same build makes the other
-four rankings by changing that key.
+four rankings by changing that key. Each card says why in one sentence: the first sentence of the
+entity's narrative on the site (written by `tools/entity-narrative.ts`, 12 words at most), which the
+snapshot stores as `media[slug].why` for every ranking's top ten. A card without one stops the
+build.
 
 ENGINE: `assets/river.js`, `FILMS.countdown` and `River.countdownPlan`. The river is drawn finished
 the whole film (the sweep's end plus 1 s) in the countdown's own frame. Each card holds for its
-words (`River.readTime` of its rank, name, meta and description) plus 1 s, rounded up to whole
-beats, from bar 3; the hook takes bars 1 and 2, and the outro the time left after No. 1 (at least
-2 bars). Whole bars do not fit: the ten need 96.5 s of reading. For Worst:
+words (`River.readTime` of its rank, name, meta and why) plus 1 s, rounded up to whole beats, from
+bar 3; the hook takes bars 1 and 2, and the outro the time left after No. 1 (at least 2 bars). The
+film is as long as its words: the ten need 64.1 s of reading, and the cards end on beat 125, so the
+film is the next whole bar after a 2-bar outro, 34 bars (Geordie, 2026-11-28: 88 s is fine; the
+120 s cut held its five-line descriptions up to 14 s). For Worst:
 
 | No. | Entity | Bar, beat | Lands | Beats |
 | --- | --- | --- | --- | --- |
-| 10 | Columbian exchange | 3, 1 | 5.333 s | 14 |
-| 9 | Viking Age | 6, 3 | 14.667 s | 17 |
-| 8 | Black Death | 10, 4 | 26.000 s | 12 |
-| 7 | Age of Discovery | 13, 4 | 34.000 s | 17 |
-| 6 | Three Kingdoms | 18, 1 | 45.333 s | 18 |
-| 5 | Spanish conquest of the Inca Empire | 22, 3 | 57.333 s | 21 |
-| 4 | Spanish Empire | 27, 4 | 71.333 s | 14 |
-| 3 | Neo-Assyrian Empire | 31, 2 | 80.667 s | 20 |
-| 2 | Atlantic slave trade | 36, 2 | 94.000 s | 12 |
-| 1 | First Jewish–Roman War | 39, 2 | 102.000 s | 19 |
-| outro | all ten, the title | 44, 1 | 114.667 s | 8 |
+| 10 | Columbian exchange | 3, 1 | 5.333 s | 11 |
+| 9 | Viking Age | 5, 4 | 12.667 s | 12 |
+| 8 | Black Death | 8, 4 | 20.667 s | 11 |
+| 7 | Age of Discovery | 11, 3 | 28.000 s | 12 |
+| 6 | Three Kingdoms | 14, 3 | 36.000 s | 12 |
+| 5 | Spanish conquest of the Inca Empire | 17, 3 | 44.000 s | 12 |
+| 4 | Spanish Empire | 20, 3 | 52.000 s | 11 |
+| 3 | Neo-Assyrian Empire | 23, 2 | 59.333 s | 12 |
+| 2 | Atlantic slave trade | 26, 2 | 67.333 s | 12 |
+| 1 | First Jewish–Roman War | 29, 2 | 75.333 s | 12 |
+| outro | all ten, the title | 32, 2 | 83.333 s | 11 |
 
 LOOK: the films' ground `#181822`, Inter (400, 700, 900), ink `#f8fafc`, muted `#94a3b8`, benefit
 `#3e9ad6`, harm `#d9534f`. The material is light: the river at 12% opacity, the band in the card
@@ -50,12 +55,11 @@ GEOMETRY (px):
 - The card, top to bottom from y 192: the rank "#10" in Inter 900, 160 px, at x 72; the picture,
   160 x 160 with a 12 px radius and a 2 px line border, its right edge at x 1008, its top at y 192;
   the name, 64 px 700, line height 72, at most two lines, from y 376; the meta ("Event · 1492–1700 ·
-  82% harm"), 38 px 400 muted, the share in harm red, 14 px under the name; the description, 34 px
-  400 in ink-2, line height 44, at most five lines, 18 px under the meta. Width 936 (x 72 to 1008).
-  A name past two lines, a description past five, or a card whose foot passes y 842 stops the
-  build: words are cut, never type. The fit is measured 900 px wide, since the Studio preview and
-  the headless renderer break lines a few pixels apart (the Inca's description: four lines and
-  five). The longest card, the Inca's, ends at y 818.
+  82% harm"), 38 px 400 muted, the share in harm red, 14 px under the name; why, 52 px 600 in ink,
+  line height 62, tracking −0.01 em, at most three lines, 24 px under the meta. Width 936 (x 72 to
+  1008). A name past two lines, why past three, or a card whose foot passes y 842 stops the build:
+  words are cut, never type. The fit is measured 900 px wide, since the Studio preview and the
+  headless renderer break lines a few pixels apart.
 - The ruler: the site's year labels, 38 px 400 muted, baseline y 900; grid lines from y 916 to the
   river's foot.
 - The river: x 72 to 1008, the axis at y 1250, half-height 316 (benefit up to y 934, harm down to
@@ -74,26 +78,29 @@ SHOTS:
   at 100%. The river pushes in 3% from (540, 900), the ruler's baseline.
 - 4.8 to 5.1: the title and source line leave (0.3 s, power2.in, blurred); 4.9 to 5.3 the ten go
   dark to 0% and the push settles back to 100%.
-- 5.333 to 114.667, the countdown: on each card's beat the number lands, its band lights, and the
+- 5.333 to 83.333, the countdown: on each card's beat the number lands, its band lights, and the
   card is read; one card at a time, as the table.
-- 114.3 to 114.5: No. 1's card leaves.
-- 114.667 to 115.267: all ten rise to 100%; 114.9 to 115.4 the title and source line return
+- 82.983 to 83.183: No. 1's card leaves.
+- 83.333 to 83.933: all ten rise to 100%; 83.566 to 84.066 the title and source line return
   (0.5 s, expo.out).
-- 115.4 to 120.0: the frame is frame 0; the last frame is frame 0, pixel for pixel.
+- 84.066 to 90.667: the frame is frame 0, held (`data-hold` on the titles); the last frame is frame
+  0, pixel for pixel.
 
 SOUND: the score's 0 s is the film's 0 s. Bar 1, the crest: a D minor chord blooming from soft in
 the strings, winds and horns, no crash, drum or timpani at frame 0. Every card's beat: a low
 stroke (timpani and basses, a bass drum from No. 5), each a step heavier from No. 10
 to No. 1; under the cards an ostinato in the strings that thickens by the slot; the race's theme A
-from No. 5, in the horns, then high in the strings for No. 1. Bar 44: the ten relight on a last
-stroke, and bar 45 dies away into bar 1's soft chord, so the join is quiet. Mastered −16.0 LUFS,
-−2.0 dBTP, no fades at either end, the bounce's tail past 120 s folded onto the start.
+from No. 5, in the horns, then high in the strings for No. 1; in a card shorter than 18 beats the
+theme stops two beats before the next card, on the dominant. Bar 32, beat 2: the ten relight on a
+last stroke, and bars 33 and 34 die away into bar 1's soft chord, so the join is quiet. Mastered
+−16.0 LUFS, −2.0 dBTP, no fades at either end, the bounce's tail past 90.667 s folded onto the
+start.
 
 BANNED: as the vertical Short, plus a card that moves while it is read, more than one card on
 screen, a number or card that lands off its beat, the river redrawn or swept (it is finished
 from frame 0), words below y 1330 or under the rail, a black first frame, and a join anyone can see
 or hear at the loop.
 
-QA: 0 s and 3 s (the hook), 5.1 s (lights out), 5.6 and 10 s (No. 10), 16 s (No. 9), 36 s (No. 7),
-59 s (No. 5, the longest name), 83 s (No. 3, the longest description), 96 s (No. 2), 103 and 112 s
-(No. 1), 114.6 s (the outro starting), 116 s, and 119.967 s against frame 0.
+QA: 0 s and 3 s (the hook), 5.1 s (lights out), 5.9 and 10 s (No. 10), 13.5 s (No. 9), 30 s
+(No. 7), 44.8 s (No. 5, the longest name), 60.1 s (No. 3), 68 s (No. 2), 76.1 and 82 s (No. 1),
+83.2 s (the outro starting), 85 s, and 90.633 s against frame 0.

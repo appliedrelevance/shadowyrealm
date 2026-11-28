@@ -24,7 +24,7 @@ each `package.json`; use `npx --yes hyperframes@0.9.42 …` so a re-render match
 | The River of Influence | `video/` | 60 s, 1800 frames | `video/SPEC.md` | `video/REVIEW.md` |
 | The River of Influence, vertical (the Short, a loop) | `video/short-vertical/` | 110 s, 3300 frames, 1080 x 1920 | `video/short-vertical/SPEC.md` | `video/short-vertical/REVIEW.md` |
 | The race | `video/race/` | 269 s, 8070 frames | `video/race/SPEC.md` | `video/race/REVIEW.md` |
-| The countdown: The 10 worst things in history (a Short, a loop) | `video/countdown/` | 120 s, 3600 frames, 1080 x 1920 | `video/countdown/SPEC.md` | `video/countdown/REVIEW.md` |
+| The countdown: The 10 worst things in history (a Short, a loop) | `video/countdown/` | 90.667 s (34 bars), 2720 frames, 1080 x 1920 | `video/countdown/SPEC.md` | `video/countdown/REVIEW.md` |
 
 - **One engine:** `video/assets/river.js` draws them all. `FILMS.short`, `FILMS.shortVertical`,
   `FILMS.race` and `FILMS.countdown` hold each film's clock and timings; `ERAS` holds the race's eras
@@ -192,11 +192,16 @@ segments:
 - **Countdowns** on the finished river, No. 10 to No. 1, each entry's band lit with a card. One
   segment type, five rankings (`River.RANKINGS`): Top 10 of all time (total), Best (net), Worst
   (net), Purest Good, Purest Evil. Worst is built (2026-11-28, storyline Lights out,
-  `video/countdown/STORYLINES.md`): a 120 s vertical loop at 90 bpm, each card on a beat for its
-  words plus 1 s (`River.countdownPlan`, `bun tools/music-cues.ts countdown`). Another ranking is
-  the same build with `FILMS.countdown.ranking` changed, and its own score. At 120 s and 90 bpm
-  (computed 2026-11-28) Worst, Purest Good and Purest Evil fit with 1 s to spare a card, Best needs
-  0.7 s and the Top 10 of all time 0.5 s, or a longer film. The snapshot
+  `video/countdown/STORYLINES.md`): a vertical loop at 90 bpm, each card on a beat for its words
+  plus 1 s (`River.countdownPlan`, `bun tools/music-cues.ts countdown`). A card says why in one
+  line, the first sentence of the entity's narrative (12 words at most, written by
+  `tools/entity-narrative.ts`, stored in the snapshot as `media[slug].why`), never the five-line
+  description: Geordie, 2026-11-28, "Nobody cares about the details at all. Just a very brief
+  sentence". The film is as long as its words, the next whole bar after a 2-bar outro (Worst: 34
+  bars, 90.667 s): set `FILMS.countdown.duration` to it and every composition's `data-duration` a
+  hair under (`90.666`), since the render rounds duration x fps up (90.6667 rendered 2721 frames, a
+  doubled frame 0 at the loop), and count the render's frames. Another ranking is the same build with `FILMS.countdown.ranking`
+  changed, and its own score. The snapshot
   fetches every ranking's pictures; Avicenna's (Purest Good) carries the licence "No restrictions",
   a case for Geordie before that film's credits.
 - **The 60-second cut** is the landscape trailer, and goes to YouTube as a regular video beside

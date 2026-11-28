@@ -13,8 +13,8 @@
       font-family: "Inter", sans-serif;
     }
     /* The card above the ruler, x 72 to 1008, y 192 down to the ruler's labels (baseline y 900):
-       the rank and the picture on one row, then the name, the meta line and the site's
-       description. */
+       the rank and the picture on one row, then the name, the meta line and why: the first
+       sentence of the entity's narrative. */
     #card {
       position: absolute;
       left: 0;
@@ -95,16 +95,17 @@
       color: var(--color-benefit);
     }
     #card-body {
-      margin-top: 18px;
-      font-weight: 400;
-      font-size: 34px;
-      line-height: 44px;
-      color: var(--color-ink-2);
+      margin-top: 24px;
+      font-weight: 600;
+      font-size: 52px;
+      line-height: 62px;
+      letter-spacing: -0.01em;
+      color: var(--color-ink);
     }
   </style>
   <div id="root" data-composition-id="card" data-width="1080" data-height="1920">
-    <!-- data-hold: a card holds still while it is read, 8 to 14 s at 0.3 s a word. -->
-    <div id="card-stage" class="clip" data-start="0" data-duration="120" data-track-index="0" data-hold>
+    <!-- data-hold: a card holds still while it is read, at 0.3 s a word. -->
+    <div id="card-stage" class="clip" data-start="0" data-duration="90.666" data-track-index="0" data-hold>
       <div id="card">
         <div id="card-rank"></div>
         <div id="card-pics"></div>
@@ -135,12 +136,11 @@
       const textEl = document.getElementById("card-text");
       shareEl.className = `side-${plan.ranking.side}`;
 
-      // Every card's words fit their lines: a name in two, a description in five, the meta line in
-      // one, and the card's foot 20 px above the ruler's labels (baseline y 900, 38 px). Words are
-      // cut, never type. Measured in a probe on the page's body, which is laid out before the
-      // scene is shown, in the face and sizes the card draws with, 900 px wide: the Studio preview
-      // and the headless renderer break lines a few pixels apart (the Inca's description is four
-      // lines in one and five in the other), so the probe measures with 36 px to spare.
+      // Every card's words fit their lines: a name in two, why in three, the meta line in one, and
+      // the card's foot 20 px above the ruler's labels (baseline y 900, 38 px). Words are cut,
+      // never type. Measured in a probe on the page's body, which is laid out before the scene is
+      // shown, in the face and sizes the card draws with, 900 px wide: the Studio preview and the
+      // headless renderer break lines a few pixels apart, so the probe measures with 36 px to spare.
       const MEASURE = 900;
       const fill = (entry) => {
         rankEl.textContent = `#${entry.rank}`;
@@ -165,16 +165,16 @@
       };
       const NAME = { font: '700 64px "Inter"', lineHeight: "72px", letterSpacing: "-0.64px" };
       const META = { font: '400 38px "Inter"', lineHeight: "46px" };
-      const BODY = { font: '400 34px "Inter"', lineHeight: "44px" };
+      const BODY = { font: '600 52px "Inter"', lineHeight: "62px", letterSpacing: "-0.52px" };
       const FOOT = 900 - 38 - 20;
       for (const entry of plan.entries) {
         const name = measure(entry.name, NAME);
         const body = measure(entry.body, BODY);
         const meta = measure(`${entry.kindSpan} · ${entry.share}`, META, true);
         if (name.lines > 2) throw new Error(`${entry.name} runs to ${name.lines} lines; the card has two`);
-        if (body.lines > 5) throw new Error(`The description of ${entry.name} runs to ${body.lines} lines; the card has five`);
+        if (body.lines > 3) throw new Error(`Why ${entry.name} ranks runs to ${body.lines} lines; the card has three`);
         if (meta.width > MEASURE) throw new Error(`The meta line of ${entry.name} is ${Math.ceil(meta.width)} px wide; it may be ${MEASURE}`);
-        const foot = 376 + name.lines * 72 + 14 + 46 + 18 + body.lines * 44;
+        const foot = 376 + name.lines * 72 + 14 + 46 + 24 + body.lines * 62;
         if (foot > FOOT) throw new Error(`The card for ${entry.name} reaches y ${foot}; the ruler's labels start at ${FOOT + 20}`);
         entry.foot = foot;
       }
