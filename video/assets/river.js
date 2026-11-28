@@ -117,6 +117,88 @@
     hook: { until: 5.0, drain: 0.6, outro: 106.5 },
   };
 
+  // The countdown (Geordie, 2026-11-28): No. 10 to No. 1 of one ranking on the finished river, a
+  // vertical Short that loops: countdown/. The river is drawn finished from frame 0 and dark; each
+  // card's band lights as its number lands on a beat of the score (bpm, in 4/4), and stays at half
+  // strength once counted. Each card holds for its words plus cardPad, rounded up to whole beats,
+  // from bar hookBars + 1; the outro takes the time left after No. 1. The hook and the outro show
+  // all ten lit under the title, so the last frame is the first.
+  FILMS.countdown = {
+    duration: 120,
+    ranking: "worst",
+    slots: 10,
+    bpm: 90,
+    hookBars: 2,
+    outroBars: 2, // at least
+    cardPad: 1.0,
+    finished: true,
+    axisIn: 0,
+    axisDur: 0.01,
+    sweep0: 0,
+    sweep1: 1,
+    lastCallout: -1,
+    ranksAt: [],
+    dimAt: Infinity,
+    // The river at dim. A band rises to full strength over `on` as its card lands and falls to
+    // `counted` as the next lands. In the hook all ten are lit and go dark from `dark` over
+    // `darkDur`; in the outro they rise again over `rise`.
+    light: { dim: 0.12, counted: 0.5, on: 0.45, dark: 4.9, darkDur: 0.4, rise: 0.6 },
+    frame: {
+      x0: 72,
+      x1: 1008,
+      textRight: 1008,
+      tickY: 852,
+      tickGap: 130,
+      gridTop: 868,
+      nameY: 556,
+      metaY: 610,
+      leaderTop: 634,
+      ruleTop: 870,
+      mid: 1210,
+      half: 320,
+      ruleBottom: 1540,
+      type: { name: 60, meta: 38, tick: 38, era: 54 },
+    },
+  };
+
+  // The countdowns' rankings. Each orders the entities, names the side its share is of, and gives
+  // the hook's title and method line.
+  const netOf = (e) => e.benefit_total - e.harm_total;
+  const shareOf = (e, side) => (side === "harm" ? e.harm_total : e.benefit_total) / e.total_magnitude;
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  const RANKINGS = {
+    total: {
+      side: "harm",
+      title: ["The 10 biggest", "influences in", "history"],
+      method: "Benefit plus harm",
+      order: (es) => [...es].sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
+    },
+    best: {
+      side: "benefit",
+      title: ["The 10 best", "things in", "history"],
+      method: "Benefit minus harm",
+      order: (es) => [...es].sort((a, b) => netOf(b) - netOf(a) || byName(a, b)),
+    },
+    worst: {
+      side: "harm",
+      title: ["The 10 worst", "things in", "history"],
+      method: "Benefit minus harm",
+      order: (es) => [...es].sort((a, b) => netOf(a) - netOf(b) || byName(a, b)),
+    },
+    pureGood: {
+      side: "benefit",
+      title: ["The 10 purest", "good things in", "history"],
+      method: "Under 2% harm, by size",
+      order: (es) => es.filter((e) => shareOf(e, "harm") < 0.02).sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
+    },
+    pureEvil: {
+      side: "harm",
+      title: ["The 10 purest", "evils in", "history"],
+      method: "Under 2% benefit, by size",
+      order: (es) => es.filter((e) => shareOf(e, "benefit") < 0.02).sort((a, b) => b.total_magnitude - a.total_magnitude || byName(a, b)),
+    },
+  };
+
   // Eras for the race's panel and its YouTube chapters, by the year they begin.
   const ERAS = [
     { year: -3500, name: "The First Cities" },
@@ -401,6 +483,47 @@
     return { cards, eraLabels };
   }
 
+  // ---- the countdown's plan: the ranking's top entries, No. 10 first, each on a beat ----
+  // An entry's words are its rank, name, meta line and description; it holds for them plus
+  // film.cardPad, rounded up to whole beats. Each entry is lit from `at` until the next lands
+  // (`until`); No. 1's until is the outro. `beat` counts from 0 at the film's start, and `bar` and
+  // `beatInBar` (both from 1) place it in the score.
+  function countdownPlan(realm, film) {
+    const ranking = RANKINGS[film.ranking];
+    if (!ranking) throw new Error(`No ranking "${film.ranking}": ${Object.keys(RANKINGS).join(", ")}`);
+    const ax = axis(realm);
+    const bar = 240 / film.bpm;
+    const drawn = realm.entities.filter((e) => e.curve.benefit.length > 0);
+    const list = ranking.order(drawn).slice(0, film.slots);
+    if (list.length < film.slots) throw new Error(`${film.ranking} has ${list.length} entries; the countdown needs ${film.slots}`);
+    const entries = list.map((e, i) => {
+      const kind = e.entity_type.charAt(0).toUpperCase() + e.entity_type.slice(1);
+      const span = e.first_year === null ? null : ax.formatSpan(e.first_year, e.last_year ?? e.first_year);
+      const share = `${Math.round(100 * shareOf(e, ranking.side))}% ${ranking.side}`;
+      const kindSpan = span ? `${kind} · ${span}` : kind;
+      const words = 1 + wordsIn(e.name) + wordsIn(kindSpan) + wordsIn(share) + wordsIn(e.description);
+      return { rank: i + 1, e, slug: e.slug, name: e.name, kindSpan, share, body: e.description || "", read: readTime(words) };
+    });
+    const beat = bar / 4;
+    const place = (b) => ({ beat: b, bar: Math.floor(b / 4) + 1, beatInBar: (b % 4) + 1, at: b * beat });
+    let b = film.hookBars * 4;
+    for (const entry of [...entries].reverse()) {
+      entry.beats = Math.ceil((entry.read + film.cardPad) / beat - 1e-9);
+      Object.assign(entry, place(b));
+      b += entry.beats;
+    }
+    const outro = place(b);
+    const loopBeat = Math.round(film.duration / beat);
+    if (Math.abs(loopBeat * beat - film.duration) > 1e-6 || loopBeat % 4 !== 0) {
+      throw new Error(`${film.duration} s is not a whole number of bars at ${film.bpm} bpm`);
+    }
+    if (loopBeat - outro.beat < film.outroBars * 4) {
+      throw new Error(`The cards end on beat ${outro.beat}; the outro needs ${film.outroBars} bars before the loop at beat ${loopBeat}`);
+    }
+    for (const entry of entries) entry.until = entry.rank === 1 ? outro.at : entries[entry.rank - 2].at;
+    return { ranking, entries, bar, beat, outro, outroAt: outro.at, loopBeat };
+  }
+
   /**
    * Draw the river into `svg` for `film`. Call after document.fonts.ready, so text is measured in
    * the face it renders in. Returns draw(t), a pure function of timeline time. `yearEl`, when
@@ -632,13 +755,24 @@
     // Nothing is called out in either.
     const finished = film.sweep1 + 1;
     const hookTime = (t) => {
+      if (film.finished) return { t: finished, quiet: true };
       if (!film.hook || t >= film.hook.until + film.hook.drain) return { t, quiet: false };
       if (t < film.hook.until) return { t: finished, quiet: true };
       const p = ease.inOut2((t - film.hook.until) / film.hook.drain);
       return { t: finished + (film.sweep0 - finished) * p, quiet: true };
     };
 
+    // A countdown's lights: how lit each entry's band is at clock time t.
+    const countdown = film.ranking ? countdownPlan(realm, film) : null;
+    const litLevel = (entry, t) => {
+      const L = film.light;
+      let level = t < entry.at ? 1 - ramp(t, L.dark, L.darkDur, ease.inOut2) : ramp(t, entry.at, L.on, ease.inOut2);
+      if (t >= entry.at && entry.rank > 1) level *= 1 - (1 - L.counted) * ramp(t, entry.until, L.on, ease.inOut2);
+      return level + (1 - level) * ramp(t, countdown.outroAt, L.rise, ease.inOut2);
+    };
+
     let shownCallout = null;
+    let riverDrawn = false;
     return function draw(clockTime) {
       const { t, quiet } = hookTime(clockTime);
       const f = frontAt(t);
@@ -659,7 +793,8 @@
         lit = ramp(t, c.at, 0.45, ease.inOut2) * (1 - ramp(t, c.at + c.hold - 0.05, 0.35, ease.inOut2));
       }
 
-      for (const layer of layers) {
+      // A finished river never changes, so it is drawn once.
+      for (const layer of film.finished && riverDrawn ? [] : layers) {
         let last = -1;
         for (let k = 0; k <= layer.stop - layer.start; k++) if (reveal[layer.start + k] > 0) last = k;
         if (last < 0) {
@@ -675,12 +810,19 @@
         layer.harmPath.setAttribute("d", bandPath(layer, layer.h0, layer.h1, last, -1, scale, v));
         layer.drawn = true;
       }
-      // The band lit now: the callout's.
+      riverDrawn = true;
+      // The band lit now: the callout's, or in a countdown every entry's at its own level, over the
+      // dark river.
       const spots = new Map();
-      if (callout && lit > 0) spots.set(callout.layer, lit);
+      if (countdown) {
+        for (const entry of countdown.entries) {
+          const level = litLevel(entry, clockTime);
+          if (level > 0.0005) spots.set(layerOf.get(entry.slug), level);
+        }
+      } else if (callout && lit > 0) spots.set(callout.layer, lit);
       let dim = 0;
       for (const amount of spots.values()) dim = Math.max(dim, amount);
-      bandsGroup.setAttribute("opacity", (1 - 0.35 * dim).toFixed(3));
+      bandsGroup.setAttribute("opacity", (countdown ? film.light.dim : 1 - 0.35 * dim).toFixed(3));
       if (spots.size > 0) {
         let k = 0;
         for (const [layer, amount] of spots) {
@@ -803,5 +945,24 @@
     };
   }
 
-  window.River = { FILMS, ERAS, SWELL, axis, clock, view, yearAt, ease, ramp, clamp01, board, wordsIn, readTime, readingPlan, mount };
+  window.River = {
+    FILMS,
+    ERAS,
+    RANKINGS,
+    SWELL,
+    axis,
+    clock,
+    view,
+    yearAt,
+    ease,
+    ramp,
+    clamp01,
+    board,
+    wordsIn,
+    readTime,
+    readingPlan,
+    countdownPlan,
+    shareOf,
+    mount,
+  };
 })();

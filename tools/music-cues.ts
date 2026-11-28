@@ -5,6 +5,7 @@
  *
  *   bun tools/music-cues.ts short   # the 60-second cut (and the vertical Short, same clock)
  *   bun tools/music-cues.ts race    # the race
+ *   bun tools/music-cues.ts countdown   # the countdown: its cards, each on a beat, and the outro
  */
 import { readFileSync } from "node:fs";
 
@@ -37,6 +38,42 @@ const ax = River.axis(g.REALM);
 const { timeAtFront } = River.clock(film);
 
 const round = (s: number) => Math.round(s * 1000) / 1000;
+
+// A countdown's cues are its cards, each on a beat of its own 4/4 grid, and the outro.
+interface Placed {
+  beat: number;
+  bar: number;
+  beatInBar: number;
+  at: number;
+}
+const countdownPlan = (g.River as { countdownPlan?: (realm: unknown, film: unknown) => unknown }).countdownPlan;
+if ((film as { ranking?: string }).ranking && countdownPlan) {
+  const plan = countdownPlan(g.REALM, film) as {
+    bar: number;
+    beat: number;
+    outro: Placed;
+    loopBeat: number;
+    entries: (Placed & { rank: number; name: string; beats: number; until: number })[];
+  };
+  const cue = (p: Placed) => ({ bar: p.bar, beat: p.beatInBar, at: round(p.at) });
+  console.log(
+    JSON.stringify(
+      {
+        film: key,
+        duration: film.duration,
+        bpm: (film as { bpm?: number }).bpm,
+        bar: round(plan.bar),
+        hook: { bar: 1, beat: 1, at: 0 },
+        cards: [...plan.entries].reverse().map((e) => ({ rank: e.rank, name: e.name, ...cue(e), beats: e.beats, until: round(e.until) })),
+        outro: cue(plan.outro),
+        loop: { bar: plan.loopBeat / 4 + 1, beat: 1, at: round(plan.loopBeat * plan.beat) },
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 console.log(
   JSON.stringify(
     {
