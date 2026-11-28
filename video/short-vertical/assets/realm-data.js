@@ -1,1 +1,0 @@
-../../assets/realm-data.js
