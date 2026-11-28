@@ -61,13 +61,10 @@ MCP_URL=https://inventions.shadowyrealm.com/mcp MCP_API_KEY=… bun tools/realm-
 
 The loader is re-runnable. It creates what is missing, links causes to consequences, gathers Wikipedia evidence for each period and has it scored. `content/realm.ts` is the whole index: 624 entities, 733 periods, 298 curated links and 3,576 System One proposals, of which 3,076 are kept as links. `content/NEXT-500.md` is a readable list of the second wave of 500.
 
-Videos live in `video/`, [HyperFrames](https://hyperframes.heygen.com) projects: HTML compositions rendered to MP4 frame by frame. `video/` is the 60-second River of Influence, `video/short-vertical/` the same minute recomposed at 1080 x 1920 for YouTube Shorts, and `video/race/` the 4:29 race with its live leaderboard, ending on 2026; all three draw the river with `video/assets/river.js`. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes to `video/assets/realm-data.js`, with the race's pictures in `video/assets/images/`: Wikimedia stills made with macOS `sips` and ffmpeg, each with its author and licence. Each project's `SPEC.md` is its film shot by shot. The `river-films` skill (`.claude/skills/river-films/`) holds the whole procedure: refreshing, re-timing, rendering, and taking the format to a new subject.
+The films live in the editorial repo, `/Volumes/Berthold/Landru/work/editorial/videos/shadowyrealm/` (see its `README.md`): the River of Influence, its vertical Short, the race and the countdown, as [HyperFrames](https://hyperframes.heygen.com) projects. A render never fetches, so it reads a frozen copy of `/api/realm` that `tools/video-snapshot.ts` writes there. That tool stays here because it needs the site's code; set `SR_VIDEO_DIR` to the films folder.
 
 ```bash
-bun tools/video-snapshot.ts                       # refresh the data every video shows
-bun tools/video-description.ts                    # the race's YouTube description: chapters and picture credits
-bun tools/video-description.ts --credits          # every picture's file, author, licence and page
-cd video && npx hyperframes check                 # lint, layout, contrast and timing; likewise in video/race and video/short-vertical
-npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4
-cd race && npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4
+SR_VIDEO_DIR=/Volumes/Berthold/Landru/work/editorial/videos/shadowyrealm bun tools/video-snapshot.ts   # refresh the data every video shows
+cd /Volumes/Berthold/Landru/work/editorial/videos/shadowyrealm && npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-of-influence.mp4
+cd /Volumes/Berthold/Landru/work/editorial/videos/shadowyrealm/race && npx hyperframes render --output /Volumes/Berthold/Landru/media/exports/shadowyrealm/river-race.mp4
 ```

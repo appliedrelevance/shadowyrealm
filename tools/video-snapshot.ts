@@ -1,13 +1,13 @@
 /**
  * Freeze a site's realm for the video project: fetch `/api/realm` once and write
- * it, with the site's time axis, as `video/assets/realm-data.js`, together with
+ * it, with the site's time axis, as `assets/realm-data.js` in the films folder, together with
  * the media the race shows: each board entity's Wikimedia picture and its credit,
  * the reason a leader leads, and, for the countdowns, the line of each counted
  * entity's narrative.
  *
  * A HyperFrames render seeks frame by frame and must not fetch anything, so the
  * composition reads this file through a <script> tag and the pictures from
- * `video/assets/images/` (made with macOS sips and ffmpeg). Committing both makes each video a record of one known
+ * `assets/images/` there (made with macOS sips and ffmpeg). Committing both makes each video a record of one known
  * state of the data; re-run this to refresh it.
  *
  *   bun tools/video-snapshot.ts               # history
@@ -16,8 +16,14 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { siteFor } from "../src/sites";
 import { narrativeParts } from "../src/lib/narrative";
+
+// The films live in the editorial repo (videos/shadowyrealm), not here. Say where to write.
+const VIDEO_DIR = process.env.SR_VIDEO_DIR;
+if (!VIDEO_DIR) throw new Error("Set SR_VIDEO_DIR to the films folder, e.g. /Volumes/Berthold/Landru/work/editorial/videos/shadowyrealm");
+const videoDir = pathToFileURL(VIDEO_DIR.replace(/\/?$/, "/"));
 
 interface RealmEntity {
   slug: string;
@@ -112,7 +118,7 @@ const snapshot: Record<string, unknown> & { entities: unknown[] } = {
 // ---- what the race shows, computed by the engine the race draws with ----
 const g = globalThis as Record<string, unknown>;
 g.window = g;
-(0, eval)(readFileSync(new URL("../video/assets/river.js", import.meta.url), "utf8"));
+(0, eval)(readFileSync(new URL("assets/river.js", videoDir), "utf8"));
 const River = g.River as {
   FILMS: { race: unknown; countdown: { slots: number } };
   RANKINGS: Record<string, { order: (entities: RealmEntity[]) => RealmEntity[] }>;
@@ -210,7 +216,7 @@ const plain = (html: string | undefined) =>
     .trim() || null;
 
 const PICTURE = 224; // px square: twice the card's picture, so it stays sharp
-const imagesDir = new URL("../video/assets/images/", import.meta.url);
+const imagesDir = new URL("assets/images/", videoDir);
 rmSync(imagesDir, { recursive: true, force: true });
 mkdirSync(imagesDir, { recursive: true });
 const scratch = mkdtempSync(join(tmpdir(), "video-snapshot-"));
@@ -268,7 +274,7 @@ for (const slug of shown) {
 snapshot.media = media;
 rmSync(scratch, { recursive: true, force: true });
 
-const out = new URL("../video/assets/realm-data.js", import.meta.url);
+const out = new URL("assets/realm-data.js", videoDir);
 writeFileSync(out, `// Written by tools/video-snapshot.ts from ${url}. Do not edit.\nwindow.REALM = ${JSON.stringify(snapshot)};\n`);
 const pictures = Object.values(media).filter((m) => (m as { image: string | null }).image).length;
 console.log(`${snapshot.entities.length} entities, ${realm.links.length} links, as of ${realm.as_of_year} → ${out.pathname}`);
