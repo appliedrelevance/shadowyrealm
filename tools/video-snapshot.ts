@@ -2,7 +2,8 @@
  * Freeze a site's realm for the video project: fetch `/api/realm` once and write
  * it, with the site's time axis, as `video/assets/realm-data.js`, together with
  * the media the race shows: each board entity's Wikimedia picture and its credit,
- * and the reason a leader leads.
+ * the reason a leader leads, and, for the countdowns, the first sentence of each
+ * counted entity's narrative.
  *
  * A HyperFrames render seeks frame by frame and must not fetch anything, so the
  * composition reads this file through a <script> tag and the pictures from
@@ -16,6 +17,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { siteFor } from "../src/sites";
+import { firstSentenceOf } from "./narrative-text";
 
 interface RealmEntity {
   slug: string;
@@ -145,6 +147,14 @@ const counted = Object.values(River.RANKINGS).flatMap((ranking) =>
   ranking.order(drawn).slice(0, River.FILMS.countdown.slots).map((e) => e.slug),
 );
 
+// ---- what a countdown's card says: the first sentence of each counted entity's narrative ----
+// (null where the entity has none yet; the countdown refuses to build a card without it)
+const why = new Map<string, string | null>();
+for (const slug of new Set(counted)) {
+  const { narrative } = (await getJson<{ entity: { narrative: string | null } }>(`${site.brand.origin}/api/entities/${slug}`)).entity;
+  why.set(slug, narrative ? firstSentenceOf(narrative) : null);
+}
+
 // ---- pictures: Wikimedia thumbnails, with each file's author and licence ----
 const shown = new Set<string>([...contenders, ...allTime.map((e) => e.slug), ...counted]);
 interface FileRef {
@@ -216,6 +226,7 @@ const withheld: string[] = [];
 for (const slug of shown) {
   const entry: Record<string, unknown> = { board: contenders.has(slug), image: null, credit: null };
   if (reasons.has(slug)) entry.reason = reasons.get(slug);
+  if (why.has(slug)) entry.why = why.get(slug);
   const file = files.find((f) => f.slug === slug);
   if (file) {
     const meta = info.get(`${file.host} ${file.title}`);
