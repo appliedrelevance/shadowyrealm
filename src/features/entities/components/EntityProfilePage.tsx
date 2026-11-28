@@ -90,6 +90,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
             {isOperator && <StatusWorkflow slug={entity.slug} status={entity.status} />}
           </div>
           <p className="mt-4 text-ink-2">{entity.description}</p>
+          {entity.narrative && <p className="mt-3 leading-relaxed text-ink-2">{entity.narrative}</p>}
           {metadata.wikipedia_url && (
             <a
               href={metadata.wikipedia_url}

@@ -943,6 +943,13 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
   const cut = (values: number[]) => values.slice(first, last + 1).map((v) => round(v, 1));
 
   const db = connect(env);
+  // The narrative of why it scored as it did (tools/entity-narrative.ts), read for this entity only.
+  const { data: narrative, error: narrativeError } = await db
+    .from("entities")
+    .select("biography")
+    .eq("id", entity.id)
+    .single();
+  if (narrativeError) fail("load the entity's narrative", narrativeError);
   const { data: evidence, error } = await db
     .from("assessments")
     .select(`id, period_id, ${evidenceColumns}, sources, confidence_level, ai_model_used, created_at`)
@@ -974,6 +981,7 @@ export async function getEntityProfile(env: ServiceEnv, slug: string, includeDra
       entity_type: entity.entity_type,
       status: entity.status,
       description: entity.description,
+      narrative: narrative.biography,
       image_url: entity.image_url,
       metadata: entity.metadata,
       updated_at: entity.updated_at,
