@@ -1,17 +1,19 @@
-"""Master the Short's loop from SoundCraft's bounce: the session is laid out in film time (the crest at 0 s,
-the loop point at 110 s), so the bounce runs past 110 s for the hall, and that tail is folded onto the
-start. The limiter runs on three copies end to end and the middle one is kept, so its memory crosses the
-loop point as it will when the Short repeats; the gain is found again until the result sits at LUFS.
+"""Master a looping film's music from SoundCraft's bounce: the session is laid out in film time (the
+Short's crest at 0 s, its loop point at 110 s), so the bounce runs past the loop point for the hall, and
+that tail is folded onto the start. The limiter runs on three copies end to end and the middle one is
+kept, so its memory crosses the loop point as it will when the film repeats; the gain is found again
+until the result sits at LUFS.
 
-    master_loop.py BOUNCE.wav OUT.wav OUT.m4a
+    master_loop.py BOUNCE.wav OUT.wav OUT.m4a [LOOP_SECONDS]   # 110 for the Short, 120 for the countdown
 """
 import subprocess, sys
 from pathlib import Path
 import numpy as np
 from pedalboard.io import AudioFile
 
-FILM, LUFS, LIMIT = 110.0, -16.0, 0.79
+LUFS, LIMIT = -16.0, 0.79
 src, wav, m4a = map(Path, sys.argv[1:4])
+FILM = float(sys.argv[4]) if len(sys.argv) > 4 else 110.0
 with AudioFile(str(src)) as f:
     sr, audio = f.samplerate, f.read(f.frames).astype(np.float64)
 n = int(round(FILM * sr))

@@ -11,6 +11,7 @@ by BBC Symphony Orchestra Discover with no window. The film's cues come from
 | The 60-second cut | the session `river/river-60.scraft` | `video/assets/music/river-60.m4a` |
 | The race | the session `race/race-score.scraft` | `video/race/assets/music/race-score.m4a` |
 | The Short, a loop | the session `short/short-score.scraft` | `video/assets/music/short-score.m4a` |
+| The countdown, a loop | the session `countdown/countdown-score.scraft` | `video/countdown/assets/music/countdown-score.m4a` |
 
 The sessions are in `/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/`. The
 race and the Short share their themes: the Short is the series trailer, so it carries the race's
@@ -27,8 +28,9 @@ The environment is `video/music/.venv` (Python 3.13, `numpy`, `pedalboard`), kep
 | Script | Does |
 |---|---|
 | [`scraft/short_level.py`](scraft/short_level.py), [`scraft/race_level.py`](scraft/race_level.py) | measure a session's stems and write its levelling as automation points for the MCP |
+| [`scraft/countdown_level.py`](scraft/countdown_level.py) | measure the countdown's stems and write its levelling as `automation.set_point` commands for `soundcraft-cli script` |
 | [`scraft/master.py`](scraft/master.py) | cut a bounce to the film's length and master it to a loudness |
-| [`scraft/master_loop.py`](scraft/master_loop.py) | master the Short's bounce as a seamless loop |
+| [`scraft/master_loop.py`](scraft/master_loop.py) | master a looping film's bounce as a seamless loop (110 s for the Short, 120 s for the countdown) |
 | [`scraft/audit.py`](scraft/audit.py) | read a session for overlapping clips, stray notes, duplicates and the players' breathing |
 | [`scraft/onsets.py`](scraft/onsets.py) | measure every note's onset in its stem |
 
@@ -91,6 +93,64 @@ counterline and theme B in D minor, and a marker for each section.
   one process (peak memory 1.7 GB), the mix 79 s.
 - **Known engine faults** (reported to the SoundCraft session): `edit.copy` of part of a MIDI clip
   also carries the notes after the range; `track.new {kind: "master"}` ignores its name.
+
+## The countdown's loop
+
+The countdown's score is the session
+`/Volumes/Berthold/Landru/media/exports/shadowyrealm/music/soundcraft/countdown/countdown-score.scraft`,
+composed through SoundCraft's engine commands (2026-11-28): the Short's 34 BBC SO Discover tracks,
+with their patches and calibrated faders, cleared, then 1,464 notes in 148 clips on 27 of them,
+written with `midi.new_clip`, `midi.note_add` and `midi.cc_add` as one `soundcraft-cli script`. A
+marker for the crest, the soft stroke, the lights going out, each card, the outro and the loop point.
+
+- **Film time, on the cards' beats.** 90 bpm in 4/4 from 0 s: 45 bars to the loop point at 120 s
+  (bar 46). The cards land on the beats `bun tools/music-cues.ts countdown` prints, some mid-bar
+  (No. 9 on bar 6, beat 3), and each card is a phrase from its own beat.
+- **The music.** Bar 1, the crest: a D minor chord in the strings, clarinets, horns and bassoon, with
+  no drum, timpani, cymbal or trumpet; its CC1 rises 40 to 80 over 1.4 s, settles to 60, and falls to
+  30 as the ten go dark at 4.9 s, under a harp and celeste run down D minor (4.67 to 5.27 s). A soft
+  timpani and pizzicato stroke on bar 2. Every card's beat: a stroke on the timpani and pizzicato
+  basses, with the cellos' pizzicato from No. 9, the bass drum from No. 5, trombones from No. 4, the
+  bass trombone from No. 3, the tuba from No. 2 and cymbal and tam-tam on No. 1, its velocities and
+  CC1 a ninth of the way heavier each card from No. 10 to No. 1. Under the cards, the race's ostinato
+  in eighths: violas from No. 10, cellos from No. 9, the harp's arpeggios from No. 8, the clarinet's
+  counterline in No. 7 and No. 6 (the bassoon under it in No. 6), basses from No. 6, the second
+  violins' pad from No. 7 to No. 4 and the first violins' high pedal from No. 5 to No. 2. The race's
+  theme A in the horns for No. 5, its answer with the clarinet for No. 4, theme A and the answer with
+  the second violins and winds for No. 3 and No. 2, then theme A an octave up in the first violins,
+  flutes and oboes, with trumpets and horns, for No. 1. Each card's harmony runs into the next on the
+  dominant: D minor, B flat and A for No. 10 to No. 6; the themes' D minor and C, then A; the answers'
+  B flat and A. A snare roll over No. 2's last two beats, a timpani roll over No. 1's last three.
+  Bar 44: the last stroke as the ten relight, then the crest's chord again, its CC1 from 84 down to 40
+  at the loop point over a timpani rumble dying away, so it meets bar 1's soft chord.
+- **CC1 first.** A note never starts on its clip's first tick: notes there start 2 ticks (1.4 ms)
+  in, so the clip's CC1 reaches the player before the note. A note on the same tick as its CC1 plays
+  at the default controller: each percussion and marcato track's first stroke came out about 20 dB
+  under the next (the cymbal's peak −56 dBFS against −36).
+- **Levels are automation.** The stems bounced on six processes in 86 s;
+  [`scraft/countdown_level.py`](scraft/countdown_level.py) brings the tracks under each theme down
+  until it sits 3 dB over them (at most 10 dB), then sets a gain per section against No. 1: the crest
+  −10 dB, the hook −12, the lights going out −20, the cards from −17 (No. 10) up to −3.5 (No. 2) and 0
+  (No. 1), the outro's stroke −3 and its last 2.67 s −13. The strokes and pulses (timpani, pizzicato
+  basses and cellos, bass drum, marcato brass, cymbal, tam-tam, snare) are never trimmed under a
+  theme: trimmed with the accompaniment, No. 7's stroke, the first card with a theme, fell 8.5 dB and
+  cleared the bar before it by 1.6 dB. 29 points on the master fader and 96 on 8 tracks, gliding 80 ms
+  into each section, saved in the session.
+- **The loop.** `file.bounce_mix` (stable, 3 renders, 77 s) renders 0 to 124 s;
+  `scraft/master_loop.py BOUNCE OUT.wav OUT.m4a 120` folds the 4 s past the loop point onto the start
+  and limits three copies end to end, keeping the middle one.
+- **Measured, 2026-11-28:** `scraft/audit.py`: no overlaps, stray notes or duplicates, the longest
+  wind line 11.7 s (clarinet, bassoon). Every note sounds in its stem within 300 ms; five long or low
+  notes take more than 60 ms to rise above −70 dBFS. In the bounce, every section within 0.03 dB of its
+  target. Every stroke's onset in its stems (timpani, pizzicato basses and cellos, bass drum, tuba,
+  cymbal) 1 to 7 ms after its cue; the master runs 4.98 ms behind the bounce (the limiter's 5 ms
+  lookahead), so in the music the strokes land 6 to 12 ms after their cues. Below 200 Hz (two passes
+  of ffmpeg `lowpass=f=200`), each card's 230 ms from its stroke against the 220 ms before it, in the
+  AAC: from +9.1 dB (No. 1) and +9.3 (No. 7) to +17.7 (No. 5); the outro's stroke, after No. 1's
+  timpani roll, +2.2. The master: 120.000 s, −16.0 LUFS, −2.0 dBTP; the AAC: 120.000 s, −16.1 LUFS,
+  −1.8 dBTP. The join: the last 0.1 s at −27.4 dBFS RMS, the first 0.1 s at −27.0; in the master the
+  join's step sits at the 5th and 78th percentiles (left, right) of the steps in the 200 ms around it,
+  in the AAC at the 96th and 99th, the codec's edge (the Short's AAC: the 98th and 99th).
 
 ## The 60-second cut and the race
 
