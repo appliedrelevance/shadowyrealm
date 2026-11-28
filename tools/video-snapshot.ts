@@ -112,7 +112,8 @@ const g = globalThis as Record<string, unknown>;
 g.window = g;
 (0, eval)(readFileSync(new URL("../video/assets/river.js", import.meta.url), "utf8"));
 const River = g.River as {
-  FILMS: { race: unknown };
+  FILMS: { race: unknown; countdown: { slots: number } };
+  RANKINGS: Record<string, { order: (entities: RealmEntity[]) => RealmEntity[] }>;
   board: (
     realm: unknown,
     film: unknown,
@@ -138,8 +139,14 @@ for (const slug of leaders) {
   );
 }
 
+// ---- what the countdowns show: every ranking's top entries ----
+const drawn = realm.entities.filter((e) => e.curve.benefit.length > 0);
+const counted = Object.values(River.RANKINGS).flatMap((ranking) =>
+  ranking.order(drawn).slice(0, River.FILMS.countdown.slots).map((e) => e.slug),
+);
+
 // ---- pictures: Wikimedia thumbnails, with each file's author and licence ----
-const shown = new Set<string>([...contenders, ...allTime.map((e) => e.slug)]);
+const shown = new Set<string>([...contenders, ...allTime.map((e) => e.slug), ...counted]);
 interface FileRef {
   slug: string;
   host: string;
