@@ -41,10 +41,11 @@ import type { SiteConfig } from "../src/sites/types";
 import { storedGraph, type StoredLink } from "./credit-graph";
 import { keyOf, SystemOneCache } from "./system-one-cache";
 import { storedArticles, Wikipedia, wikipediaJson } from "./wiki-evidence";
+import { mcpCall, mcpRequest } from "./mcp";
 import { DOLLARS_PER_CHAR_AT_MOST } from "./workers-ai";
 
 const MCP_URL = process.env.MCP_URL ?? "http://localhost:35421/mcp";
-const MCP_API_KEY = process.env.MCP_API_KEY;
+const MCP_API_KEY = process.env.MCP_API_KEY ?? "";
 if (!MCP_API_KEY) throw new Error("MCP_API_KEY is not set");
 
 const args = process.argv.slice(2);
@@ -65,27 +66,7 @@ let wiki: Wikipedia;
 
 // ---------- MCP ----------
 
-let rpcId = 0;
-async function call<T = unknown>(name: string, input: Record<string, unknown>): Promise<T> {
-  const res = await fetch(MCP_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${MCP_API_KEY}`,
-      "Content-Type": "application/json",
-      Accept: "application/json, text/event-stream",
-    },
-    body: JSON.stringify({ jsonrpc: "2.0", id: ++rpcId, method: "tools/call", params: { name, arguments: input } }),
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error(`${name}: HTTP ${res.status} ${text.slice(0, 300)}`);
-  const json = text.startsWith("{")
-    ? JSON.parse(text)
-    : JSON.parse(text.split("\n").find((l) => l.startsWith("data: "))!.slice(6));
-  if (json.error) throw new Error(`${name}: ${json.error.message}`);
-  const body = json.result.content[0].text as string;
-  if (json.result.isError) throw new Error(`${name}: ${body}`);
-  return JSON.parse(body) as T;
-}
+const call = <T = unknown>(name: string, input: Record<string, unknown>) => mcpCall<T>(MCP_URL, MCP_API_KEY, name, input);
 
 // ---------- Wikipedia ----------
 
@@ -146,20 +127,7 @@ async function detail(slug: string): Promise<EntityDetail | null> {
  * answers already held; such a server is refused before anything is sent.
  */
 async function checkScorePeriodTakesAnswers() {
-  const res = await fetch(MCP_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${MCP_API_KEY}`,
-      "Content-Type": "application/json",
-      Accept: "application/json, text/event-stream",
-    },
-    body: JSON.stringify({ jsonrpc: "2.0", id: ++rpcId, method: "tools/list", params: {} }),
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error(`tools/list: HTTP ${res.status} ${text.slice(0, 300)}`);
-  const json = text.startsWith("{")
-    ? JSON.parse(text)
-    : JSON.parse(text.split("\n").find((l) => l.startsWith("data: "))!.slice(6));
+  const json = { result: await mcpRequest<{ tools: unknown[] }>(MCP_URL, MCP_API_KEY, "tools/list", {}) };
   const tool = (json.result.tools as { name: string; inputSchema: { properties?: Record<string, unknown> } }[]).find(
     (t) => t.name === "score_period",
   );

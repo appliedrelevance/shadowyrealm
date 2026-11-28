@@ -10,9 +10,15 @@
  *
  *   CF_TOKEN_FILE=… bun tools/entity-narrative.ts [--site history] [--only slug,slug] [--model @cf/…]
  *     [--out narratives.json|narratives.jsonl] [--concurrency 3] [--pay]   (.jsonl is written as it goes and resumed)
+ *
+ * Then store them through the site's MCP server (update_entity's biography, which the entity's page
+ * shows as its narrative); a narrative that failed its checks is held back and listed:
+ *
+ *   MCP_API_KEY=… bun tools/entity-narrative.ts --write narratives.jsonl [--site history] [--mcp https://…/mcp]
  */
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { siteFor } from "../src/sites";
+import { mcpCall } from "./mcp";
 import { runModel } from "./workers-ai";
 
 const arg = (name: string) => {
@@ -25,6 +31,28 @@ const PAY = process.argv.includes("--pay");
 const OUT = arg("out");
 const CONCURRENCY = Number(arg("concurrency") ?? 3);
 const headers = { "User-Agent": site.brand.userAgent };
+
+// ---- store narratives already written: --write <file.jsonl> ----
+const WRITE = arg("write");
+if (WRITE) {
+  const key = process.env.MCP_API_KEY ?? "";
+  if (!key) throw new Error("MCP_API_KEY is not set");
+  const url = arg("mcp") ?? `${site.brand.origin}/mcp`;
+  const rows = readFileSync(WRITE, "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as { slug: string; narrative: string; problems: string[] });
+  const held = rows.filter((r) => r.problems.length > 0);
+  let stored = 0;
+  for (const row of rows) {
+    if (row.problems.length > 0) continue;
+    await mcpCall(url, key, "update_entity", { slug: row.slug, biography: row.narrative });
+    stored++;
+  }
+  console.log(`${stored} narratives stored through ${url}; ${held.length} held back`);
+  for (const row of held) console.log(`  held: ${row.slug}: ${row.problems.join("; ")}`);
+  process.exit(0);
+}
 
 /** List prices per million tokens, from the account's model catalogue on 2026-11-28. */
 const PRICES: Record<string, { input: number; output: number }> = {
