@@ -8,6 +8,7 @@ import { formatMagnitude } from "@/features/realm/chart";
 import { InfluenceCurve, ProfileBars } from "@/features/realm/ProfileCharts";
 import { TYPE_ICONS } from "@/lib/icons";
 import { COPY } from "@/lib/copy";
+import { narrativeParts } from "@/lib/narrative";
 import { dimensionCountWords, HAS_HARM, SITE } from "@/lib/site";
 import { creditTypes, linkLabels } from "@/sites";
 import { formatSpan, formatYear } from "@/lib/timeline";
@@ -52,6 +53,7 @@ export function EntityProfilePage({ slug }: { slug: string }) {
   const { entity, score } = profile;
   const Icon = TYPE_ICONS[entity.entity_type];
   const metadata = (entity.metadata ?? {}) as Record<string, string>;
+  const narrative = entity.narrative ? narrativeParts(entity.narrative) : null;
   const periods = profile.periods;
   const first = periods[0]?.start_year;
   const last = periods.length > 0 ? Math.max(...periods.map((p) => p.end_year)) : undefined;
@@ -90,7 +92,8 @@ export function EntityProfilePage({ slug }: { slug: string }) {
             {isOperator && <StatusWorkflow slug={entity.slug} status={entity.status} />}
           </div>
           <p className="mt-4 text-ink-2">{entity.description}</p>
-          {entity.narrative && <p className="mt-3 leading-relaxed text-ink-2">{entity.narrative}</p>}
+          {narrative?.line && <p className="mt-4 text-lg font-semibold leading-snug text-ink">{narrative.line}</p>}
+          {narrative && <p className="mt-3 leading-relaxed text-ink-2">{narrative.paragraph}</p>}
           {metadata.wikipedia_url && (
             <a
               href={metadata.wikipedia_url}
